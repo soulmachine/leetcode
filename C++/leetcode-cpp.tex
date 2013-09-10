@@ -1,0 +1,43 @@
+\documentclass[10pt,adobefonts,fancyhdr,hyperref,UTF8]{ctexbook}
+
+\usepackage{multirow}
+% for \soul 删除线
+\usepackage{ulem}
+% 表头斜线
+\usepackage{diagbox}
+
+\makeatletter
+\input{format.cls}
+\makeatother
+
+\begin{document}
+\sloppy
+\newcommand\BookTitle{LeetCode题解}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RE]{\normalfont\small\rmfamily\nouppercase{\leftmark}}
+\fancyhead[LO]{\normalfont\small\rmfamily\nouppercase{\rightmark}}
+\fancyhead[LE,RO]{\thepage}
+%\fancyfoot[LE,LO]{\small\normalfont\youyuan\BookTitle}
+%\fancyfoot[RE,RO]{\textsf{\small \color{blue} https://gitcafe.com/soulmachine/LeetCode}}
+
+\makeatletter
+\@openrightfalse
+\makeatother
+
+\frontmatter % 开始前言目录，页码用罗马数字
+
+\include{title}
+
+\tableofcontents
+
+\mainmatter % 开始正文，页码用阿拉伯数字
+
+\graphicspath{{diagrams/}}
+
+\include{chapProgrammingTrick}
+
+\appendix % 开始附录，章用字母编号
+\printindex
+
+\end{document}
