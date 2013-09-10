@@ -67,6 +67,7 @@ body={390pt,530pt},marginparsep=10pt,marginpar=50pt]{geometry}
 \newcommand{\mn}[1]{\texttt{\bs #1}}
 \renewcommand{\today}{\the\year-\the\month-\the\day}
 \newcommand\bs{\textbackslash}
+\newcommand{\code}[1]{\small{\fontspec{Latin Modern Mono} #1}}
 
 \newcommand\begindot{\begin{itemize}
 [itemsep=2pt plus 2pt minus 2pt,%

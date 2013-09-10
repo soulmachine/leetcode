@@ -1,0 +1,73 @@
+\chapter{深度优先搜索}
+
+
+\section{Palindrome Partitioning} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:palindrome-partitioning}
+
+
+\subsubsection{描述}
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+Return all possible palindrome partitioning of s.
+
+For example, given \code{s = "aab"},
+Return
+\begin{Code}
+  [
+    ["aa","b"],
+    ["a","a","b"]
+  ]
+\end{Code}
+
+
+\subsubsection{分析}
+在每一步都可以判断中间结果是否为合法结果，用回溯法。
+
+一个长度为n的字符串，有n+1个地方可以砍断，每个地方可断可不断，因此复杂度为$O(2^{n+1})$
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Palindrome Partitioning
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> result;
+        vector<string> output;  // 一个partition方案
+        DFS(s, 0, output, result);
+        return result;
+    }
+    // 搜索必须以s[start]开头的partition方案
+    // 如果一个字符串长度为n，则可以插入n+1个隔板，复制度为O(2^{n+1})
+    void DFS(string &s, int start, vector<string>& output,
+            vector<vector<string>> &result) {
+        if (start == s.size()) {
+            result.push_back(output);
+            return;
+        }
+        for (int i = start; i < s.size(); i++) {
+            if (isPalindrome(s, start, i)) { // 从i位置砍一刀
+                output.push_back(s.substr(start, i - start + 1));
+                DFS(s, i + 1, output, result);  // 继续往下砍
+                output.pop_back(); // 撤销上一个push_back的砍
+            }
+        }
+    }
+    bool isPalindrome(string &s, int start, int end) {
+        while (start < end) {
+            if (s[start] != s[end]) return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Palindrome Partitioning II，见 \S \ref{sec:palindrome-partitioning-ii}
+\myenddot
+

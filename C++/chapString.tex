@@ -1,0 +1,55 @@
+\chapter{字符串}
+这类题目考察字符串的操作。
+
+
+\section{Add Binary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:add-binary}
+
+
+\subsubsection{描述}
+Given two binary strings, return their sum (also a binary string).
+
+For example,
+\begin{Code}
+a = "11"
+b = "1"
+\end{Code}
+Return {\small \fontspec{Latin Modern Mono} "100"}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Add Binary
+class Solution {
+public:
+    string addBinary(string a, string b) {
+        string result;
+        int maxL = a.size() > b.size() ? a.size() : b.size();
+        std::reverse(a.begin(), a.end());
+        std::reverse(b.begin(), b.end());
+        int carry = 0;
+        for (int i = 0; i < maxL; i++) {
+            int ai = i < a.size() ? a[i] - '0' : 0;
+            int bi = i < b.size() ? b[i] - '0' : 0;
+            int val = (ai + bi + carry) % 2;
+            carry = (ai + bi + carry) / 2;
+            result.insert(result.begin(), val + '0');
+        }
+        if (carry == 1) {
+            result.insert(result.begin(), '1');
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Add Two Numbers，见 \S \ref{sec:add-two-numbers}
+\myenddot
+

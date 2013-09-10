@@ -1,0 +1,187 @@
+\chapter{基本实现题}
+这类题目不考特定的算法，纯粹考察写代码的熟练度。
+
+
+\section{Two Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:wordladder}
+
+
+\subsubsection{描述}
+Given an array of integers, find two numbers such that they add up to a specific target number.
+
+The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+You may assume that each input would have exactly one solution.
+
+Input:  \code{numbers=\{2, 7, 11, 15\}, target=9}
+
+Output: \code{index1=1, index2=2}
+
+
+\subsubsection{分析}
+方法1：暴力，复杂度$O(n^2)$，会超时
+
+方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度$O(n)$
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Two Sum
+// 方法1：暴力，O(n^2)
+// 方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度O(n)，代码如下，
+class Solution {
+public:
+    vector<int> twoSum(vector<int> &numbers, int target) {
+        unordered_map<int, int> mapping;
+        vector<int> result;
+        for (int i = 0; i < numbers.size(); i++) {
+            mapping[numbers[i]] = i;
+        }
+        for (int i = 0; i < numbers.size(); i++) {
+            const int gap = target - numbers[i];
+            if (mapping.find(gap) != mapping.end()) {
+                result.push_back(i + 1);
+                result.push_back(mapping[gap] + 1);
+                break;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\section{Insert Interval} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:insert-interval}
+
+
+\subsubsection{描述}
+Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary).
+
+You may assume that the intervals were initially sorted according to their start times.
+
+Example 1:
+Given intervals \code{[1,3],[6,9]}, insert and merge \code{[2,5]} in as \code{[1,5],[6,9]}.
+
+Example 2:
+Given \code{[1,2],[3,5],[6,7],[8,10],[12,16]}, insert and merge \code{[4,9]} in as \code{[1,2],[3,10],[12,16]}.
+
+This is because the new interval \code{[4,9]} overlaps with \code{[3,5],[6,7],[8,10]}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) { }
+    Interval(int s, int e) : start(s), end(e) { }
+};
+ 
+//LeetCode, Insert Interval
+class Solution {
+public:
+    vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
+        vector<Interval>::iterator it = intervals.begin();
+        while (it != intervals.end()) {
+            if (newInterval.end < it->start) {
+                intervals.insert(it, newInterval);
+                return intervals;
+            } else if (newInterval.start > it->end) {
+                it++;
+                continue;
+            } else {
+                newInterval.start = min(newInterval.start, it->start);
+                newInterval.end = max(newInterval.end, it->end);
+                it = intervals.erase(it);
+            }
+        }
+        intervals.insert(intervals.end(), newInterval);
+        return intervals;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Merge Intervals，见 \S \ref{sec:merge-intervals}
+\myenddot
+
+
+\section{Merge Intervals} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:merge-intervals}
+
+
+\subsubsection{描述}
+Given a collection of intervals, merge all overlapping intervals.
+
+For example,
+Given \code{[1,3],[2,6],[8,10],[15,18]},
+return \code{[1,6],[8,10],[15,18]}
+
+
+\subsubsection{分析}
+复用一下Insert Intervals的解法即可，创建一个新的interval集合，然后每次从旧的里面取一个interval出来，然后插入到新的集合中。
+
+
+\subsubsection{代码}
+\begin{Code}
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) { }
+    Interval(int s, int e) : start(s), end(e) { }
+};
+ 
+//LeetCode, Merge Interval
+//复用一下Insert Intervals的解法即可
+class Solution {
+public:
+    vector<Interval> merge(vector<Interval> &intervals) {
+        vector<Interval> result;
+        for (int i = 0; i < intervals.size(); i++) {
+            insert(result, intervals[i]);
+        }
+        return result;
+    }
+private:
+    vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
+        vector<Interval>::iterator it = intervals.begin();
+        while (it != intervals.end()) {
+            if (newInterval.end < it->start) {
+                intervals.insert(it, newInterval);
+                return intervals;
+            } else if (newInterval.start > it->end) {
+                it++;
+                continue;
+            } else {
+                newInterval.start = min(newInterval.start, it->start);
+                newInterval.end = max(newInterval.end, it->end);
+                it = intervals.erase(it);
+            }
+        }
+        intervals.insert(intervals.end(), newInterval);
+        return intervals;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Insert Interval，见 \S \ref{sec:insert-interval}
+\myenddot

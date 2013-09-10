@@ -1,0 +1,63 @@
+\chapter{线性表}
+这类题目考察线性表的操作，例如，数组，单链表，双向链表等。
+
+
+\section{Add Two Numbers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:add-two-numbers}
+
+
+\subsubsection{描述}
+You are given two linked lists representing two non-negative numbers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+Input: {\small \fontspec{Latin Modern Mono} (2 -> 4 -> 3) + (5 -> 6 -> 4)}
+
+Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
+
+
+\subsubsection{分析}
+跟Add Binary（见 \S \ref{sec:add-binary}）很类似
+
+
+\subsubsection{代码}
+\begin{Code}
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) { }
+};
+ 
+//LeetCode, Add Two Numbers
+//跟Add Binary 很类似
+class Solution {
+public:
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+        ListNode* head = new ListNode(-1); // 头节点
+        ListNode* pre = head;
+        ListNode *pa = l1, *pb = l2;
+        int carry = 0;
+        while (pa != NULL || pb != NULL) {
+            int av = pa == NULL ? 0 : pa->val;
+            int bv = pb == NULL ? 0 : pb->val;
+            ListNode* node = new ListNode((av + bv + carry) % 10);
+            carry = (av + bv + carry) / 10;
+            pre->next = node; // 尾插法
+            pre = pre->next;
+            pa = pa == NULL ? NULL : pa->next;
+            pb = pb == NULL ? NULL : pb->next;
+        }
+        if (carry > 0)
+            pre->next = new ListNode(1);
+        pre = head->next;
+        delete head;
+        return pre;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Add Binary，见 \S \ref{sec:add-binary}
+\myenddot
+

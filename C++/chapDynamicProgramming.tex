@@ -1,0 +1,132 @@
+\chapter{动态规划}
+
+
+\section{Palindrome Partitioning II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:palindrome-partitioning-ii}
+
+
+\subsubsection{描述}
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+Return the minimum cuts needed for a palindrome partitioning of s.
+
+For example, given \code{s = "aab"},
+
+Return 1 since the palindrome partitioning \code{["aa","b"]} could be produced using 1 cut.
+
+
+\subsubsection{分析}
+定义状态\fn{f(i,j)}表示区间\fn{[i,j]}之间最小的cut数，则状态转移方程为 
+$$
+f(i,j)=\min\left\{f(i,k)+f(k+1,j)\right\}, i \leq k \leq j, 0 \leq i \leq j<n
+$$
+这是一个二维函数，实际写代码比较麻烦。
+ 
+所以要转换成一维DP。如果每次，从i往右扫描，每找到一个回文就算一次DP的话，就可以转换为\code{f(i)=区间[i, n-1]之间最小的cut数}，n为字符串长度，则状态转移方程为
+$$
+f(i)=\min\left\{f(j+1)+1\right\}, i \leq j<n
+$$
+
+一个问题出现了，就是如何判断\fn{[i,j]}是否是回文？每次都从i到j比较一遍？太浪费了，这里也是一个DP问题。
+
+定义状态\fn{P[i][j] = true if [i,j]为回文}，那么
+\begin{Code}
+P[i][j] = str[i] == str[j] && P[i+1][j-1]
+\end{Code}
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Palindrome Partitioning II
+class Solution {
+public:
+    int minCut(string s) {
+        const int len = s.size();
+        int f[len+1];
+        bool p[len][len];
+        //the worst case is cutting by each char
+        for (int i = 0; i <= len; i++)
+            f[i] = len - 1 - i; // 最后一个f[len]=-1
+        for (int i = 0; i < len; i++)
+            for (int j = 0; j < len; j++)
+                p[i][j] = false;
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = i; j < len; j++) {
+                if (s[i] == s[j] && (j - i < 2 || p[i + 1][j - 1])) {
+                    p[i][j] = true;
+                    f[i] = min(f[i], f[j + 1] + 1);
+                }
+            }
+        }
+        return f[0];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Palindrome Partitioning，见 \S \ref{sec:palindrome-partitioning}
+\myenddot
+
+
+\section{Maximal Rectangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:maximal-rectangle}
+
+
+\subsubsection{描述}
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its area.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Maximal Rectangle
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char> > &matrix) {
+        if (matrix.empty())  return 0;
+
+        const int m = matrix.size();
+        const int n = matrix[0].size();
+        vector<int> H(n, 0);
+        vector<int> L(n, 0);
+        vector<int> R(n, n);
+
+        int ret = 0;
+        for (int i = 0; i < m; ++i) {
+            int left = 0, right = n;
+            // calculate L(i, j) from left to right
+            for (int j = 0; j < n; ++j) {
+                if (matrix[i][j] == '1') {
+                    ++H[j];
+                    L[j] = max(L[j], left);
+                } else {
+                    left = j+1;
+                    H[j] = 0; L[j] = 0; R[j] = n;
+                }
+            }
+            // calculate R(i, j) from right to left
+            for (int j = n-1; j >= 0; --j) {
+                if (matrix[i][j] == '1') {
+                    R[j] = min(R[j], right);
+                    ret = max(ret, H[j]*(R[j]-L[j]));
+                } else {
+                    right = j;
+                }
+            }
+        }
+        return ret;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot

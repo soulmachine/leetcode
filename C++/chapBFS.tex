@@ -1,0 +1,217 @@
+\chapter{广度优先搜索}
+当题目看不出任何规律，既不能用分治，贪心，也不能用动规时，这时候万能方法——搜索，
+就派上用场了。搜索分为广搜和深搜，广搜里面又有普通广搜，双向广搜，A*搜索等。
+深搜里面又有普通深搜，回溯法等。
+
+广搜和深搜非常类似（除了在扩展节点这部分不一样），二者有相同的框架，如何表示状态？
+如何扩展状态？如何判重？尤其是判重，解决了这个问题，基本上整个问题就解决了。
+
+
+\section{Word Ladder} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:wordladder}
+
+
+\subsubsection{描述}
+Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from start to end, such that:
+\begindot
+\item Only one letter can be changed at a time
+\item Each intermediate word must exist in the dictionary
+\myenddot
+
+For example, Given:
+
+\begin{Code}
+start = "hit"
+end = "cog"
+dict = ["hot","dot","dog","lot","log"]
+\end{Code}
+As one shortest transformation is \code{"hit" -> "hot" -> "dot" -> "dog" -> "cog"}, return its length $5$.
+
+Note:
+\begindot
+\item Return 0 if there is no such transformation sequence.
+\item All words have the same length.
+\item All words contain only lowercase alphabetic characters.
+\myenddot
+
+
+\subsubsection{分析}
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Word Ladder
+class Solution {
+public:
+    int ladderLength(string start, string end, unordered_set<string> &dict) {
+        if (start.size() != end.size()) return 0;
+        if (start.empty() || end.empty()) return 1; return 0;
+        int level = 1;  // 层次
+        queue<string> queToPush, queToPop;
+
+        queToPop.push(start);
+        while (dict.size() > 0 && !queToPop.empty()) {
+            while (!queToPop.empty()) {
+                string str(queToPop.front());
+                queToPop.pop();
+                for (int i = 0; i < str.size(); i++) {
+                    for (char j = 'a'; j <= 'z'; j++) {
+                        if (j == str[i]) continue;
+
+                        const char temp = str[i];
+                        str[i] = j;
+                        if (str == end) return level + 1; //找到了
+
+                        if (dict.count(str) > 0) {
+                            queToPush.push(str);
+                            dict.erase(str); // 删除该单词，防止死循环
+                        }
+                        str[i] = temp; // 恢复该单词
+                    }
+                }
+            }
+            swap(queToPush, queToPop); //!!! 交换两个队列
+            level++;
+        }
+        return 0; // 所有单词已经用光，还是找不到通向目标单词的路径
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Word Ladder II，见 \S \ref{sec:wordladderii}
+\myenddot
+
+
+\section{Word Ladder II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:wordladderii}
+
+
+\subsubsection{描述}
+Given two words (start and end), and a dictionary, find all shortest transformation sequence(s) from start to end, such that:
+\begindot
+\item Only one letter can be changed at a time
+\item Each intermediate word must exist in the dictionary
+\myenddot
+
+For example, Given:
+\begin{Code}
+start = "hit"
+end = "cog"
+dict = ["hot","dot","dog","lot","log"]
+\end{Code}
+Return
+\begin{Code}
+[
+    ["hit","hot","dot","dog","cog"],
+    ["hit","hot","lot","log","cog"]
+]
+\end{Code}
+
+Note:
+\begindot
+\item All words have the same length.
+\item All words contain only lowercase alphabetic characters.
+\myenddot
+
+
+\subsubsection{分析}
+跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点
+
+
+\subsubsection{代码}
+
+\begin{Code}
+//LeetCode, Word Ladder II
+//跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点
+class Solution {
+public:
+    std::vector<std::vector<std::string> > findLadders(std::string start,
+            std::string end, std::unordered_set<std::string> &dict) {
+        result_.clear();
+        std::unordered_map<std::string, std::vector<std::string>> prevMap;
+
+        for (auto iter = dict.begin(); iter != dict.end(); ++iter) {
+            prevMap[*iter] = std::vector<std::string>();
+        }
+
+        std::vector<std::unordered_set<std::string>> candidates(2);
+
+        int current = 0;
+        int previous = 1;
+
+        candidates[current].insert(start);
+
+        while (true) {
+            current = !current;
+            previous = !previous;
+
+            // 从dict中删除previous中的单词，避免自己指向自己
+            for (auto iter = candidates[previous].begin();
+                    iter != candidates[previous].end(); ++iter) {
+                dict.erase(*iter);
+            }
+
+            candidates[current].clear();
+
+            for (auto iter = candidates[previous].begin();
+                    iter != candidates[previous].end(); ++iter) {
+                for (size_t pos = 0; pos < iter->size(); ++pos) {
+                    std::string word = *iter;
+                    for (int i = 'a'; i <= 'z'; ++i) {
+                        if (word[pos] == i) continue;
+
+                        word[pos] = i;
+
+                        if (dict.count(word) > 0) {
+                            prevMap[word].push_back(*iter);
+                            candidates[current].insert(word);
+                        }
+                    }
+                }
+            }
+
+            if (candidates[current].size() == 0) return result_;  // 此题无解
+            if (candidates[current].count(end)) break; // 没看懂
+        }
+
+        std::vector<std::string> path;
+        GeneratePath(prevMap, path, end);
+
+        return result_;
+    }
+
+private:
+    std::vector<std::vector<std::string>> result_;
+
+    void GeneratePath(
+            std::unordered_map<std::string, std::vector<std::string>> &prevMap,
+            std::vector<std::string>& path, const std::string& word) {
+        if (prevMap[word].size() == 0) {
+            path.push_back(word);
+            std::vector<std::string> curPath = path;
+            reverse(curPath.begin(), curPath.end());
+            result_.push_back(curPath);
+            path.pop_back();
+            return;
+        }
+
+        path.push_back(word);
+        for (auto iter = prevMap[word].begin(); iter != prevMap[word].end();
+                ++iter) {
+            GeneratePath(prevMap, path, *iter);
+        }
+        path.pop_back();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Word Ladder，见 \S \ref{sec:wordladder}
+\myenddot
