@@ -1,6 +1,111 @@
 \chapter{动态规划}
 
 
+\section{Maximum Subarray} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:maximum-subarray}
+
+
+\subsubsection{描述}
+Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+
+For example, given the array \code{[−2,1,−3,4,−1,2,1,−5,4]},
+the contiguous subarray \code{[4,−1,2,1]} has the largest \code{sum = 6}.
+
+
+\subsubsection{分析}
+最大连续子序列和，非常经典的题。
+
+当我们从头到尾遍历这个数组的时候，对于数组里的一个整数，它有几种选择呢？它只有两种选择： 1、加入之前的SubArray；2. 自己另起一个SubArray。那什么时候会出现这两种情况呢？
+
+如果之前SubArray的总体和大于0的话，我们认为其对后续结果是有贡献的。这种情况下我们选择加入之前的SubArray
+
+如果之前SubArray的总体和为0或者小于0的话，我们认为其对后续结果是没有贡献，甚至是有害的（小于0时）。这种情况下我们选择以这个数字开始，另起一个SubArray。
+
+设状态为d[j]，表示以S[j]结尾的最大连续子序列和，则状态转移方程如下：
+\begin{eqnarray}
+d[j] &=& \max\left\{d[j-1]+S[j],S[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber \\
+target &=& \max\left\{d[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
+\end{eqnarray}
+
+解释如下：
+\begindot
+\item 情况一，S[j]不独立，与前面的某些数组成一个连续子序列，则最大连续子序列和为$d[j-1]+S[j]$。
+\item 情况二，S[j]独立划分成为一段，即连续子序列仅包含一个数S[j]，则最大连续子序列和为$S[j]$。
+\myenddot  
+
+其他思路：
+\begindot
+\item 思路1：直接在i到j之间暴力枚举，复杂度是$O(n^3)$
+\item 思路2：处理后枚举，连续子序列的和等于两个前缀和之差，复杂度$O(n^2)$。
+\item 思路3：分治法，把序列分为两段，分别求最大连续子序列和，然后归并，复杂度$O(n\log n)$
+\item 思路4：把思路2$O(n^2)$的代码稍作处理，得到$O(n)$的算法
+\item 思路5：当成M=1的最大M子段和
+\myenddot
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Maximum Subarray
+class Solution {
+public:
+    int maxSubArray(int A[], int n) {
+        return mcss(A, n);
+        //return mcss_dp(A, n);
+    }
+private:
+    /**
+     * @brief 最大连续子序列和，思路四
+     * @param[in] S 数列
+     * @param[in] n 数组的长度
+     * @return 最大连续子序列和
+     */
+    static int mcss(int S[], int n) {
+        int i, result, cur_min;
+        int *sum = (int*) malloc((n + 1) * sizeof(int));  // 前n项和
+
+        sum[0] = 0;
+        result = INT_MIN;
+        cur_min = sum[0];
+        for (i = 1; i <= n; i++) {
+            sum[i] = sum[i - 1] + S[i - 1];
+        }
+        for (i = 1; i <= n; i++) {
+            result = max(result, sum[i] - cur_min);
+            cur_min = min(cur_min, sum[i]);
+        }
+        free(sum);
+        return result;
+    }
+
+    /**
+     * @brief 最大连续子序列和，动规
+     * @param[in] S 数列
+     * @param[in] n 数组的长度
+     * @return 最大连续子序列和
+     */
+    static int mcss_dp(int S[], int n) {
+        int i, result;
+        int *d = (int*) malloc(n * sizeof(int));
+        d[0] = S[0];
+        result = d[0];
+        for (i = 1; i < n; i++) {
+            d[i] = max(S[i], d[i - 1] + S[i]);
+            if (result < d[i])
+                result = d[i];
+        }
+        free(d);
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Binary Tree Maximum Path Sum，见 \S \ref{sec:binary-tree-maximum-path-sum}
+\myenddot
+
+
 \section{Palindrome Partitioning II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:palindrome-partitioning-ii}
 
@@ -127,6 +232,115 @@ public:
 
 \subsubsection{相关题目}
 
+\begindot
+\item 无
+\myenddot
+
+
+\section{Best Time to Buy and Sell Stock III} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:best-time-to-buy-and-sell-stock-iii}
+
+
+\subsubsection{描述}
+Say you have an array for which the i-th element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete at most two transactions.
+
+Note: You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+
+\subsubsection{分析}
+设状态$f(i)$，表示区间$[0,i](0 \leq i \leq n-1)$的最大利润，状态$g(i)$，表示区间$[i, n-1](0 \leq i \leq n-1)$的最大利润，则最终答案为$\max\left\{f(i)+g(i)\right\},0 \leq i \leq n-1$。
+
+允许在一天内买进又卖出，相当于不交易，因为题目的规定是最多两次，而不是一定要两次。
+
+将原数组变成差分数组，本题也可以看做是最大$m$子段和，$m=2$，参考代码：\myurl{https://gist.github.com/soulmachine/5906637}
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Best Time to Buy and Sell Stock III
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if (prices.size() < 2) return 0;
+
+        const int n = prices.size();
+        vector<int> f(n, 0);
+        vector<int> g(n, 0);
+
+        for (int i = 1, valley = prices[0]; i < n; ++i) {
+            valley = std::min(valley, prices[i]);
+            f[i] = std::max(f[i - 1], prices[i] - valley);
+        }
+
+        for (int i = n - 2, peak = prices[n - 1]; i >= 0; --i) {
+            peak = std::max(peak, prices[i]);
+            g[i] = std::max(g[i], peak - prices[i]);
+        }
+
+        int maxProfit = 0;
+        for (int i = 0; i < n; ++i)
+            maxProfit = max(maxProfit, f[i] + g[i]);
+
+        return maxProfit;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
+\item Best Time to Buy and Sell Stock II，见 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
+\myenddot
+
+
+\section{Triangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:triangle}
+
+
+\subsubsection{描述}
+Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+For example, given the following triangle
+\begin{Code}
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+\end{Code}
+The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+
+Note: Bonus point if you are able to do this using only $O(n)$ extra space, where n is the total number of rows in the triangle.
+
+
+\subsubsection{分析}
+设状态为$f(i, j)$，表示从从位置$(i,j)$出发，路径的最小和，则状态转移方程为
+$$
+f(i,j)=\min\left\{f(i,j+1),f(i+1,j+1)\right\}+(i,j)
+$$
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Triangle
+class Solution {
+public:
+    int minimumTotal (vector<vector<int>>& triangle) {
+        for (int i = triangle.size() - 2; i >= 0; --i)
+            for (int j = 0; j < i + 1; ++j)
+                triangle[i][j] += std::min(triangle[i + 1][j],
+                        triangle[i + 1][j + 1]);
+
+        return triangle [0][0];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
 \begindot
 \item 无
 \myenddot

@@ -1,7 +1,29 @@
 \chapter{树}
 
+LeetCode 上二叉树的节点定义如下：
+\begin{Code}
+// 树的节点
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) { }
+};
+\end{Code}
 
-\section{Binary Tree Level Order Traversal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{二叉树的遍历} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+树的遍历有两类：深度优先遍历和宽度优先遍历。深度优先遍历又可分为两种：先根（次序）遍历和后根（次序）遍历。
+
+树的先根遍历是：先访问树的根结点，然后依次先根遍历根的各棵子树。树的先跟遍历的结果与对应二叉树（孩子兄弟表示法）的先序遍历的结果相同。
+
+树的后根遍历是：先依次后根遍历树根的各棵子树，然后访问根结点。树的后跟遍历的结果与对应二叉树的中序遍历的结果相同。
+
+二叉树的先根遍历有：\textbf{先序遍历}(root->left->right)，root->right->left；后根遍历有：\textbf{后序遍历}(left->right->root)，right->left->root；二叉树还有个一般的树没有的遍历次序，\textbf{中序遍历}(left->root->right)。
+
+
+\subsection{Binary Tree Level Order Traversal}
 \label{sec:binary-tree-tevel-order-traversal}
 
 
@@ -33,13 +55,6 @@ return its level order traversal as:
 
 \subsubsection{代码}
 \begin{Code}
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
 //LeetCode, Binary Tree Level Order Traversal
 class Solution {
 public:
@@ -75,7 +90,7 @@ public:
 \myenddot
 
 
-\section{Binary Tree Level Order Traversal II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Binary Tree Level Order Traversal II}
 \label{sec:binary-tree-tevel-order-traversal-ii}
 
 
@@ -107,13 +122,6 @@ return its bottom-up level order traversal as:
 
 \subsubsection{代码}
 \begin{Code}
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) { }
-};
-
 //LeetCode, Binary Tree Level Order Traversal II
 //在Binary Tree Level Order Traversal I的基础上，用一个list作为栈
 //每次在头部插入，就可以实现倒着输出
@@ -161,7 +169,7 @@ public:
 \myenddot
 
 
-\section{Binary Tree Zigzag Level Order Traversal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Binary Tree Zigzag Level Order Traversal}
 \label{sec:binary-tree-zigzag-level-order-traversal}
 
 
@@ -193,15 +201,6 @@ return its zigzag level order traversal as:
 
 \subsubsection{代码}
 \begin{Code}
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) :
-            val(x), left(NULL), right(NULL) {
-    }
-};
-
 //LeetCode, Binary Tree Zigzag Level Order Traversal
 //广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
 class Solution {
@@ -251,3 +250,1085 @@ public:
 \item Binary Tree Level Order Traversal，见 \S \ref{sec:binary-tree-tevel-order-traversal}
 \item Binary Tree Level Order Traversal II，见 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
 \myenddot
+
+
+\subsection{Binary Tree Inorder Traversal}
+\label{sec:binary-tree-inorder-traversal}
+
+
+\subsubsection{描述}
+Given a binary tree, return the inorder traversal of its nodes' values.
+
+For example:
+Given binary tree \code{\{1,\#,2,3\}},
+\begin{Code}
+ 1
+  \
+   2
+  /
+ 3
+\end{Code}
+return \code{[1,3,2]}.
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+\subsubsection{分析}
+不用递归，可用栈，Morris中序遍历或者线索二叉树哦。
+
+
+\subsubsection{代码}
+
+栈
+\begin{Code}
+// LeetCode, Binary Tree Inorder Traversal
+// 使用栈
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+        vector<int> result;
+        const TreeNode *p = root;
+        std::stack<const TreeNode *> s;
+
+        while (!s.empty() || p != NULL) {
+            if (p != NULL) {
+                s.push(p);
+                p = p->left;
+            } else {
+                p = s.top();
+                s.pop();
+                result.push_back(p->val);
+                p = p->right;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+Morris中序遍历
+\begin{Code}
+// LeetCode, Binary Tree Inorder Traversal
+// Morris中序遍历
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+        vector<int> result;
+        TreeNode* prev = NULL;
+        TreeNode* cur = root;
+
+        while (cur != NULL) {
+            if (cur->left == NULL) {
+                result.push_back(cur->val);
+                prev = cur;
+                cur = cur->right;
+            } else {
+                auto node = cur->left;
+
+                while (node->right != NULL and node->right != cur)
+                    node = node->right;
+
+                if (node->right == NULL) {
+                    node->right = cur;
+                    prev = cur;
+                    cur = cur->left;
+                } else {
+                    result.push_back(cur->val);
+                    node->right = NULL;
+                    prev = cur;
+                    cur = cur->right;
+                }
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\myenddot
+
+
+\subsection{Recover Binary Search Tree}
+\label{sec:recover-binary-search-tree}
+
+
+\subsubsection{描述}
+Two elements of a binary search tree (BST) are swapped by mistake.
+
+Recover the tree without changing its structure.
+
+Note: A solution using $O(n)$ space is pretty straight forward. Could you devise a constant space solution?
+
+
+\subsubsection{分析}
+$O(n)$空间的解法是，开一个指针数组，中序遍历，将节点指针依次存放到数组里，然后寻找两处逆向的位置，先从前往后找第一个逆序的位置，然后从后往前找第二个逆序的位置，交换这两个指针的值。
+
+中序遍历一般需要用到栈，空间也是$O(n)$的，如何才能不使用栈？Morris中序遍历。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Recover Binary Search Tree
+// Morris中序遍历
+class Solution {
+public:
+    void recoverTree(TreeNode* root) {
+        pair<TreeNode*, TreeNode*> broken;
+        TreeNode* prev = NULL;
+        TreeNode* cur = root;
+
+        while (cur != NULL) {
+            if (cur->left == NULL) {
+                detect(broken, prev, cur);
+                prev = cur;
+                cur = cur->right;
+            } else {
+                auto node = cur->left;
+
+                while (node->right != NULL and node->right != cur)
+                    node = node->right;
+
+                if (node->right == NULL) {
+                    node->right = cur;
+                    prev = cur;
+                    cur = cur->left;
+                } else {
+                    detect(broken, prev, cur);
+                    node->right = NULL;
+                    prev = cur;
+                    cur = cur->right;
+                }
+            }
+        }
+
+        swap(broken.first->val, broken.second->val);
+    }
+
+    void detect(pair<TreeNode*, TreeNode*>& broken, TreeNode* prev,
+            TreeNode* current) {
+        if (prev != NULL and prev->val > current->val) {
+            if (broken.first == NULL) {
+                broken.first = prev;
+            } //不能用else
+            broken.second = current;
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
+\myenddot
+
+
+\section{二叉查找树} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Unique Binary Search Trees}
+\label{sec:unique-binary-search-trees}
+
+
+\subsubsection{描述}
+Given $n$, how many structurally unique BST's (binary search trees) that store values $1...n$?
+
+For example,
+Given $n = 3$, there are a total of 5 unique BST's.
+\begin{Code}
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+\end{Code}
+
+\subsubsection{分析}
+如果把上例的顺序改一下，就可以看出规律了。
+\begin{Code}
+ 1       1           2          3       3
+  \       \         / \        /       / 
+   3       2       1   3      2       1
+  /         \                /         \
+2            3              1           2
+\end{Code}
+
+比如，以1为根的树的个数，等于左子树的个数乘以右子树的个数，左子树是0个元素的树，右子树是2个元素的树。以2为根的树的个数，等于左子树的个数乘以右子树的个数，左子树是1个元素的树，右子树也是1个元素的树。依此类推。
+
+当数组为 $1,2,3,...,n$时，基于以下原则的构建的BST树具有唯一性：
+\textbf{以i为根节点的树，其左子树由[1, i-1]构成， 其右子树由[i+1, n]构成。}
+
+定义$f(i)$为以$[1,i]$能产生的Unique Binary Search Tree的数目，则
+
+如果数组为空，毫无疑问，只有一种BST，即空树，$f(0)=1$。
+
+如果数组仅有一个元素{1}，只有一种BST，单个节点，$f(1)=1$。
+
+如果数组有两个元素{1,2}， 那么有如下两种可能
+\begin{Code}
+1             2
+  \          /
+    2      1
+\end{Code}
+
+\begin{eqnarray}
+f(2) &=& f(0) * f(1)   \text{ ，1为根的情况} \nonumber \\
+     &+& f(1) * f(0)   \text{ ，2为根的情况} \nonumber
+\end{eqnarray}
+
+再看一看3个元素的数组，可以发现BST的取值方式如下：
+\begin{eqnarray}
+f(3) &=& f(0) * f(2)   \text{ ，1为根的情况} \nonumber \\
+     &+& f(1) * f(1)   \text{ ，2为根的情况} \nonumber \\
+     &+& f(2) * f(0)   \text{ ，3为根的情况} \nonumber
+\end{eqnarray}
+
+所以，由此观察，可以得出$f$的递推公式为
+$$
+f(i) = \sum_{k=1}^{i} f(k-1) \times f(i-k)
+$$
+至此，问题划归为一维动态规划。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Unique Binary Search Trees
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<int> f(n + 1, 0);
+
+        f[0] = 1;
+        f[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            for (int k = 1; k <= i; ++k)
+                f[i] += f[k-1] * f[i - k];
+        }
+
+        return f[n];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Unique Binary Search Trees II，见 \S \ref{sec:unique-binary-search-trees-ii}
+\myenddot
+
+
+\subsection{Unique Binary Search Trees II}
+\label{sec:unique-binary-search-trees-ii}
+
+
+\subsubsection{描述}
+Given $n$, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+For example,
+Given $n = 3$, your program should return all 5 unique BST's shown below.
+\begin{Code}
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+\end{Code}
+
+
+\subsubsection{分析}
+见前面一题。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Unique Binary Search Trees II
+class Solution {
+public:
+    vector<TreeNode *> generateTrees(int n) {
+        if (n == 0)
+            return *generate(1, 0);
+        return *generate(1, n);
+    }
+private:
+    vector<TreeNode *>* generate(int start, int end) {
+        auto subTree = new vector<TreeNode*>();
+        if (start > end) {
+            subTree->push_back(NULL);
+            return subTree;
+        }
+        for (int k = start; k <= end; k++) {
+            vector<TreeNode*> *leftSubs = generate(start, k - 1);
+            vector<TreeNode*> *rightSubs = generate(k + 1, end);
+            for (auto i = leftSubs->begin(); i < leftSubs->end(); i++) {
+                for (auto j = rightSubs->begin(); j < rightSubs->end(); j++) {
+                    TreeNode *node = new TreeNode(k);
+                    node->left = *i;
+                    node->right = *j;
+                    subTree->push_back(node);
+                }
+            }
+        }
+        return subTree;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Unique Binary Search Trees，见 \S \ref{sec:unique-binary-search-trees}
+\myenddot
+
+
+\subsection{Validate Binary Search Tree}
+\label{sec:validate-binary-search-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, determine if it is a valid binary search tree (BST).
+
+Assume a BST is defined as follows:
+\begindot
+\item The left subtree of a node contains only nodes with keys less than the node's key.
+\item The right subtree of a node contains only nodes with keys greater than the node's key.
+\item Both the left and right subtrees must also be binary search trees.
+\myenddot
+
+
+\subsubsection{分析}
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Validate Binary Search Tree
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        return isValidBST(root, INT_MIN, INT_MAX);
+    }
+
+    bool isValidBST(TreeNode* root, int lower, int upper) {
+        if (root == NULL) return true;
+
+        return root->val > lower and root->val < upper
+                and isValidBST(root->left, lower, root->val)
+                and isValidBST(root->right, root->val, upper);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Validate Binary Search Tree，见 \S \ref{sec:validate-binary-search-tree}
+\myenddot
+
+
+\subsection{Convert Sorted Array to Binary Search Tree}
+\label{sec:convert-sorted-array-to-binary-search-tree}
+
+
+\subsubsection{描述}
+Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+
+
+\subsubsection{分析}
+分治法，二分。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Convert Sorted Array to Binary Search Tree
+// 分治法
+class Solution {
+public:
+    TreeNode* sortedArrayToBST (vector<int>& num) {
+        return sortedArrayToBST (num.begin (), num.end ());
+    }
+
+    template<typename RandomAccessIterator>
+    TreeNode* sortedArrayToBST (RandomAccessIterator first, RandomAccessIterator last) {
+        const auto length = std::distance (first, last);
+
+        if (length == 0) return NULL;
+        if (length == 1) return new TreeNode (*first);
+
+        auto mid = first + length / 2;
+        TreeNode* root = new TreeNode (*mid);
+        root->left = sortedArrayToBST (first, mid);
+        root->right = sortedArrayToBST (mid + 1, last);
+
+        return root;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Convert Sorted List to Binary Search Tree，见 \S \ref{sec:convert-sorted-list-to-binary-search-tree}
+\myenddot
+
+
+\subsection{Convert Sorted List to Binary Search Tree}
+\label{sec:convert-sorted-list-to-binary-search-tree}
+
+
+\subsubsection{描述}
+Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+
+
+\subsubsection{分析}
+这题与上一题类似，但是单链表不能随机访问，而自顶向下的二分法必须需要RandomAccessIterator，因此前面的方法不适用本题。
+
+存在一种自底向上(bottom-up)的方法，见\myurl{http://leetcode.com/2010/11/convert-sorted-list-to-balanced-binary.html}
+
+\subsubsection{代码}
+
+分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度$O(n\log n)$。
+\begin{Code}
+// LeetCode, Convert Sorted List to Binary Search Tree
+// 分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度O(nlogn)
+class Solution {
+public:
+    TreeNode* sortedListToBST (ListNode* head) {
+        return sortedListToBST (head, listLength (head));
+    }
+
+    TreeNode* sortedListToBST (ListNode* head, int len) {
+        if (len == 0) return NULL;
+        if (len == 1) return new TreeNode (head->val);
+
+        TreeNode* root = new TreeNode (nth_node (head, len / 2 + 1)->val);
+        root->left = sortedListToBST (head, len / 2);
+        root->right = sortedListToBST (nth_node (head, len / 2 + 2), (len - 1) / 2);
+
+        return root;
+    }
+
+    int listLength (ListNode* node) {
+        int n = 0;
+
+        while(node) {
+            ++n;
+            node = node->next;
+        }
+
+        return n;
+    }
+
+    ListNode* nth_node (ListNode* node, int n) {
+        while (--n)
+            node = node->next;
+
+        return node;
+    }
+};
+\end{Code}
+
+自底向上，复杂度$O(n)$。
+\begin{Code}
+// LeetCode, Convert Sorted List to Binary Search Tree
+// bottom-up，复杂度O(nlogn)
+class Solution {
+public:
+    TreeNode *sortedListToBST(ListNode *head) {
+        int len = 0;
+        ListNode *p = head;
+        while (p) {
+            len++;
+            p = p->next;
+        }
+        return sortedListToBST(head, 0, len - 1);
+    }
+private:
+    TreeNode* sortedListToBST(ListNode*& list, int start, int end) {
+        if (start > end) return NULL;
+
+        int mid = start + (end - start) / 2; //if use start + (end - start) >> 1, test case will break, strange!
+        TreeNode *leftChild = sortedListToBST(list, start, mid - 1);
+        TreeNode *parent = new TreeNode(list->val);
+        parent->left = leftChild;
+        list = list->next;
+        parent->right = sortedListToBST(list, mid + 1, end);
+        return parent;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Convert Sorted Array to Binary Search Tree，见 \S \ref{sec:convert-sorted-array-to-binary-search-tree}
+\myenddot
+
+
+\section{二叉树的深度} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Minimum Depth of Binary Tree}
+\label{sec:minimum-depth-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, find its minimum depth.
+
+The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+
+
+\subsubsection{分析}
+无
+
+\subsubsection{代码}
+
+递归版
+\begin{Code}
+// LeetCode, Minimum Depth of Binary Tree
+// 递归版
+class Solution {
+public:
+    int minDepth(TreeNode *root) {
+        if (root == NULL) return 0;
+        else {
+            d = INT_MAX;
+            minDepth(root, 1);
+            return d;
+        }
+    }
+private:
+    int d;
+    void minDepth(TreeNode *root, int cur) {
+        if (root != NULL) {
+            if (root->left == NULL && root->right == NULL) { // 叶子节点
+                d = std::min(cur, d);
+                return;
+            }
+            if (cur < d) { // 剪枝
+                minDepth(root->left, cur+1);
+                minDepth(root->right, cur+1);
+            }
+        }
+    }
+};
+\end{Code}
+
+迭代版
+\begin{Code}
+// LeetCode, Minimum Depth of Binary Tree
+// 迭代版
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if (root == NULL)
+            return 0;
+
+        int result = INT_MAX;
+
+        stack<pair<TreeNode*, int>> s;
+        s.push(std::make_pair(root, 1));
+
+        while (!s.empty()) {
+            auto node = s.top().first;
+            auto depth = s.top().second;
+            s.pop();
+
+            if (node->left == NULL && node->right == NULL)
+                result = min(result, depth);
+
+            if (node->left && result > depth) // 深度控制，剪枝
+                s.push(std::make_pair(node->left, depth + 1));
+
+            if (node->right && result > depth) // 深度控制，剪枝
+                s.push(std::make_pair(node->right, depth + 1));
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{相关题目}
+\begindot
+\item Maximum Depth of Binary Tree，见 \S \ref{sec:maximum-depth-of-binary-tree}
+\myenddot
+
+
+\subsection{Maximum Depth of Binary Tree}
+\label{sec:maximum-depth-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, find its maximum depth.
+
+The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+
+\subsubsection{分析}
+无
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Maximum Depth of Binary Tree
+class Solution {
+public:
+    int maxDepth(TreeNode *root) {
+        if (root == NULL) return 0;
+
+        int lmax = maxDepth(root->left);
+        int rmax = maxDepth(root->right);
+        return std::max(lmax, rmax) + 1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Minimum Depth of Binary Tree，见 \S \ref{sec:minimum-depth-of-binary-tree}
+\myenddot
+
+
+\section{二叉树的构建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Construct Binary Tree from Preorder and Inorder Traversal}
+\label{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
+
+
+\subsubsection{描述}
+Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return buildTree(std::begin(preorder), std::end(preorder),
+                std::begin(inorder), std::end(inorder));
+    }
+
+    template<typename InputIterator>
+    TreeNode* buildTree(InputIterator pre_first, InputIterator pre_last,
+            InputIterator in_first, InputIterator in_last) {
+        if (in_first == in_last) return NULL;
+
+        auto root = new TreeNode(*pre_first);
+
+        auto inRootPos = std::find(in_first, in_last, *pre_first);
+        auto leftSize = std::distance(in_first, inRootPos);
+
+        root->left = buildTree(std::next(pre_first), std::next(pre_first,
+                leftSize + 1), in_first, std::next(in_first, leftSize));
+        root->right = buildTree(std::next(pre_first, leftSize + 1), pre_last,
+                std::next(inRootPos), in_last);
+
+        return root;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Construct Binary Tree from Inorder and Postorder Traversal，见 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+\myenddot
+
+
+\subsection{Construct Binary Tree from Inorder and Postorder Traversal}
+\label{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+
+
+\subsubsection{描述}
+Given inorder and postorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        return buildTree(std::begin(inorder), std::end(inorder),
+                std::begin(postorder), std::end(postorder));
+    }
+
+    template<typename BidiIt>
+    TreeNode* buildTree(BidiIt in_first, BidiIt in_last,
+            BidiIt post_first, BidiIt post_last) {
+        if (std::distance(in_first, in_last) == 0) return NULL;
+        if (std::distance(post_first, post_last) == 0) return NULL;
+
+        const auto val = *std::prev(post_last);
+        TreeNode* root = new TreeNode(val);
+
+        auto in_root_pos = std::find(in_first, in_last, val);
+        auto left_size = std::distance(in_first, in_root_pos);
+        auto post_left_last = std::next(post_first, left_size);
+
+        root->left = buildTree(in_first, in_root_pos, post_first, post_left_last);
+        root->right = buildTree(std::next(in_root_pos), in_last, post_left_last,
+                prev(post_last));
+
+        return root;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Construct Binary Tree from Preorder and Inorder Traversal，见 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
+\myenddot
+
+
+\section{二叉树的DFS} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他遍历顺序，共有$3!=6$种。其他3种顺序是root->r->l，r->root->l, r->l->root。
+
+
+\subsection{Same Tree}
+\label{sec:same-tree}
+
+
+\subsubsection{描述}
+Given two binary trees, write a function to check if they are equal or not.
+
+Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+
+\subsubsection{分析}
+在父节点时就可以及时进行判断，因此本题适合用先根遍历。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Same Tree
+class Solution {
+public:
+    bool isSameTree(TreeNode *p, TreeNode *q) {
+        if (!p and !q) return true;
+        if (!p || !q) return false;
+        return p->val == q->val
+                and isSameTree(p->left, q->left)
+                and isSameTree(p->right, q->right);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Symmetric Tree，见 \S \ref{sec:symmetric-tree}
+\myenddot
+
+
+\subsection{Symmetric Tree}
+\label{sec:symmetric-tree}
+
+
+\subsubsection{描述}
+Given two binary trees, write a function to check if they are equal or not.
+
+Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+
+\subsubsection{分析}
+在父节点时就可以及时进行判断，因此本题适合用先根遍历。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Symmetric Tree，递归版
+class Solution {
+public:
+    bool isSymmetric(TreeNode *root) {
+        return root ? isSymmetric(root->left, root->right) : true;
+    }
+    bool isSymmetric(TreeNode *left, TreeNode *right) {
+        if (!left and !right) return true;
+        if (!left or !right) return false;
+        if (left->val != right->val) return false;
+        return isSymmetric(left->left, right->right)
+                and isSymmetric(left->right, right->left);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Symmetric Tree，迭代版
+class Solution {
+public:
+    bool isSymmetric (TreeNode* root) {
+        if (!root) return true;
+
+        stack<TreeNode*> s;
+        s.push(root->left);
+        s.push(root->right);
+
+        while (!s.empty ()) {
+            auto lhs = s.top ();
+            s.pop();
+
+            auto rhs = s.top ();
+            s.pop();
+
+            if (!lhs and !rhs) continue;
+            if (!lhs or !rhs) return false;
+            if (lhs->val != rhs->val) return false;
+
+            s.push(lhs->left);
+            s.push(rhs->right);
+
+            s.push(lhs->right);
+            s.push(rhs->left);
+        }
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Same Tree，见 \S \ref{sec:same-tree}
+\myenddot
+
+
+\subsection{Balanced Binary Tree}
+\label{sec:balanced-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, determine if it is height-balanced.
+
+For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Balanced Binary Tree
+class Solution {
+public:
+    bool isBalanced (TreeNode* root) {
+        return balancedHeight (root) >= 0;
+    }
+
+    /**
+     * Returns the height of `root` if `root` is a balanced tree,
+     * otherwise, returns `-1`.
+     */
+    int balancedHeight (TreeNode* root) {
+        if (root == NULL)
+            return 0;
+
+        int lhs = balancedHeight (root->left);
+        int rhs = balancedHeight (root->right);
+
+        if (lhs < 0 or rhs < 0 or std::abs (lhs - rhs) > 1)
+            return -1;
+
+        return std::max(lhs, rhs) + 1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Flatten Binary Tree to Linked List}
+\label{sec:flatten-binary-tree-to-linked-list}
+
+
+\subsubsection{描述}
+Given a binary tree, flatten it to a linked list in-place.
+
+For example, Given
+\begin{Code}
+         1
+        / \
+       2   5
+      / \   \
+     3   4   6
+\end{Code}
+
+The flattened tree should look like:
+\begin{Code}
+   1
+    \
+     2
+      \
+       3
+        \
+         4
+          \
+           5
+            \
+             6
+\end{Code}
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+递归版
+\begin{Code}
+// LeetCode, Flatten Binary Tree to Linked List，递归版
+class Solution {
+public:
+    void flatten(TreeNode *root) {
+        if (root == NULL) return;
+        //1.flat the left subtree
+        if (root->left)
+            flatten(root->left);
+        //2.flatten the right subtree
+        if (root->right)
+            flatten(root->right);
+        //3.if no left return
+        if (NULL == root->left)
+            return;
+        //4.insert left sub tree between root and root->right
+        //4.1.find the last node in left
+        TreeNode ** ptn = & (root->left->right);
+        while (*ptn)
+            ptn = & ((*ptn)->right);
+        //4.2.connect right sub tree after left sub tree
+        *ptn = root->right;
+        //4.3.move left sub tree to the root's right sub tree
+        root->right = root->left;
+        root->left = NULL;
+    }
+};
+\end{Code}
+
+迭代版
+\begin{Code}
+// LeetCode, Flatten Binary Tree to Linked List，迭代版
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        if (root == NULL)
+            return;
+
+        stack<TreeNode*> s;
+        s.push(root);
+
+        while (!s.empty()) {
+            auto top = s.top();
+            s.pop();
+
+            if (top->right)
+                s.push(top->right);
+            if (top->left)
+                s.push(top->left);
+
+            top->left = NULL;
+            if (!s.empty())
+                top->right = s.top();
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Binary Tree Maximum Path Sum}
+\label{sec:binary-tree-maximum-path-sum}
+
+
+\subsubsection{描述}
+Given a binary tree, find the maximum path sum.
+
+The path may start and end at any node in the tree.
+For example:
+Given the below binary tree,
+\begin{Code}
+  1
+ / \
+2   3
+\end{Code}
+Return $6$.
+
+
+\subsubsection{分析}
+这题很难，路径可以从任意节点开始，到任意节点结束。
+
+可以利用“最大连续子序列和”问题的思路，见第\S \ref{sec:maximum-subarray}节。如果说Array只有一个方向的话，那么Binary Tree其实只是左、右两个方向而已，我们需要比较两个方向上的值。
+
+不过，Array可以从头到尾遍历，那么Binary Tree怎么办呢，我们可以采用Binary Tree最常用的dfs来进行遍历。先算出左右子树的结果L和R，如果L大于0，那么对后续结果是有利的，我们加上L，如果R大于0，对后续结果也是有利的，继续加上R。
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Binary Tree Maximum Path Sum
+class Solution {
+public:
+    int maxPathSum(TreeNode *root) {
+        max = INT_MIN;
+        dfs(root);
+        return max;
+    }
+private:
+    int max;
+    int dfs(const TreeNode *root) {
+        if (root == NULL) return 0;
+        int l = dfs(root->left);
+        int r = dfs(root->right);
+        int sum = root->val;
+        if (l > 0) sum += l;
+        if (r > 0) sum += r;
+        max = std::max(max, sum);
+        return std::max(r, l) > 0 ? std::max(r, l) + root->val : root->val;
+    }
+};
+\end{Code}
+
+注意，最后return的时候，只返回一个方向上的值，为什么？这是因为在递归中，只能向父节点返回，不可能存在L->root->R的路径，只可能是L->root或R->root。
+
+
+\subsubsection{相关题目}
+\begindot
+\item Maximum Subarray，见 \S \ref{sec:maximum-subarray}
+\myenddot
+

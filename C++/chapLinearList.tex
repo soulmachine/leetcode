@@ -2,7 +2,331 @@
 这类题目考察线性表的操作，例如，数组，单链表，双向链表等。
 
 
-\section{Add Two Numbers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{数组} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Remove Duplicates from Sorted Array}
+\label{sec:remove-duplicates-from-sorted-array}
+
+
+\subsubsection{描述}
+Given a sorted array, remove the duplicates in place such that each element appear only once and return the new length.
+
+Do not allocate extra space for another array, you must do this in place with constant memory.
+
+For example, Given input array \code{A = [1,1,2]},
+
+Your function should return length = 2, and A is now \code{[1,2]}.
+
+
+\subsubsection{分析}
+
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted Array
+class Solution {
+public:
+    int removeDuplicates(int A[], int n) {
+        if (n == 0) return 0;
+
+        int index = 0;
+        for (int i = 1; i < n; i++) {
+            if (A[index] == A[i]) continue;
+            A[++index] = A[i];
+        }
+        return index + 1;
+    }
+};
+\end{Code}
+
+
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted Array，使用STL
+class Solution {
+public:
+    int removeDuplicates(int A[], int n) {
+        return removeDuplicates(A, A + n, A) - A;
+    }
+
+    template<typename InIt, typename OutIt>
+    OutIt removeDuplicates(InIt first, InIt last, OutIt output) {
+        while (first != last) {
+            *output++ = *first;
+            first = std::find_if(first, last,
+                    std::bind1st(std::not_equal_to<int>(), *first));
+        }
+
+        return output;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Remove Duplicates from Sorted Array II，见 \S \ref{sec:remove-duplicates-from-sorted-array-ii}
+\myenddot
+
+
+\subsection{Remove Duplicates from Sorted Array II}
+\label{sec:remove-duplicates-from-sorted-array-ii}
+
+
+\subsubsection{描述}
+Follow up for "Remove Duplicates":
+What if duplicates are allowed at most twice?
+
+For example,
+Given sorted array \code{A = [1,1,1,2,2,3]},
+
+Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
+
+
+\subsubsection{分析}
+加一个变量记录一下元素出现的次数即可。这题因为是已经排序的数组，所以一个变量即可解决。如果是没有排序的数组，则需要引入一个hashmap来记录出现次数。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted Array II
+class Solution {
+public:
+    int removeDuplicates(int A[], int n) {
+        if (n == 0) return 0;
+
+        int occur = 1;
+        int index = 0;
+        for (int i = 1; i < n; i++) {
+            if (A[index] == A[i]) {
+                if (occur >= 2) continue;
+                else occur++;
+            } else {
+                occur = 1;
+            }
+            A[++index] = A[i];
+        }
+        return index + 1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Remove Duplicates from Sorted Array，见 \S \ref{sec:remove-duplicates-from-sorted-array}
+\myenddot
+
+
+\subsection{Search in Rotated Sorted Array}
+\label{sec:search-in-rotated-sorted-array}
+
+
+\subsubsection{描述}
+Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+(i.e., \code{0 1 2 4 5 6 7} might become \code{4 5 6 7 0 1 2}).
+
+You are given a target value to search. If found in the array return its index, otherwise return -1.
+
+You may assume no duplicate exists in the array.
+
+
+\subsubsection{分析}
+二分查找，难度主要在于左右边界的确定。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Search in Rotated Sorted Array
+class Solution {
+public:
+    int search(int A[], int n, int target) {
+        int l = 0, r = n - 1;
+        while (l <= r) {
+            const int m = (l + r) / 2;
+            if (A[m] == target)
+                return m;
+            if (A[m] >= A[l]) {
+                if (A[l] <= target && target <= A[m])
+                    r = m - 1;
+                else
+                    l = m + 1;
+            } else {
+                if (A[m] >= target || target >= A[l])
+                    r = m - 1;
+                else
+                    l = m + 1;
+            }
+        }
+        return -1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Search in Rotated Sorted Array II，见 \S \ref{sec:search-in-rotated-sorted-array-ii}
+\myenddot
+
+
+\subsection{Search in Rotated Sorted Array II}
+\label{sec:search-in-rotated-sorted-array-ii}
+
+
+\subsubsection{描述}
+Follow up for "Search in Rotated Sorted Array": What if \emph{duplicates} are allowed?
+
+Would this affect the run-time complexity? How and why?
+
+Write a function to determine if a given target is in the array.
+
+
+\subsubsection{分析}
+允许重复元素，则上一题中如果\fn{A[m]>=A[l]},那么\fn{[l,m]}为递增序列的假设就不能成立了，比如\code{[1,3,1,1,1]}。
+
+如果\fn{A[m]>=A[l]}不能确定递增，那就把它拆分成两个条件：
+\begindot
+\item 若\fn{A[m]>A[l]}，则区间\fn{[l,m]}一定递增
+\item 若\fn{A[m]==A[l]} 确定不了，那就\fn{l++}，往下看一步即可。
+\myenddot
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Search in Rotated Sorted Array
+class Solution {
+public:
+    bool search(int A[], int n, int target) {
+        int l = 0;
+        int r = n - 1;
+        while (l <= r) {
+            int m = (l + r) / 2;
+            if (A[m] == target)
+                return true;
+            if (A[l] < A[m]) {
+                if (target >= A[l] && target < A[m])
+                    r = m - 1;
+                else
+                    l = m + 1;
+            } else if (A[l] > A[m]) {
+                if (target > A[m] && target <= A[r])
+                    l = m + 1;
+                else
+                    r = m - 1;
+            } else
+                //skip duplicate one, A[start] == A[mid]
+                l++;
+        }
+        return false;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Search in Rotated Sorted Array，见 \S \ref{sec:search-in-rotated-sorted-array}
+\myenddot
+
+
+\subsection{Median of Two Sorted Arrays}
+\label{sec:median-of-two-sorted-arrays}
+
+
+\subsubsection{描述}
+There are two sorted arrays A and B of size m and n respectively. Find the median of the two sorted arrays. The overall run time complexity should be $O(\log (m+n))$.
+
+
+\subsubsection{分析}
+这是一道非常经典的题。这题更通用的形式是，给定两个已经排序好的数组，找到两者所有元素中第$k$大的元素。
+
+$O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的元素。
+
+不过我们仅仅需要第$k$大的元素，是不需要“排序”这么复杂的操作的。可以用一个计数器，记录当前已经找到第$m$大的元素了。同时我们使用两个指针\fn{pA}和\fn{pB}，分别指向A和B数组的第一个元素，使用类似于merge sort的原理，如果数组A当前元素小，那么\fn{pA++}，同时\fn{m++}；如果数组B当前元素小，那么\fn{pB++}，同时\fn{m++}。最终当$m$等于$k$的时候，就得到了我们的答案，$O(k)$时间，$O(1)$空间。但是，当$k$很接近$m+n$的时候，这个方法还是$O(m+n)$的。
+
+有没有更好的方案呢？我们可以考虑从$k$入手。如果我们每次都能够删除一个一定在第$k$大元素之前的元素，那么我们需要进行$k$次。但是如果每次我们都删除一半呢？由于A和B都是有序的，我们应该充分利用这里面的信息，类似于二分查找，也是充分利用了“有序”。
+
+假设A和B的元素个数都大于$k/2$，我们将A的第$k/2$个元素（即\fn{A[k/2-1]}）和B的第$k/2$个元素（即\fn{B[k/2-1]}）进行比较，有以下三种情况（为了简化这里先假设$k$为偶数，所得到的结论对于$k$是奇数也是成立的）：
+\begindot
+\item \fn{A[k/2-1] == B[k/2-1]}
+\item \fn{A[k/2-1] > B[k/2-1]}
+\item \fn{A[k/2-1] < B[k/2-1]}
+\myenddot
+
+如果\fn{A[k/2-1] < B[k/2-1]}，意味着\fn{A[0]}到\fn{A[k/2-1}的肯定在$A \cup B$的top k元素的范围内，换句话说，\fn{A[k/2-1}不可能大于$A \cup B$的第$k$大元素。留给读者证明。
+
+因此，我们可以放心的删除A数组的这$k/2$个元素。同理，当\fn{A[k/2-1] > B[k/2-1]}时，可以删除B数组的$k/2$个元素。
+
+当\fn{A[k/2-1] == B[k/2-1]}时，说明找到了第$k$大的元素，直接返回\fn{A[k/2-1}或\fn{B[k/2-1}即可。
+
+因此，我们可以写一个递归函数。那么函数什么时候应该终止呢？
+\begindot
+\item 当A或B是空时，直接返回\fn{B[k-1]}或\fn{A[k-1]}；
+\item 当\fn{k=1}是，返回\fn{min(A[0], B[0])}；
+\item 当\fn{A[k/2-1] == B[k/2-1]}时，返回\fn{A[k/2-1}或\fn{B[k/2-1}
+\myenddot
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Median of Two Sorted Arrays
+class Solution {
+public:
+    double findMedianSortedArrays(int A[], int m, int B[], int n) {
+        int total = m + n;
+        if (total & 0x1)
+            return find_kth(A, m, B, n, total / 2 + 1);
+        else
+            return (find_kth(A, m, B, n, total / 2)
+                    + find_kth(A, m, B, n, total / 2 + 1)) / 2;
+    }
+private:
+    static double find_kth(int a[], int m, int b[], int n, int k) {
+        //always assume that m is equal or smaller than n
+        if (m > n) return find_kth(b, n, a, m, k);
+        if (m == 0) return b[k - 1];
+        if (k == 1) return min(a[0], b[0]);
+
+        //divide k into two parts
+        int pa = min(k / 2, m), pb = k - pa;
+        if (a[pa - 1] < b[pb - 1])
+            return find_kth(a + pa, m - pa, b, n, k - pa);
+        else if (a[pa - 1] > b[pb - 1])
+            return find_kth(a, m, b + pb, n - pb, k - pb);
+        else
+            return a[pa - 1];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\section{单链表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+单链表节点的定义如下：
+\begin{Code}
+// 单链表节点
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) { }
+};
+\end{Code}
+
+
+\subsection{Add Two Numbers}
 \label{sec:add-two-numbers}
 
 
@@ -20,12 +344,6 @@ Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
 
 \subsubsection{代码}
 \begin{Code}
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(NULL) { }
-};
- 
 //LeetCode, Add Two Numbers
 //跟Add Binary 很类似
 class Solution {
@@ -61,3 +379,349 @@ public:
 \item Add Binary，见 \S \ref{sec:add-binary}
 \myenddot
 
+
+\subsection{Reverse Linked List II}
+\label{sec:reverse-linked-list-ii}
+
+
+\subsubsection{描述}
+Reverse a linked list from position $m$ to $n$. Do it in-place and in one-pass.
+
+For example:
+Given \code{1->2->3->4->5->NULL}, $m$ = 2 and $n$ = 4,
+
+return \code{1->4->3->2->5->NULL}.
+
+Note:
+Given m, n satisfy the following condition:
+$1 \leq m \leq  n \leq $ length of list.
+
+
+\subsubsection{分析}
+这题非常繁琐，有很多边界检查，15分钟内做到bug free很有难度！
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Reverse Linked List II
+class Solution {
+public:
+    ListNode *reverseBetween(ListNode *head, int m, int n) {
+        if(m >= n) return head;
+        ListNode dummy(0);
+        ListNode *h = &dummy;
+        h->next = head;
+
+        int count = 0;
+        ListNode *p = h, *pm, *pn;
+        while(p) {
+            if (count == m-1) pm = p;
+            if (count == n) {
+                pn = p;
+                break;
+            }
+            count++;
+            p = p->next;
+        }
+        p = pm;
+        pm = pm->next;
+        if (m == 1) head = pn;  // 若m=1，则pn就变为首节点
+
+        p->next = pn;
+        p = pm->next;
+        pm->next = pn->next;
+
+        ListNode *q = p->next; // pm->p->q
+        while(pm != pn) {
+            p->next = pm;
+            pm = p;
+            p = q;
+            if(q) q = q->next;
+        }
+
+        return head;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Partition List}
+\label{sec:partition-list}
+
+
+\subsubsection{描述}
+Given a linked list and a value $x$, partition it such that all nodes less than $x$ come before nodes greater than or equal to $x$.
+
+You should preserve the original relative order of the nodes in each of the two partitions.
+
+For example,
+Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->4->3->5}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Partition List
+class Solution {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        if (head == NULL) return head;
+
+        ListNode left_dummy(0); // 头结点
+        ListNode right_dummy(0); // 头结点
+
+        auto left_cur = &left_dummy;
+        auto right_cur = &right_dummy;
+
+        for (; head; head = head->next) {
+            if (head->val < x) {
+                left_cur->next = head;
+                left_cur = head;
+            } else {
+                right_cur->next = head;
+                right_cur = head;
+            }
+        }
+
+        left_cur->next = right_dummy.next;
+        right_cur->next = NULL;
+
+        return left_dummy.next;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Remove Duplicates from Sorted List}
+\label{sec:remove-duplicates-from-sorted-list}
+
+
+\subsubsection{描述}
+Given a sorted linked list, delete all duplicates such that each element appear only once.
+
+For example,
+
+Given \code{1->1->2}, return \code{1->2}.
+
+Given \code{1->1->2->3->3}, return \code{1->2->3}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted List
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (head == NULL) return NULL;
+        ListNode * prev = head;
+        ListNode *cur = head->next;
+        while (cur != NULL) {
+            if (prev->val == cur->val) {
+                ListNode* temp = cur;
+                cur = cur->next;
+                prev->next = cur;
+                delete temp;
+                continue;
+            }
+            prev = prev->next;
+            cur = cur->next;
+        }
+        return head;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Remove Duplicates from Sorted List II，见 \S \ref{sec:remove-duplicates-from-sorted-list-ii}
+\myenddot
+
+
+\subsection{Remove Duplicates from Sorted List II}
+\label{sec:remove-duplicates-from-sorted-list-ii}
+
+
+\subsubsection{描述}
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+
+For example,
+
+Given \code{1->2->3->3->4->4->5}, return \code{1->2->5}.
+
+Given \code{1->1->1->2->3}, return \code{2->3}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted List II
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (head == NULL) return head;
+
+        ListNode dummy(INT_MIN); // 头结点
+        dummy.next = head;
+        ListNode *prev = &dummy, *cur = head;
+        while (cur != NULL) {
+            bool duplicated = false;
+            while (cur->next != NULL && cur->val == cur->next->val) {
+                duplicated = true;
+                ListNode *temp = cur;
+                cur = cur->next;
+                delete temp;
+            }
+            if (duplicated) { // 删除重复的最后一个元素
+                ListNode *temp = cur;
+                cur = cur->next;
+                delete temp;
+                continue;
+            }
+            prev->next = cur;
+            prev = prev->next;
+            cur = cur->next;
+        }
+        prev->next = cur;
+        return dummy.next;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Remove Duplicates from Sorted List，见 \S \ref{sec:remove-duplicates-from-sorted-list}
+\myenddot
+
+
+\subsection{Rotate List}
+\label{sec:rotate-list}
+
+
+\subsubsection{描述}
+Given a list, rotate the list to the right by $k$ places, where $k$ is non-negative.
+
+For example:
+Given \code{1->2->3->4->5->NULL} and \code{k = 2}, return \code{4->5->1->2->3->NULL}.
+
+
+\subsubsection{分析}
+先遍历一遍，得出链表长度$len$，注意$k$可能大于$len$，因此令$k \%= len$。将尾节点next指针指向首节点，形成一个环，接着往后跑$len-k$步，从这里断开，就是要求的结果了。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Rotate List
+class Solution {
+public:
+    ListNode *rotateRight(ListNode *head, int k) {
+        if (head == NULL || k == 0) return head;
+
+        int len = 1;
+        ListNode* p = head;
+        while (p->next) { // 求长度
+            len++;
+            p = p->next;
+        }
+        k = len - k % len;
+
+        p->next = head; // 首尾相连
+        for(int step = 0; step < k; step++) {
+            p = p->next;  //接着往后跑
+        }
+        head = p->next; // 新的首节点
+        p->next = NULL; // 断开环
+        return head;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Remove Nth Node From End of List}
+\label{sec:remove-nth-node-from-end-of-list}
+
+
+\subsubsection{描述}
+Given a linked list, remove the $n^{th}$ node from the end of list and return its head.
+
+For example, Given linked list: \code{1->2->3->4->5}, and $n$ = 2.
+
+After removing the second node from the end, the linked list becomes \code{1->2->3->5}.
+
+Note:
+\begindot
+\item Given $n$ will always be valid.
+\item Try to do this in one pass.
+\myenddot
+
+
+\subsubsection{分析}
+设两个指针$p,q$，让$q$先走$n$步，然后$p$和$q$一起走，直到$q$走到尾节点，删除\fn{p->next}即可。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Nth Node From End of List
+class Solution {
+public:
+    ListNode *removeNthFromEnd(ListNode *head, int n) {
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode *p = &dummy, *q = &dummy;
+
+        for (int i = 0; i < n; i++) { // q先走n步
+            q = q->next;
+        }
+
+        while(q->next) { // 一起走
+            p = p->next;
+            q = q->next;
+        }
+        ListNode *tmp = p->next;
+        p->next = p->next->next;
+        delete tmp;
+        return dummy.next;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot

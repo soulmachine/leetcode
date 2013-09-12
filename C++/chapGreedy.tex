@@ -1,0 +1,80 @@
+\chapter{贪心法}
+
+
+\section{Best Time to Buy and Sell Stock} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:best-time-to-buy-and-sell-stock}
+
+
+\subsubsection{描述}
+Say you have an array for which the i-th element is the price of a given stock on day i.
+
+If you were only permitted to complete at    most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+
+\subsubsection{分析}
+贪心法，分别找到价格最低和最高的一天，低进高出，注意最低的一天要在最高的一天之前。
+
+把原始价格序列变成差分序列，本题也可以做是最大$m$子段和，$m=1$。
+
+\subsubsection{代码}
+\begin{Code}
+class Solution {
+public:
+    int maxProfit(vector<int> &prices) {
+        if (prices.size() < 2) return 0;
+        int profit = 0;  // 差价，也就是利润
+        int cur_min = prices[0]; // 当前最小
+
+        for (int i = 1; i < prices.size(); i++) {
+            profit = std::max(profit, prices[i] - cur_min);
+            cur_min = std::min(cur_min, prices[i]);
+        }
+        return profit;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Best Time to Buy and Sell Stock II，见 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
+\item Best Time to Buy and Sell Stock III，见 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
+\myenddot
+
+
+\section{Best Time to Buy and Sell Stock II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:best-time-to-buy-and-sell-stock-ii}
+
+
+\subsubsection{描述}
+Say you have an array for which the i-th element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+
+\subsubsection{分析}
+贪心法，低进高出，把所有正的价格差价相加起来。
+
+把原始价格序列变成差分序列，本题也可以做是最大$m$子段和，$m=$数组长度。
+
+\subsubsection{代码}
+\begin{Code}
+class Solution {
+public:
+    int maxProfit(vector<int> &prices) {
+        int sum = 0;
+        for (int i = 1; i < prices.size(); i++) {
+            int diff = prices[i] - prices[i - 1];
+            if (diff > 0) sum += diff;
+        }
+        return sum;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
+\item Best Time to Buy and Sell Stock III，见 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
+\myenddot
