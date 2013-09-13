@@ -277,7 +277,9 @@ Note: The numbers can be arbitrarily large and are non-negative.
 
 
 \subsubsection{分析}
-无
+高精度乘法。
+
+常见的做法是将字符转化为一个int，一一对应，形成一个int数组。但是这样很浪费空间，一个int32的最大值是$2^{31}-1=2147483647$，可以与9个字符对应，由于有乘法，减半，则至少可以与4个字符一一对应。一个int64可以与9个字符对应。
 
 
 \subsubsection{代码}
@@ -291,7 +293,7 @@ public:
      * @return 无
      */
     BigInt(string s) {
-        vector<int> result;
+        vector<int64_t> result;
         result.reserve(s.size() / RADIX_LEN + 1);
 
         for (int i = s.size(); i > 0; i -= RADIX_LEN) {  // [i-RADIX_LEN, i)
@@ -302,7 +304,7 @@ public:
             }
             result.push_back(temp);
         }
-        n = result;
+        elems = result;
     }
     /**
      * @brief 将整数转化为字符串.
@@ -311,9 +313,9 @@ public:
     string toString() {
         stringstream result;
         bool started = false; // 用于跳过前导0
-        for (auto i = n.rbegin(); i != n.rend(); i++) {
+        for (auto i = elems.rbegin(); i != elems.rend(); i++) {
             if (started) { // 如果多余的0已经都跳过，则输出
-                result << std::setw(4) << std::setfill('0') << *i;
+                result << std::setw(RADIX_LEN) << std::setfill('0') << *i;
             } else {
                 result << *i;
                 started = true; // 碰到第一个非0的值，就说明多余的0已经都跳过
@@ -331,12 +333,12 @@ public:
      * @return 大整数
      */
     static BigInt multiply(const BigInt &x, const BigInt &y) {
-        vector<int> z(x.n.size() + y.n.size() + 1, 0);
+        vector<int64_t> z(x.elems.size() + y.elems.size() + 1, 0);
 
-        for (size_t i = 0; i < y.n.size(); i++) {
-            for (size_t j = 0; j < x.n.size(); j++) { // 用y[i]去乘以x的各位
+        for (size_t i = 0; i < y.elems.size(); i++) {
+            for (size_t j = 0; j < x.elems.size(); j++) { // 用y[i]去乘以x的各位
                 //  两数第i, j位相乘，累加到结果的第i+j位
-                z[i + j] += y.n[i] * x.n[j];
+                z[i + j] += y.elems[i] * x.elems[j];
 
                 if (z[i + j] >= BIGINT_RADIX) { //  看是否要进位
                     z[i + j + 1] += z[i + j] / BIGINT_RADIX; //  进位
@@ -349,12 +351,15 @@ public:
     }
 
 private:
-    /** 一个数组元素表示4个十进制位，即数组是万进制的 */
-    const static int BIGINT_RADIX = 10000;
-    const static int RADIX_LEN = 4;
+    typedef long long int64_t;
+    /** 一个数组元素对应9个十进制位，即数组是亿进制的
+     * 因为 1000000000 * 1000000000 没有超过 2^63-1
+     */
+    const static int BIGINT_RADIX = 1000000000;
+    const static int RADIX_LEN = 9;
     /** 万进制整数. */
-    vector<int> n;
-    BigInt(const vector<int> num) : n(num) {}
+    vector<int64_t> elems;
+    BigInt(const vector<int64_t> num) : elems(num) {}
 };
 
 
