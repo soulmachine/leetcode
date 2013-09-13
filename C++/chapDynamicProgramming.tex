@@ -344,3 +344,349 @@ public:
 \begindot
 \item 无
 \myenddot
+
+
+\section{Interleaving String} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:interleaving-string}
+
+
+\subsubsection{描述}
+Given $s1, s2, s3$, find whether $s3$ is formed by the interleaving of $s1$ and $s2$.
+
+For example, Given: \code{s1 = "aabcc", s2 = "dbbca"},
+
+When \code{s3 = "aadbbcbcac"}, return true.
+
+When \code{s3 = "aadbbbaccc"}, return false.
+
+
+\subsubsection{分析}
+这题用二维动态规划。
+
+设状态\fn{f[i][j]}，表示\fn{s1[0,i]}和\fn{s2[0,j]}，匹配\fn{s3[0, i+j]}。如果s1的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i-1][j]}；如果s2的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i][j-1]}。因此状态转移方程如下：
+\begin{Code}
+f[i][j] = (s1[i - 1] == s3 [i + j - 1] and f[i - 1][j])
+       or (s2[j - 1] == s3 [i + j - 1] and f[i][j - 1]);
+\end{Code}
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Interleaving String
+// 动规，二维数组
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if (s3.length() != s1.length() + s2.length())
+            return false;
+
+        vector<vector<bool>> f(s1.length() + 1,
+                vector<bool>(s2.length() + 1, true));
+
+        for (size_t i = 1; i <= s1.length(); ++i)
+            f[i][0] = f[i - 1][0] and s1[i - 1] == s3[i - 1];
+
+        for (size_t i = 1; i <= s2.length(); ++i)
+            f[0][i] = f[0][i - 1] and s2[i - 1] == s3[i - 1];
+
+        for (size_t i = 1; i <= s1.length(); ++i)
+            for (size_t j = 1; j <= s2.length(); ++j)
+                f[i][j] = (s1[i - 1] == s3[i + j - 1] and f[i - 1][j])
+                        or (s2[j - 1] == s3[i + j - 1] and f[i][j - 1]);
+
+        return f[s1.length()][s2.length()];
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Interleaving String
+// 动规，滚动数组
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if (s1.length() + s2.length() != s3.length())
+            return false;
+
+        if (s1.length() < s2.length())
+            return isInterleave(s2, s1, s3);
+
+        vector<bool> f(s2.length() + 1, true);
+
+        for (size_t i = 1; i <= s2.length(); ++i)
+            f[i] = s2[i - 1] == s3[i - 1] and f[i - 1];
+
+        for (size_t i = 1; i <= s1.length(); ++i) {
+            f[0] = s1[i - 1] == s3[i - 1] and f[0];
+
+            for (size_t j = 1; j <= s2.length(); ++j)
+                f[j] = (s1[i - 1] == s3[i + j - 1] and f[j])
+                        or (s2[j - 1] == s3[i + j - 1] and f[j - 1]);
+        }
+
+        return f[s2.length()];
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Interleaving String
+// 递归，小集合可以过，大集合会超时
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if (s3.length() != s1.length() + s2.length())
+            return false;
+
+        return isInterleave(begin(s1), end(s1), begin(s2), end(s2),
+                begin(s3), end(s3));
+    }
+
+    template<typename InIt>
+    bool isInterleave(InIt first1, InIt last1, InIt first2, InIt last2,
+            InIt first3, InIt last3) {
+        if (first3 == last3)
+            return first1 == last1 and first2 == last2;
+
+        return (*first1 == *first3
+                and isInterleave(next(first1), last1, first2, last2,
+                        next(first3), last3))
+                or (*first2 == *first3
+                        and isInterleave(first1, last1, next(first2), last2,
+                                next(first3), last3));
+    }
+};
+\end{Code}
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Scramble String} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:scramble-string}
+
+
+\subsubsection{描述}
+Given a string $s1$, we may represent it as a binary tree by partitioning it to two non-empty substrings recursively.
+
+Below is one possible representation of \code{s1 = "great"}:
+\begin{Code}
+    great
+   /    \
+  gr    eat
+ / \    /  \
+g   r  e   at
+           / \
+          a   t
+\end{Code}
+
+To scramble the string, we may choose any non-leaf node and swap its two children.
+
+For example, if we choose the node \code{"gr"} and swap its two children, it produces a scrambled string \code{"rgeat"}.
+\begin{Code}
+    rgeat
+   /    \
+  rg    eat
+ / \    /  \
+r   g  e   at
+           / \
+          a   t
+\end{Code}
+
+We say that \code{"rgeat"} is a scrambled string of \code{"great"}.
+
+Similarly, if we continue to swap the children of nodes \code{"eat"} and \code{"at"}, it produces a scrambled string \code{"rgtae"}.
+\begin{Code}
+    rgtae
+   /    \
+  rg    tae
+ / \    /  \
+r   g  ta  e
+       / \
+      t   a
+\end{Code}
+
+We say that \code{"rgtae"} is a scrambled string of \code{"great"}.
+
+Given two strings $s1$ and $s2$ of the same length, determine if $s2$ is a scrambled string of $s1$.
+
+
+\subsubsection{分析}
+首先想到的是递归（即深搜），对两个string进行分割，然后比较四对字符串。代码虽然简单，但是复杂度比较高。有两种加速策略，一种是剪枝，提前返回；一种是加缓存，缓存中间结果，和动规中自顶向下的记忆化搜索类似。
+
+剪枝可以五花八门，要充分观察，充分利用信息，找到能让节点提前返回的条件。例如，判断两个字符串是否互为scamble，至少要求每个字符在两个字符串中出现的次数要相等，如果不相等则返回false。
+
+加缓存，可以用数组或HashMap。本题维数较高，用HashMap，\fn{std::map}和\fn{std::unordered_map}均可。
+
+其次，这题可以用动规。
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Interleaving String
+// 递归，小集合可以过，大集合会超时
+class Solution {
+public:
+    bool isScramble(string s1, string s2) {
+        return isScramble(s1.begin(), s1.end(), s2.begin());
+    }
+private:
+    typedef string::iterator Iterator;
+    bool isScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto length = distance(first1, last1);
+        auto last2 = next(first2, length);
+
+        if (length == 1) return *first1 == *first2;
+
+        for (int i = 1; i < length; ++i)
+            if ((isScramble(first1, first1 + i, first2)
+                 and isScramble(first1 + i, last1, first2 + i))
+                    or (isScramble(first1, first1 + i, last2 - i)
+                            and isScramble(first1 + i, last1, first2)))
+                return true;
+
+        return false;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Interleaving String
+// 递归+剪枝
+class Solution {
+public:
+    bool isScramble(string s1, string s2) {
+        return isScramble(s1.begin(), s1.end(), s2.begin());
+    }
+private:
+    typedef string::iterator Iterator;
+    bool isScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto length = distance(first1, last1);
+        auto last2 = next(first2, length);
+        if (length == 1) return *first1 == *first2;
+
+        // 剪枝，提前返回
+        int A[26]; // 每个字符的计数器
+        std::fill(A, A + 26, 0);
+        for(int i = 0; i < length; i++) A[*(first1+i)-'a']++;
+        for(int i = 0; i < length; i++) A[*(first2+i)-'a']--;
+        for(int i = 0; i < 26; i++) if (A[i] != 0) return false;
+
+        for (int i = 1; i < length; ++i)
+            if ((isScramble(first1, first1 + i, first2)
+                 and isScramble(first1 + i, last1, first2 + i))
+                    or (isScramble(first1, first1 + i, last2 - i)
+                            and isScramble(first1 + i, last1, first2)))
+                return true;
+
+        return false;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Interleaving String
+// 递归+map做cache
+class Solution {
+public:
+    bool isScramble(string s1, string s2) {
+        cache.clear();
+        return isScramble(s1.begin(), s1.end(), s2.begin());
+    }
+private:
+    typedef string::const_iterator Iterator;
+    map<tuple<Iterator, Iterator, Iterator>, bool> cache;
+
+    bool isScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto length = distance(first1, last1);
+        auto last2 = next(first2, length);
+
+        if (length == 1) return *first1 == *first2;
+
+        for (int i = 1; i < length; ++i)
+            if ((cachedIsScramble(first1, first1 + i, first2)
+                    and cachedIsScramble(first1 + i, last1, first2 + i))
+                    or (cachedIsScramble(first1, first1 + i, last2 - i)
+                            and cachedIsScramble(first1 + i, last1, first2)))
+                return true;
+
+        return false;
+    }
+
+    bool cachedIsScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto key = make_tuple(first1, last1, first2);
+        auto pos = cache.find(key);
+
+        return (pos != cache.end()) ?
+                pos->second : (cache[key] = isScramble(first1, last1, first2));
+    }
+};
+\end{Code}
+
+\begin{Code}
+typedef string::const_iterator Iterator;
+typedef tuple<Iterator, Iterator, Iterator> Key;
+// 定制一个哈希函数
+namespace std {
+template<> struct hash<Key> {
+    size_t operator()(const Key & x) const {
+        Iterator first1, last1, first2;
+        std::tie(first1, last1, first2) = x;
+
+        int result = *first1;
+        result = result * 31 + *last1;
+        result = result * 31 + *first2;
+        result = result * 31 + *(next(first2, distance(first1, last1)-1));
+        return result;
+    }
+};
+}
+
+// LeetCode, Interleaving String
+// 递归+unordered_map做cache，比map快
+class Solution {
+public:
+    unordered_map<Key, bool> cache;
+
+    bool isScramble(string s1, string s2) {
+        cache.clear();
+        return isScramble(s1.begin(), s1.end(), s2.begin());
+    }
+
+    bool isScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto length = distance(first1, last1);
+        auto last2 = next(first2, length);
+
+        if (length == 1)
+            return *first1 == *first2;
+
+        for (int i = 1; i < length; ++i)
+            if ((cachedIsScramble(first1, first1 + i, first2)
+                    and cachedIsScramble(first1 + i, last1, first2 + i))
+                    or (cachedIsScramble(first1, first1 + i, last2 - i)
+                            and cachedIsScramble(first1 + i, last1, first2)))
+                return true;
+
+        return false;
+    }
+
+    bool cachedIsScramble(Iterator first1, Iterator last1, Iterator first2) {
+        auto key = make_tuple(first1, last1, first2);
+        auto pos = cache.find(key);
+
+        return (pos != cache.end()) ?
+                pos->second : (cache[key] = isScramble(first1, last1, first2));
+    }
+};
+\end{Code}
+
+\begin{Code}
+
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
