@@ -185,3 +185,193 @@ private:
 \begindot
 \item Insert Interval，见 \S \ref{sec:insert-interval}
 \myenddot
+
+
+\section{Minimum Window Substring} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:minimum-window-substring}
+
+
+\subsubsection{描述}
+Given a string $S$ and a string $T$, find the minimum window in $S$ which will contain all the characters in $T$ in complexity $O(n)$.
+
+For example, \code{S = "ADOBECODEBANC", T = "ABC"}
+
+Minimum window is \code{"BANC"}.
+
+Note:
+\begindot
+\item If there is no such window in $S$ that covers all characters in $T$, return the emtpy string \code{""}.
+\item If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in $S$.
+\myenddot
+
+
+\subsubsection{分析}
+双指针，动态维护一个区间。尾指针不断往后扫，当扫到有一个窗口包含了所有$T$的字符后，然后再收缩头指针，直到不能再收缩为止。最后记录所有可能的情况中窗口最小的
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Minimum Window Substring
+// 双指针，动态维护一个区间。尾指针不断往后扫，当扫到有一个窗口包含了所有T的字符
+// 后，然后再收缩头指针，直到不能再收缩为止。最后记录所有可能的情况中窗口最小的
+class Solution {
+public:
+    string minWindow(string S, string T) {
+        if (S.empty()) return "";
+        if (S.size() < T.size()) return "";
+
+        const int ASCII_MAX = 256;
+        int appeared_count[ASCII_MAX];
+        int expected_count[ASCII_MAX];
+        std::fill(appeared_count, appeared_count + ASCII_MAX, 0);
+        std::fill(expected_count, expected_count + ASCII_MAX, 0);
+
+        for (size_t i = 0; i < T.size(); i++) expected_count[T[i]]++;
+
+        int minWidth = INT_MAX, min_start = 0;  // 窗口大小，起点
+        int wnd_start = 0;
+        int appeared = 0;  // 完整包含了一个T
+        //尾指针不断往后扫
+        for (size_t wnd_end = 0; wnd_end < S.size(); wnd_end++) {
+            if (expected_count[S[wnd_end]] > 0)  {  // this char is a part of T
+                appeared_count[S[wnd_end]]++;
+                if (appeared_count[S[wnd_end]] <= expected_count[S[wnd_end]])
+                    appeared++;
+            }
+            if (appeared == T.size()) {  // 完整包含了一个T
+                // 收缩头指针
+                while (appeared_count[S[wnd_start]] > expected_count[S[wnd_start]]
+                        || expected_count[S[wnd_start]] == 0) {
+                    appeared_count[S[wnd_start]]--;
+                    wnd_start++;
+                }
+                if (minWidth > (wnd_end - wnd_start + 1)) {
+                    minWidth = wnd_end - wnd_start + 1;
+                    min_start = wnd_start;
+                }
+            }
+        }
+
+        if (minWidth == INT_MAX) return "";
+        else return S.substr(min_start, minWidth);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\section{Multiply Strings} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:multiply-strings}
+
+
+\subsubsection{描述}
+Given two numbers represented as strings, return multiplication of the numbers as a string.
+
+Note: The numbers can be arbitrarily large and are non-negative.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+/** 大整数. */
+class BigInt {
+public:
+    /**
+     * @brief 构造函数，将字符串转化为大整数.
+     * @param[in] s 输入的字符串
+     * @return 无
+     */
+    BigInt(string s) {
+        vector<int> result;
+        result.reserve(s.size() / RADIX_LEN + 1);
+
+        for (int i = s.size(); i > 0; i -= RADIX_LEN) {  // [i-RADIX_LEN, i)
+            int temp = 0;
+            const int low = max(i - RADIX_LEN, 0);
+            for (int j = low; j < i; j++) {
+                temp = temp * 10 + s[j] - '0';
+            }
+            result.push_back(temp);
+        }
+        n = result;
+    }
+    /**
+     * @brief 将整数转化为字符串.
+     * @return 字符串
+     */
+    string toString() {
+        stringstream result;
+        bool started = false; // 用于跳过前导0
+        for (auto i = n.rbegin(); i != n.rend(); i++) {
+            if (started) { // 如果多余的0已经都跳过，则输出
+                result << std::setw(4) << std::setfill('0') << *i;
+            } else {
+                result << *i;
+                started = true; // 碰到第一个非0的值，就说明多余的0已经都跳过
+            }
+        }
+
+        if (!started) return "0"; // 当x全为0时
+        else return result.str();
+    }
+
+    /**
+     * @brief 大整数乘法.
+     * @param[in] x x
+     * @param[in] y y
+     * @return 大整数
+     */
+    static BigInt multiply(const BigInt &x, const BigInt &y) {
+        vector<int> z(x.n.size() + y.n.size() + 1, 0);
+
+        for (size_t i = 0; i < y.n.size(); i++) {
+            for (size_t j = 0; j < x.n.size(); j++) { // 用y[i]去乘以x的各位
+                //  两数第i, j位相乘，累加到结果的第i+j位
+                z[i + j] += y.n[i] * x.n[j];
+
+                if (z[i + j] >= BIGINT_RADIX) { //  看是否要进位
+                    z[i + j + 1] += z[i + j] / BIGINT_RADIX; //  进位
+                    z[i + j] %= BIGINT_RADIX;
+                }
+            }
+        }
+        while (z.back() == 0) z.pop_back();  // 没有进位，去掉最高位的0
+        return BigInt(z);
+    }
+
+private:
+    /** 一个数组元素表示4个十进制位，即数组是万进制的 */
+    const static int BIGINT_RADIX = 10000;
+    const static int RADIX_LEN = 4;
+    /** 万进制整数. */
+    vector<int> n;
+    BigInt(const vector<int> num) : n(num) {}
+};
+
+
+// LeetCode, Multiply Strings
+class Solution {
+public:
+    string multiply(string num1, string num2) {
+        BigInt x(num1);
+        BigInt y(num2);
+        return BigInt::multiply(x, y).toString();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
