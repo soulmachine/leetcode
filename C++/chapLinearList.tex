@@ -321,7 +321,7 @@ private:
 struct ListNode {
     int val;
     ListNode *next;
-    ListNode(int x) : val(x), next(NULL) { }
+    ListNode(int x) : val(x), next(nullptr) { }
 };
 \end{Code}
 
@@ -353,15 +353,15 @@ public:
         ListNode* pre = head;
         ListNode *pa = l1, *pb = l2;
         int carry = 0;
-        while (pa != NULL || pb != NULL) {
-            int av = pa == NULL ? 0 : pa->val;
-            int bv = pb == NULL ? 0 : pb->val;
+        while (pa != nullptr || pb != nullptr) {
+            int av = pa == nullptr ? 0 : pa->val;
+            int bv = pb == nullptr ? 0 : pb->val;
             ListNode* node = new ListNode((av + bv + carry) % 10);
             carry = (av + bv + carry) / 10;
             pre->next = node; // 尾插法
             pre = pre->next;
-            pa = pa == NULL ? NULL : pa->next;
-            pb = pb == NULL ? NULL : pb->next;
+            pa = pa == nullptr ? nullptr : pa->next;
+            pb = pb == nullptr ? nullptr : pb->next;
         }
         if (carry > 0)
             pre->next = new ListNode(1);
@@ -388,9 +388,9 @@ public:
 Reverse a linked list from position $m$ to $n$. Do it in-place and in one-pass.
 
 For example:
-Given \code{1->2->3->4->5->NULL}, $m$ = 2 and $n$ = 4,
+Given \code{1->2->3->4->5->nullptr}, $m$ = 2 and $n$ = 4,
 
-return \code{1->4->3->2->5->NULL}.
+return \code{1->4->3->2->5->nullptr}.
 
 Note:
 Given m, n satisfy the following condition:
@@ -475,7 +475,7 @@ Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->4->3->5}.
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
-        if (head == NULL) return head;
+        if (head == nullptr) return head;
 
         ListNode left_dummy(0); // 头结点
         ListNode right_dummy(0); // 头结点
@@ -494,7 +494,7 @@ public:
         }
 
         left_cur->next = right_dummy.next;
-        right_cur->next = NULL;
+        right_cur->next = nullptr;
 
         return left_dummy.next;
     }
@@ -533,10 +533,10 @@ Given \code{1->1->2->3->3}, return \code{1->2->3}.
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
-        if (head == NULL) return NULL;
+        if (head == nullptr) return nullptr;
         ListNode * prev = head;
         ListNode *cur = head->next;
-        while (cur != NULL) {
+        while (cur != nullptr) {
             if (prev->val == cur->val) {
                 ListNode* temp = cur;
                 cur = cur->next;
@@ -584,14 +584,14 @@ Given \code{1->1->1->2->3}, return \code{2->3}.
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
-        if (head == NULL) return head;
+        if (head == nullptr) return head;
 
         ListNode dummy(INT_MIN); // 头结点
         dummy.next = head;
         ListNode *prev = &dummy, *cur = head;
-        while (cur != NULL) {
+        while (cur != nullptr) {
             bool duplicated = false;
-            while (cur->next != NULL && cur->val == cur->next->val) {
+            while (cur->next != nullptr && cur->val == cur->next->val) {
                 duplicated = true;
                 ListNode *temp = cur;
                 cur = cur->next;
@@ -629,7 +629,7 @@ public:
 Given a list, rotate the list to the right by $k$ places, where $k$ is non-negative.
 
 For example:
-Given \code{1->2->3->4->5->NULL} and \code{k = 2}, return \code{4->5->1->2->3->NULL}.
+Given \code{1->2->3->4->5->nullptr} and \code{k = 2}, return \code{4->5->1->2->3->nullptr}.
 
 
 \subsubsection{分析}
@@ -642,7 +642,7 @@ Given \code{1->2->3->4->5->NULL} and \code{k = 2}, return \code{4->5->1->2->3->N
 class Solution {
 public:
     ListNode *rotateRight(ListNode *head, int k) {
-        if (head == NULL || k == 0) return head;
+        if (head == nullptr || k == 0) return head;
 
         int len = 1;
         ListNode* p = head;
@@ -657,7 +657,7 @@ public:
             p = p->next;  //接着往后跑
         }
         head = p->next; // 新的首节点
-        p->next = NULL; // 断开环
+        p->next = nullptr; // 断开环
         return head;
     }
 };

@@ -54,23 +54,15 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 
 \subsubsection{代码}
 \begin{Code}
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) :
-            val(x), next(NULL) {
-    }
-};
- 
 //LeetCode, Merge Two Sorted Lists
 class Solution {
 public:
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
         ListNode* head = new ListNode(-1);
         ListNode* p = head;
-        while (l1 != NULL || l2 != NULL) {
-            int val1 = l1 == NULL ? INT_MAX : l1->val;
-            int val2 = l2 == NULL ? INT_MAX : l2->val;
+        while (l1 != nullptr || l2 != nullptr) {
+            int val1 = l1 == nullptr ? INT_MAX : l1->val;
+            int val2 = l2 == nullptr ? INT_MAX : l2->val;
             if (val1 <= val2) {
                 p->next = l1;
                 l1 = l1->next;
@@ -109,20 +101,12 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 
 \subsubsection{代码}
 \begin{Code}
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) :
-            val(x), next(NULL) {
-    }
-};
- 
 //LeetCode, Merge k Sorted Lists
 class Solution {
 public:
     ListNode *mergeKLists(vector<ListNode *> &lists) {
-        if (lists.size() == 0)
-            return NULL;
+        if (lists.size() == 0) return nullptr;
+
         ListNode *p = lists[0];
         for (int i = 1; i < lists.size(); i++) {
             p = mergeTwoLists(p, lists[i]);
@@ -134,9 +118,9 @@ public:
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
         ListNode* head = new ListNode(-1);
         ListNode* p = head;
-        while (l1 != NULL || l2 != NULL) {
-            int val1 = l1 == NULL ? INT_MAX : l1->val;
-            int val2 = l2 == NULL ? INT_MAX : l2->val;
+        while (l1 != nullptr || l2 != nullptr) {
+            int val1 = l1 == nullptr ? INT_MAX : l1->val;
+            int val2 = l2 == nullptr ? INT_MAX : l2->val;
             if (val1 <= val2) {
                 p->next = l1;
                 l1 = l1->next;

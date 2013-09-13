@@ -7,7 +7,7 @@ struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) { }
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) { }
 };
 \end{Code}
 
@@ -60,7 +60,7 @@ class Solution {
 public:
     vector<vector<int> > levelOrder(TreeNode *root) {
         vector<vector<int> > result;
-        if(root == NULL) return result;
+        if(root == nullptr) return result;
 
         queue<TreeNode*> queToPush, queToPop;
         queToPop.push(root);
@@ -71,8 +71,8 @@ public:
                 TreeNode* node = queToPop.front();
                 queToPop.pop();
                 level.push_back(node->val);
-                if (node->left != NULL) queToPush.push(node->left);
-                if (node->right != NULL) queToPush.push(node->right);
+                if (node->left != nullptr) queToPush.push(node->left);
+                if (node->right != nullptr) queToPush.push(node->right);
             }
             result.push_back(level);
             swap(queToPush, queToPop); //!!! how to use swap
@@ -132,7 +132,7 @@ public:
 
         queue<TreeNode *> q;
         q.push(root);
-        q.push(NULL); // level separator
+        q.push(nullptr); // level separator
 
         vector<int> level;  // elements in one level
         while(!q.empty()) {
@@ -146,7 +146,7 @@ public:
                 if(level.size() > 0) {
                     retTemp.push_front(level);
                     level.erase(level.begin(),level.end());
-                    q.push(NULL);
+                    q.push(nullptr);
                 }
             }
         }
@@ -207,14 +207,14 @@ class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
         vector<vector<int> > result;
-        if (NULL == root) return result;
+        if (nullptr == root) return result;
 
         queue<TreeNode*> q;
         bool l2r = true;  //left to right
         vector<int> level;  // one level's elements
 
         q.push(root);
-        q.push(NULL);  // level separator
+        q.push(nullptr);  // level separator
         while (!q.empty()) {
             TreeNode *cur = q.front();
             q.pop();
@@ -235,7 +235,7 @@ public:
                 level.clear();
                 l2r = !l2r;
 
-                if (q.size() > 0) q.push(NULL);
+                if (q.size() > 0) q.push(nullptr);
             }
         }
 
@@ -290,8 +290,8 @@ public:
         const TreeNode *p = root;
         std::stack<const TreeNode *> s;
 
-        while (!s.empty() || p != NULL) {
-            if (p != NULL) {
+        while (!s.empty() || p != nullptr) {
+            if (p != nullptr) {
                 s.push(p);
                 p = p->left;
             } else {
@@ -314,27 +314,27 @@ class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
         vector<int> result;
-        TreeNode* prev = NULL;
+        TreeNode* prev = nullptr;
         TreeNode* cur = root;
 
-        while (cur != NULL) {
-            if (cur->left == NULL) {
+        while (cur != nullptr) {
+            if (cur->left == nullptr) {
                 result.push_back(cur->val);
                 prev = cur;
                 cur = cur->right;
             } else {
                 auto node = cur->left;
 
-                while (node->right != NULL and node->right != cur)
+                while (node->right != nullptr and node->right != cur)
                     node = node->right;
 
-                if (node->right == NULL) {
+                if (node->right == nullptr) {
                     node->right = cur;
                     prev = cur;
                     cur = cur->left;
                 } else {
                     result.push_back(cur->val);
-                    node->right = NULL;
+                    node->right = nullptr;
                     prev = cur;
                     cur = cur->right;
                 }
@@ -379,27 +379,27 @@ class Solution {
 public:
     void recoverTree(TreeNode* root) {
         pair<TreeNode*, TreeNode*> broken;
-        TreeNode* prev = NULL;
+        TreeNode* prev = nullptr;
         TreeNode* cur = root;
 
-        while (cur != NULL) {
-            if (cur->left == NULL) {
+        while (cur != nullptr) {
+            if (cur->left == nullptr) {
                 detect(broken, prev, cur);
                 prev = cur;
                 cur = cur->right;
             } else {
                 auto node = cur->left;
 
-                while (node->right != NULL and node->right != cur)
+                while (node->right != nullptr and node->right != cur)
                     node = node->right;
 
-                if (node->right == NULL) {
+                if (node->right == nullptr) {
                     node->right = cur;
                     prev = cur;
                     cur = cur->left;
                 } else {
                     detect(broken, prev, cur);
-                    node->right = NULL;
+                    node->right = nullptr;
                     prev = cur;
                     cur = cur->right;
                 }
@@ -411,8 +411,8 @@ public:
 
     void detect(pair<TreeNode*, TreeNode*>& broken, TreeNode* prev,
             TreeNode* current) {
-        if (prev != NULL and prev->val > current->val) {
-            if (broken.first == NULL) {
+        if (prev != nullptr and prev->val > current->val) {
+            if (broken.first == nullptr) {
                 broken.first = prev;
             } //不能用else
             broken.second = current;
@@ -560,7 +560,7 @@ private:
     vector<TreeNode *>* generate(int start, int end) {
         auto subTree = new vector<TreeNode*>();
         if (start > end) {
-            subTree->push_back(NULL);
+            subTree->push_back(nullptr);
             return subTree;
         }
         for (int k = start; k <= end; k++) {
@@ -616,7 +616,7 @@ public:
     }
 
     bool isValidBST(TreeNode* root, int lower, int upper) {
-        if (root == NULL) return true;
+        if (root == nullptr) return true;
 
         return root->val > lower and root->val < upper
                 and isValidBST(root->left, lower, root->val)
@@ -656,10 +656,11 @@ public:
     }
 
     template<typename RandomAccessIterator>
-    TreeNode* sortedArrayToBST (RandomAccessIterator first, RandomAccessIterator last) {
+    TreeNode* sortedArrayToBST (RandomAccessIterator first, 
+            RandomAccessIterator last) {
         const auto length = std::distance (first, last);
 
-        if (length == 0) return NULL;
+        if (length == 0) return nullptr;
         if (length == 1) return new TreeNode (*first);
 
         auto mid = first + length / 2;
@@ -697,7 +698,8 @@ Given a singly linked list where elements are sorted in ascending order, convert
 分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度$O(n\log n)$。
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
-// 分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度O(nlogn)
+// 分治法，类似于 Convert Sorted Array to Binary Search Tree，
+// 自顶向下，复杂度O(nlogn)
 class Solution {
 public:
     TreeNode* sortedListToBST (ListNode* head) {
@@ -705,12 +707,13 @@ public:
     }
 
     TreeNode* sortedListToBST (ListNode* head, int len) {
-        if (len == 0) return NULL;
+        if (len == 0) return nullptr;
         if (len == 1) return new TreeNode (head->val);
 
         TreeNode* root = new TreeNode (nth_node (head, len / 2 + 1)->val);
         root->left = sortedListToBST (head, len / 2);
-        root->right = sortedListToBST (nth_node (head, len / 2 + 2), (len - 1) / 2);
+        root->right = sortedListToBST (nth_node (head, len / 2 + 2), 
+                (len - 1) / 2);
 
         return root;
     }
@@ -752,9 +755,9 @@ public:
     }
 private:
     TreeNode* sortedListToBST(ListNode*& list, int start, int end) {
-        if (start > end) return NULL;
+        if (start > end) return nullptr;
 
-        int mid = start + (end - start) / 2; //if use start + (end - start) >> 1, test case will break, strange!
+        int mid = start + (end - start) / 2;
         TreeNode *leftChild = sortedListToBST(list, start, mid - 1);
         TreeNode *parent = new TreeNode(list->val);
         parent->left = leftChild;
@@ -797,7 +800,7 @@ The minimum depth is the number of nodes along the shortest path from the root n
 class Solution {
 public:
     int minDepth(TreeNode *root) {
-        if (root == NULL) return 0;
+        if (root == nullptr) return 0;
         else {
             d = INT_MAX;
             minDepth(root, 1);
@@ -807,8 +810,8 @@ public:
 private:
     int d;
     void minDepth(TreeNode *root, int cur) {
-        if (root != NULL) {
-            if (root->left == NULL && root->right == NULL) { // 叶子节点
+        if (root != nullptr) {
+            if (root->left == nullptr && root->right == nullptr) { // 叶子节点
                 d = std::min(cur, d);
                 return;
             }
@@ -828,7 +831,7 @@ private:
 class Solution {
 public:
     int minDepth(TreeNode* root) {
-        if (root == NULL)
+        if (root == nullptr)
             return 0;
 
         int result = INT_MAX;
@@ -841,7 +844,7 @@ public:
             auto depth = s.top().second;
             s.pop();
 
-            if (node->left == NULL && node->right == NULL)
+            if (node->left == nullptr && node->right == nullptr)
                 result = min(result, depth);
 
             if (node->left && result > depth) // 深度控制，剪枝
@@ -882,7 +885,7 @@ The maximum depth is the number of nodes along the longest path from the root no
 class Solution {
 public:
     int maxDepth(TreeNode *root) {
-        if (root == NULL) return 0;
+        if (root == nullptr) return 0;
 
         int lmax = maxDepth(root->left);
         int rmax = maxDepth(root->right);
@@ -929,7 +932,7 @@ public:
     template<typename InputIterator>
     TreeNode* buildTree(InputIterator pre_first, InputIterator pre_last,
             InputIterator in_first, InputIterator in_last) {
-        if (in_first == in_last) return NULL;
+        if (in_first == in_last) return nullptr;
 
         auto root = new TreeNode(*pre_first);
 
@@ -981,8 +984,8 @@ public:
     template<typename BidiIt>
     TreeNode* buildTree(BidiIt in_first, BidiIt in_last,
             BidiIt post_first, BidiIt post_last) {
-        if (std::distance(in_first, in_last) == 0) return NULL;
-        if (std::distance(post_first, post_last) == 0) return NULL;
+        if (std::distance(in_first, in_last) == 0) return nullptr;
+        if (std::distance(post_first, post_last) == 0) return nullptr;
 
         const auto val = *std::prev(post_last);
         TreeNode* root = new TreeNode(val);
@@ -1150,7 +1153,7 @@ public:
      * otherwise, returns `-1`.
      */
     int balancedHeight (TreeNode* root) {
-        if (root == NULL)
+        if (root == nullptr)
             return 0;
 
         int lhs = balancedHeight (root->left);
@@ -1213,7 +1216,7 @@ The flattened tree should look like:
 class Solution {
 public:
     void flatten(TreeNode *root) {
-        if (root == NULL) return;
+        if (root == nullptr) return;
         //1.flat the left subtree
         if (root->left)
             flatten(root->left);
@@ -1221,7 +1224,7 @@ public:
         if (root->right)
             flatten(root->right);
         //3.if no left return
-        if (NULL == root->left)
+        if (nullptr == root->left)
             return;
         //4.insert left sub tree between root and root->right
         //4.1.find the last node in left
@@ -1232,7 +1235,7 @@ public:
         *ptn = root->right;
         //4.3.move left sub tree to the root's right sub tree
         root->right = root->left;
-        root->left = NULL;
+        root->left = nullptr;
     }
 };
 \end{Code}
@@ -1243,7 +1246,7 @@ public:
 class Solution {
 public:
     void flatten(TreeNode* root) {
-        if (root == NULL)
+        if (root == nullptr)
             return;
 
         stack<TreeNode*> s;
@@ -1258,7 +1261,7 @@ public:
             if (top->left)
                 s.push(top->left);
 
-            top->left = NULL;
+            top->left = nullptr;
             if (!s.empty())
                 top->right = s.top();
         }
@@ -1312,7 +1315,7 @@ public:
 private:
     int max;
     int dfs(const TreeNode *root) {
-        if (root == NULL) return 0;
+        if (root == nullptr) return 0;
         int l = dfs(root->left);
         int r = dfs(root->right);
         int sum = root->val;
