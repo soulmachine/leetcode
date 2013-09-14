@@ -53,3 +53,254 @@ public:
 \item Add Two Numbers，见 \S \ref{sec:add-two-numbers}
 \myenddot
 
+
+\section{String to Integer (atoi)} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:string-to-integer}
+
+
+\subsubsection{描述}
+Implement \fn{atoi} to convert a string to an integer.
+
+\textbf{Hint}: Carefully consider all possible input cases. If you want a challenge, please do not see below and ask yourself what are the possible input cases.
+
+\textbf{Notes}: It is intended for this problem to be specified vaguely (ie, no given input specs). You are responsible to gather all the input requirements up front.
+
+\textbf{Requirements for atoi}:
+
+The function first discards as many whitespace characters as necessary until the first non-whitespace character is found. Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits as possible, and interprets them as a numerical value.
+
+The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.
+
+If the first sequence of non-whitespace characters in str is not a valid integral number, or if no such sequence exists because either str is empty or it contains only whitespace characters, no conversion is performed.
+
+If no valid conversion could be performed, a zero value is returned. If the correct value is out of the range of representable values, \code{INT_MAX (2147483647)} or \code{INT_MIN (-2147483648)} is returned.
+
+\subsubsection{分析}
+细节题。注意几个测试用例：
+\begin{enumerate}
+\item 不规则输入，但是有效，"-3924x8fc"， "  +  413",
+\item 无效格式，" ++c", " ++1"
+\item 溢出数据，"2147483648"
+\end{enumerate}
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, String to Integer (atoi)
+class Solution {
+public:
+    int atoi(const char *str) {
+        int num = 0;
+        int sign = 1;
+        int len = strlen(str);
+        int i = 0;
+
+        while (str[i] == ' ' && i < len) i++;
+        if (str[i] == '+') i++;
+
+        if (str[i] == '-') {
+            sign = -1;
+            i++;
+        }
+
+        for (; i < len; i++) {
+            if (str[i] == ' ')
+                break;
+            if (str[i] < '0' || str[i] > '9')
+                break;
+            if (INT_MAX / 10 < num
+                    || INT_MAX / 10 == num
+                    && INT_MAX % 10 < (str[i] - '0')) {
+                return sign == -1 ? INT_MIN : INT_MAX;
+                break;
+            }
+            num = num * 10 + str[i] - '0';
+        }
+        return num * sign;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Longest Palindromic Substring} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:longest-palindromic-substring}
+
+
+\subsubsection{描述}
+Given a string $S$, find the longest palindromic substring in $S$. You may assume that the maximum length of $S$ is 1000, and there exists one unique longest palindromic substring.
+
+
+\subsubsection{分析}
+最长回文子串，非常经典的题。
+
+思路一：暴力枚举，以每个元素为中间元素，同时从左右出发，复杂度$O(n^2)$。
+
+思路二：记忆化搜索，复杂度$O(n^2)$。设\fn{f[i][j]} 表示[i,j]之间的最长回文子串，递推方程如下：
+\begin{Code}
+f[i][j] = if (i == j) S[i]
+          if (S[i] == S[j] && f[i+1][j-1] == S[i+1][j-1]) S[i][j]
+          else max(f[i+1][j-1], f[i][j-1], f[i+1][j])
+\end{Code}
+
+思路三：动规，复杂度$O(n^2)$。设状态为\fn{f(i,j)}，表示区间[i,j]是否为回文串，则状态转移方程为
+$$
+f(i,j)=\begin{cases}
+true & ,i=j\\
+S[i]=S[j] & , j = i + 1 \\
+S[i]=S[j] \text{ and } f(i+1, j-1) & , j > i + 1
+\end{cases}
+$$
+
+思路三：Manacher’s Algorithm, 复杂度$O(n)$。详细解释见 \myurl{http://leetcode.com/2011/11/longest-palindromic-substring-part-ii.html} 。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Longest Palindromic Substring
+// 记忆化搜索，大集合会超时
+typedef string::const_iterator Iterator;
+
+namespace std {
+template<>
+struct hash<pair<Iterator, Iterator>> {
+    size_t operator()(pair<Iterator, Iterator> const& p) const {
+        return ((size_t) &(*p.first)) ^ ((size_t) &(*p.second));
+    }
+};
+}
+
+class Solution {
+public:
+    string longestPalindrome(string const& s) {
+        cache.clear();
+        return memoizedLongestPalindrome(begin(s), end(s));
+    }
+
+private:
+    unordered_map<pair<Iterator, Iterator>, string> cache;
+
+    string longestPalindrome(Iterator first, Iterator last) {
+        size_t length = distance(first, last);
+
+        if (length < 2) return string(first, last);
+
+        auto s = memoizedLongestPalindrome(next(first), prev(last));
+
+        if (s.length() == length - 2 and *first == *prev(last))
+            return string(first, last);
+
+        auto s1 = memoizedLongestPalindrome(next(first), last);
+        auto s2 = memoizedLongestPalindrome(first, prev(last));
+
+        // return max(s, s1, s2)
+        if (s.size() > s1.size()) return s.size() > s2.size() ? s : s2;
+        else return s1.size() > s2.size() ? s1 : s2;
+    }
+
+    string memoizedLongestPalindrome(Iterator first, Iterator last) {
+        auto key = make_pair(first, last);
+        auto pos = cache.find(key);
+
+        if (pos != cache.end()) return pos->second;
+        else return cache[key] = longestPalindrome(first, last);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Longest Palindromic Substring
+// 动规
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        const int len = s.size();
+        int f[len][len];
+        memset(f, 0, len * len * sizeof(int)); //TODO: std::fill, fill_n
+        int maxL = 1, start = 0;  // 最长回文子串的长度，起点
+
+        for (size_t i = 0; i < s.size(); i++) {
+            f[i][i] = 1;
+            for (size_t j = 0; j < i; j++) {  // [j, i]
+                f[j][i] = (s[j] == s[i] && (i - j < 2 || f[j + 1][i - 1]));
+                if (f[j][i] && maxL < (i - j + 1)) {
+                    maxL = i - j + 1;
+                    start = j;
+                }
+            }
+        }
+        return s.substr(start, maxL);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Longest Palindromic Substring
+// Manacher’s Algorithm
+class Solution {
+public:
+    // Transform S into T.
+    // For example, S = "abba", T = "^#a#b#b#a#$".
+    // ^ and $ signs are sentinels appended to each end to avoid bounds checking
+    string preProcess(string s) {
+        int n = s.length();
+        if (n == 0) return "^$";
+
+        string ret = "^";
+        for (int i = 0; i < n; i++) ret += "#" + s.substr(i, 1);
+
+        ret += "#$";
+        return ret;
+    }
+
+    string longestPalindrome(string s) {
+        string T = preProcess(s);
+        int n = T.length();
+        // 以T[i]为中心，向左/右扩张的长度，不包含T[i]自己，
+        // 因此 P[i]是源字符串中回文串的长度
+        int *P = new int[n];
+        int C = 0, R = 0;
+
+        for (int i = 1; i < n - 1; i++) {
+            int i_mirror = 2 * C - i; // equals to i' = C - (i-C)
+
+            P[i] = (R > i) ? min(R - i, P[i_mirror]) : 0;
+
+            // Attempt to expand palindrome centered at i
+            while (T[i + 1 + P[i]] == T[i - 1 - P[i]])
+                P[i]++;
+
+            // If palindrome centered at i expand past R,
+            // adjust center based on expanded palindrome.
+            if (i + P[i] > R) {
+                C = i;
+                R = i + P[i];
+            }
+        }
+
+        // Find the maximum element in P.
+        int maxLen = 0;
+        int centerIndex = 0;
+        for (int i = 1; i < n - 1; i++) {
+            if (P[i] > maxLen) {
+                maxLen = P[i];
+                centerIndex = i;
+            }
+        }
+        delete[] P;
+
+        return s.substr((centerIndex - 1 - maxLen) / 2, maxLen);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
