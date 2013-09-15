@@ -1014,6 +1014,127 @@ public:
 二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他遍历顺序，共有$3!=6$种。其他3种顺序是root->r->l，r->root->l, r->l->root。
 
 
+\subsection{Path Sum}
+\label{sec:path-sum}
+
+
+\subsubsection{描述}
+Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
+
+For example:
+Given the below binary tree and \code{sum = 22},
+\begin{Code}
+          5
+         / \
+        4   8
+       /   / \
+      11  13  4
+     /  \      \
+    7    2      1
+\end{Code}
+return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 22.
+
+
+\subsubsection{分析}
+必须要走到叶子节点才能判断，因此中途不能剪枝，只能进行朴素深搜。由于只需要求出一个结果，因此，当左、右任意一棵子树求到了满意结果，都可以及时return。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Path Sum
+class Solution {
+public:
+    bool hasPathSum(TreeNode *root, int sum) {
+        if (root == nullptr) return false;
+
+        if (root->left == nullptr and root->right == nullptr) { // leaf
+            if (sum == root->val) return true;
+            else return false;
+        }
+        if (hasPathSum(root->left, sum - root->val)) return true;
+        if (hasPathSum(root->right, sum - root->val)) return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Path Sum II，见 \S \ref{sec:path-sum-ii}
+\myenddot
+
+
+\subsection{Path Sum II}
+\label{sec:path-sum-ii}
+
+
+\subsubsection{描述}
+Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+
+For example:
+Given the below binary tree and \code{sum = 22},
+\begin{Code}
+          5
+         / \
+        4   8
+       /   / \
+      11  13  4
+     /  \    / \
+    7    2  5   1
+\end{Code}
+return
+\begin{Code}
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+\end{Code}
+
+
+\subsubsection{分析}
+必须要走到叶子节点才能判断，因此中途不能剪枝，只能进行朴素深搜。且要求出所有结果，左子树求到了满意结果，不能return，要接着求右子树。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Path Sum II
+class Solution {
+public:
+    vector<vector<int> > pathSum(TreeNode *root, int sum) {
+        vector<vector<int> > result;
+        vector<int> cur; // 中间结果
+        pathSum(root, sum, cur, result);
+        return result;
+    }
+private:
+    void pathSum(TreeNode *root, int gap, vector<int> &cur,
+            vector<vector<int> > &result) {
+        if (root == nullptr) return;
+
+        cur.push_back(root->val);
+
+        if (root->left == nullptr and root->right == nullptr) { // leaf
+            if (gap == root->val) {
+                result.push_back(cur);
+            }
+        }
+        pathSum(root->left, gap - root->val, cur, result);
+        pathSum(root->right, gap - root->val, cur, result);
+
+        cur.pop_back();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Path Sum，见 \S \ref{sec:path-sum}
+\myenddot
+
+
 \subsection{Same Tree}
 \label{sec:same-tree}
 

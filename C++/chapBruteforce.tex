@@ -1,0 +1,226 @@
+\chapter{暴力枚举法}
+
+
+\section{Subsets} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:subsets}
+
+
+\subsubsection{描述}
+Given a set of distinct integers, $S$, return all possible subsets.
+
+Note:
+\begindot
+\item Elements in a subset must be in non-descending order.
+\item The solution set must not contain duplicate subsets.
+\myenddot
+
+For example, If \code{S = [1,2,3]}, a solution is:
+\begin{Code}
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+\end{Code}
+
+
+\subsection{增量构造法}
+每个元素，都有两种选择，选或者不选。
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Subsets
+// 增量构造法，朴素深搜
+class Solution {
+public:
+    vector<vector<int> > subsets(vector<int> &S) {
+        vector<vector<int> > result;
+        vector<int> cur;
+        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+
+        subsets(S, cur, 0, result);
+        return result;
+    }
+
+private:
+    static void subsets(const vector<int> &S, vector<int> &cur, int step,
+            vector<vector<int> > &result) {
+        if (step == S.size()) {
+            result.push_back(cur);
+            return;
+        }
+        // 不选S[step]
+        subsets(S, cur, step + 1, result);
+        // 选S[step]
+        cur.push_back(S[step]);
+        subsets(S, cur, step + 1, result);
+        cur.pop_back();
+    }
+};
+\end{Code}
+
+
+\subsection{位向量法}
+开一个位向量\fn{bool selected[n]}，每个元素可以选或者不选。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Subsets
+// 位向量法，也属于朴素深搜
+class Solution {
+public:
+    vector<vector<int> > subsets(vector<int> &S) {
+        vector<vector<int> > result;
+        bool *selected = new bool[S.size()];
+        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+
+        subsets(S, selected, 0, result);
+        delete[] selected;
+        return result;
+    }
+
+private:
+    static void subsets(const vector<int> &S, bool selected[], int step, 
+            vector<vector<int> > &result) {
+        if (step == S.size()) {
+            vector<int> subset;
+            for (int i = 0; i < S.size(); i++) {
+                if (selected[i]) subset.push_back(S[i]);
+            }
+            result.push_back(subset);
+            return;
+        }
+        // 不选S[step]
+        selected[step] = false;
+        subsets(S, selected, step + 1, result);
+        // 选S[step]
+        selected[step] = true;
+        subsets(S, selected, step + 1, result);
+    }
+};
+\end{Code}
+
+
+\subsection{二进制法}
+本方法的前提是：集合的元素不超过int位数。用一个int整数表示位向量，第$i$位为1，则表示选择$S[i]$，为0则不选择。例如\fn{S=\{A,B,C,D\}}，则\fn{0110=6}表示子集\fn{\{B,C\}}。
+
+这种方法最巧妙。因为它不仅能生成子集，还能方便的表示集合的并、交、差等集合运算。设两个集合的位向量分别为$B_1$和$B_2$，则$B_1|B_2, B_1 \& B_2, B_1 \^ B_2$分别对应集合的并、交、对称差。
+
+\begin{Code}
+// LeetCode, Subsets
+// 二进制法
+class Solution {
+public:
+    vector<vector<int> > subsets(vector<int> &S) {
+        vector<vector<int> > result;
+        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        const size_t n = S.size();
+        vector<int> v;
+
+        for (size_t i = 0; i < 1 << n; i++) {
+            for (size_t j = 0; j < n; j++) {
+                if (i & 1 << j) v.push_back(S[j]);
+            }
+            result.push_back(v);
+            v.clear();
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码}
+\begin{Code}
+
+\end{Code}
+
+\subsubsection{相关题目}
+\begindot
+\item Subsets II，见 \S \ref{sec:subsets-ii}
+\myenddot
+
+
+\section{Subsets II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:subsets-ii}
+
+
+\subsubsection{描述}
+Given a collection of integers that might contain duplicates, $S$, return all possible subsets.
+
+Note:
+
+Elements in a subset must be in non-descending order.
+The solution set must not contain duplicate subsets.
+For example,
+If \fn{S = [1,2,2]}, a solution is:
+\begin{Code}
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+\end{Code}
+
+
+\subsubsection{分析}
+这题有重复元素，但本质上，跟上一题很类似，上一题中元素没有重复，相当于每个元素只能选0或1次，这里扩充到了每个元素可以选0到若干次而已。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Subsets II
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        vector<vector<int> > result;
+        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        std::vector<int> count(S.back() - S.front() + 1, 0);
+        // 计算所有元素的个数
+        for(auto i = S.begin(); i != S.end(); i++) {
+            count[*i - S[0]]++;
+        }
+
+        // 每个元素选择了多少个
+        std::vector<int> selected(S.back() - S.front() + 1, -1);
+
+        subsets(S, count, selected, 0, result);
+        return result;
+    }
+
+private:
+    static void subsets(const vector<int> &S, vector<int> &count,
+            vector<int> &selected, size_t step, vector<vector<int> > &result) {
+        if (step == count.size()) {
+            vector<int> subset;
+            for(size_t i = 0; i < selected.size(); i++) {
+                for (int j = 0; j < selected[i]; j++) {
+                    subset.push_back(i+S[0]);
+                }
+            }
+            result.push_back(subset);
+            return;
+        }
+
+        for (int i = 0; i <= count[step]; i++) {
+            selected[step] = i;
+            subsets(S, count, selected, step + 1, result);
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Subsets，见 \S \ref{sec:subsets}
+\myenddot

@@ -283,8 +283,50 @@ Note: The numbers can be arbitrarily large and are non-negative.
 
 
 \subsubsection{代码}
+
 \begin{Code}
-/** 大整数. */
+// LeetCode, Multiply Strings
+// 一个字符对应一个int
+typedef vector<char> bigint;
+
+bigint make_bigint(string const& repr) {
+    bigint n;
+    transform(repr.rbegin(), repr.rend(), back_inserter(n), [](char c) { return c - '0'; });
+    return move(n);
+}
+
+string to_string(bigint const& n) {
+    string str;
+    transform(find_if(n.rbegin(), prev(n.rend()), [](char c) { return c > '\0'; }),
+              n.rend(), back_inserter(str), [](char c) { return c + '0'; });
+    return move(str);
+}
+
+bigint operator*(bigint const& x, bigint const& y) {
+    bigint z(x.size() + y.size());
+
+    for (size_t i = 0; i < x.size(); ++i)
+        for (size_t j = 0; j < y.size(); ++j) {
+            z[i + j] += x[i] * y[j];
+            z[i + j + 1] += z[i + j] / 10;
+            z[i + j] %= 10;
+        }
+
+    return move(z);
+}
+
+class Solution {
+public:
+    string multiply(string num1, string num2) {
+        return to_string(make_bigint(num1) * make_bigint(num2));
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Multiply Strings
+// 9个字符对应一个int64_t
+/** 大整数类. */
 class BigInt {
 public:
     /**
@@ -333,7 +375,7 @@ public:
      * @return 大整数
      */
     static BigInt multiply(const BigInt &x, const BigInt &y) {
-        vector<int64_t> z(x.elems.size() + y.elems.size() + 1, 0);
+        vector<int64_t> z(x.elems.size() + y.elems.size(), 0);
 
         for (size_t i = 0; i < y.elems.size(); i++) {
             for (size_t j = 0; j < x.elems.size(); j++) { // 用y[i]去乘以x的各位
@@ -363,7 +405,6 @@ private:
 };
 
 
-// LeetCode, Multiply Strings
 class Solution {
 public:
     string multiply(string num1, string num2) {
@@ -379,4 +420,177 @@ public:
 
 \begindot
 \item 无
+\myenddot
+
+
+\section{Substring with Concatenation of All Words} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:substring-with-concatenation-of-all-words}
+
+
+\subsubsection{描述}
+You are given a string, $S$, and a list of words, $L$, that are all of the same length. Find all starting indices of substring(s) in $S$ that is a concatenation of each word in $L$ exactly once and without any intervening characters.
+
+For example, given: 
+\begin{Code}
+S: "barfoothefoobarman"
+L: ["foo", "bar"]
+\end{Code}
+
+You should return the indices: \code{[0,9]}.(order does not matter).
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Substring with Concatenation of All Words
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& dict)
+    {
+        size_t wordLength = dict.front().length();
+        size_t catLength = wordLength * dict.size();
+        vector<int> result;
+
+        if (s.length() < catLength) return result;
+
+        unordered_map<string, int> wordCount;
+
+        for (auto const& word : dict) ++wordCount[word];
+
+        for (auto i = begin(s); i <= prev(end(s), catLength); ++i) {
+            unordered_map<string, int> unused(wordCount);
+
+            for (auto j = i; j != next(i, catLength); j += wordLength) {
+                auto pos = unused.find(string(j, next(j, wordLength)));
+
+                if (pos == unused.end() or pos->second == 0) break;
+
+                if (--pos->second == 0) unused.erase(pos);
+            }
+
+            if (unused.size() == 0) result.push_back(distance(begin(s), i));
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\section{Pascal's Triangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:pascals-triangle}
+
+
+\subsubsection{描述}
+Given $numRows$, generate the first $numRows$ of Pascal's triangle.
+
+For example, given $numRows = 5$,
+
+Return
+\begin{Code}
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+\end{Code}
+
+
+\subsubsection{分析}
+本题可以用队列，计算下一行时，给上一行左右各加一个0，然后下一行的每个元素，就等于左上角和右上角之和。
+
+另一种思路，下一行第一个元素和最后一个元素赋值为1，中间的每个元素，等于上一行的左上角和右上角元素之和。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Pascal's Triangle
+class Solution {
+public:
+    vector<vector<int> > generate(int numRows) {
+        vector<vector<int> > result;
+        if(numRows == 0) return result;
+
+        result.push_back(vector<int>(1,1)); //first row
+
+        for(int i = 2; i <= numRows; ++i) {
+            vector<int> thisrow(i,1);  // 本行
+            vector<int> &lastrow = result[i-2];  // 上一行
+
+            for(int j = 1; j < i - 1; ++j) {
+                thisrow[j] = lastrow[j-1] + lastrow[j]; // 左上角和右上角之和
+            }
+            result.push_back(thisrow);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Pascal's Triangle II，见 \S \ref{sec:pascals-triangle-ii}
+\myenddot
+
+
+\section{Pascal's Triangle II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:pascals-triangle-ii}
+
+
+\subsubsection{描述}
+Given an index $k$, return the $k^{th}$ row of the Pascal's triangle.
+
+For example, given $k = 3$,
+
+Return \code{[1,3,3,1]}.
+
+Note: Could you optimize your algorithm to use only $O(k)$ extra space?
+
+
+\subsubsection{分析}
+滚动数组。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Pascal's Triangle
+// 滚动数组
+class Solution {
+public:
+    vector<int> getRow(int rowIndex) {
+        vector<int> result;
+        result.resize(rowIndex + 2);
+        result.assign(result.size(), 0);
+
+        result[1] = 1;
+        for (int i = 0; i < rowIndex; i++) {
+            for (int j = rowIndex + 1; j > 0; j--) {
+                result[j] = result[j - 1] + result[j];
+            }
+        }
+        result.erase(result.begin());
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Pascal's Triangle，见 \S \ref{sec:pascals-triangle}
 \myenddot

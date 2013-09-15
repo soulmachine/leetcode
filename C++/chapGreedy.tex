@@ -78,3 +78,54 @@ public:
 \item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
 \item Best Time to Buy and Sell Stock III，见 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
 \myenddot
+
+
+\section{Longest Substring Without Repeating Characters} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:longest-substring-without-repeating-characters}
+
+
+\subsubsection{描述}
+Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for \code{"abcabcbb"} is \code{"abc"}, which the length is 3. For \code{"bbbbb"} the longest substring is \code{"b"}, with the length of 1.
+
+
+\subsubsection{分析}
+假设子串里含有重复字符，则父串一定含有重复字符，单个子问题就可以决定父问题，因此可以用贪心法。跟动规不同，动规里，单个子问题只能影响父问题，不足以决定父问题。
+
+从左往右扫描，当遇到重复字母时，以上一个重复字母的\fn{index+1}，作为新的搜索起始位置，直到最后一个字母，复杂度是$O(n)$。如图~\ref{fig:longest-substring-without-repeating-characters}所示。
+
+\begin{center}
+\includegraphics[width=300pt]{longest-substring-without-repeating-characters.png}\\
+\figcaption{不含重复字符的最长子串}\label{fig:longest-substring-without-repeating-characters}
+\end{center}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Longest Substring Without Repeating Characters
+// 贪心法
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        const int ASCII_MAX = 26;
+        int last[ASCII_MAX]; // 记录字符上次出现过的位置
+        std::fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化为-1
+        int len = 0, max_len = 0;
+        for (size_t i = 0; i < s.size(); i++, len++) {
+            if (last[s[i] - 'a'] >= 0) {
+                max_len = max(len, max_len);
+                len = 0;
+                i = last[s[i] - 'a'] + 1;
+                std::fill(last, last + ASCII_MAX, -1);   // 重新开始
+            }
+            last[s[i] - 'a'] = i;
+        }
+        return max(len, max_len);  // 别忘了最后一次，例如"abcd"
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
