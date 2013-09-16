@@ -428,6 +428,266 @@ public:
 \myenddot
 
 
+\subsection{Same Tree}
+\label{sec:same-tree}
+
+
+\subsubsection{描述}
+Given two binary trees, write a function to check if they are equal or not.
+
+Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Same Tree
+class Solution {
+public:
+    bool isSameTree(TreeNode *p, TreeNode *q) {
+        if (!p and !q) return true;  // 终止条件
+        if (!p || !q) return false;  // 剪纸
+        return p->val == q->val
+                and isSameTree(p->left, q->left)
+                and isSameTree(p->right, q->right);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Symmetric Tree，见 \S \ref{sec:symmetric-tree}
+\myenddot
+
+
+\subsection{Symmetric Tree}
+\label{sec:symmetric-tree}
+
+
+\subsubsection{描述}
+Given two binary trees, write a function to check if they are equal or not.
+
+Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Symmetric Tree，递归版
+class Solution {
+public:
+    bool isSymmetric(TreeNode *root) {
+        return root ? isSymmetric(root->left, root->right) : true;
+    }
+    bool isSymmetric(TreeNode *left, TreeNode *right) {
+        if (!left and !right) return true;  // 终止条件
+        if (!left or !right) return false;  // 剪枝
+        if (left->val != right->val) return false;  // 剪枝
+        return isSymmetric(left->left, right->right)
+                and isSymmetric(left->right, right->left);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Symmetric Tree，迭代版
+class Solution {
+public:
+    bool isSymmetric (TreeNode* root) {
+        if (!root) return true;
+
+        stack<TreeNode*> s;
+        s.push(root->left);
+        s.push(root->right);
+
+        while (!s.empty ()) {
+            auto lhs = s.top ();
+            s.pop();
+
+            auto rhs = s.top ();
+            s.pop();
+
+            if (!lhs and !rhs) continue;
+            if (!lhs or !rhs) return false;
+            if (lhs->val != rhs->val) return false;
+
+            s.push(lhs->left);
+            s.push(rhs->right);
+
+            s.push(lhs->right);
+            s.push(rhs->left);
+        }
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Same Tree，见 \S \ref{sec:same-tree}
+\myenddot
+
+
+\subsection{Balanced Binary Tree}
+\label{sec:balanced-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, determine if it is height-balanced.
+
+For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Balanced Binary Tree
+class Solution {
+public:
+    bool isBalanced (TreeNode* root) {
+        return balancedHeight (root) >= 0;
+    }
+
+    /**
+     * Returns the height of `root` if `root` is a balanced tree,
+     * otherwise, returns `-1`.
+     */
+    int balancedHeight (TreeNode* root) {
+        if (root == nullptr) return 0;  // 终止条件
+
+        int lhs = balancedHeight (root->left);
+        int rhs = balancedHeight (root->right);
+
+        if (lhs < 0 or rhs < 0 or std::abs(lhs - rhs) > 1) return -1;  // 剪枝
+
+        return std::max(lhs, rhs) + 1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Flatten Binary Tree to Linked List}
+\label{sec:flatten-binary-tree-to-linked-list}
+
+
+\subsubsection{描述}
+Given a binary tree, flatten it to a linked list in-place.
+
+For example, Given
+\begin{Code}
+         1
+        / \
+       2   5
+      / \   \
+     3   4   6
+\end{Code}
+
+The flattened tree should look like:
+\begin{Code}
+   1
+    \
+     2
+      \
+       3
+        \
+         4
+          \
+           5
+            \
+             6
+\end{Code}
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+递归版
+\begin{Code}
+// LeetCode, Flatten Binary Tree to Linked List，递归版
+class Solution {
+public:
+    void flatten(TreeNode *root) {
+        if (root == nullptr) return;  // 终止条件
+        //1.flat the left subtree
+        if (root->left) flatten(root->left);
+
+        //2.flatten the right subtree
+        if (root->right) flatten(root->right);
+
+        //3.if no left return
+        if (nullptr == root->left) return;
+
+        //4.insert left sub tree between root and root->right
+        //4.1.find the last node in left
+        TreeNode ** ptn = & (root->left->right);
+        while (*ptn)
+            ptn = & ((*ptn)->right);
+        //4.2.connect right sub tree after left sub tree
+        *ptn = root->right;
+        //4.3.move left sub tree to the root's right sub tree
+        root->right = root->left;
+        root->left = nullptr;
+    }
+};
+\end{Code}
+
+迭代版
+\begin{Code}
+// LeetCode, Flatten Binary Tree to Linked List，迭代版
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        if (root == nullptr)
+            return;
+
+        stack<TreeNode*> s;
+        s.push(root);
+
+        while (!s.empty()) {
+            auto top = s.top();
+            s.pop();
+
+            if (top->right)
+                s.push(top->right);
+            if (top->left)
+                s.push(top->left);
+
+            top->left = nullptr;
+            if (!s.empty())
+                top->right = s.top();
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
 \section{二叉查找树} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -1036,8 +1296,11 @@ return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 
 
 
 \subsubsection{分析}
-必须要走到叶子节点才能判断，因此中途不能剪枝，只能进行朴素深搜。由于只需要求出一个结果，因此，当左、右任意一棵子树求到了满意结果，都可以及时return。
+题目只要求返回\fn{true}或者\fn{false}，因此不需要记录路径。
 
+由于只需要求出一个结果，因此，当左、右任意一棵子树求到了满意结果，都可以及时return。
+
+由于题目没有说节点的数据一定是正整数，必须要走到叶子节点才能判断，因此中途没法剪枝，只能进行朴素深搜。
 
 \subsubsection{代码}
 
@@ -1093,8 +1356,7 @@ return
 
 
 \subsubsection{分析}
-必须要走到叶子节点才能判断，因此中途不能剪枝，只能进行朴素深搜。且要求出所有结果，左子树求到了满意结果，不能return，要接着求右子树。
-
+跟上一题相比，本题是求路径本身。且要求出所有结果，左子树求到了满意结果，不能return，要接着求右子树。
 
 \subsubsection{代码}
 
@@ -1132,268 +1394,6 @@ private:
 \subsubsection{相关题目}
 \begindot
 \item Path Sum，见 \S \ref{sec:path-sum}
-\myenddot
-
-
-\subsection{Same Tree}
-\label{sec:same-tree}
-
-
-\subsubsection{描述}
-Given two binary trees, write a function to check if they are equal or not.
-
-Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
-
-
-\subsubsection{分析}
-在父节点时就可以及时进行判断，因此本题适合用先根遍历。
-
-
-\subsubsection{代码}
-
-\begin{Code}
-// LeetCode, Same Tree
-class Solution {
-public:
-    bool isSameTree(TreeNode *p, TreeNode *q) {
-        if (!p and !q) return true;
-        if (!p || !q) return false;
-        return p->val == q->val
-                and isSameTree(p->left, q->left)
-                and isSameTree(p->right, q->right);
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item Symmetric Tree，见 \S \ref{sec:symmetric-tree}
-\myenddot
-
-
-\subsection{Symmetric Tree}
-\label{sec:symmetric-tree}
-
-
-\subsubsection{描述}
-Given two binary trees, write a function to check if they are equal or not.
-
-Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
-
-
-\subsubsection{分析}
-在父节点时就可以及时进行判断，因此本题适合用先根遍历。
-
-
-\subsubsection{代码}
-
-\begin{Code}
-// LeetCode, Symmetric Tree，递归版
-class Solution {
-public:
-    bool isSymmetric(TreeNode *root) {
-        return root ? isSymmetric(root->left, root->right) : true;
-    }
-    bool isSymmetric(TreeNode *left, TreeNode *right) {
-        if (!left and !right) return true;
-        if (!left or !right) return false;
-        if (left->val != right->val) return false;
-        return isSymmetric(left->left, right->right)
-                and isSymmetric(left->right, right->left);
-    }
-};
-\end{Code}
-
-\begin{Code}
-// LeetCode, Symmetric Tree，迭代版
-class Solution {
-public:
-    bool isSymmetric (TreeNode* root) {
-        if (!root) return true;
-
-        stack<TreeNode*> s;
-        s.push(root->left);
-        s.push(root->right);
-
-        while (!s.empty ()) {
-            auto lhs = s.top ();
-            s.pop();
-
-            auto rhs = s.top ();
-            s.pop();
-
-            if (!lhs and !rhs) continue;
-            if (!lhs or !rhs) return false;
-            if (lhs->val != rhs->val) return false;
-
-            s.push(lhs->left);
-            s.push(rhs->right);
-
-            s.push(lhs->right);
-            s.push(rhs->left);
-        }
-
-        return true;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item Same Tree，见 \S \ref{sec:same-tree}
-\myenddot
-
-
-\subsection{Balanced Binary Tree}
-\label{sec:balanced-binary-tree}
-
-
-\subsubsection{描述}
-Given a binary tree, determine if it is height-balanced.
-
-For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
-
-
-\subsubsection{分析}
-无
-
-
-\subsubsection{代码}
-\begin{Code}
-// LeetCode, Balanced Binary Tree
-class Solution {
-public:
-    bool isBalanced (TreeNode* root) {
-        return balancedHeight (root) >= 0;
-    }
-
-    /**
-     * Returns the height of `root` if `root` is a balanced tree,
-     * otherwise, returns `-1`.
-     */
-    int balancedHeight (TreeNode* root) {
-        if (root == nullptr)
-            return 0;
-
-        int lhs = balancedHeight (root->left);
-        int rhs = balancedHeight (root->right);
-
-        if (lhs < 0 or rhs < 0 or std::abs (lhs - rhs) > 1)
-            return -1;
-
-        return std::max(lhs, rhs) + 1;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item 无
-\myenddot
-
-
-\subsection{Flatten Binary Tree to Linked List}
-\label{sec:flatten-binary-tree-to-linked-list}
-
-
-\subsubsection{描述}
-Given a binary tree, flatten it to a linked list in-place.
-
-For example, Given
-\begin{Code}
-         1
-        / \
-       2   5
-      / \   \
-     3   4   6
-\end{Code}
-
-The flattened tree should look like:
-\begin{Code}
-   1
-    \
-     2
-      \
-       3
-        \
-         4
-          \
-           5
-            \
-             6
-\end{Code}
-
-\subsubsection{分析}
-无
-
-
-\subsubsection{代码}
-递归版
-\begin{Code}
-// LeetCode, Flatten Binary Tree to Linked List，递归版
-class Solution {
-public:
-    void flatten(TreeNode *root) {
-        if (root == nullptr) return;
-        //1.flat the left subtree
-        if (root->left)
-            flatten(root->left);
-        //2.flatten the right subtree
-        if (root->right)
-            flatten(root->right);
-        //3.if no left return
-        if (nullptr == root->left)
-            return;
-        //4.insert left sub tree between root and root->right
-        //4.1.find the last node in left
-        TreeNode ** ptn = & (root->left->right);
-        while (*ptn)
-            ptn = & ((*ptn)->right);
-        //4.2.connect right sub tree after left sub tree
-        *ptn = root->right;
-        //4.3.move left sub tree to the root's right sub tree
-        root->right = root->left;
-        root->left = nullptr;
-    }
-};
-\end{Code}
-
-迭代版
-\begin{Code}
-// LeetCode, Flatten Binary Tree to Linked List，迭代版
-class Solution {
-public:
-    void flatten(TreeNode* root) {
-        if (root == nullptr)
-            return;
-
-        stack<TreeNode*> s;
-        s.push(root);
-
-        while (!s.empty()) {
-            auto top = s.top();
-            s.pop();
-
-            if (top->right)
-                s.push(top->right);
-            if (top->left)
-                s.push(top->left);
-
-            top->left = nullptr;
-            if (!s.empty())
-                top->right = s.top();
-        }
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item 无
 \myenddot
 
 
@@ -1455,4 +1455,3 @@ private:
 \begindot
 \item Maximum Subarray，见 \S \ref{sec:maximum-subarray}
 \myenddot
-
