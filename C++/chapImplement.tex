@@ -1,4 +1,4 @@
-\chapter{基本实现题}
+\chapter{细节实现题}
 这类题目不考特定的算法，纯粹考察写代码的熟练度。
 
 
@@ -593,4 +593,140 @@ public:
 \subsubsection{相关题目}
 \begindot
 \item Pascal's Triangle，见 \S \ref{sec:pascals-triangle}
+\myenddot
+
+
+\section{Spiral Matrix} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:spiral-matrix}
+
+
+\subsubsection{描述}
+Given a matrix of $m \times n$ elements ($m$ rows, $n$ columns), return all elements of the matrix in spiral order.
+
+For example,
+Given the following matrix:
+\begin{Code}
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+\end{Code}
+You should return \fn{[1,2,3,6,9,8,7,4,5]}.
+
+
+\subsubsection{分析}
+无
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Spiral Matrix
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int> > &matrix) {
+        const int m = matrix.size();
+        if (m == 0) return vector<int>();
+        const int n = matrix[0].size();
+        if (n == 0) return vector<int>();
+
+        vector<int> result(m * n, 0);
+
+        int layer, index;
+        for (layer = min(m, n), index = 0; layer > 1; layer -= 2) {
+            const int offset = (min(m, n) - layer) / 2;
+            // left to right
+            for (int i = offset; i < n - offset - 1; i++)
+                result[index++] = matrix[offset][i];
+            // top to bottom
+            for (int i = offset; i < m - offset - 1; i++)
+                result[index++] = matrix[i][n - offset - 1];
+            // right to left
+            for (int i = n - offset - 1; i > offset; i--)
+                result[index++] = matrix[m - offset - 1][i];
+            // bottom to top
+            for (int i = m - offset - 1; i > offset; i--)
+                result[index++] = matrix[i][offset];
+        }
+
+        if (layer == 1) {  // 最后一行
+            if (m < n)
+                for (int i = m / 2; i < n - m / 2; i++)
+                    result[index++] = matrix[m / 2][i];
+            else
+                for (int i = n / 2; i < m - n / 2; i++)
+                       result[index++] = matrix[i][n / 2];
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Spiral Matrix II ，见 \S \ref{sec:spiral-matrix-ii}
+\myenddot
+
+
+\section{Spiral Matrix II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:spiral-matrix-ii}
+
+
+\subsubsection{描述}
+Given an integer $n$, generate a square matrix filled with elements from 1 to $n^2$ in spiral order.
+
+For example,
+Given $n = 3$,
+
+You should return the following matrix:
+\begin{Code}
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]
+\end{Code}
+
+
+\subsubsection{分析}
+这题比上一题要简单。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Spiral Matrix II
+class Solution {
+public:
+    vector<vector<int> > generateMatrix(int n) {
+        if (n == 0) return vector<vector<int> >();
+
+        vector<vector<int> > matrix(n, vector<int>(n, 0));
+
+        int num = 1, layer;
+        for (layer = n; layer > 1; layer -= 2) {
+            const int offset = (n - layer) / 2;
+            // left to right
+            for (int i = offset; i < n - offset - 1; i++)
+                matrix[offset][i] = num++;
+            // top to bottom
+            for (int i = offset; i < n - offset - 1; i++)
+                matrix[i][n - offset - 1] = num++;
+            // right to left
+            for (int i = n - offset - 1; i > offset; i--)
+                matrix[n - offset - 1][i] = num++;
+            // bottom to top
+            for (int i = n - offset - 1; i > offset; i--)
+                matrix[i][offset] = num++;
+        }
+        if (layer == 1) matrix[n / 2][n / 2] = num;
+
+        return matrix;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Spiral Matrix ，见 \S \ref{sec:spiral-matrix}
 \myenddot

@@ -1,6 +1,153 @@
 \chapter{贪心法}
 
 
+\section{Jump Game} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:jump-game}
+
+
+\subsubsection{描述}
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Determine if you are able to reach the last index.
+
+For example:
+
+\code{A = [2,3,1,1,4]}, return true.
+
+\code{A = [3,2,1,0,4]}, return false.
+
+
+\subsubsection{分析}
+由于每层最多可以跳\fn{A[i]}步，也可以跳0或1步，因此如果能到达最高层，则说明每一层都可以到达。有了这个条件，说明可以用贪心法。
+
+思路一：正向，从0出发，一层一层网上跳，看最后能不能超过最高层，能超过，说明能到达，否则不能到达。
+
+思路二：逆向，从最高层下楼梯，一层一层下降，看最后能不能下降到第0层。
+
+思路三：如果不敢用贪心，可以用动规，设状态为\fn{f[i]}，表示从第0层出发，走到\fn{A[i]}时剩余的最大步数，则状态转移方程为：
+$$
+f[i] = max(f[i-1], A[i-1])-1, i > 0
+$$
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Jump Game
+// 思路一
+class Solution {
+public:
+    bool canJump(int A[], int n) {
+        int right_most = 0; // 最右能跳到哪里
+        for (int start = 0; start <= right_most; start++) {
+            if (A[start] + start > right_most)
+                right_most = A[start] + start;
+
+            if (right_most >= n - 1) return true;
+        }
+        return false;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Jump Game
+// 思路二
+class Solution {
+public:
+    bool canJump (int A[], int n) {
+        if (n == 0) return true;
+        // 逆向下楼梯，最左能下降到第几层
+        int left_most = n - 1;
+
+        for (int i = n - 2; i >= 0; --i)
+            if (i + A[i] >= left_most)
+                left_most = i;
+
+        return left_most == 0;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Jump Game
+// 思路三，动规
+class Solution {
+public:
+    bool canJump(int A[], int n) {
+        vector<int> f(n, 0);
+        f[0] = 0;
+        for (int i = 1; i < n; i++) {
+            f[i] = max(f[i - 1], A[i - 1]) - 1;
+            if (f[i] < 0) return false;;
+        }
+        return f[n - 1] >= 0;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Jump Game II ，见 \S \ref{sec:jump-game-ii}
+\myenddot
+
+
+\section{Jump Game II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:jump-game-ii}
+
+
+\subsubsection{描述}
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Your goal is to reach the last index in the minimum number of jumps.
+
+For example:
+Given array \code{A = [2,3,1,1,4]}
+
+The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+
+
+\subsubsection{分析}
+贪心法。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Jump Game II
+class Solution {
+public:
+    int jump(int A[], int n) {
+        int step = 0; // 最小步数
+        int left = 0;
+        int right = 0;  // [left, right]是当前能覆盖的区间
+        if (n == 1) return 0;
+
+        while (left <= right) { // 尝试从每一层跳最远
+            ++step;
+            int old_right = right;
+            for (int i = left; i <= old_right; ++i) {
+                int new_right = i + A[i];
+                if (new_right >= n - 1) return step;
+
+                if (new_right > right) right = new_right;
+            }
+            left = old_right + 1;
+        }
+        return 0;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Jump Game ，见 \S \ref{sec:jump-game}
+\myenddot
+
+
 \section{Best Time to Buy and Sell Stock} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:best-time-to-buy-and-sell-stock}
 

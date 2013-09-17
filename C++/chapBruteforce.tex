@@ -77,16 +77,15 @@ class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
         vector<vector<int> > result;
-        bool *selected = new bool[S.size()];
+        vector<bool> selected(S.size(), false);
         std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
 
         subsets(S, selected, 0, result);
-        delete[] selected;
         return result;
     }
 
 private:
-    static void subsets(const vector<int> &S, bool selected[], int step, 
+    static void subsets(const vector<int> &S, vector<bool> &selected, int step,
             vector<vector<int> > &result) {
         if (step == S.size()) {
             vector<int> subset;
@@ -112,11 +111,12 @@ private:
 
 这种方法最巧妙。因为它不仅能生成子集，还能方便的表示集合的并、交、差等集合运算。设两个集合的位向量分别为$B_1$和$B_2$，则$B_1|B_2, B_1 \& B_2, B_1 \^ B_2$分别对应集合的并、交、对称差。
 
+二进制法，也可以看做是位向量法，只不过更加优化。
 
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets
-// 二进制法
+// 二进制法，也可以看做是位向量法，只不过更加优化
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
@@ -220,4 +220,234 @@ private:
 \subsubsection{相关题目}
 \begindot
 \item Subsets，见 \S \ref{sec:subsets}
+\myenddot
+
+
+\section{Permutations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:permutations}
+
+
+\subsection{next_permutation()}
+\label{sec:next-permutation}
+偷懒的做法，可以直接使用\fn{std::next_permutation}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Permutations
+class Solution {
+public:
+    vector<vector<int> > permute(vector<int> &num) {
+        vector<vector<int> > result;
+        std::sort(num.begin(), num.end());
+
+        do {
+            result.push_back(num);
+        } while(std::next_permutation(num.begin(), num.end()));
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsection{重新实现next_permutation()}
+\label{sec:next-permutation-implement}
+算法过程如图~\ref{fig:permutation}所示（来自\myurl{http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html}）。
+
+\begin{center}
+\includegraphics[width=360pt]{next-permutation.png}\\
+\figcaption{下一个排列算法流程}\label{fig:permutation}
+\end{center}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Permutations
+// 重新实现 next_permutation()
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& num) {
+        sort(num.begin(), num.end());
+
+        vector<vector<int>> permutations;
+
+        do {
+            permutations.push_back(num);
+        } while (next_permutation(num.begin(), num.end()));
+
+        return permutations;
+    }
+
+    template<typename BidiIt>
+    bool next_permutation(BidiIt first, BidiIt last) {
+        // Get a reversed range to simplify reversed traversal.
+        const auto rfirst = reverse_iterator<BidiIt>(last);
+        const auto rlast = reverse_iterator<BidiIt>(first);
+
+        // Begin from the second last element to the first element.
+        auto pivot = next(rfirst);
+
+        // Find `pivot`, which is the first element that is no less than its
+        // successor.  `Prev` is used since `pivort` is a `reversed_iterator`.
+        while (pivot != rlast and !(*pivot < *prev(pivot)))
+            ++pivot;
+
+        // No such elemenet found, current sequence is already the largest
+        // permutation, then rearrange to the first permutation and return false.
+        if (pivot == rlast) {
+            reverse(rfirst, rlast);
+            return false;
+        }
+
+        // Scan from right to left, find the first element that is greater than
+        // `pivot`.
+        auto pos = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
+
+        swap(*pos, *pivot);
+        reverse(rfirst, pivot);
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsection{深搜}
+本题是求路径本身，求所有解，函数参数需要标记当前走到了哪步，还需要中间结果的引用，最终结果的引用。
+
+扩展节点，每次从左到右，选一个没有出现过的元素。
+
+本题不需要判重，因为状态装换图是一颗有层次的树。收敛条件是当前走到了最后一个元素。
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Permutations
+// 深搜
+class Solution {
+public:
+    vector<vector<int> > permute(vector<int>& num) {
+        std::sort(num.begin(), num.end());
+
+        vector<vector<int>> result;
+        vector<int> p(num.size(), 0);  // 中间结果
+
+        permute(num.begin(), num.end(), 0, p, result);
+        return result;
+    }
+private:
+    typedef vector<int>::const_iterator Iter;
+    void permute(Iter first, Iter last, int cur, vector<int> &p,
+            vector<vector<int> > &result) {
+        if ((first + cur) == last) {  // 收敛条件
+            result.push_back(p);
+        }
+
+        // 扩展状态
+        for (auto i = first; i != last; i++) {
+            bool used = false;
+            // 查找 *i 是否在p[0, cur) 中出现过
+            for (auto j = p.begin(); j != p.begin() + cur; j++) {
+                if (*i == *j) {
+                    used = true;
+                    break;
+                }
+            }
+            if (!used) {
+                p[cur] = *i;
+                permute(first, last, cur + 1, p, result);
+                // 不需要恢复P[cur]，返回上层cur会自动减1，P[cur]会被覆盖
+            }
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Permutations II ，见 \S \ref{sec:permutations-ii}
+\myenddot
+
+
+\section{Permutations II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:permutations-ii}
+
+
+\subsection{next_permutation()}
+上一题中的代码，见\S \ref{sec:next-permutation} 节，也适用于本题。
+
+
+\subsection{重新实现next_permutation()}
+上一题中的代码，见\S \ref{sec:next-permutation-implement} 节，也适用于本题。
+
+
+\subsection{深搜}
+递归函数\fn{permute()}的参数\fn{p}，是中间结果，它的长度又能标记当前走到了哪一步，用于判断收敛条件。
+
+扩展节点，每次从小到大，选一个没有被用光的元素，直到所有元素被用光。
+
+本题不需要判重，因为状态装换图是一颗有层次的树。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Permutations II
+// 深搜
+class Solution {
+public:
+    vector<vector<int> > permuteUnique(vector<int>& num) {
+        std::sort(num.begin(), num.end());
+
+        unordered_map<int, int> count_map; // 记录每个元素的出现次数
+        std::for_each(num.begin(), num.end(), [&count_map](int e) {
+            if (count_map.find(e) != count_map.end())
+                count_map[e]++;
+            else
+                count_map[e] = 1;
+        });
+
+        // 将map里的pair拷贝到一个vector里
+        std::vector<pair<int, int> > elems;
+        std::for_each(count_map.begin(), count_map.end(),
+                [&elems](const pair<int, int> &e) {
+                    elems.push_back(e);
+                });
+
+        vector<vector<int>> result; // 最终结果
+        vector<int> p;  // 中间结果
+
+        permute(num.size(), elems.begin(), elems.end(), 0, p, result);
+        return result;
+    }
+
+private:
+    typedef std::vector<pair<int, int> >::const_iterator Iter;
+
+    void permute(const size_t n, Iter first, Iter last,
+            vector<int> &p, vector<vector<int> > &result) {
+        if (n == p.size()) {  // 收敛条件
+            result.push_back(p);
+        }
+
+        // 扩展状态
+        for (auto i = first; i != last; i++) {
+            int count = 0; // 统计 *i 在p中出现过多少次
+            for (auto j = p.begin(); j != p.end(); j++) {
+                if (i->first == *j) {
+                    count ++;
+                }
+            }
+            if (count < i->second) {
+                p.push_back(i->first);
+                permute(n, first, last, p, result);
+                p.pop_back(); // 撤销动作，返回上一层
+            }
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Permutations ，见 \S \ref{sec:permutations}
 \myenddot

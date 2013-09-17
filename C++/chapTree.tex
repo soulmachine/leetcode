@@ -1455,3 +1455,160 @@ private:
 \begindot
 \item Maximum Subarray，见 \S \ref{sec:maximum-subarray}
 \myenddot
+
+
+\section{Populating Next Right Pointers in Each Node} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:populating-next-right-pointers-in-each-node}
+
+
+\subsubsection{描述}
+Given a binary tree
+\begin{Code}
+struct TreeLinkNode {
+   int val;
+   TreeLinkNode *left, *right, *next;
+   TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+};
+\end{Code}
+
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to \fn{NULL}.
+
+Initially, all next pointers are set to \fn{NULL}.
+
+Note:
+\begindot
+\item You may only use constant extra space.
+\item You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
+\myenddot
+
+For example,
+Given the following perfect binary tree,
+\begin{Code}
+         1
+       /  \
+      2    3
+     / \  / \
+    4  5  6  7
+\end{Code}
+
+After calling your function, the tree should look like:
+\begin{Code}
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \  / \
+    4->5->6->7 -> NULL
+\end{Code}
+
+
+\subsubsection{分析}
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Populating Next Right Pointers in Each Node
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        connect(root, NULL);
+    }
+private:
+    void connect(TreeLinkNode *root, TreeLinkNode *sibling) {
+        if (root == nullptr)
+            return;
+        else
+            root->next = sibling;
+
+        connect(root->left, root->right);
+        if (sibling)
+            connect(root->right, sibling->left);
+        else
+            connect(root->right, nullptr);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Populating Next Right Pointers in Each Node II，见 \S \ref{sec:populating-next-right-pointers-in-each-node-ii}
+\myenddot
+
+
+
+\section{Populating Next Right Pointers in Each Node II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:populating-next-right-pointers-in-each-node-ii}
+
+
+\subsubsection{描述}
+Follow up for problem "Populating Next Right Pointers in Each Node".
+
+What if the given tree could be any binary tree? Would your previous solution still work?
+
+Note: You may only use constant extra space.
+
+For example,
+Given the following binary tree,
+\begin{Code}
+         1
+       /  \
+      2    3
+     / \    \
+    4   5    7
+\end{Code}
+
+After calling your function, the tree should look like:
+\begin{Code}
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \    \
+    4-> 5 -> 7 -> NULL
+\end{Code}
+
+
+\subsubsection{分析}
+要处理一个节点，可能需要最右边的兄弟节点，因此用广搜。
+
+同时注意，这题的代码原封不动，可以解决上一题！
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Populating Next Right Pointers in Each Node II
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        vector<vector<int> > result;
+        if (root == nullptr)
+            return;
+
+        vector<TreeLinkNode*> nextLevel, currentLevel;
+        currentLevel.push_back(root);
+        while (!currentLevel.empty()) {
+            while (!currentLevel.empty()) {
+                TreeLinkNode* node = currentLevel.front();
+                currentLevel.erase(currentLevel.begin());
+
+                if (!currentLevel.empty())
+                    node->next = currentLevel.front();
+                else
+                    node->next = nullptr;
+
+                if (node->left != nullptr)
+                    nextLevel.push_back(node->left);
+                if (node->right != nullptr)
+                    nextLevel.push_back(node->right);
+            }
+            swap(nextLevel, currentLevel); //!!! how to use swap
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Populating Next Right Pointers in Each Node，见 \S \ref{sec:populating-next-right-pointers-in-each-node}
+\myenddot

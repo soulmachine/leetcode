@@ -1,6 +1,57 @@
 \chapter{动态规划}
 
 
+\section{Triangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:triangle}
+
+
+\subsubsection{描述}
+Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+For example, given the following triangle
+\begin{Code}
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+\end{Code}
+The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+
+Note: Bonus point if you are able to do this using only $O(n)$ extra space, where n is the total number of rows in the triangle.
+
+
+\subsubsection{分析}
+设状态为$f(i, j)$，表示从从位置$(i,j)$出发，路径的最小和，则状态转移方程为
+$$
+f(i,j)=\min\left\{f(i,j+1),f(i+1,j+1)\right\}+(i,j)
+$$
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Triangle
+class Solution {
+public:
+    int minimumTotal (vector<vector<int>>& triangle) {
+        for (int i = triangle.size() - 2; i >= 0; --i)
+            for (int j = 0; j < i + 1; ++j)
+                triangle[i][j] += std::min(triangle[i + 1][j],
+                        triangle[i + 1][j + 1]);
+
+        return triangle [0][0];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
 \section{Maximum Subarray} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:maximum-subarray}
 
@@ -292,57 +343,6 @@ public:
 \begindot
 \item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
 \item Best Time to Buy and Sell Stock II，见 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
-\myenddot
-
-
-\section{Triangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:triangle}
-
-
-\subsubsection{描述}
-Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
-
-For example, given the following triangle
-\begin{Code}
-[
-     [2],
-    [3,4],
-   [6,5,7],
-  [4,1,8,3]
-]
-\end{Code}
-The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
-
-Note: Bonus point if you are able to do this using only $O(n)$ extra space, where n is the total number of rows in the triangle.
-
-
-\subsubsection{分析}
-设状态为$f(i, j)$，表示从从位置$(i,j)$出发，路径的最小和，则状态转移方程为
-$$
-f(i,j)=\min\left\{f(i,j+1),f(i+1,j+1)\right\}+(i,j)
-$$
-
-
-\subsubsection{代码}
-\begin{Code}
-// LeetCode, Triangle
-class Solution {
-public:
-    int minimumTotal (vector<vector<int>>& triangle) {
-        for (int i = triangle.size() - 2; i >= 0; --i)
-            for (int j = 0; j < i + 1; ++j)
-                triangle[i][j] += std::min(triangle[i + 1][j],
-                        triangle[i + 1][j + 1]);
-
-        return triangle [0][0];
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item 无
 \myenddot
 
 
