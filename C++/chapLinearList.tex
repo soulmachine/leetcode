@@ -54,8 +54,8 @@ public:
     OutIt removeDuplicates(InIt first, InIt last, OutIt output) {
         while (first != last) {
             *output++ = *first;
-            first = std::find_if(first, last,
-                    std::bind1st(std::not_equal_to<int>(), *first));
+            first = find_if(first, last,
+                    bind1st(not_equal_to<int>(), *first));
         }
 
         return output;

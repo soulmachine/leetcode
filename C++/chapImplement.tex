@@ -223,8 +223,8 @@ public:
         const int ASCII_MAX = 256;
         int appeared_count[ASCII_MAX];
         int expected_count[ASCII_MAX];
-        std::fill(appeared_count, appeared_count + ASCII_MAX, 0);
-        std::fill(expected_count, expected_count + ASCII_MAX, 0);
+        fill(appeared_count, appeared_count + ASCII_MAX, 0);
+        fill(expected_count, expected_count + ASCII_MAX, 0);
 
         for (size_t i = 0; i < T.size(); i++) expected_count[T[i]]++;
 
@@ -357,7 +357,7 @@ public:
         bool started = false; // 用于跳过前导0
         for (auto i = elems.rbegin(); i != elems.rend(); i++) {
             if (started) { // 如果多余的0已经都跳过，则输出
-                result << std::setw(RADIX_LEN) << std::setfill('0') << *i;
+                result << setw(RADIX_LEN) << setfill('0') << *i;
             } else {
                 result << *i;
                 started = true; // 碰到第一个非0的值，就说明多余的0已经都跳过

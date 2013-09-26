@@ -153,8 +153,8 @@ public:
     string addBinary(string a, string b) {
         string result;
         const size_t max_len = a.size() > b.size() ? a.size() : b.size();
-        std::reverse(a.begin(), a.end());
-        std::reverse(b.begin(), b.end());
+        reverse(a.begin(), a.end());
+        reverse(b.begin(), b.end());
         int carry = 0;
         for (size_t i = 0; i < max_len; i++) {
             const int ai = i < a.size() ? a[i] - '0' : 0;
@@ -260,7 +260,7 @@ public:
     string longestPalindrome(string s) {
         const int len = s.size();
         int f[len][len];
-        memset(f, 0, len * len * sizeof(int)); //TODO: std::fill, fill_n
+        memset(f, 0, len * len * sizeof(int)); //TODO: fill, fill_n
         int maxL = 1, start = 0;  // 最长回文子串的长度，起点
 
         for (size_t i = 0; i < s.size(); i++) {

@@ -288,7 +288,7 @@ public:
     vector<int> inorderTraversal(TreeNode *root) {
         vector<int> result;
         const TreeNode *p = root;
-        std::stack<const TreeNode *> s;
+        stack<const TreeNode *> s;
 
         while (!s.empty() || p != nullptr) {
             if (p != nullptr) {
@@ -467,7 +467,7 @@ public:
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
-        std::stack<TreeNode*> s;
+        stack<TreeNode*> s;
         s.push(p);
         s.push(q);
 
@@ -604,9 +604,9 @@ public:
         int lhs = balancedHeight (root->left);
         int rhs = balancedHeight (root->right);
 
-        if (lhs < 0 || rhs < 0 || std::abs(lhs - rhs) > 1) return -1;  // 剪枝
+        if (lhs < 0 || rhs < 0 || abs(lhs - rhs) > 1) return -1;  // 剪枝
 
-        return std::max(lhs, rhs) + 1; // 三方合并
+        return max(lhs, rhs) + 1; // 三方合并
     }
 };
 \end{Code}
@@ -949,7 +949,7 @@ public:
     template<typename RandomAccessIterator>
     TreeNode* sortedArrayToBST (RandomAccessIterator first,
             RandomAccessIterator last) {
-        const auto length = std::distance(first, last);
+        const auto length = distance(first, last);
 
         if (length == 0) return nullptr;  // 终止条件
         if (length == 1) return new TreeNode(*first); // 收敛条件
@@ -1104,7 +1104,7 @@ private:
     void minDepth(TreeNode *root, int cur) {
         if (root != nullptr) {
             if (root->left == nullptr && root->right == nullptr) { // 叶子节点
-                d = std::min(cur, d);
+                d = min(cur, d);
                 return;
             }
             if (cur < d) { // 剪枝
@@ -1129,7 +1129,7 @@ public:
         int result = INT_MAX;
 
         stack<pair<TreeNode*, int>> s;
-        s.push(std::make_pair(root, 1));
+        s.push(make_pair(root, 1));
 
         while (!s.empty()) {
             auto node = s.top().first;
@@ -1140,10 +1140,10 @@ public:
                 result = min(result, depth);
 
             if (node->left && result > depth) // 深度控制，剪枝
-                s.push(std::make_pair(node->left, depth + 1));
+                s.push(make_pair(node->left, depth + 1));
 
             if (node->right && result > depth) // 深度控制，剪枝
-                s.push(std::make_pair(node->right, depth + 1));
+                s.push(make_pair(node->right, depth + 1));
         }
 
         return result;
@@ -1181,7 +1181,7 @@ public:
 
         int lmax = maxDepth(root->left);
         int rmax = maxDepth(root->right);
-        return std::max(lmax, rmax) + 1;
+        return max(lmax, rmax) + 1;
     }
 };
 \end{Code}
@@ -1217,8 +1217,8 @@ You may assume that duplicates do not exist in the tree.
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return buildTree(std::begin(preorder), std::end(preorder),
-                std::begin(inorder), std::end(inorder));
+        return buildTree(begin(preorder), end(preorder),
+                begin(inorder), end(inorder));
     }
 
     template<typename InputIterator>
@@ -1229,13 +1229,13 @@ public:
 
         auto root = new TreeNode(*pre_first);
 
-        auto inRootPos = std::find(in_first, in_last, *pre_first);
-        auto leftSize = std::distance(in_first, inRootPos);
+        auto inRootPos = find(in_first, in_last, *pre_first);
+        auto leftSize = distance(in_first, inRootPos);
 
-        root->left = buildTree(std::next(pre_first), std::next(pre_first,
-                leftSize + 1), in_first, std::next(in_first, leftSize));
-        root->right = buildTree(std::next(pre_first, leftSize + 1), pre_last,
-                std::next(inRootPos), in_last);
+        root->left = buildTree(next(pre_first), next(pre_first,
+                leftSize + 1), in_first, next(in_first, leftSize));
+        root->right = buildTree(next(pre_first, leftSize + 1), pre_last,
+                next(inRootPos), in_last);
 
         return root;
     }
@@ -1270,8 +1270,8 @@ You may assume that duplicates do not exist in the tree.
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return buildTree(std::begin(inorder), std::end(inorder),
-                std::begin(postorder), std::end(postorder));
+        return buildTree(begin(inorder), end(inorder),
+                begin(postorder), end(postorder));
     }
 
     template<typename BidiIt>
@@ -1280,15 +1280,15 @@ public:
         if (in_first ==in_last) return nullptr;
         if (post_first == post_last) return nullptr;
 
-        const auto val = *std::prev(post_last);
+        const auto val = *prev(post_last);
         TreeNode* root = new TreeNode(val);
 
-        auto in_root_pos = std::find(in_first, in_last, val);
-        auto left_size = std::distance(in_first, in_root_pos);
-        auto post_left_last = std::next(post_first, left_size);
+        auto in_root_pos = find(in_first, in_last, val);
+        auto left_size = distance(in_first, in_root_pos);
+        auto post_left_last = next(post_first, left_size);
 
         root->left = buildTree(in_first, in_root_pos, post_first, post_left_last);
-        root->right = buildTree(std::next(in_root_pos), in_last, post_left_last,
+        root->right = buildTree(next(in_root_pos), in_last, post_left_last,
                 prev(post_last));
 
         return root;
@@ -1475,8 +1475,8 @@ private:
         int sum = root->val;
         if (l > 0) sum += l;
         if (r > 0) sum += r;
-        max = std::max(max, sum);
-        return std::max(r, l) > 0 ? std::max(r, l) + root->val : root->val;
+        max = max(max, sum);
+        return max(r, l) > 0 ? max(r, l) + root->val : root->val;
     }
 };
 \end{Code}

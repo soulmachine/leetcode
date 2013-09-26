@@ -632,7 +632,7 @@ A solution set is:
 class Solution {
 public:
     vector<vector<int> > combinationSum(vector<int> &nums, int target) {
-        std::sort(nums.begin(), nums.end());
+        sort(nums.begin(), nums.end());
         vector<vector<int> > result; // 最终结果
         vector<int> intermediate; // 中间结果
         dfs(nums, target, 0, intermediate, result);
@@ -700,7 +700,7 @@ A solution set is:
 class Solution {
 public:
     vector<vector<int> > combinationSum2(vector<int> &nums, int target) {
-        std::sort(nums.begin(), nums.end()); // 跟第 50 行配合，
+        sort(nums.begin(), nums.end()); // 跟第 50 行配合，
                                              // 确保每个元素最多只用一次
         vector<vector<int> > result;
         vector<int> intermediate;

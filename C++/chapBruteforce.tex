@@ -41,7 +41,7 @@ public:
     vector<vector<int> > subsets(vector<int> &S) {
         vector<vector<int> > result;
         vector<int> cur;
-        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
 
         subsets(S, cur, 0, result);
         return result;
@@ -78,7 +78,7 @@ public:
     vector<vector<int> > subsets(vector<int> &S) {
         vector<vector<int> > result;
         vector<bool> selected(S.size(), false);
-        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
 
         subsets(S, selected, 0, result);
         return result;
@@ -121,7 +121,7 @@ class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
         vector<vector<int> > result;
-        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
         const size_t n = S.size();
         vector<int> v;
 
@@ -181,10 +181,10 @@ class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
         vector<vector<int> > result;
-        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
 
         unordered_map<int, int> count_map; // 记录每个元素的出现次数
-        std::for_each(S.begin(), S.end(), [&count_map](int e) {
+        for_each(S.begin(), S.end(), [&count_map](int e) {
             if (count_map.find(e) != count_map.end())
                 count_map[e]++;
             else
@@ -192,20 +192,20 @@ public:
         });
 
         // 将map里的pair拷贝到一个vector里
-        std::vector<pair<int, int> > elems;
-        std::for_each(count_map.begin(), count_map.end(),
+        vector<pair<int, int> > elems;
+        for_each(count_map.begin(), count_map.end(),
                 [&elems](const pair<int, int> &e) {
                     elems.push_back(e);
                 });
-        std::sort(elems.begin(), elems.end());
-        std::vector<int> path; // 中间结果
+        sort(elems.begin(), elems.end());
+        vector<int> path; // 中间结果
 
         subsets(elems, 0, path, result);
         return result;
     }
 
 private:
-    static void subsets(const std::vector<pair<int, int> > &elems,
+    static void subsets(const vector<pair<int, int> > &elems,
             size_t step, vector<int> &path, vector<vector<int> > &result) {
         if (step == elems.size()) {
             result.push_back(path);
@@ -232,15 +232,15 @@ class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
         vector<vector<int> > result;
-        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
-        std::vector<int> count(S.back() - S.front() + 1, 0);
+        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        vector<int> count(S.back() - S.front() + 1, 0);
         // 计算所有元素的个数
         for(auto i = S.begin(); i != S.end(); i++) {
             count[*i - S[0]]++;
         }
 
         // 每个元素选择了多少个
-        std::vector<int> selected(S.back() - S.front() + 1, -1);
+        vector<int> selected(S.back() - S.front() + 1, -1);
 
         subsets(S, count, selected, 0, result);
         return result;
@@ -281,7 +281,7 @@ private:
 
 \subsection{next_permutation()}
 \label{sec:next-permutation}
-偷懒的做法，可以直接使用\fn{std::next_permutation}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
+偷懒的做法，可以直接使用\fn{next_permutation}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
 
 \subsubsection{代码}
 \begin{Code}
@@ -290,11 +290,11 @@ class Solution {
 public:
     vector<vector<int> > permute(vector<int> &num) {
         vector<vector<int> > result;
-        std::sort(num.begin(), num.end());
+        sort(num.begin(), num.end());
 
         do {
             result.push_back(num);
-        } while(std::next_permutation(num.begin(), num.end()));
+        } while(next_permutation(num.begin(), num.end()));
         return result;
     }
 };
@@ -377,7 +377,7 @@ public:
 class Solution {
 public:
     vector<vector<int> > permute(vector<int>& num) {
-        std::sort(num.begin(), num.end());
+        sort(num.begin(), num.end());
 
         vector<vector<int>> result;
         vector<int> p(num.size(), 0);  // 中间结果
@@ -447,10 +447,10 @@ private:
 class Solution {
 public:
     vector<vector<int> > permuteUnique(vector<int>& num) {
-        std::sort(num.begin(), num.end());
+        sort(num.begin(), num.end());
 
         unordered_map<int, int> count_map; // 记录每个元素的出现次数
-        std::for_each(num.begin(), num.end(), [&count_map](int e) {
+        for_each(num.begin(), num.end(), [&count_map](int e) {
             if (count_map.find(e) != count_map.end())
                 count_map[e]++;
             else
@@ -458,8 +458,8 @@ public:
         });
 
         // 将map里的pair拷贝到一个vector里
-        std::vector<pair<int, int> > elems;
-        std::for_each(count_map.begin(), count_map.end(),
+        vector<pair<int, int> > elems;
+        for_each(count_map.begin(), count_map.end(),
                 [&elems](const pair<int, int> &e) {
                     elems.push_back(e);
                 });
@@ -474,7 +474,7 @@ public:
 
 private:
     size_t n;
-    typedef std::vector<pair<int, int> >::const_iterator Iter;
+    typedef vector<pair<int, int> >::const_iterator Iter;
 
     void permute(Iter first, Iter last, vector<int> &p,
             vector<vector<int> > &result) {

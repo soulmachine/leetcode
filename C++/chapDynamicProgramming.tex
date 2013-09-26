@@ -37,7 +37,7 @@ public:
     int minimumTotal (vector<vector<int>>& triangle) {
         for (int i = triangle.size() - 2; i >= 0; --i)
             for (int j = 0; j < i + 1; ++j)
-                triangle[i][j] += std::min(triangle[i + 1][j],
+                triangle[i][j] += min(triangle[i + 1][j],
                         triangle[i + 1][j + 1]);
 
         return triangle [0][0];
@@ -320,13 +320,13 @@ public:
         vector<int> g(n, 0);
 
         for (int i = 1, valley = prices[0]; i < n; ++i) {
-            valley = std::min(valley, prices[i]);
-            f[i] = std::max(f[i - 1], prices[i] - valley);
+            valley = min(valley, prices[i]);
+            f[i] = max(f[i - 1], prices[i] - valley);
         }
 
         for (int i = n - 2, peak = prices[n - 1]; i >= 0; --i) {
-            peak = std::max(peak, prices[i]);
-            g[i] = std::max(g[i], peak - prices[i]);
+            peak = max(peak, prices[i]);
+            g[i] = max(g[i], peak - prices[i]);
         }
 
         int maxProfit = 0;
@@ -517,7 +517,7 @@ Given two strings $s1$ and $s2$ of the same length, determine if $s2$ is a scram
 
 剪枝可以五花八门，要充分观察，充分利用信息，找到能让节点提前返回的条件。例如，判断两个字符串是否互为scamble，至少要求每个字符在两个字符串中出现的次数要相等，如果不相等则返回false。
 
-加缓存，可以用数组或HashMap。本题维数较高，用HashMap，\fn{std::map}和\fn{std::unordered_map}均可。
+加缓存，可以用数组或HashMap。本题维数较高，用HashMap，\fn{map}和\fn{unordered_map}均可。
 
 既然可以用记忆化搜索，这题也一定可以用动规。设状态为\fn{f[i][j][k]}，表示长度为$i$，起点为\fn{s1[j]}和起点为\fn{s2[]}两个字符串是否互为scramble，则状态转移方程为
 \begin{Code}
@@ -573,7 +573,7 @@ private:
 
         // 剪枝，提前返回
         int A[26]; // 每个字符的计数器
-        std::fill(A, A + 26, 0);
+        fill(A, A + 26, 0);
         for(int i = 0; i < length; i++) A[*(first1+i)-'a']++;
         for(int i = 0; i < length; i++) A[*(first2+i)-'a']--;
         for(int i = 0; i < 26; i++) if (A[i] != 0) return false;
@@ -637,7 +637,7 @@ namespace std {
 template<> struct hash<Key> {
     size_t operator()(const Key & x) const {
         Iterator first1, last1, first2;
-        std::tie(first1, last1, first2) = x;
+        tie(first1, last1, first2) = x;
 
         int result = *first1;
         result = result * 31 + *last1;

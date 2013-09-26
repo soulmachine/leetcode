@@ -173,8 +173,8 @@ public:
         int cur_min = prices[0]; // 当前最小
 
         for (int i = 1; i < prices.size(); i++) {
-            profit = std::max(profit, prices[i] - cur_min);
-            cur_min = std::min(cur_min, prices[i]);
+            profit = max(profit, prices[i] - cur_min);
+            cur_min = min(cur_min, prices[i]);
         }
         return profit;
     }
@@ -255,14 +255,14 @@ public:
     int lengthOfLongestSubstring(string s) {
         const int ASCII_MAX = 26;
         int last[ASCII_MAX]; // 记录字符上次出现过的位置
-        std::fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化为-1
+        fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化为-1
         int len = 0, max_len = 0;
         for (size_t i = 0; i < s.size(); i++, len++) {
             if (last[s[i] - 'a'] >= 0) {
                 max_len = max(len, max_len);
                 len = 0;
                 i = last[s[i] - 'a'] + 1;
-                std::fill(last, last + ASCII_MAX, -1);   // 重新开始
+                fill(last, last + ASCII_MAX, -1);   // 重新开始
             }
             last[s[i] - 'a'] = i;
         }
