@@ -1,48 +1,49 @@
 \chapter{字符串}
-这类题目考察字符串的操作。
 
 
-\section{Add Binary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:add-binary}
+\section{Implement strStr()} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:strstr}
 
 
 \subsubsection{描述}
-Given two binary strings, return their sum (also a binary string).
+Implement strStr().
 
-For example,
-\begin{Code}
-a = "11"
-b = "1"
-\end{Code}
-Return {\small \fontspec{Latin Modern Mono} "100"}.
+Returns a pointer to the first occurrence of needle in haystack, or null if needle is not part of haystack.
 
 
 \subsubsection{分析}
-无
+暴力算法的复杂度是 $O(m*n)$，代码如下。更高效的的算法有KMP算法、Boyer-Mooer算法和Rabin-Karp算法。面试中暴力算法足够了，一定要写得没有BUG。
 
 
 \subsubsection{代码}
 \begin{Code}
-//LeetCode, Add Binary
+// LeetCode, Implement strStr()
+// 暴力解法，复杂度O(N*M)
 class Solution {
 public:
-    string addBinary(string a, string b) {
-        string result;
-        int maxL = a.size() > b.size() ? a.size() : b.size();
-        std::reverse(a.begin(), a.end());
-        std::reverse(b.begin(), b.end());
-        int carry = 0;
-        for (int i = 0; i < maxL; i++) {
-            int ai = i < a.size() ? a[i] - '0' : 0;
-            int bi = i < b.size() ? b[i] - '0' : 0;
-            int val = (ai + bi + carry) % 2;
-            carry = (ai + bi + carry) / 2;
-            result.insert(result.begin(), val + '0');
+    char *strstr(const char *haystack, const char *needle) {
+        // if needle is empty return the full string
+        if (!*needle) return (char*) haystack;
+
+        const char *p1;
+        const char *p2;
+        const char *p1_advance = haystack;
+        for (p2 = &needle[1]; *p2; ++p2) {
+            p1_advance++;   // advance p1_advance M-1 times
         }
-        if (carry == 1) {
-            result.insert(result.begin(), '1');
+
+        for (p1 = haystack; *p1_advance; p1_advance++) {
+            char *p1_old = (char*) p1;
+            p2 = needle;
+            while (*p1 && *p2 && *p1 == *p2) {
+                p1++;
+                p2++;
+            }
+            if (!*p2) return p1_old;
+
+            p1 = p1_old + 1;
         }
-        return result;
+        return NULL;
     }
 };
 \end{Code}
@@ -50,7 +51,7 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item Add Two Numbers，见 \S \ref{sec:add-two-numbers}
+\item String to Integer (atoi) ，见 \S \ref{sec:string-to-integer}
 \myenddot
 
 
@@ -91,10 +92,11 @@ public:
     int atoi(const char *str) {
         int num = 0;
         int sign = 1;
-        int len = strlen(str);
+        const int len = strlen(str);
         int i = 0;
 
         while (str[i] == ' ' && i < len) i++;
+
         if (str[i] == '+') i++;
 
         if (str[i] == '-') {
@@ -103,15 +105,12 @@ public:
         }
 
         for (; i < len; i++) {
-            if (str[i] == ' ')
-                break;
             if (str[i] < '0' || str[i] > '9')
                 break;
-            if (INT_MAX / 10 < num
-                    || INT_MAX / 10 == num
-                    && INT_MAX % 10 < (str[i] - '0')) {
+            if (num > INT_MAX / 10 ||
+                            (num == INT_MAX / 10 &&
+                                    (str[i] - '0') > INT_MAX % 10)) {
                 return sign == -1 ? INT_MIN : INT_MAX;
-                break;
             }
             num = num * 10 + str[i] - '0';
         }
@@ -123,7 +122,59 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item 无
+\item Implement strStr() ，见 \S \ref{sec:strstr}
+\myenddot
+
+
+\section{Add Binary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:add-binary}
+
+
+\subsubsection{描述}
+Given two binary strings, return their sum (also a binary string).
+
+For example,
+\begin{Code}
+a = "11"
+b = "1"
+\end{Code}
+Return {\small \fontspec{Latin Modern Mono} "100"}.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Add Binary
+class Solution {
+public:
+    string addBinary(string a, string b) {
+        string result;
+        const size_t max_len = a.size() > b.size() ? a.size() : b.size();
+        std::reverse(a.begin(), a.end());
+        std::reverse(b.begin(), b.end());
+        int carry = 0;
+        for (size_t i = 0; i < max_len; i++) {
+            const int ai = i < a.size() ? a[i] - '0' : 0;
+            const int bi = i < b.size() ? b[i] - '0' : 0;
+            const int val = (ai + bi + carry) % 2;
+            carry = (ai + bi + carry) / 2;
+            result.insert(result.begin(), val + '0');
+        }
+        if (carry == 1) {
+            result.insert(result.begin(), '1');
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Add Two Numbers，见 \S \ref{sec:add-two-numbers}
 \myenddot
 
 
@@ -163,23 +214,11 @@ $$
 
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
-// 记忆化搜索，大集合会超时
-typedef string::const_iterator Iterator;
-
-namespace std {
-template<>
-struct hash<pair<Iterator, Iterator>> {
-    size_t operator()(pair<Iterator, Iterator> const& p) const {
-        return ((size_t) &(*p.first)) ^ ((size_t) &(*p.second));
-    }
-};
-}
-
 class Solution {
 public:
     string longestPalindrome(string const& s) {
         cache.clear();
-        return memoizedLongestPalindrome(begin(s), end(s));
+        return cachedLongestPalindrome(begin(s), end(s));
     }
 
 private:
@@ -190,20 +229,20 @@ private:
 
         if (length < 2) return string(first, last);
 
-        auto s = memoizedLongestPalindrome(next(first), prev(last));
+        auto s = cachedLongestPalindrome(next(first), prev(last));
 
-        if (s.length() == length - 2 and *first == *prev(last))
+        if (s.length() == length - 2 && *first == *prev(last))
             return string(first, last);
 
-        auto s1 = memoizedLongestPalindrome(next(first), last);
-        auto s2 = memoizedLongestPalindrome(first, prev(last));
+        auto s1 = cachedLongestPalindrome(next(first), last);
+        auto s2 = cachedLongestPalindrome(first, prev(last));
 
         // return max(s, s1, s2)
         if (s.size() > s1.size()) return s.size() > s2.size() ? s : s2;
         else return s1.size() > s2.size() ? s1 : s2;
     }
 
-    string memoizedLongestPalindrome(Iterator first, Iterator last) {
+    string cachedLongestPalindrome(Iterator first, Iterator last) {
         auto key = make_pair(first, last);
         auto pos = cache.find(key);
 

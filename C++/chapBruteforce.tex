@@ -116,7 +116,7 @@ private:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets
-// 二进制法，也可以看做是位向量法，只不过更加优化
+// 二进制法
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
@@ -176,6 +176,58 @@ If \fn{S = [1,2,2]}, a solution is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets II
+// 增量构造法
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        vector<vector<int> > result;
+        std::sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+
+        unordered_map<int, int> count_map; // 记录每个元素的出现次数
+        std::for_each(S.begin(), S.end(), [&count_map](int e) {
+            if (count_map.find(e) != count_map.end())
+                count_map[e]++;
+            else
+                count_map[e] = 1;
+        });
+
+        // 将map里的pair拷贝到一个vector里
+        std::vector<pair<int, int> > elems;
+        std::for_each(count_map.begin(), count_map.end(),
+                [&elems](const pair<int, int> &e) {
+                    elems.push_back(e);
+                });
+        std::sort(elems.begin(), elems.end());
+        std::vector<int> path; // 中间结果
+
+        subsets(elems, 0, path, result);
+        return result;
+    }
+
+private:
+    static void subsets(const std::vector<pair<int, int> > &elems,
+            size_t step, vector<int> &path, vector<vector<int> > &result) {
+        if (step == elems.size()) {
+            result.push_back(path);
+            return;
+        }
+
+        for (int i = 0; i <= elems[step].second; i++) {
+            for (int j = 0; j < i; ++j) {
+                path.push_back(elems[step].first);
+            }
+            subsets(elems, step + 1, path, result);
+            for (int j = 0; j < i; ++j) {
+                path.pop_back();
+            }
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Subsets II
+// 位向量法
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
@@ -300,9 +352,9 @@ public:
 
         // Scan from right to left, find the first element that is greater than
         // `pivot`.
-        auto pos = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
+        auto change = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
 
-        swap(*pos, *pivot);
+        swap(*change, *pivot);
         reverse(rfirst, pivot);
 
         return true;
@@ -415,15 +467,17 @@ public:
         vector<vector<int>> result; // 最终结果
         vector<int> p;  // 中间结果
 
-        permute(num.size(), elems.begin(), elems.end(), 0, p, result);
+        n = num.size();
+        permute(elems.begin(), elems.end(), p, result);
         return result;
     }
 
 private:
+    size_t n;
     typedef std::vector<pair<int, int> >::const_iterator Iter;
 
-    void permute(const size_t n, Iter first, Iter last,
-            vector<int> &p, vector<vector<int> > &result) {
+    void permute(Iter first, Iter last, vector<int> &p,
+            vector<vector<int> > &result) {
         if (n == p.size()) {  // 收敛条件
             result.push_back(p);
         }
@@ -438,7 +492,7 @@ private:
             }
             if (count < i->second) {
                 p.push_back(i->first);
-                permute(n, first, last, p, result);
+                permute(first, last, p, result);
                 p.pop_back(); // 撤销动作，返回上一层
             }
         }

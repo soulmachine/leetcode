@@ -58,9 +58,8 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 class Solution {
 public:
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
-        ListNode* head = new ListNode(-1);
-        ListNode* p = head;
-        while (l1 != nullptr || l2 != nullptr) {
+        ListNode head(-1);
+        for (ListNode* p = &head; l1 != nullptr || l2 != nullptr; p = p->next) {
             int val1 = l1 == nullptr ? INT_MAX : l1->val;
             int val2 = l2 == nullptr ? INT_MAX : l2->val;
             if (val1 <= val2) {
@@ -70,11 +69,8 @@ public:
                 p->next = l2;
                 l2 = l2->next;
             }
-            p = p->next;
         }
-        p = head->next;
-        delete head;
-        return p;
+        return head.next;
     }
 };
 \end{Code}
@@ -113,12 +109,11 @@ public:
         }
         return p;
     }
- 
+
     // Merge Two Sorted Lists
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
-        ListNode* head = new ListNode(-1);
-        ListNode* p = head;
-        while (l1 != nullptr || l2 != nullptr) {
+        ListNode head(-1);
+        for (ListNode* p = &head; l1 != nullptr || l2 != nullptr; p = p->next) {
             int val1 = l1 == nullptr ? INT_MAX : l1->val;
             int val2 = l2 == nullptr ? INT_MAX : l2->val;
             if (val1 <= val2) {
@@ -128,11 +123,8 @@ public:
                 p->next = l2;
                 l2 = l2->next;
             }
-            p = p->next;
         }
-        p = head->next;
-        delete head;
-        return p;
+        return head.next;
     }
 };
 \end{Code}

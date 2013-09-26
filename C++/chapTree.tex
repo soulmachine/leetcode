@@ -62,20 +62,21 @@ public:
         vector<vector<int> > result;
         if(root == nullptr) return result;
 
-        queue<TreeNode*> queToPush, queToPop;
-        queToPop.push(root);
-        while (!queToPop.empty()) {
-            vector<int> level; // elments in level level
+        queue<TreeNode*> current_level, next_level;
+        vector<int> level; // elments in level level
 
-            while (!queToPop.empty()) {
-                TreeNode* node = queToPop.front();
-                queToPop.pop();
+        current_level.push(root);
+        while (!current_level.empty()) {
+            while (!current_level.empty()) {
+                TreeNode* node = current_level.front();
+                current_level.pop();
                 level.push_back(node->val);
-                if (node->left != nullptr) queToPush.push(node->left);
-                if (node->right != nullptr) queToPush.push(node->right);
+                if (node->left != nullptr) next_level.push(node->left);
+                if (node->right != nullptr) next_level.push(node->right);
             }
             result.push_back(level);
-            swap(queToPush, queToPop); //!!! how to use swap
+            level.clear();
+            swap(next_level, current_level); //!!! how to use swap
         }
         return result;
     }
@@ -128,7 +129,7 @@ return its bottom-up level order traversal as:
 class Solution {
 public:
     vector<vector<int> > levelOrderBottom(TreeNode *root) {
-        list<vector<int> > retTemp;
+        list<vector<int> > tmp_result;
 
         queue<TreeNode *> q;
         q.push(root);
@@ -136,25 +137,24 @@ public:
 
         vector<int> level;  // elements in one level
         while(!q.empty()) {
-            TreeNode *cur = q.front();
-            q.pop();
+            TreeNode *cur = q.front(); q.pop();
+
             if(cur) {
                 level.push_back(cur->val);
                 if(cur->left) q.push(cur->left);
                 if(cur->right) q.push(cur->right);
             } else {
                 if(level.size() > 0) {
-                    retTemp.push_front(level);
-                    level.erase(level.begin(),level.end());
+                    tmp_result.push_front(level);
+                    level.clear();
                     q.push(nullptr);
                 }
             }
         }
 
         vector<vector<int> > ret;
-        for(list<vector<int> >::iterator it = retTemp.begin();
-                it != retTemp.end(); ++it) {
-            ret.push_back(*it);
+        for(auto iter = tmp_result.begin(); iter != tmp_result.end(); ++iter) {
+            ret.push_back(*iter);
         }
         return ret;
     }
@@ -226,11 +226,11 @@ public:
                 if (l2r) {
                     result.push_back(level);
                 } else {
-                    vector<int> temp;
-                    for (int i = level.size() - 1; i >= 0; --i) {
-                        temp.push_back(level[i]);
+                    vector<int> tmp;
+                    for (auto iter = level.rbegin(); iter != level.rend(); ++iter) {
+                        tmp.push_back(*iter);
                     }
-                    result.push_back(temp);
+                    result.push_back(tmp);
                 }
                 level.clear();
                 l2r = !l2r;
@@ -325,12 +325,12 @@ public:
             } else {
                 auto node = cur->left;
 
-                while (node->right != nullptr and node->right != cur)
+                while (node->right != nullptr && node->right != cur)
                     node = node->right;
 
                 if (node->right == nullptr) {
                     node->right = cur;
-                    prev = cur;
+                    //prev = cur; 不能有这句，因为cur还没有被访问
                     cur = cur->left;
                 } else {
                     result.push_back(cur->val);
@@ -390,12 +390,12 @@ public:
             } else {
                 auto node = cur->left;
 
-                while (node->right != nullptr and node->right != cur)
+                while (node->right != nullptr && node->right != cur)
                     node = node->right;
 
                 if (node->right == nullptr) {
                     node->right = cur;
-                    prev = cur;
+                    //prev = cur; 不能有这句！因为cur还没有被访问
                     cur = cur->left;
                 } else {
                     detect(broken, prev, cur);
@@ -411,10 +411,11 @@ public:
 
     void detect(pair<TreeNode*, TreeNode*>& broken, TreeNode* prev,
             TreeNode* current) {
-        if (prev != nullptr and prev->val > current->val) {
+        if (prev != nullptr && prev->val > current->val) {
             if (broken.first == nullptr) {
                 broken.first = prev;
-            } //不能用else
+            } //不能用else，例如 {0,1}，会导致最后 swap时second为nullptr，
+              //会 Runtime Error
             broken.second = current;
         }
     }
@@ -443,17 +444,48 @@ Two binary trees are considered equal if they are structurally identical and the
 
 
 \subsubsection{代码}
-
+递归版
 \begin{Code}
 // LeetCode, Same Tree
+// 迭代
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
-        if (!p and !q) return true;  // 终止条件
+        if (!p && !q) return true;   // 终止条件
         if (!p || !q) return false;  // 剪纸
-        return p->val == q->val
-                and isSameTree(p->left, q->left)
-                and isSameTree(p->right, q->right);
+        return p->val == q->val      // 三方合并
+                && isSameTree(p->left, q->left)
+                && isSameTree(p->right, q->right);
+    }
+};
+\end{Code}
+
+迭代版
+\begin{Code}
+// LeetCode, Same Tree
+// 迭代
+class Solution {
+public:
+    bool isSameTree(TreeNode *p, TreeNode *q) {
+        std::stack<TreeNode*> s;
+        s.push(p);
+        s.push(q);
+
+        while(!s.empty()) {
+            p = s.top(); s.pop();
+            q = s.top(); s.pop();
+
+            if (!p && !q) continue;
+            if (!p || !q) return false;
+            if (p->val != q->val) return false;
+
+            s.push(p->left);
+            s.push(q->left);
+
+            s.push(p->right);
+            s.push(q->right);
+        }
+        return true;
     }
 };
 \end{Code}
@@ -480,26 +512,29 @@ Two binary trees are considered equal if they are structurally identical and the
 
 
 \subsubsection{代码}
-
+递归版
 \begin{Code}
-// LeetCode, Symmetric Tree，递归版
+// LeetCode, Symmetric Tree
+// 递归版
 class Solution {
 public:
     bool isSymmetric(TreeNode *root) {
         return root ? isSymmetric(root->left, root->right) : true;
     }
     bool isSymmetric(TreeNode *left, TreeNode *right) {
-        if (!left and !right) return true;  // 终止条件
-        if (!left or !right) return false;  // 剪枝
-        if (left->val != right->val) return false;  // 剪枝
-        return isSymmetric(left->left, right->right)
-                and isSymmetric(left->right, right->left);
+        if (!left && !right) return true;   // 终止条件
+        if (!left || !right) return false;  // 终止条件
+        return left->val != right->val      // 三方合并
+                && isSymmetric(left->left, right->right)
+                && isSymmetric(left->right, right->left);
     }
 };
 \end{Code}
 
+迭代版
 \begin{Code}
-// LeetCode, Symmetric Tree，迭代版
+// LeetCode, Symmetric Tree
+// 迭代版
 class Solution {
 public:
     bool isSymmetric (TreeNode* root) {
@@ -510,21 +545,18 @@ public:
         s.push(root->right);
 
         while (!s.empty ()) {
-            auto lhs = s.top ();
-            s.pop();
+            auto p = s.top (); s.pop();
+            auto q = s.top (); s.pop();
 
-            auto rhs = s.top ();
-            s.pop();
+            if (!p && !q) continue;
+            if (!p || !q) return false;
+            if (p->val != q->val) return false;
 
-            if (!lhs and !rhs) continue;
-            if (!lhs or !rhs) return false;
-            if (lhs->val != rhs->val) return false;
+            s.push(p->left);
+            s.push(q->right);
 
-            s.push(lhs->left);
-            s.push(rhs->right);
-
-            s.push(lhs->right);
-            s.push(rhs->left);
+            s.push(p->right);
+            s.push(q->left);
         }
 
         return true;
@@ -572,9 +604,9 @@ public:
         int lhs = balancedHeight (root->left);
         int rhs = balancedHeight (root->right);
 
-        if (lhs < 0 or rhs < 0 or std::abs(lhs - rhs) > 1) return -1;  // 剪枝
+        if (lhs < 0 || rhs < 0 || std::abs(lhs - rhs) > 1) return -1;  // 剪枝
 
-        return std::max(lhs, rhs) + 1;
+        return std::max(lhs, rhs) + 1; // 三方合并
     }
 };
 \end{Code}
@@ -640,11 +672,11 @@ public:
 
         //4.insert left sub tree between root and root->right
         //4.1.find the last node in left
-        TreeNode ** ptn = & (root->left->right);
-        while (*ptn)
-            ptn = & ((*ptn)->right);
+        TreeNode *p = root->left;
+        while(p->right) p = p->right;
+        p->right = root->right;
         //4.2.connect right sub tree after left sub tree
-        *ptn = root->right;
+        p->right = root->right;
         //4.3.move left sub tree to the root's right sub tree
         root->right = root->left;
         root->left = nullptr;
@@ -654,28 +686,28 @@ public:
 
 迭代版
 \begin{Code}
-// LeetCode, Flatten Binary Tree to Linked List，迭代版
+// LeetCode, Flatten Binary Tree to Linked List
+// 迭代版
 class Solution {
 public:
     void flatten(TreeNode* root) {
-        if (root == nullptr)
-            return;
+        if (root == nullptr) return;
 
         stack<TreeNode*> s;
         s.push(root);
 
         while (!s.empty()) {
-            auto top = s.top();
+            auto p = s.top();
             s.pop();
 
-            if (top->right)
-                s.push(top->right);
-            if (top->left)
-                s.push(top->left);
+            if (p->right)
+                s.push(p->right);
+            if (p->left)
+                s.push(p->left);
 
-            top->left = nullptr;
+            p->left = nullptr;
             if (!s.empty())
-                top->right = s.top();
+                p->right = s.top();
         }
     }
 };
@@ -812,26 +844,25 @@ Given $n = 3$, your program should return all 5 unique BST's shown below.
 class Solution {
 public:
     vector<TreeNode *> generateTrees(int n) {
-        if (n == 0)
-            return *generate(1, 0);
-        return *generate(1, n);
+        if (n == 0) return generate(1, 0);
+        return generate(1, n);
     }
 private:
-    vector<TreeNode *>* generate(int start, int end) {
-        auto subTree = new vector<TreeNode*>();
+    vector<TreeNode *> generate(int start, int end) {
+        vector<TreeNode*> subTree;
         if (start > end) {
-            subTree->push_back(nullptr);
+            subTree.push_back(nullptr);
             return subTree;
         }
         for (int k = start; k <= end; k++) {
-            vector<TreeNode*> *leftSubs = generate(start, k - 1);
-            vector<TreeNode*> *rightSubs = generate(k + 1, end);
-            for (auto i = leftSubs->begin(); i < leftSubs->end(); i++) {
-                for (auto j = rightSubs->begin(); j < rightSubs->end(); j++) {
+            vector<TreeNode*> leftSubs = generate(start, k - 1);
+            vector<TreeNode*> rightSubs = generate(k + 1, end);
+            for (auto i = leftSubs.begin(); i < leftSubs.end(); i++) {
+                for (auto j = rightSubs.begin(); j < rightSubs.end(); j++) {
                     TreeNode *node = new TreeNode(k);
                     node->left = *i;
                     node->right = *j;
-                    subTree->push_back(node);
+                    subTree.push_back(node);
                 }
             }
         }
@@ -878,9 +909,9 @@ public:
     bool isValidBST(TreeNode* root, int lower, int upper) {
         if (root == nullptr) return true;
 
-        return root->val > lower and root->val < upper
-                and isValidBST(root->left, lower, root->val)
-                and isValidBST(root->right, root->val, upper);
+        return root->val > lower && root->val < upper
+                && isValidBST(root->left, lower, root->val)
+                && isValidBST(root->right, root->val, upper);
     }
 };
 \end{Code}
@@ -901,7 +932,7 @@ Given an array where elements are sorted in ascending order, convert it to a hei
 
 
 \subsubsection{分析}
-分治法，二分。
+二分法。
 
 
 \subsubsection{代码}
@@ -912,21 +943,22 @@ Given an array where elements are sorted in ascending order, convert it to a hei
 class Solution {
 public:
     TreeNode* sortedArrayToBST (vector<int>& num) {
-        return sortedArrayToBST (num.begin (), num.end ());
+        return sortedArrayToBST(num.begin(), num.end());
     }
 
     template<typename RandomAccessIterator>
-    TreeNode* sortedArrayToBST (RandomAccessIterator first, 
+    TreeNode* sortedArrayToBST (RandomAccessIterator first,
             RandomAccessIterator last) {
-        const auto length = std::distance (first, last);
+        const auto length = std::distance(first, last);
 
-        if (length == 0) return nullptr;
-        if (length == 1) return new TreeNode (*first);
+        if (length == 0) return nullptr;  // 终止条件
+        if (length == 1) return new TreeNode(*first); // 收敛条件
 
+        // 三方合并
         auto mid = first + length / 2;
         TreeNode* root = new TreeNode (*mid);
-        root->left = sortedArrayToBST (first, mid);
-        root->right = sortedArrayToBST (mid + 1, last);
+        root->left = sortedArrayToBST(first, mid);
+        root->right = sortedArrayToBST(mid + 1, last);
 
         return root;
     }
@@ -1192,6 +1224,7 @@ public:
     template<typename InputIterator>
     TreeNode* buildTree(InputIterator pre_first, InputIterator pre_last,
             InputIterator in_first, InputIterator in_last) {
+        if (pre_first == pre_last) return nullptr;
         if (in_first == in_last) return nullptr;
 
         auto root = new TreeNode(*pre_first);
@@ -1244,8 +1277,8 @@ public:
     template<typename BidiIt>
     TreeNode* buildTree(BidiIt in_first, BidiIt in_last,
             BidiIt post_first, BidiIt post_last) {
-        if (std::distance(in_first, in_last) == 0) return nullptr;
-        if (std::distance(post_first, post_last) == 0) return nullptr;
+        if (in_first ==in_last) return nullptr;
+        if (post_first == post_last) return nullptr;
 
         const auto val = *std::prev(post_last);
         TreeNode* root = new TreeNode(val);
@@ -1271,7 +1304,7 @@ public:
 
 
 \section{二叉树的DFS} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他遍历顺序，共有$3!=6$种。其他3种顺序是root->r->l，r->root->l, r->l->root。
+二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他遍历顺序，共有$3!=6$种。其他3种顺序是 \fn{root->r->l，r->root->l, r->l->root}。
 
 
 \subsection{Path Sum}
@@ -1311,7 +1344,7 @@ public:
     bool hasPathSum(TreeNode *root, int sum) {
         if (root == nullptr) return false;
 
-        if (root->left == nullptr and root->right == nullptr) { // leaf
+        if (root->left == nullptr && root->right == nullptr) { // leaf
             if (sum == root->val) return true;
             else return false;
         }
@@ -1377,7 +1410,7 @@ private:
 
         cur.push_back(root->val);
 
-        if (root->left == nullptr and root->right == nullptr) { // leaf
+        if (root->left == nullptr && root->right == nullptr) { // leaf
             if (gap == root->val) {
                 result.push_back(cur);
             }

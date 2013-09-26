@@ -365,8 +365,8 @@ When \code{s3 = "aadbbbaccc"}, return false.
 
 设状态\fn{f[i][j]}，表示\fn{s1[0,i]}和\fn{s2[0,j]}，匹配\fn{s3[0, i+j]}。如果s1的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i-1][j]}；如果s2的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i][j-1]}。因此状态转移方程如下：
 \begin{Code}
-f[i][j] = (s1[i - 1] == s3 [i + j - 1] and f[i - 1][j])
-       or (s2[j - 1] == s3 [i + j - 1] and f[i][j - 1]);
+f[i][j] = (s1[i - 1] == s3 [i + j - 1] && f[i - 1][j])
+       || (s2[j - 1] == s3 [i + j - 1] && f[i][j - 1]);
 \end{Code}
 
 \subsubsection{代码}
@@ -383,15 +383,15 @@ public:
                 vector<bool>(s2.length() + 1, true));
 
         for (size_t i = 1; i <= s1.length(); ++i)
-            f[i][0] = f[i - 1][0] and s1[i - 1] == s3[i - 1];
+            f[i][0] = f[i - 1][0] && s1[i - 1] == s3[i - 1];
 
         for (size_t i = 1; i <= s2.length(); ++i)
-            f[0][i] = f[0][i - 1] and s2[i - 1] == s3[i - 1];
+            f[0][i] = f[0][i - 1] && s2[i - 1] == s3[i - 1];
 
         for (size_t i = 1; i <= s1.length(); ++i)
             for (size_t j = 1; j <= s2.length(); ++j)
-                f[i][j] = (s1[i - 1] == s3[i + j - 1] and f[i - 1][j])
-                        or (s2[j - 1] == s3[i + j - 1] and f[i][j - 1]);
+                f[i][j] = (s1[i - 1] == s3[i + j - 1] && f[i - 1][j])
+                        || (s2[j - 1] == s3[i + j - 1] && f[i][j - 1]);
 
         return f[s1.length()][s2.length()];
     }
@@ -413,14 +413,14 @@ public:
         vector<bool> f(s2.length() + 1, true);
 
         for (size_t i = 1; i <= s2.length(); ++i)
-            f[i] = s2[i - 1] == s3[i - 1] and f[i - 1];
+            f[i] = s2[i - 1] == s3[i - 1] && f[i - 1];
 
         for (size_t i = 1; i <= s1.length(); ++i) {
-            f[0] = s1[i - 1] == s3[i - 1] and f[0];
+            f[0] = s1[i - 1] == s3[i - 1] && f[0];
 
             for (size_t j = 1; j <= s2.length(); ++j)
-                f[j] = (s1[i - 1] == s3[i + j - 1] and f[j])
-                        or (s2[j - 1] == s3[i + j - 1] and f[j - 1]);
+                f[j] = (s1[i - 1] == s3[i + j - 1] && f[j])
+                        || (s2[j - 1] == s3[i + j - 1] && f[j - 1]);
         }
 
         return f[s2.length()];
@@ -445,13 +445,13 @@ public:
     bool isInterleave(InIt first1, InIt last1, InIt first2, InIt last2,
             InIt first3, InIt last3) {
         if (first3 == last3)
-            return first1 == last1 and first2 == last2;
+            return first1 == last1 && first2 == last2;
 
         return (*first1 == *first3
-                and isInterleave(next(first1), last1, first2, last2,
+                && isInterleave(next(first1), last1, first2, last2,
                         next(first3), last3))
-                or (*first2 == *first3
-                        and isInterleave(first1, last1, next(first2), last2,
+                || (*first2 == *first3
+                        && isInterleave(first1, last1, next(first2), last2,
                                 next(first3), last3));
     }
 };
@@ -546,9 +546,9 @@ private:
 
         for (int i = 1; i < length; ++i)
             if ((isScramble(first1, first1 + i, first2)
-                 and isScramble(first1 + i, last1, first2 + i))
-                    or (isScramble(first1, first1 + i, last2 - i)
-                            and isScramble(first1 + i, last1, first2)))
+                 && isScramble(first1 + i, last1, first2 + i))
+                    || (isScramble(first1, first1 + i, last2 - i)
+                            && isScramble(first1 + i, last1, first2)))
                 return true;
 
         return false;
@@ -580,9 +580,9 @@ private:
 
         for (int i = 1; i < length; ++i)
             if ((isScramble(first1, first1 + i, first2)
-                 and isScramble(first1 + i, last1, first2 + i))
-                    or (isScramble(first1, first1 + i, last2 - i)
-                            and isScramble(first1 + i, last1, first2)))
+                 && isScramble(first1 + i, last1, first2 + i))
+                    || (isScramble(first1, first1 + i, last2 - i)
+                            && isScramble(first1 + i, last1, first2)))
                 return true;
 
         return false;
@@ -611,9 +611,9 @@ private:
 
         for (int i = 1; i < length; ++i)
             if ((cachedIsScramble(first1, first1 + i, first2)
-                    and cachedIsScramble(first1 + i, last1, first2 + i))
-                    or (cachedIsScramble(first1, first1 + i, last2 - i)
-                            and cachedIsScramble(first1 + i, last1, first2)))
+                    && cachedIsScramble(first1 + i, last1, first2 + i))
+                    || (cachedIsScramble(first1, first1 + i, last2 - i)
+                            && cachedIsScramble(first1 + i, last1, first2)))
                 return true;
 
         return false;
@@ -668,9 +668,9 @@ public:
 
         for (int i = 1; i < length; ++i)
             if ((cachedIsScramble(first1, first1 + i, first2)
-                    and cachedIsScramble(first1 + i, last1, first2 + i))
-                    or (cachedIsScramble(first1, first1 + i, last2 - i)
-                            and cachedIsScramble(first1 + i, last1, first2)))
+                    && cachedIsScramble(first1 + i, last1, first2 + i))
+                    || (cachedIsScramble(first1, first1 + i, last2 - i)
+                            && cachedIsScramble(first1 + i, last1, first2)))
                 return true;
 
         return false;

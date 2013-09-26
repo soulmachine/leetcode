@@ -43,37 +43,50 @@ Note:
 //LeetCode, Word Ladder
 class Solution {
 public:
-    int ladderLength(string start, string end, unordered_set<string> &dict) {
+    typedef string state_t;
+    int ladderLength(string start, string end,
+            const unordered_set<string> &dict) {
         if (start.size() != end.size()) return 0;
-        if (start.empty() || end.empty()) return 1; return 0;
-        int level = 1;  // 层次
-        queue<string> queToPush, queToPop;
+        if (start.empty() || end.empty()) return 0;
 
-        queToPop.push(start);
-        while (dict.size() > 0 && !queToPop.empty()) {
-            while (!queToPop.empty()) {
-                string str(queToPop.front());
-                queToPop.pop();
-                for (int i = 0; i < str.size(); i++) {
-                    for (char j = 'a'; j <= 'z'; j++) {
-                        if (j == str[i]) continue;
+        queue<string> next, current; // 当前层，下一层
+        unordered_set<string> visited; // 判重
+        unordered_map<string, string > father;
+        int level = 0;  // 层次
+        bool found = false;
 
-                        const char temp = str[i];
-                        str[i] = j;
-                        if (str == end) return level + 1; //找到了
+        current.push(start);
+        while (!current.empty() && !found) {
+            ++level;
+            while (!current.empty() && !found) {
+                const string str(current.front()); current.pop();
 
-                        if (dict.count(str) > 0) {
-                            queToPush.push(str);
-                            dict.erase(str); // 删除该单词，防止死循环
+                for (size_t i = 0; i < str.size(); ++i) {
+                    string new_word(str);
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        if (c == new_word[i]) continue;
+
+                        swap(c, new_word[i]);
+                        if (new_word == end) {
+                            found = true; //找到了
+                            father[new_word] = str;
+                            break;
                         }
-                        str[i] = temp; // 恢复该单词
+
+                        if (dict.count(new_word) > 0
+                                && !visited.count(new_word)) {
+                            next.push(new_word);
+                            visited.insert(new_word);
+                            father[new_word] = str;
+                        }
+                        swap(c, new_word[i]); // 恢复该单词
                     }
                 }
             }
-            swap(queToPush, queToPop); //!!! 交换两个队列
-            level++;
+            swap(next, current); //!!! 交换两个队列
         }
-        return 0; // 所有单词已经用光，还是找不到通向目标单词的路径
+        if (found) return level+1;
+        else return 0;
     }
 };
 \end{Code}
@@ -119,90 +132,80 @@ Note:
 
 
 \subsubsection{分析}
-跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点
+跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点。
+
+这题跟普通的广搜有很大的不同，就是要输出所有路径，因此在记录前驱和判重地方与普通广搜略有不同。
 
 
 \subsubsection{代码}
 
 \begin{Code}
 //LeetCode, Word Ladder II
-//跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点
 class Solution {
 public:
-    std::vector<std::vector<std::string> > findLadders(std::string start,
-            std::string end, std::unordered_set<std::string> &dict) {
-        result_.clear();
-        std::unordered_map<std::string, std::vector<std::string>> prevMap;
+    vector<vector<string> > findLadders(string start, string end,
+            const unordered_set<string> &dict) {
+        unordered_set<string> visited; // 判重
+        unordered_map<string, vector<string> > father; // 树
+        unordered_set<string> current, next;  // 当前层，下一层，用集合是为了去重
 
-        for (auto iter = dict.begin(); iter != dict.end(); ++iter) {
-            prevMap[*iter] = std::vector<std::string>();
-        }
+        int level = 0; // 层数
+        bool found = false;
 
-        std::vector<std::unordered_set<std::string>> candidates(2);
+        current.insert(start);
+        while (!current.empty() && !found) {
+            ++level;
+            // 先将本层全部置为已访问，防止同层之间互相指向
+            for (auto iter = current.begin(); iter != current.end(); ++iter)
+                visited.insert(*iter);
+            for (auto iter = current.begin(); iter != current.end(); ++iter) {
+            //while (!current.empty()) {
+                const string word = *iter;
 
-        int current = 0;
-        int previous = 1;
+                for (size_t i = 0; i < word.size(); ++i) {
+                    string new_word = word;
+                    for (char c = 'a'; c <= 'z'; ++c) {
+                        if (c == new_word[i]) continue;
+                        swap(c, new_word[i]);
 
-        candidates[current].insert(start);
+                        if (new_word == end) found = true; //找到了
 
-        while (true) {
-            current = !current;
-            previous = !previous;
-
-            // 从dict中删除previous中的单词，避免自己指向自己
-            for (auto iter = candidates[previous].begin();
-                    iter != candidates[previous].end(); ++iter) {
-                dict.erase(*iter);
-            }
-
-            candidates[current].clear();
-
-            for (auto iter = candidates[previous].begin();
-                    iter != candidates[previous].end(); ++iter) {
-                for (size_t pos = 0; pos < iter->size(); ++pos) {
-                    std::string word = *iter;
-                    for (int i = 'a'; i <= 'z'; ++i) {
-                        if (word[pos] == i) continue;
-
-                        word[pos] = i;
-
-                        if (dict.count(word) > 0) {
-                            prevMap[word].push_back(*iter);
-                            candidates[current].insert(word);
+                        if (visited.count(new_word) == 0
+                                && (dict.count(new_word) > 0 ||
+                                        new_word == end)) {
+                            next.insert(new_word);
+                            father[new_word].push_back(word);
+                            // visited.insert(new_word)移动到最上面了
                         }
+
+                        swap(c, new_word[i]);  // restore
                     }
                 }
             }
 
-            if (candidates[current].size() == 0) return result_;  // 此题无解
-            if (candidates[current].count(end)) break; // 没看懂
+            current.clear();
+            swap(current, next);
         }
-
-        std::vector<std::string> path;
-        GeneratePath(prevMap, path, end);
-
-        return result_;
+        vector<vector<string> > result;
+        if (found) {
+            vector<string> path;
+            buildPath(father, path, start, end, result);
+        }
+        return result;
     }
-
 private:
-    std::vector<std::vector<std::string>> result_;
-
-    void GeneratePath(
-            std::unordered_map<std::string, std::vector<std::string>> &prevMap,
-            std::vector<std::string>& path, const std::string& word) {
-        if (prevMap[word].size() == 0) {
-            path.push_back(word);
-            std::vector<std::string> curPath = path;
-            reverse(curPath.begin(), curPath.end());
-            result_.push_back(curPath);
-            path.pop_back();
-            return;
-        }
-
+    void buildPath(unordered_map<string, vector<string> > &father,
+            vector<string> &path, const string &start, const string &word,
+            vector<vector<string> > &result) {
         path.push_back(word);
-        for (auto iter = prevMap[word].begin(); iter != prevMap[word].end();
-                ++iter) {
-            GeneratePath(prevMap, path, *iter);
+        if (word == start) {
+            result.push_back(path);
+            reverse(result.back().begin(), result.back().end());
+        } else {
+            for (auto iter = father[word].begin(); iter != father[word].end();
+                    ++iter) {
+                buildPath(father, path, start, *iter, result);
+            }
         }
         path.pop_back();
     }

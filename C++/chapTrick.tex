@@ -1,6 +1,16 @@
 \chapter{编程技巧}
 
-动态分配定长数组，不要用\fn{ary = new type[len]}，用std::vector<type> ary(len)。首先在性能上，由于vector能够保证连续内存，因此一旦分配了后，它的性能跟原始数组相当，其次使用方便，用new 还需要多写一句delete，容易出错，且声明多维数组的话，只能一个一个new，例如：
+在判断两个浮点数a和b是否相等时，不要用\fn{a==b}，应该判断二者之差的绝对值\fn{fabs(a-b)}是否小于某个阀值，例如\fn{1e-9}。
+
+以下是关于STL使用技巧的，很多条款来自《Effective STL》这本书。
+
+\subsubsection{vector和string优先于动态分配的数组}
+
+首先，在性能上，由于\fn{vector}能够保证连续内存，因此一旦分配了后，它的性能跟原始数组相当；
+
+其次，如果用new，意味着你要确保后面进行了delete，一旦忘记了，就会出现BUG，且这样需要都写一行delete，代码不够短；
+
+再次，声明多维数组的话，只能一个一个new，例如：
 \begin{Code}
 int** ary = new int*[row_num];
 for(int i = 0; i < row_num; ++i)
@@ -11,5 +21,4 @@ for(int i = 0; i < row_num; ++i)
 vector<vector<int> > ary(row_num, vector<int>(col_num, 0));
 \end{Code}
 
-在判断两个浮点数a和b是否相等时，不要用\fn{a==b}，应该判断二者之差的绝对值\fn{fabs(a-b)}是否小于某个阀值，例如\fn{1e-9}。
-
+\subsubsection{使用reserve来避免不必要的重新分配}

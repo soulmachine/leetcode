@@ -466,7 +466,7 @@ public:
             for (auto j = i; j != next(i, catLength); j += wordLength) {
                 auto pos = unused.find(string(j, next(j, wordLength)));
 
-                if (pos == unused.end() or pos->second == 0) break;
+                if (pos == unused.end() || pos->second == 0) break;
 
                 if (--pos->second == 0) unused.erase(pos);
             }

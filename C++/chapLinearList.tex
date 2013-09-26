@@ -33,8 +33,8 @@ public:
 
         int index = 0;
         for (int i = 1; i < n; i++) {
-            if (A[index] == A[i]) continue;
-            A[++index] = A[i];
+            if (A[index] != A[i])
+                A[++index] = A[i];
         }
         return index + 1;
     }
@@ -101,12 +101,14 @@ public:
         int index = 0;
         for (int i = 1; i < n; i++) {
             if (A[index] == A[i]) {
-                if (occur >= 2) continue;
-                else occur++;
+                if (occur < 2) {
+                    A[++index] = A[i];
+                    occur++;
+                }
             } else {
+                A[++index] = A[i];
                 occur = 1;
             }
-            A[++index] = A[i];
         }
         return index + 1;
     }
@@ -145,21 +147,21 @@ You may assume no duplicate exists in the array.
 class Solution {
 public:
     int search(int A[], int n, int target) {
-        int l = 0, r = n - 1;
-        while (l <= r) {
-            const int m = (l + r) / 2;
-            if (A[m] == target)
-                return m;
-            if (A[m] >= A[l]) {
-                if (A[l] <= target && target <= A[m])
-                    r = m - 1;
+        int first = 0, last = n;
+        while (first != last) {
+            const int mid = (first + last) / 2;
+            if (A[mid] == target)
+                return mid;
+            if (A[first] <= A[mid]) {
+                if (A[first] <= target && target < A[mid])
+                    last = mid;
                 else
-                    l = m + 1;
+                    first = mid + 1;
             } else {
-                if (A[m] >= target || target >= A[l])
-                    r = m - 1;
+                if (A[mid] < target && target <= A[last-1])
+                    first = mid + 1;
                 else
-                    l = m + 1;
+                    last = mid;
             }
         }
         return -1;
@@ -198,29 +200,28 @@ Write a function to determine if a given target is in the array.
 
 \subsubsection{代码}
 \begin{Code}
-// LeetCode, Search in Rotated Sorted Array
+// LeetCode, Search in Rotated Sorted Array II
 class Solution {
 public:
     bool search(int A[], int n, int target) {
-        int l = 0;
-        int r = n - 1;
-        while (l <= r) {
-            int m = (l + r) / 2;
-            if (A[m] == target)
+        int first = 0, last = n;
+        while (first != last) {
+            const int mid = (first + last) / 2;
+            if (A[mid] == target)
                 return true;
-            if (A[l] < A[m]) {
-                if (target >= A[l] && target < A[m])
-                    r = m - 1;
+            if (A[first] < A[mid]) {
+                if (A[first] <= target && target < A[mid])
+                    last = mid;
                 else
-                    l = m + 1;
-            } else if (A[l] > A[m]) {
-                if (target > A[m] && target <= A[r])
-                    l = m + 1;
+                    first = mid + 1;
+            } else if (A[first] > A[mid]) {
+                if (A[mid] <= target && target <= A[last-1])
+                    first = mid + 1;
                 else
-                    r = m - 1;
+                    last = mid;
             } else
                 //skip duplicate one, A[start] == A[mid]
-                l++;
+                first++;
         }
         return false;
     }
@@ -263,13 +264,13 @@ $O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的�
 
 因此，我们可以放心的删除A数组的这$k/2$个元素。同理，当\fn{A[k/2-1] > B[k/2-1]}时，可以删除B数组的$k/2$个元素。
 
-当\fn{A[k/2-1] == B[k/2-1]}时，说明找到了第$k$大的元素，直接返回\fn{A[k/2-1}或\fn{B[k/2-1}即可。
+当\fn{A[k/2-1] == B[k/2-1]}时，说明找到了第$k$大的元素，直接返回\fn{A[k/2-1]}或\fn{B[k/2-1]}即可。
 
 因此，我们可以写一个递归函数。那么函数什么时候应该终止呢？
 \begindot
 \item 当A或B是空时，直接返回\fn{B[k-1]}或\fn{A[k-1]}；
 \item 当\fn{k=1}是，返回\fn{min(A[0], B[0])}；
-\item 当\fn{A[k/2-1] == B[k/2-1]}时，返回\fn{A[k/2-1}或\fn{B[k/2-1}
+\item 当\fn{A[k/2-1] == B[k/2-1]}时，返回\fn{A[k/2-1]}或\fn{B[k/2-1]}
 \myenddot
 
 
@@ -287,20 +288,20 @@ public:
                     + find_kth(A, m, B, n, total / 2 + 1)) / 2;
     }
 private:
-    static double find_kth(int a[], int m, int b[], int n, int k) {
+    static double find_kth(int A[], int m, int B[], int n, int k) {
         //always assume that m is equal or smaller than n
-        if (m > n) return find_kth(b, n, a, m, k);
-        if (m == 0) return b[k - 1];
-        if (k == 1) return min(a[0], b[0]);
+        if (m > n) return find_kth(B, n, A, m, k);
+        if (m == 0) return B[k - 1];
+        if (k == 1) return min(A[0], B[0]);
 
         //divide k into two parts
         int pa = min(k / 2, m), pb = k - pa;
-        if (a[pa - 1] < b[pb - 1])
-            return find_kth(a + pa, m - pa, b, n, k - pa);
-        else if (a[pa - 1] > b[pb - 1])
-            return find_kth(a, m, b + pb, n - pb, k - pb);
+        if (A[pa - 1] < B[pb - 1])
+            return find_kth(A + pa, m - pa, B, n, k - pa);
+        else if (A[pa - 1] > B[pb - 1])
+            return find_kth(A, m, B + pb, n - pb, k - pb);
         else
-            return a[pa - 1];
+            return A[pa - 1];
     }
 };
 \end{Code}
@@ -349,25 +350,23 @@ Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
 class Solution {
 public:
     ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-        ListNode* head = new ListNode(-1); // 头节点
-        ListNode* pre = head;
-        ListNode *pa = l1, *pb = l2;
+        ListNode head(-1); // 头节点
         int carry = 0;
-        while (pa != nullptr || pb != nullptr) {
-            int av = pa == nullptr ? 0 : pa->val;
-            int bv = pb == nullptr ? 0 : pb->val;
-            ListNode* node = new ListNode((av + bv + carry) % 10);
-            carry = (av + bv + carry) / 10;
-            pre->next = node; // 尾插法
-            pre = pre->next;
-            pa = pa == nullptr ? nullptr : pa->next;
-            pb = pb == nullptr ? nullptr : pb->next;
+        ListNode *prev = &head;
+        for (ListNode *pa = l1, *pb = l2;
+             pa != nullptr || pb != nullptr;
+             pa = pa == nullptr ? nullptr : pa->next,
+             pb = pb == nullptr ? nullptr : pb->next,
+             prev = prev->next) {
+            const int ai = pa == nullptr ? 0 : pa->val;
+            const int bi = pb == nullptr ? 0 : pb->val;
+            const int value = (ai + bi + carry) % 10;
+            carry = (ai + bi + carry) / 10;
+            prev->next = new ListNode(value); // 尾插法
         }
         if (carry > 0)
-            pre->next = new ListNode(1);
-        pre = head->next;
-        delete head;
-        return pre;
+            prev->next = new ListNode(carry);
+        return head.next;
     }
 };
 \end{Code}
@@ -414,14 +413,13 @@ public:
 
         int count = 0;
         ListNode *p = h, *pm, *pn;
-        while(p) {
+        for (; p; p = p->next) {
             if (count == m-1) pm = p;
             if (count == n) {
                 pn = p;
                 break;
             }
             count++;
-            p = p->next;
         }
         p = pm;
         pm = pm->next;
@@ -538,14 +536,15 @@ public:
         ListNode *cur = head->next;
         while (cur != nullptr) {
             if (prev->val == cur->val) {
-                ListNode* temp = cur;
+                ListNode* tmp = cur;
                 cur = cur->next;
                 prev->next = cur;
-                delete temp;
+                delete tmp;
                 continue;
+            } else {
+                prev = prev->next;
+                cur = cur->next;
             }
-            prev = prev->next;
-            cur = cur->next;
         }
         return head;
     }
