@@ -23,10 +23,55 @@ Return
 \subsubsection{分析}
 在每一步都可以判断中间结果是否为合法结果，用回溯法。
 
-一个长度为n的字符串，有n+1个地方可以砍断，每个地方可断可不断，因此复杂度为$O(2^{n+1})$
+一个长度为n的字符串，有n+1个地方可以砍断，每个地方可断可不断，前后两个隔板默认已经使用，因此复杂度为$O(2^{n-1})$
 
 
 \subsubsection{代码}
+\begin{Code}
+//LeetCode, Palindrome Partitioning
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> result;
+        vector<string> output;  // 一个partition方案
+        DFS(s, 0, 1, output, result);
+        return result;
+    }
+
+    // s[0, prev-1]之间已经处理，保证是回文串
+    // prev 表示s[prev-1]与s[prev]之间的空隙位置，start同理
+    void DFS(string &s, size_t prev, size_t start, vector<string>& output,
+            vector<vector<string>> &result) {
+        if (start == s.size()) { // 最后一个隔板
+            if (isPalindrome(s, prev, start - 1)) { // 必须使用
+                output.push_back(s.substr(prev, start - prev));
+                result.push_back(output);
+                output.pop_back();
+            }
+            return;
+        }
+        // 不断开
+        DFS(s, prev, start + 1, output, result);
+        // 如果[prev, start-1] 是回文，则可以断开，也可以不断开（上一行已经做了）
+        if (isPalindrome(s, prev, start - 1)) {
+            // 不断开，if 上一行已经做了
+            // 断开
+            output.push_back(s.substr(prev, start - prev));
+            DFS(s, start, start + 1, output, result);
+            output.pop_back();
+        }
+    }
+
+    bool isPalindrome(string &s, int start, int end) {
+        while (start < end) {
+            if (s[start++] != s[end--]) return false;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+另一种写法，更加简洁。这种写法也在 Combination Sum, Combination Sum II 中出现过。
 \begin{Code}
 //LeetCode, Palindrome Partitioning
 class Solution {
@@ -38,7 +83,6 @@ public:
         return result;
     }
     // 搜索必须以s[start]开头的partition方案
-    // 如果一个字符串长度为n，则可以插入n+1个隔板，复制度为O(2^{n+1})
     void DFS(string &s, int start, vector<string>& output,
             vector<vector<string>> &result) {
         if (start == s.size()) {
@@ -101,20 +145,11 @@ How many possible unique paths are there?
 class Solution {
 public:
     int uniquePaths(int m, int n) {
-        this->m = m;
-        this->n = n;
-        return uniquePathsRecursive(m, n);
-    }
-private:
-    int m, n;
+        if (m < 1 || n < 1) return 0; // 终止条件
 
-    int uniquePathsRecursive(int x, int y) {
-        if (x < 1 || x > m) return 0; // 数据非法
-        if (y < 1 || y > n) return 0;
+        if (m == 1 && n == 1) return 1; // 收敛条件
 
-        if (x == 1 && y == 1) return 1; // 终止条件
-
-        return uniquePathsRecursive(x - 1, y) + uniquePathsRecursive(x, y - 1);
+        return uniquePaths(m - 1, n) + uniquePaths(m, n - 1);
     }
 };
 \end{Code}
@@ -130,29 +165,24 @@ private:
 class Solution {
 public:
     int uniquePaths(int m, int n) {
-        this->m = m;
-        this->n = n;
         // 0行和0列未使用
         this->f = vector<vector<int> >(m + 1, vector<int>(n + 1, 0));
-        return cachedUniquePathsRecursive(m, n);
+        return dfs(m, n);
     }
 private:
-    int m, n;  // 全局只读数据
     vector<vector<int> > f;  // 缓存
 
-    int uniquePathsRecursive(int x, int y) {
-        if (x < 1 || x > m) return 0; // 数据非法，终止条件
-        if (y < 1 || y > n) return 0;
+    int dfs(int x, int y) {
+        if (x < 1 || y < 1) return 0; // 数据非法，终止条件
 
         if (x == 1 && y == 1) return 1; // 回到起点，收敛条件
 
-        return cachedUniquePathsRecursive(x - 1, y) +
-                cachedUniquePathsRecursive(x, y - 1);
+        return getOrUpdate(x - 1, y) + getOrUpdate(x, y - 1);
     }
 
-    int cachedUniquePathsRecursive(int x, int y) {
+    int getOrUpdate(int x, int y) {
         if (f[x][y] > 0) return f[x][y];
-        else return f[x][y] = uniquePathsRecursive(x, y);
+        else return f[x][y] = dfs(x, y);
     }
 };
 \end{Code}
@@ -272,29 +302,28 @@ public:
         const int n = obstacleGrid[0].size();
         // 0行和0列未使用
         this->f = vector<vector<int> >(m + 1, vector<int>(n + 1, 0));
-        return cachedUniquePathsRecursive(obstacleGrid, m, n);
+        return dfs(obstacleGrid, m, n);
     }
 private:
     vector<vector<int> > f;  // 缓存
 
-    int uniquePathsRecursive(const vector<vector<int> > &obstacleGrid,
+    int dfs(const vector<vector<int> > &obstacleGrid,
             int x, int y) {
-        if (x < 1 || x > obstacleGrid.size()) return 0; // 数据非法，终止条件
-        if (y < 1 || y > obstacleGrid[0].size()) return 0;
+        if (x < 1 || y < 1) return 0; // 数据非法，终止条件
 
         // (x,y)是障碍
         if (obstacleGrid[x-1][y-1]) return 0;
 
         if (x == 1 and y == 1) return 1; // 回到起点，收敛条件
 
-        return cachedUniquePathsRecursive(obstacleGrid, x - 1, y) +
-                cachedUniquePathsRecursive(obstacleGrid, x, y - 1);
+        return getOrUpdate(obstacleGrid, x - 1, y) +
+                getOrUpdate(obstacleGrid, x, y - 1);
     }
 
-    int cachedUniquePathsRecursive(const vector<vector<int> > &obstacleGrid,
+    int getOrUpdate(const vector<vector<int> > &obstacleGrid,
             int x, int y) {
         if (f[x][y] > 0) return f[x][y];
-        else return f[x][y] = uniquePathsRecursive(obstacleGrid, x, y);
+        else return f[x][y] = dfs(obstacleGrid, x, y);
     }
 };
 \end{Code}
@@ -401,7 +430,7 @@ public:
 
         vector<vector<string> > result;
         vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
-        solveNQueens(0, C, result);
+        dfs(0, C, result);
         return result;
     }
 private:
@@ -410,7 +439,7 @@ private:
     vector<int> principal_diagonals;  // 占据了哪些主对角线
     vector<int> counter_diagonals;  // 占据了哪些副对角线
 
-    void solveNQueens(int row, vector<int> &C,
+    void dfs(int row, vector<int> &C,
             vector<vector<string> > &result) {
         const int N = C.size();
         if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
@@ -435,7 +464,7 @@ private:
                 C[row] = j;
                 columns[j] = principal_diagonals[row + j] =
                         counter_diagonals[row - j + N] = 1;
-                solveNQueens(row + 1, C, result);
+                dfs(row + 1, C, result);
                 // 撤销动作
                 // C[row] = 0;
                 columns[j] = principal_diagonals[row + j] =
@@ -479,9 +508,8 @@ public:
         this->principal_diagonals = vector<int>(2 * n, 0);
         this->counter_diagonals = vector<int>(2 * n, 0);
 
-        vector<vector<string> > result;
         vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
-        solveNQueens(0, C, result);
+        dfs(0, C);
         return this->count;
     }
 private:
@@ -491,8 +519,7 @@ private:
     vector<int> principal_diagonals;  // 占据了哪些主对角线
     vector<int> counter_diagonals;  // 占据了哪些副对角线
 
-    void solveNQueens(int row, vector<int> &C,
-            vector<vector<string> > &result) {
+    void dfs(int row, vector<int> &C) {
         const int N = C.size();
         if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
             this->count++;
@@ -508,7 +535,7 @@ private:
                 C[row] = j;
                 columns[j] = principal_diagonals[row + j] =
                         counter_diagonals[row - j + N] = 1;
-                solveNQueens(row + 1, C, result);
+                dfs(row + 1, C);
                 // 撤销动作
                 // C[row] = 0;
                 columns[j] = principal_diagonals[row + j] =
@@ -564,21 +591,21 @@ public:
      * @param[out] result 存放所有可能的IP地址
      * @return 无
      */
-    void dfs(string s, int start, int step, string ip,
+    void dfs(string s, size_t start, size_t step, string ip,
             vector<string> &result) {
-        if (s.size() - start > (4 - step) * 3)
-            return;  // 非法结果，剪枝
-        if (s.size() - start < (4 - step))
-            return;  // 非法结果，剪枝
-
         if (start == s.size() && step == 4) {  // 找到一个合法解
             ip.resize(ip.size() - 1);
             result.push_back(ip);
             return;
         }
 
+        if (s.size() - start > (4 - step) * 3)
+            return;  // 剪枝
+        if (s.size() - start < (4 - step))
+            return;  // 剪枝
+
         int num = 0;
-        for (int i = start; i < start + 3; i++) {
+        for (size_t i = start; i < start + 3; i++) {
             num = num * 10 + (s[i] - '0');
 
             if (num <= 255) {  // 当前结点合法，则继续往下递归
@@ -640,13 +667,13 @@ public:
     }
 
 private:
-    void dfs(vector<int>& nums, int gap, int level, vector<int>& intermediate,
+    void dfs(vector<int>& nums, int gap, int start, vector<int>& intermediate,
             vector<vector<int> > &result) {
         if (gap == 0) {  // 找到一个合法解
             result.push_back(intermediate);
             return;
         }
-        for (size_t i = level; i < nums.size(); i++) { // 扩展状态
+        for (size_t i = start; i < nums.size(); i++) { // 扩展状态
             if (gap < nums[i]) return; // 剪枝
 
             intermediate.push_back(nums[i]); // 执行扩展动作
@@ -708,8 +735,8 @@ public:
         return result;
     }
 private:
-    // 使用nums[index, nums.size())之间的元素，能找到的所有可行解
-    static void dfs(vector<int> &nums, int gap, int index,
+    // 使用nums[start, nums.size())之间的元素，能找到的所有可行解
+    static void dfs(vector<int> &nums, int gap, int start,
             vector<int> &intermediate, vector<vector<int> > &result) {
         if (gap == 0) {  //  找到一个合法解
             result.push_back(intermediate);
@@ -717,7 +744,7 @@ private:
         }
 
         int previous = -1;
-        for (size_t i = index; i < nums.size(); i++) {
+        for (size_t i = start; i < nums.size(); i++) {
             // 如果上一轮循环没有选nums[i]，则本次循环就不能再选nums[i]，
             // 确保nums[i]最多只用一次
             if (previous == nums[i]) continue;

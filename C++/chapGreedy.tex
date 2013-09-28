@@ -127,7 +127,7 @@ public:
 
         while (left <= right) { // 尝试从每一层跳最远
             ++step;
-            int old_right = right;
+            const int old_right = right;
             for (int i = left; i <= old_right; ++i) {
                 int new_right = i + A[i];
                 if (new_right >= n - 1) return step;

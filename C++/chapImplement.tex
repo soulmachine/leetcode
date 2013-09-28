@@ -287,18 +287,20 @@ Note: The numbers can be arbitrarily large and are non-negative.
 \begin{Code}
 // LeetCode, Multiply Strings
 // 一个字符对应一个int
-typedef vector<char> bigint;
+typedef vector<int> bigint;
 
 bigint make_bigint(string const& repr) {
     bigint n;
-    transform(repr.rbegin(), repr.rend(), back_inserter(n), [](char c) { return c - '0'; });
+    transform(repr.rbegin(), repr.rend(), back_inserter(n),
+            [](char c) { return c - '0'; });
     return move(n);
 }
 
 string to_string(bigint const& n) {
     string str;
-    transform(find_if(n.rbegin(), prev(n.rend()), [](char c) { return c > '\0'; }),
-              n.rend(), back_inserter(str), [](char c) { return c + '0'; });
+    transform(find_if(n.rbegin(), prev(n.rend()),
+            [](char c) { return c > '\0'; }), n.rend(), back_inserter(str),
+            [](char c) { return c + '0'; });
     return move(str);
 }
 
@@ -527,13 +529,13 @@ public:
         result.push_back(vector<int>(1,1)); //first row
 
         for(int i = 2; i <= numRows; ++i) {
-            vector<int> thisrow(i,1);  // 本行
-            vector<int> &lastrow = result[i-2];  // 上一行
+            vector<int> current(i,1);  // 本行
+            const vector<int> &prev = result[i-2];  // 上一行
 
             for(int j = 1; j < i - 1; ++j) {
-                thisrow[j] = lastrow[j-1] + lastrow[j]; // 左上角和右上角之和
+                current[j] = prev[j-1] + prev[j]; // 左上角和右上角之和
             }
-            result.push_back(thisrow);
+            result.push_back(current);
         }
         return result;
     }
@@ -573,9 +575,7 @@ Note: Could you optimize your algorithm to use only $O(k)$ extra space?
 class Solution {
 public:
     vector<int> getRow(int rowIndex) {
-        vector<int> result;
-        result.resize(rowIndex + 2);
-        result.assign(result.size(), 0);
+        vector<int> result(rowIndex + 2, 0);
 
         result[1] = 1;
         for (int i = 0; i < rowIndex; i++) {

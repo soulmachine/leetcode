@@ -329,11 +329,11 @@ public:
             g[i] = max(g[i], peak - prices[i]);
         }
 
-        int maxProfit = 0;
+        int max_profit = 0;
         for (int i = 0; i < n; ++i)
-            maxProfit = max(maxProfit, f[i] + g[i]);
+            max_profit = max(max_profit, f[i] + g[i]);
 
-        return maxProfit;
+        return max_profit;
     }
 };
 \end{Code}
