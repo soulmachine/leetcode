@@ -314,6 +314,72 @@ private:
 \myenddot
 
 
+\subsection{Longest Consecutive Sequence} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:longest-consecutive-sequence}
+
+
+\subsubsection{描述}
+Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+For example,
+Given \code{[100, 4, 200, 1, 3, 2]},
+The longest consecutive elements sequence is \code{[1, 2, 3, 4]}. Return its length: 4.
+
+Your algorithm should run in $O(n)$ complexity.
+
+
+\subsubsection{分析}
+如果允许$O(n \log n)$的复杂度，那么可以先排序，可是本题要求$O(n)$。
+
+由于序列里的元素是无序的，又要求$O(n)$，首先要想到用哈希表。
+
+用一个哈希表 \fn{unordered_map<int, bool> used}记录每个元素是否使用，对每个元素，以该元素为中心，往左右扩张，直到不连续为止，记录下最长的长度。
+
+
+\subsubsection{代码}
+\begin{Code}
+// Leet Code, Longest Consecutive Sequence
+class Solution {
+public:
+    int longestConsecutive(vector<int> const& num) {
+        unordered_map<int, bool> used;
+
+        for (auto i : num) used[i] = false;
+
+        int longest = 0;
+
+        for (auto i : num) {
+            if (used[i]) continue;
+
+            int length = 1;
+
+            used[i] = true;
+
+            for (int j = i + 1; used.find(j) != used.end(); ++j) {
+                used[j] = true;
+                ++length;
+            }
+
+            for (int j = i - 1; used.find(j) != used.end(); --j) {
+                used[j] = true;
+                ++length;
+            }
+
+            longest = max(longest, length);
+        }
+
+        return longest;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
 \section{单链表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 单链表节点的定义如下：

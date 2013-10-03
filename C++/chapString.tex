@@ -1,6 +1,63 @@
 \chapter{字符串}
 
 
+\section{Valid Palindrome} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:valid-palindrome}
+
+
+\subsubsection{描述}
+Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+
+For example,\\
+\code{"A man, a plan, a canal: Panama"} is a palindrome.\\
+\code{"race a car"} is not a palindrome.
+
+Note:
+Have you consider that the string might be empty? This is a good question to ask during an interview.
+
+For the purpose of this problem, we define empty string as valid palindrome.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// Leet Code, Valid Palindrome
+class Solution {
+public:
+    bool isPalindrome(string s) {
+        transform(s.begin(), s.end(), s.begin(), ::tolower);
+        auto left = s.begin(), right = prev(s.end());
+        while (left < right) {
+            if (!::isalnum(*left)) {
+                ++left;
+                continue;
+            }
+            if (!::isalnum(*right)) {
+                --right;
+                continue;
+            }
+            if (*left == *right) {
+                ++left;
+                --right;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
 \section{Implement strStr()} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:strstr}
 
