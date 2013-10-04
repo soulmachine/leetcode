@@ -78,7 +78,7 @@ Returns a pointer to the first occurrence of needle in haystack, or null if need
 // 暴力解法，复杂度O(N*M)
 class Solution {
 public:
-    char *strstr(const char *haystack, const char *needle) {
+    char *strStr(const char *haystack, const char *needle) {
         // if needle is empty return the full string
         if (!*needle) return (char*) haystack;
 
@@ -271,11 +271,23 @@ $$
 
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
+// 备忘录法，TLE
+typedef string::const_iterator Iterator;
+
+namespace std {
+template<>
+struct hash<pair<Iterator, Iterator>> {
+    size_t operator()(pair<Iterator, Iterator> const& p) const {
+        return ((size_t) &(*p.first)) ^ ((size_t) &(*p.second));
+    }
+};
+}
+
 class Solution {
 public:
     string longestPalindrome(string const& s) {
         cache.clear();
-        return cachedLongestPalindrome(begin(s), end(s));
+        return cachedLongestPalindrome(s.begin(), s.end());
     }
 
 private:

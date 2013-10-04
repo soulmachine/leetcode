@@ -235,8 +235,8 @@ public:
         sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
         vector<int> count(S.back() - S.front() + 1, 0);
         // 计算所有元素的个数
-        for(auto i = S.begin(); i != S.end(); i++) {
-            count[*i - S[0]]++;
+        for (auto i : S) {
+            count[i - S[0]]++;
         }
 
         // 每个元素选择了多少个

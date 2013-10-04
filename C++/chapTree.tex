@@ -153,8 +153,8 @@ public:
         }
 
         vector<vector<int> > ret;
-        for(auto iter = tmp_result.begin(); iter != tmp_result.end(); ++iter) {
-            ret.push_back(*iter);
+        for (auto e : tmp_result) {
+            ret.push_back(e);
         }
         return ret;
     }
@@ -524,7 +524,7 @@ public:
     bool isSymmetric(TreeNode *left, TreeNode *right) {
         if (!left && !right) return true;   // 终止条件
         if (!left || !right) return false;  // 终止条件
-        return left->val != right->val      // 三方合并
+        return left->val == right->val      // 三方合并
                 && isSymmetric(left->left, right->right)
                 && isSymmetric(left->right, right->left);
     }
@@ -878,11 +878,11 @@ private:
         for (int k = start; k <= end; k++) {
             vector<TreeNode*> leftSubs = generate(start, k - 1);
             vector<TreeNode*> rightSubs = generate(k + 1, end);
-            for (auto i = leftSubs.begin(); i < leftSubs.end(); i++) {
-                for (auto j = rightSubs.begin(); j < rightSubs.end(); j++) {
+            for (auto i : leftSubs) {
+                for (auto j : rightSubs) {
                     TreeNode *node = new TreeNode(k);
-                    node->left = *i;
-                    node->right = *j;
+                    node->left = i;
+                    node->right = j;
                     subTree.push_back(node);
                 }
             }
@@ -1483,12 +1483,12 @@ Return $6$.
 class Solution {
 public:
     int maxPathSum(TreeNode *root) {
-        max = INT_MIN;
+        max_sum = INT_MIN;
         dfs(root);
-        return max;
+        return max_sum;
     }
 private:
-    int max;
+    int max_sum;
     int dfs(const TreeNode *root) {
         if (root == nullptr) return 0;
         int l = dfs(root->left);
@@ -1496,7 +1496,7 @@ private:
         int sum = root->val;
         if (l > 0) sum += l;
         if (r > 0) sum += r;
-        max = max(max, sum);
+        max_sum = max(max_sum, sum);
         return max(r, l) > 0 ? max(r, l) + root->val : root->val;
     }
 };

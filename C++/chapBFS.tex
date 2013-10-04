@@ -156,12 +156,9 @@ public:
         while (!current.empty() && !found) {
             ++level;
             // 先将本层全部置为已访问，防止同层之间互相指向
-            for (auto iter = current.begin(); iter != current.end(); ++iter)
-                visited.insert(*iter);
-            for (auto iter = current.begin(); iter != current.end(); ++iter) {
-            //while (!current.empty()) {
-                const string word = *iter;
-
+            for (auto word : current)
+                visited.insert(word);
+            for (auto word : current) {
                 for (size_t i = 0; i < word.size(); ++i) {
                     string new_word = word;
                     for (char c = 'a'; c <= 'z'; ++c) {
@@ -202,9 +199,8 @@ private:
             result.push_back(path);
             reverse(result.back().begin(), result.back().end());
         } else {
-            for (auto iter = father[word].begin(); iter != father[word].end();
-                    ++iter) {
-                buildPath(father, path, start, *iter, result);
+            for (auto f : father[word]) {
+                buildPath(father, path, start, f, result);
             }
         }
         path.pop_back();
