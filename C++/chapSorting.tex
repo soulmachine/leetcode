@@ -135,3 +135,158 @@ public:
 \item Merge Sorted Array \S \ref{sec:merge-sorted-array}
 \item Merge Two Sorted Lists，见 \S \ref{sec:merge-two-sorted-lists}
 \myenddot
+
+
+\section{First Missing Positive} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:first-missing-positive}
+
+
+\subsubsection{描述}
+Given an unsorted integer array, find the first missing positive integer.
+
+For example,
+Given \fn{[1,2,0]} return \fn{3},
+and \fn{[3,4,-1,1]} return \fn{2}.
+
+Your algorithm should run in $O(n)$ time and uses constant space.
+
+
+\subsubsection{分析}
+本质上是桶排序(bucket sort)，每当\fn{A[i]!= i+1}的时候，将A[i]与A[A[i]-1]交换，直到无法交换为止，终止条件是 \fn{A[i]== A[A[i]-1]}。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, First Missing Positive
+class Solution {
+public:
+    int firstMissingPositive(int A[], int n) {
+        bucket_sort(A, n);
+        
+        for (int i = 0; i < n; ++i)
+            if (A[i] != (i + 1))
+                return i + 1;
+        return n + 1;
+    }
+private:
+    static void bucket_sort(int A[], int n) {
+        for (int i = 0; i < n; i++) {
+            while (A[i] != i + 1) {
+                if (A[i] <= 0 || A[i] > n || A[i] == A[A[i] - 1])
+                    break;
+                swap(A[i], A[A[i] - 1]);
+            }
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Sort Colors, 见 \S \ref{sec:sort-colors}
+\myenddot
+
+
+\section{Sort Colors} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sort-colors}
+
+
+\subsubsection{描述}
+Given an array with $n$ objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+
+Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+Note:
+You are not suppose to use the library's sort function for this problem.
+
+\textbf{Follow up:}
+
+A rather straight forward solution is a two-pass algorithm using counting sort.
+
+First, iterate the array counting number of 0's, 1's, and 2's, then overwrite array with total number of 0's, then 1's and followed by 2's.
+
+Could you come up with an one-pass algorithm using only constant space?
+
+
+\subsubsection{分析}
+由于0, 1, 2 非常紧凑，首先想到计数排序(counting sort)，但需要扫描两遍，不符合题目要求。
+
+由于只有三种颜色，可以设置两个index，一个是red的index，一个是blue的index，两边往中间走。时间复杂度$O(n)$，空间复杂度$O(1)$。
+
+第3种思路，利用快速排序里 partition 的思想，第一次将数组按0分割，第二次按1分割，排序完毕，可以推广到$n$种颜色，每种颜色有重复元素的情况。
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Sort Colors
+// Counting Sort
+class Solution {
+public:
+    void sortColors(int A[], int n) {
+        int counts[3] = { 0 }; // 记录每个颜色出现的次数
+
+        for (int i = 0; i < n; i++)
+            counts[A[i]]++;
+
+        for (int i = 0, index = 0; i < 3; i++)
+            for (int j = 0; j < counts[i]; j++)
+                A[index++] = i;
+
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Sort Colors
+// 双指针
+class Solution {
+public:
+    void sortColors(int A[], int n) {
+        // 一个是red的index，一个是blue的index，两边往中间走
+        int red = 0, blue = n - 1;
+
+        for (int i = 0; i < blue + 1;) {
+            if (A[i] == 0)
+                swap(A[i++], A[red++]);
+            else if (A[i] == 2)
+                swap(A[i], A[blue--]);
+            else
+                i++;
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Sort Colors
+// @author 连城 (http://weibo.com/lianchengzju)
+// partition
+class Solution {
+public:
+    void sortColors(int a[], int n) {
+        split(split(a, a + n, bind1st(equal_to<int>(), 0)), a + n,
+                bind1st(equal_to<int>(), 1));
+    }
+private:
+    //@return pivot 的位置
+    template<typename ForwardIterator, typename UnaryPredicate>
+    ForwardIterator split(ForwardIterator first, ForwardIterator last,
+            UnaryPredicate pred) {
+        auto pos = first;
+
+        for (; first != last; ++first)
+            if (pred(*first))
+                swap(*first, *pos++);
+
+        return pos;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item First Missing Positive, 见 \S \ref{sec:first-missing-positive}
+\myenddot

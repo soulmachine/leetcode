@@ -691,3 +691,471 @@ public:
 \begindot
 \item 无
 \myenddot
+
+
+\section{Minimum Path Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:minimum-path-sum}
+
+
+\subsubsection{描述}
+Given a $m \times n$ grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+Note: You can only move either down or right at any point in time
+
+
+\subsubsection{分析}
+跟 Unique Paths (见 \S \ref{sec:unique-paths}) 很类似。
+
+设状态为\fn{f[i][j]}，表示从起点$(0,0)$到达$(i,j)$的最小路径和，则状态转移方程为：
+\begin{Code}
+f[i][j]=min(f[i-1][j], f[i][j-1])+grid[i][j]
+\end{Code}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Minimum Path Sum
+// 备忘录法
+class Solution {
+public:
+    int minPathSum(vector<vector<int> > &grid) {
+        const int m = grid.size();
+        const int n = grid[0].size();
+        this->f = vector<vector<int> >(m, vector<int>(n, -1));
+        return dfs(grid, m-1, n-1);
+    }
+private:
+    vector<vector<int> > f;  // 缓存
+
+    int dfs(const vector<vector<int> > &grid, int x, int y) {
+        if (x < 0 || y < 0) return INT_MAX; // 越界，终止条件，注意，不是0
+
+        if (x == 0 && y == 0) return grid[0][0]; // 回到起点，收敛条件
+
+        return min(getOrUpdate(grid, x - 1, y),
+                getOrUpdate(grid, x, y - 1)) + grid[x][y];
+    }
+
+    int getOrUpdate(const vector<vector<int> > &grid, int x, int y) {
+        if (x < 0 || y < 0) return INT_MAX; // 越界，注意，不是0
+        if (f[x][y] >= 0) return f[x][y];
+        else return f[x][y] = dfs(grid, x, y);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Minimum Path Sum
+// 二维动规
+class Solution {
+public:
+    int minPathSum(vector<vector<int> > &grid) {
+        if (grid.size() == 0) return 0;
+        const int m = grid.size();
+        const int n = grid[0].size();
+
+        int f[m][n];
+        f[0][0] = grid[0][0];
+        for (int i = 1; i < m; i++) {
+            f[i][0] = f[i - 1][0] + grid[i][0];
+        }
+        for (int i = 1; i < n; i++) {
+            f[0][i] = f[0][i - 1] + grid[0][i];
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                f[i][j] = min(f[i - 1][j], f[i][j - 1]) + grid[i][j];
+            }
+        }
+        return f[m - 1][n - 1];
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Minimum Path Sum
+// 二维动规+滚动数组
+class Solution {
+public:
+    int minPathSum(vector<vector<int> > &grid) {
+        const int m = grid.size();
+        const int n = grid[0].size();
+
+        int f[n];
+        fill(f, f+n, INT_MAX); // 初始值是 INT_MAX，因为后面用了min函数。
+        f[0] = 0;
+
+        for (int i = 0; i < m; i++) {
+            f[0] += grid[i][0];
+            for (int j = 1; j < n; j++) {
+                // 左边的f[j]，表示更新后的f[j]，与公式中的f[i[[j]对应
+                // 右边的f[j]，表示老的f[j]，与公式中的f[i-1][j]对应
+                f[j] = min(f[j - 1], f[j]) + grid[i][j];
+            }
+        }
+        return f[n - 1];
+    }
+};
+\end{Code}
+
+\subsubsection{相关题目}
+\begindot
+\item Unique Paths, 见 \S \ref{sec:unique-paths}
+\item Unique Paths II, 见 \S \ref{sec:unique-paths-ii}
+\myenddot
+
+
+\section{Edit Distance} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:edit-distance}
+
+
+\subsubsection{描述}
+Given two words \fn{word1} and \fn{word2}, find the minimum number of steps required to convert \fn{word1} to \fn{word2}. (each operation is counted as 1 step.)
+
+You have the following 3 operations permitted on a word:
+\begindot
+\item Insert a character
+\item Delete a character
+\item Replace a character
+\myenddot
+
+
+\subsubsection{分析}
+设状态为\fn{f[i][j]}，表示\fn{A[0,i]}和\fn{B[0,j]}之间的最小编辑距离。设\fn{A[0,i]}的形式是\fn{str1c}，\fn{B[0,j]}的形式是\fn{str2d}，
+\begin{enumerate}
+\item 如果\fn{c==d}，则\fn{f[i][j]=f[i-1][j-1]}；
+\item 如果\fn{c!=d}，
+    \begin{enumerate}
+        \item 如果将c替换成d，则\fn{f[i][j]=f[i-1][j-1]+1}；
+        \item 如果在c后面添加一个d，则\fn{f[i][j]=f[i][j-1]+1}；
+        \item 如果将c删除，则\fn{f[i][j]=f[i-1][j]+1}；
+    \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Edit Distance
+// 二维动规
+class Solution {
+public:
+    int minDistance(const string &word1, const string &word2) {
+        // 长度为n的字符串，有n+1个隔板
+        int f[word1.size() + 1][word2.size() + 1];
+        for (size_t i = 0; i <= word1.size(); i++)
+            f[i][0] = i;
+        for (size_t j = 0; j <= word2.size(); j++)
+            f[0][j] = j;
+
+        for (size_t i = 1; i <= word1.size(); i++) {
+            for (size_t j = 1; j <= word2.size(); j++) {
+                if (word1[i - 1] == word2[j - 1])
+                    f[i][j] = f[i - 1][j - 1];
+                else {
+                    int mn = min(f[i - 1][j], f[i][j - 1]);
+                    f[i][j] = 1 + min(f[i - 1][j - 1], mn);
+                }
+            }
+        }
+        return f[word1.size()][word2.size()];
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Edit Distance
+// 二维动规+滚动数组
+class Solution {
+public:
+    int minDistance(const string &word1, const string &word2) {
+        if (word1.length() < word2.length())
+            return minDistance(word2, word1);
+
+        int f[word2.length() + 1];
+        int upper_left = 0; // 额外用一个变量记录f[i-1][j-1]
+
+        for (size_t i = 0; i <= word2.size(); ++i)
+            f[i] = i;
+
+        for (size_t i = 1; i <= word1.size(); ++i) {
+            upper_left = f[0];
+            f[0] = i;
+
+            for (size_t j = 1; j <= word2.size(); ++j) {
+                int upper = f[j];
+
+                if (word1[i - 1] == word2[j - 1])
+                    f[j] = upper_left;
+                else
+                    f[j] = 1 + min(upper_left, min(f[j], f[j - 1]));
+
+                upper_left = upper;
+            }
+        }
+
+        return f[word2.length()];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Decode Ways} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:decode-ways}
+
+
+\subsubsection{描述}
+A message containing letters from \fn{A-Z} is being encoded to numbers using the following mapping:
+\begin{Code}
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+\end{Code}
+
+Given an encoded message containing digits, determine the total number of ways to decode it.
+
+For example,
+Given encoded message \fn{"12"}, it could be decoded as \fn{"AB"} (1 2) or \fn{"L"} (12).
+
+The number of ways decoding \fn{"12"} is 2.
+
+
+\subsubsection{分析}
+跟 Climbing Stairs (见 \S \ref{sec:climbing-stairs})很类似，不过多加一些判断逻辑。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Decode Ways
+// 动规
+class Solution {
+public:
+    int numDecodings(const string &s) {
+        if (s.empty() || s[0] == '0') return 0;
+
+        int prev = 0;
+        int cur = 1;
+        // 长度为n的字符串，有 n+1个阶梯
+        for (size_t i = 1; i <= s.size(); ++i) {
+            if (s[i-1] == '0') cur = 0;
+
+            if (i < 2 || !(s[i - 2] == '1' ||
+                     (s[i - 2] == '2' && s[i - 1] <= '6')))
+                prev = 0;
+
+            int tmp = cur;
+            cur = prev + cur;
+            prev = tmp;
+        }
+        return cur;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Climbing Stairs, 见 \S \ref{sec:climbing-stairs}
+\myenddot
+
+
+\section{Distinct Subsequences} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:distinct-subsequences}
+
+
+\subsubsection{描述}
+Given a string $S$ and a string $T$, count the number of distinct subsequences of $T$ in $S$.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, \fn{"ACE"} is a subsequence of \fn{"ABCDE"} while \fn{"AEC"} is not).
+
+Here is an example:
+$S$ = \fn{"rabbbit"}, $T$ = \fn{"rabbit"}
+
+Return 3.
+
+
+\subsubsection{分析}
+设状态为$f(i,j)$，表示\fn{T[0,j]}在\fn{S[0,i]}里出现的次数。首先，无论\fn{S[i]}和\fn{T[j]}是否相等，若不使用\fn{S[i]}，则$f(i,j)=f(i-1,j)$；若\fn{S[i]==T[j]}，则可以使用\fn{S[i]}，此时$f(i,j)=f(i-1,j)+f(i-1, j-1)$。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Decode Ways
+// 二维动规+滚动数组
+class Solution {
+public:
+    int numDistinct(const string &S, const string &T) {
+        vector<int> f(T.size() + 1);
+        f[0] = 1;
+        for (int i = 0; i < S.size(); ++i) {
+            for (int j = T.size() - 1; j >= 0; --j) {
+                f[j + 1] += S[i] == T[j] ? f[j] : 0;
+            }
+        }
+
+        return f[T.size()];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Word Break} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:word-break}
+
+
+\subsubsection{描述}
+Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+For example, given \\
+s = \fn{"leetcode"},\\
+dict = \fn{["leet", "code"]}.
+
+Return true because \fn{"leetcode"} can be segmented as \fn{"leet code"}.
+
+
+\subsubsection{分析}
+设状态为$f(i)$，表示\fn{s[0,i]}是否可以分词，则状态转移方程为
+$$
+f(i) = any_of(f(j) and s[j+1,i] in dict),  0 \leq j < i
+$$
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Word Break
+// 深搜，超时
+class Solution {
+public:
+    bool wordBreak(string s, unordered_set<string> &dict) {
+        return dfs(s, dict, 0, 0);
+    }
+private:
+    static bool dfs(const string &s, unordered_set<string> &dict,
+            size_t start, size_t cur) {
+        if (cur == s.size()) {
+            return dict.find(s.substr(start, cur-start+1)) != dict.end();
+        }
+        if (dfs(s, dict, start, cur+1)) return true;
+        if (dict.find(s.substr(start, cur-start+1)) != dict.end())
+            if (dfs(s, dict, cur+1, cur+1)) return true;
+        return false;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Word Break
+// 动规
+class Solution {
+public:
+    bool wordBreak(string s, unordered_set<string> &dict) {
+        // 长度为n的字符串有n+1个隔板
+        vector<bool> f(s.length() + 1, false);
+        f[0] = true;
+        for (int i = 1; i <= s.length(); ++i) {
+            for (int j = i - 1; j >= 0; --j) {
+                if (f[j] && dict.find(s.substr(j, i - j)) != dict.end()) {
+                    f[i] = true;
+                    break;
+                }
+            }
+        }
+        return f[s.length()];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Word Break II, 见 \S \ref{sec:word-break-ii}
+\myenddot
+
+
+\section{Word Break II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:word-break-ii}
+
+
+\subsubsection{描述}
+Given a string s and a dictionary of words dict, add spaces in s to construct a sentence where each word is a valid dictionary word.
+
+Return all such possible sentences.
+
+For example, given  \\
+s = \fn{"catsanddog"}, \\
+dict = \fn{["cat", "cats", "and", "sand", "dog"]}.
+
+A solution is \fn{["cats and dog", "cat sand dog"]}.
+
+
+\subsubsection{分析}
+在上一题的基础上，要返回解本身。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Word Break II
+// 动规
+class Solution {
+public:
+    vector<string> wordBreak(string s, unordered_set<string> &dict) {
+        // 长度为n的字符串有n+1个隔板
+        vector<bool> f(s.length() + 1, false);
+        // path[i][j]为true，表示s[j, i)是一个合法单词，可以从j处切开
+        // 第一行未用
+        vector<vector<bool> > prev(s.length()+1, vector<bool>(s.length()));
+        f[0] = true;
+        for (int i = 1; i <= s.length(); ++i) {
+            for (int j = i - 1; j >= 0; --j) {
+                if (f[j] && dict.find(s.substr(j, i - j)) != dict.end()) {
+                    f[i] = true;
+                    prev[i][j] = true;
+                }
+            }
+        }
+        vector<string> result;
+        vector<string> path;
+        gen_path(s, prev, s.length(), path, result);
+        return result;
+
+    }
+private:
+    // DFS遍历树，生成路径
+    void gen_path(const string &s, const vector<vector<bool> > &prev,
+            int cur, vector<string> &path, vector<string> &result) {
+        if (cur == 0) {
+            string tmp;
+            for (auto iter = path.rbegin(); iter != path.rend(); ++iter)
+                tmp += *iter + " ";
+            tmp.erase(tmp.end()-1);
+            result.push_back(tmp);
+        }
+        for (int i = 0; i < s.length(); ++i) {
+            if (prev[cur][i]) {
+                path.push_back(s.substr(i, cur - i));
+                gen_path(s, prev, i, path, result);
+                path.pop_back();
+            }
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Word Break, 见 \S \ref{sec:word-break}
+\myenddot

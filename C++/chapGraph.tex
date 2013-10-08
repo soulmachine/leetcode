@@ -1,0 +1,121 @@
+\chapter{图}
+
+无向图的节点定义如下：
+\begin{Code}
+// 无向图的节点
+struct UndirectedGraphNode {
+    int label;
+    vector<UndirectedGraphNode *> neighbors;
+    UndirectedGraphNode(int x) : label(x) {};
+};
+\end{Code}
+
+
+\section{Clone Graph} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:clone-graph}
+
+
+\subsubsection{描述}
+Clone an undirected graph. Each node in the graph contains a \code{label} and a list of its \code{neighbours}.
+
+
+OJ's undirected graph serialization:
+Nodes are labeled uniquely.
+
+We use \code{#} as a separator for each node, and \code{,} as a separator for node label and each neighbour of the node.
+As an example, consider the serialized graph \code{\{0,1,2#1,2#2,2\}}.
+
+The graph has a total of three nodes, and therefore contains three parts as separated by \code{#}.
+\begin{enumerate}
+\item First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+\item Second node is labeled as 1. Connect node 1 to node 2.
+\item Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
+\end{enumerate}
+
+Visually, the graph looks like the following:
+\begin{Code}
+       1
+      / \
+     /   \
+    0 --- 2
+         / \
+         \_/
+\end{Code}
+
+
+\subsubsection{分析}
+广度优先遍历或深度优先遍历都可以。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Clone Graph
+// DFS
+class Solution {
+public:
+    UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {
+        if(node == nullptr) return nullptr;
+        // key is original node，value is copied node
+        unordered_map<const UndirectedGraphNode *,
+                            UndirectedGraphNode *> copied;
+        clone(node, copied);
+        return copied[node];
+    }
+private:
+    // DFS
+    static UndirectedGraphNode* clone(const UndirectedGraphNode *node,
+            unordered_map<const UndirectedGraphNode *,
+            UndirectedGraphNode *> &copied) {
+        // a copy already exists
+        if (copied.find(node) != copied.end()) return copied[node];
+
+        UndirectedGraphNode *new_node = new UndirectedGraphNode(node->label);
+        copied[node] = new_node;
+        for (auto nbr : node->neighbors)
+            new_node->neighbors.push_back(clone(nbr, copied));
+        return new_node;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Clone Graph
+// BFS
+class Solution {
+public:
+    UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {
+        if (node == nullptr) return nullptr;
+        // key is original node，value is copied node
+        unordered_map<const UndirectedGraphNode *,
+                            UndirectedGraphNode *> copied;
+        // each node in queue is already copied itself
+        // but neighbors are not copied yet
+        queue<const UndirectedGraphNode *> q;
+        q.push(node);
+        copied[node] = new UndirectedGraphNode(node->label);
+        while (!q.empty()) {
+            const UndirectedGraphNode *cur = q.front();
+            q.pop();
+            for (auto nbr : cur->neighbors) {
+                // a copy already exists
+                if (copied.find(nbr) != copied.end()) {
+                    copied[cur]->neighbors.push_back(copied[nbr]);
+                } else {
+                    UndirectedGraphNode *new_node =
+                            new UndirectedGraphNode(nbr->label);
+                    copied[nbr] = new_node;
+                    copied[cur]->neighbors.push_back(new_node);
+                    q.push(nbr);
+                }
+            }
+        }
+        return copied[node];
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot

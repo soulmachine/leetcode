@@ -8,7 +8,7 @@
 
 
 \section{Word Ladder} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:wordladder}
+\label{sec:word-ladder}
 
 
 \subsubsection{描述}
@@ -95,12 +95,12 @@ public:
 \subsubsection{相关题目}
 
 \begindot
-\item Word Ladder II，见 \S \ref{sec:wordladderii}
+\item Word Ladder II，见 \S \ref{sec:word-ladder-ii}
 \myenddot
 
 
 \section{Word Ladder II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:wordladderii}
+\label{sec:word-ladder-ii}
 
 
 \subsubsection{描述}
@@ -212,5 +212,228 @@ private:
 \subsubsection{相关题目}
 
 \begindot
-\item Word Ladder，见 \S \ref{sec:wordladder}
+\item Word Ladder，见 \S \ref{sec:word-ladder}
 \myenddot
+
+
+\section{Surrounded Regions} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:surrounded-regions}
+
+
+\subsubsection{描述}
+Given a 2D board containing \fn{'X'} and \fn{'O'}, capture all regions surrounded by \fn{'X'}.
+
+A region is captured by flipping all \fn{'O'}s into \fn{'X'}s in that surrounded region .
+
+For example,
+\begin{Code}
+X X X X
+X O O X
+X X O X
+X O X X
+\end{Code}
+
+After running your function, the board should be:
+\begin{Code}
+X X X X
+X X X X
+X X X X
+X O X X
+\end{Code}
+
+
+\subsubsection{分析}
+广搜。从上下左右四个边界往里走，凡是能碰到的\fn{'O'}，都是跟边界接壤的，应该删除。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Surrounded Regions
+// BFS
+class Solution {
+public:
+    void solve(vector<vector<char>> &board) {
+        if (board.size() == 0) return;
+
+        const int m = board.size();
+        const int n = board[0].size();
+        for (int i = 0; i < n; i++) {
+            bfs(board, 0, i);
+            bfs(board, m - 1, i);
+        }
+        for (int j = 1; j < m - 1; j++) {
+            bfs(board, j, 0);
+            bfs(board, j, n - 1);
+        }
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (board[i][j] == 'O')
+                    board[i][j] = 'X';
+                else if (board[i][j] == '+')
+                    board[i][j] = 'O';
+    }
+private:
+    void bfs(vector<vector<char>> &board, int i, int j) {
+        queue<int> q;
+        visit(board, i, j, q);
+        while (!q.empty()) {
+            int cur = q.front(); q.pop();
+            const int x = cur / board[0].size();
+            const int y = cur % board[0].size();
+            visit(board, x - 1, y, q);
+            visit(board, x, y - 1, q);
+            visit(board, x + 1, y, q);
+            visit(board, x, y + 1, q);
+        }
+    }
+    void visit(vector<vector<char>> &board, int i, int j, queue<int> &q) {
+        const int m = board.size();
+        const int n = board[0].size();
+        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != 'O')
+            return;
+        board[i][j] = '+'; // 既有标记功能又有去重功能
+        q.push(i * n + j);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item 无
+\myenddot
+
+
+\section{小结} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:bfs-template}
+
+
+\subsection{适用场景}
+注意，这里的总结是一种经验，一种概率，不是绝对的结论！
+
+\textbf{输入数据}：没什么特征，不像深搜，需要有“递归”的性质。如果是树或者图，概率更大。
+
+\textbf{状态转换图}：树或者图。
+
+\textbf{求解目标}：求最短。
+
+
+\subsection{思考的步骤}
+\begin{enumerate}
+\item 是求路径长度，还是路径本身（或动作序列）？
+    \begin{enumerate}
+    \item 如果是求路径长度，则状态里面要存路径长度
+    \item 如果是求路径本身或动作序列
+        \begin{enumerate}
+            \item 要用一棵树存储宽搜过程中的路径
+            \item 是否可以预估状态个数的上限？能够预估状态总数，则开一个大数组，用树的双亲表示法；如果不能预估状态总数，则要使用一棵通用的树。这一步也是第4步的必要不充分条件。
+        \end{enumerate}
+    \end{enumerate}
+
+\item 如何表示状态？即一个状态需要存储哪些些必要的数据，才能够完整提供如何扩展到下一步状态的所有信息。一般记录当前位置或整体局面。
+
+\item 如何扩展状态？这一步跟第2步相关。状态里记录的数据不同，扩展方法就不同。对于固定不变的数据结构（一般题目直接给出，作为输入数据），如二叉树，图等，扩展方法很简单，直接往下一层走，对于隐式图，要先在第1步里想清楚状态所带的数据，想清楚了这点，那如何扩展就很简单了。
+
+\item 关于判重，状态是否存在完美哈希方案？即将状态一一映射到整数，互相之间不会冲突。
+    \begin{enumerate}
+    \item 如果不存在，则需要使用通用的哈希表（自己实现或用标准库，例如\fn{unordered_set}）来判重；自己实现哈希表的话，如果能够预估状态个数的上限，则可以开两个数组，head和next，表示哈希表，参考第 \S \ref{subsec:eightDigits}节方案2。
+    \item 如果存在，则可以开一个大布尔数组，作为哈希表来判重，且此时可以精确计算出状态总数，而不仅仅是预估上限。
+    \end{enumerate}
+
+\item 目标状态是否已知？如果题目已经给出了目标状态，可以带来很大便利，这时候可以从起始状态出发，正向广搜；也可以从目标状态出发，逆向广搜；也可以同时出发，双向广搜。
+\end{enumerate}
+
+
+\subsection{代码模板}
+广搜需要一个队列，用于一层一层扩展，一个hashset，用于判重，一棵树（只求长度时不需要），用于存储整棵树。
+
+对于队列，可以用\fn{queue}，也可以把\fn{vector}当做队列使用。当求长度时，有两种做法：
+\begin{enumerate}
+\item 只用一个队列，但在状态结构体\fn{state_t}里增加一个整数字段\fn{step}，表示走到当前状态用了多少步，当碰到目标状态，直接输出\fn{step}即可。这个方案，可以很方便的变成A*算法，把队列换成优先队列即可。
+\item 用两个队列，\fn{current, next}，分别表示当前层次和下一层，另设一个全局整数\fn{level}，表示层数（也即路径长度），当碰到目标状态，输出\fn{level}即可。这个方案，状态可以少一个字段，节省内存。
+\end{enumerate}
+
+对于hashset，如果有完美哈希方案，用布尔数组(\fn{bool visited[STATE_MAX]}或\fn{vector<bool> visited(STATE_MAX, false)})来表示；如果没有，可以用STL里的\fn{set}或\fn{unordered_set}。
+
+对于树，如果用STL，可以用\fn{unordered_map<state_t, state_t > father}表示一颗树，代码非常简洁。如果能够预估状态总数的上限（设为STATE_MAX），可以用数组(\fn{state_t nodes[STATE_MAX]})，即树的双亲表示法来表示树，效率更高，当然，需要写更多代码。
+
+
+\begin{Codex}[label=bfs_template1.cpp]
+/**
+ * @brief 反向生成路径.
+ * @param[in] father 树
+ * @param[in] target 目标节点
+ * @return 从起点到target的路径
+ */
+template<typename state_t>
+vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
+        const state_t &target) {
+    vector<state_t> path;
+    path.push_back(target);
+
+    state_t cur = target;
+    while (father.find(cur) != father.end()) {
+        cur = father.at(cur);
+        path.push_back(cur);
+    }
+    reverse(path.begin(), path.end());
+
+    return path;
+}
+
+/**
+ * @brief 广搜.
+ * @param[in] state_t 状态，如整数，字符串，一维数组等
+ * @param[in] start 起点
+ * @param[in] state_is_target 判断状态是否是目标的函数
+ * @param[in] state_extend 状态扩展函数
+ * @return 从起点到目标状态的一条最短路径
+ */
+template<typename state_t>
+vector<state_t> bfs(state_t &start, bool (*state_is_target)(const state_t&),
+        vector<state_t>(*state_extend)(const state_t&,
+                unordered_set<string> &visited)) {
+    queue<state_t> next, current; // 当前层，下一层
+    unordered_set<state_t> visited; // 判重
+    unordered_map<state_t, state_t> father;
+
+    int level = 0;  // 层次
+    bool found = false;
+    state_t target;
+
+    current.push(start);
+    while (!current.empty() && !found) {
+        ++level;
+        while (!current.empty() && !found) {
+            const state_t state = current.front();
+            current.pop();
+            vector<state_t> new_states = state_extend(state, visited);
+            for (auto iter = new_states.begin();
+                    iter != new_states.end() && ! found; ++iter) {
+                const state_t new_state(*iter);
+
+                if (state_is_target(new_state)) {
+                    found = true; //找到了
+                    target = new_state;
+                    father[new_state] = state;
+                    break;
+                }
+
+                next.push(new_state);
+                // visited.insert(new_state); 必须放到 state_extend()里
+                father[new_state] = state;
+            }
+        }
+        swap(next, current); //!!! 交换两个队列
+    }
+
+    if (found) {
+        return gen_path(father, target);
+        //return level + 1;
+    } else {
+        return vector<state_t>();
+        //return 0;
+    }
+}
+\end{Codex}

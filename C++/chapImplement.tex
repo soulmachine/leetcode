@@ -2,6 +2,109 @@
 这类题目不考特定的算法，纯粹考察写代码的熟练度。
 
 
+\section{Reverse Integer} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:reverse-integer}
+
+
+\subsubsection{描述}
+Reverse digits of an integer.
+
+Example1: x = 123, return 321
+
+Example2: x = -123, return -321
+
+
+\textbf{Have you thought about this?}
+
+Here are some good questions to ask before coding. Bonus points for you if you have already thought through this!
+
+If the integer's last digit is 0, what should the output be? ie, cases such as 10, 100.
+
+Did you notice that the reversed integer might overflow? Assume the input is a 32-bit integer, then the reverse of 1000000003 overflows. How should you handle such cases?
+
+Throw an exception? Good, but what if throwing an exception is not an option? You would then have to re-design the function (ie, add an extra parameter).
+
+
+\subsubsection{分析}
+短小精悍的题，代码也可以写的很短小。
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Reverse Integer
+class Solution {
+public:
+    int reverse (int x) {
+        int r = 0;
+
+        for (; x; x /= 10)
+            r = r * 10 + x % 10;
+
+        return r;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Palindrome Number, 见 \S \ref{sec:palindrome-number}
+\myenddot
+
+
+\section{Palindrome Number} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:palindrome-number}
+
+
+\subsubsection{描述}
+Determine whether an integer is a palindrome. Do this without extra space.
+
+\textbf{Some hints:}
+
+Could negative integers be palindromes? (ie, -1)
+
+If you are thinking of converting the integer to string, note the restriction of using extra space.
+
+You could also try reversing an integer. However, if you have solved the problem "Reverse Integer", you know that the reversed integer might overflow. How would you handle such case?
+
+There is a more generic way of solving this problem.
+
+
+\subsubsection{分析}
+首先想到，可以利用上一题，将整数反转，然后与原来的整数比较，是否相等，相等则为 Palindrome 的。可是 reverse()会溢出。
+
+正确的解法是，不断地取第一位和最后一位（10进制下）进行比较，相等则取第二位和倒数第二位，直到完成比较或者中途找到了不一致的位。
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Palindrome Number
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0) return false;
+        int d = 1; // divisor
+        while (x / d >= 10) d *= 10;
+
+        while (x > 0) {
+            int q = x / d;  // quotient
+            int r = x % 10;   // remainder
+            if (q != r) return false;
+            x = x % d / 10;
+            d /= 100;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Reverse Integer, 见 \S \ref{sec:reverse-integer}
+\myenddot
+
+
 \section{Two Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:wordladder}
 
@@ -285,7 +388,7 @@ Note: The numbers can be arbitrarily large and are non-negative.
 
 \begin{Code}
 // LeetCode, Multiply Strings
-// @author 连城(http://weibo.com/lianchengzju)
+// @author 连城 (http://weibo.com/lianchengzju)
 // 一个字符对应一个int
 typedef vector<int> bigint;
 
@@ -728,5 +831,240 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item Spiral Matrix ，见 \S \ref{sec:spiral-matrix}
+\item Spiral Matrix, 见 \S \ref{sec:spiral-matrix}
+\myenddot
+
+
+\section{ZigZag Conversion} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:zigzag-conversion}
+
+
+\subsubsection{描述}
+The string \code{"PAYPALISHIRING"} is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+
+\begin{Code}
+P   A   H   N
+A P L S I I G
+Y   I   R
+\end{Code}
+
+And then read line by line: \code{"PAHNAPLSIIGYIR"}
+
+Write the code that will take a string and make this conversion given a number of rows:
+\begin{Code}
+string convert(string text, int nRows);
+\end{Code}
+\code{convert("PAYPALISHIRING", 3)} should return \code{"PAHNAPLSIIGYIR"}.
+
+
+\subsubsection{分析}
+要找到数学规律。真正面试中，不大可能出这种问题。
+
+n=4:
+\begin{Code}
+P     I     N
+A   L S   I G
+Y A   H R
+P     I
+\end{Code}
+
+n=5:
+\begin{Code}
+P       H
+A     S I
+Y   I   R
+P L     I  G
+A       N
+\end{Code}
+
+所以，对于每一层垂直元素的坐标 $(i,j)= (j+1 )*n +i$；对于每两层垂直元素之间的插入元素（斜对角元素），$(i,j)= (j+1)*n -i$
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, ZigZag Conversion
+class Solution {
+public:
+    string convert(string s, int nRows) {
+        if (nRows <= 1 || s.size() <= 1) return s;
+        string result;
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0, index = i; index < s.size();
+                    j++, index = (2 * nRows - 2) * j + i) {
+                result.append(1, s[index]);  // 垂直元素
+                if (i == 0 || i == nRows - 1) continue;   // 斜对角元素
+                if (index + (nRows - i - 1) * 2 < s.size())
+                    result.append(1, s[index + (nRows - i - 1) * 2]);
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Divide Two Integers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:divide-two-integers}
+
+
+\subsubsection{描述}
+Divide two integers without using multiplication, division and mod operator.
+
+
+\subsubsection{分析}
+不能用乘、除和取模，那剩下的，还有加、减和位运算。
+
+最简单的方法，是不断减去被除数。在这个基础上，可以做一点优化，每次把被除数翻倍，从而加速。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Divide Two Integers
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        int result = 0;
+        const bool sign = (dividend > 0 && divisor < 0) ||
+                (dividend < 0 && divisor > 0); // 异号
+
+        // 当 dividend = INT_MIN, divisor =-1 时，会溢出，所以用 unsigned int
+        unsigned int a = dividend >= 0 ? dividend : -dividend;
+        unsigned int b = divisor >= 0 ? divisor : -divisor;
+
+        while (a >= b) {
+            int multi = 1;
+            unsigned int bb = b;
+            while (a >= bb) {
+                a -= bb;
+                result += multi;
+
+                if (bb < INT_MAX >> 1) { // 防止溢出
+                    bb += bb;
+                    multi += multi;
+                }
+            }
+        }
+        if (sign) return -result;
+        else return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Text Justification} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:text-justification}
+
+
+\subsubsection{描述}
+Given an array of words and a length $L$, format the text such that each line has exactly $L$ characters and is fully (left and right) justified.
+
+You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces \fn{' '} when necessary so that each line has exactly $L$ characters.
+
+Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.
+
+For the last line of text, it should be left justified and no extra space is inserted between words.
+
+For example, \\
+words: \code{["This", "is", "an", "example", "of", "text", "justification."]} \\
+L: 16.
+
+Return the formatted lines as:
+\begin{Code}
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+\end{Code}
+
+Note: Each word is guaranteed not to exceed $L$ in length.
+
+Corner Cases:
+\begindot
+\item A line other than the last line might contain only one word. What should you do in this case?
+\item In this case, that line should be left
+\myenddot
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Text Justification
+class Solution {
+public:
+    vector<string> fullJustify(vector<string> &words, int L) {
+        vector<string> result;
+        const int n = words.size();
+        int begin = 0, len = 0; // 当前行的起点，当前长度
+        for (int i = 0; i < n; ++i) {
+            if (len + words[i].size() + (i - begin) > L) {
+                result.push_back(connect(words, begin, i - 1, len, L, false));
+                begin = i;
+                len = 0;
+            }
+            len += words[i].size();
+        }
+        // 最后一行不足L
+        result.push_back(connect(words, begin, n - 1, len, L, true));
+        return result;
+    }
+    /**
+     * @brief 将 words[begin, end] 连成一行
+     * @param[in] words 单词列表
+     * @param[in] begin 开始
+     * @param[in] end 结束
+     * @param[in] len words[begin, end]所有单词加起来的长度
+     * @param[in] L 题目规定的一行长度
+     * @param[in] is_last 是否是最后一行
+     * @return 对齐后的当前行
+     */
+    string connect(vector<string> &words, int begin, int end,
+            int len, int L, bool is_last) {
+        string s;
+        int n = end - begin + 1;
+        for (int i = 0; i < n; ++i) {
+            s += words[begin + i];
+            addSpaces(s, i, n - 1, L - len, is_last);
+        }
+
+        if (s.size() < L) s.append(L - s.size(), ' ');
+        return s;
+    }
+
+    /**
+     * @brief 添加空格.
+     * @param[inout]s 一行
+     * @param[in] i 当前空隙的序号
+     * @param[in] n 空隙总数
+     * @param[in] L 总共需要添加的空额数
+     * @param[in] is_last 是否是最后一行
+     * @return 无
+     */
+    void addSpaces(string &s, int i, int n, int L, bool is_last) {
+        if (n < 1 || i > n - 1) return;
+        int spaces = is_last ? 1 : (L / n + (i < (L % n) ? 1 : 0));
+        s.append(spaces, ' ');
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
 \myenddot

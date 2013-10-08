@@ -1,0 +1,203 @@
+\chapter{查找}
+
+
+\section{Search for a Range} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:search-for-a-range}
+
+
+\subsubsection{描述}
+Given a sorted array of integers, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of $O(\log n)$.
+
+If the target is not found in the array, return \code{[-1, -1]}.
+
+For example,
+Given \code{[5, 7, 7, 8, 8, 10]} and target value 8,
+return \code{[3, 4]}.
+
+
+\subsubsection{分析}
+已经排好了序，用二分查找。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Search for a Range
+// 偷懒的做法
+class Solution {
+public:
+    vector<int> searchRange(int A[], int n, int target) {
+        const int l = distance(A, lower_bound(A, A + n, target));
+        const int u = distance(A, prev(upper_bound(A, A + n, target)));
+        if (A[l] != target) // not found
+            return vector<int> { -1, -1 };
+        else
+            return vector<int> { l, u };
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Search for a Range
+// 重新实现 lower_bound 和 upper_bound
+class Solution {
+public:
+    vector<int> searchRange (int A[], int n, int target) {
+        auto lower = lower_bound(A, A + n, target);
+        auto uppper = upper_bound(lower, A + n, target);
+
+        if (lower == A + n || *lower != target)
+            return vector<int> { -1, -1 };
+        else
+            return vector<int> {distance(A, lower), distance(A, prev(uppper))};
+    }
+
+    template<typename ForwardIterator, typename T>
+    ForwardIterator lower_bound (ForwardIterator first,
+            ForwardIterator last, T value) {
+        while (first != last) {
+            auto mid = next(first, distance(first, last) / 2);
+
+            if (value > *mid)   first = ++mid;
+            else                last = mid;
+        }
+
+        return first;
+    }
+
+    template<typename ForwardIterator, typename T>
+    ForwardIterator upper_bound (ForwardIterator first,
+            ForwardIterator last, T value) {
+        while (first != last) {
+            auto mid = next(first, distance (first, last) / 2);
+
+            if (value >= *mid)   first = ++mid;  // 与 lower_bound 仅此不同
+            else                 last = mid;
+        }
+
+        return first;
+    }
+};
+\end{Code}
+
+\subsubsection{相关题目}
+\begindot
+\item Search Insert Position, 见 \S \ref{sec:search-insert-position}
+\myenddot
+
+
+\section{Search Insert Position} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:search-insert-position}
+
+
+\subsubsection{描述}
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You may assume no duplicates in the array.
+
+Here are few examples.
+\begin{Code}
+[1,3,5,6], 5 → 2
+[1,3,5,6], 2 → 1
+[1,3,5,6], 7 → 4
+[1,3,5,6], 0 → 0
+\end{Code}
+
+
+\subsubsection{分析}
+即\fn{std::lower_bound()}。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Search Insert Position
+// 重新实现 lower_bound
+class Solution {
+public:
+    int searchInsert(int A[], int n, int target) {
+        return lower_bound(A, A + n, target) - A;
+    }
+
+    template<typename ForwardIterator, typename T>
+    ForwardIterator lower_bound (ForwardIterator first,
+            ForwardIterator last, T value) {
+        while (first != last) {
+            auto mid = next(first, distance(first, last) / 2);
+
+            if (value > *mid)   first = ++mid;
+            else                last = mid;
+        }
+
+        return first;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Search for a Range, 见 \S \ref{sec:search-for-a-range}
+\myenddot
+
+
+\section{Search a 2D Matrix} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:search-a-2d-matrix}
+
+
+\subsubsection{描述}
+Write an efficient algorithm that searches for a value in an $m \times n$ matrix. This matrix has the following properties:
+\begindot
+\item Integers in each row are sorted from left to right.
+\item The first integer of each row is greater than the last integer of the previous row.
+\myenddot
+
+For example, Consider the following matrix:
+\begin{Code}
+[
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+\end{Code}
+Given \fn{target = 3}, return true.
+
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Search a 2D Matrix
+class Solution {
+public:
+    bool searchMatrix(const vector<vector<int>>& matrix, int target) {
+        const size_t  m = matrix.size();
+        const size_t n = matrix.front().size();
+
+        int first = 0;
+        int last = m * n;
+
+        while (first < last) {
+            int mid = first + (last - first) / 2;
+            int value = matrix[mid / n][mid % n];
+
+            if (value == target)
+                return true;
+            else if (value < target)
+                first = mid + 1;
+            else
+                last = mid;
+        }
+
+        return false;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot

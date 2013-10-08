@@ -380,6 +380,1268 @@ public:
 \myenddot
 
 
+\subsection{3Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:3sum}
+
+
+\subsubsection{描述}
+Given an array $S$ of $n$ integers, are there elements $a, b, c$ in $S$ such that $a + b + c = 0$? Find all unique triplets in the array which gives the sum of zero.
+
+Note:
+\begindot
+\item Elements in a triplet $(a,b,c)$ must be in non-descending order. (ie, $a \leq b \leq c$)
+\item The solution set must not contain duplicate triplets.
+\myenddot
+
+For example, given array \code{S = \{-1 0 1 2 -1 -4\}}.
+
+A solution set is:
+\begin{Code}
+(-1, 0, 1)
+(-1, -1, 2)
+\end{Code}
+
+
+\subsubsection{分析}
+先排序，然后二分查找，复杂度 $O(n^2 \log n)$。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, 3Sum
+// 先排序，然后二分查找
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& num) {
+        vector<vector<int>> result;
+        if (num.size() < 3) return result;
+        sort(num.begin(), num.end());
+        const int target = 0;
+
+        auto last = num.end();
+        for (auto a = num.begin(); a < prev(last, 2);
+                a = upper_bound(a, prev(last, 2), *a)) {
+            for (auto b = next(a); b < prev(last);
+                    b = upper_bound(b, prev(last), *b)) {
+                const int c = target - *a - *b;
+
+                if (binary_search(next(b), last, c))
+                    result.push_back(vector<int> { *a, *b, c });
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
+\item 4Sum, 见 \S \ref{sec:4sum}
+\myenddot
+
+\subsection{3Sum Closest} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:3sum-closest}
+
+
+\subsubsection{描述}
+Given an array $S$ of $n$ integers, find three integers in $S$ such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+For example, given array \code{S = \{-1 2 1 -4\}}, and \code{target = 1}.
+
+The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
+
+
+\subsubsection{分析}
+先排序，然后左右夹逼，复杂度 $O(n^3)$。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, 3Sum Closest
+// 先排序，然后左右夹逼
+class Solution {
+public:
+    int threeSumClosest(vector<int>& num, int target) {
+        int result = 0;
+        int min_gap = INT_MAX;
+
+        sort(num.begin(), num.end());
+
+        for (auto a = num.begin(); a != prev(num.end(), 2);
+                a = upper_bound(a, prev(num.end(), 2), *a)) {
+            auto b = next(a);
+            auto c = prev(num.end());
+
+            while (b < c) {
+                const int sum = *a + *b + *c;
+                const int gap = abs(sum - target);
+
+                if (gap < min_gap) {
+                    result = sum;
+                    min_gap = gap;
+                }
+
+                if (sum < target)
+                    b = upper_bound(b, c, *b);
+                else
+                    c = prev(lower_bound(b, c, *c));
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 3Sum, 见 \S \ref{sec:3sum}
+\item 4Sum, 见 \S \ref{sec:4sum}
+\myenddot
+
+
+\subsection{4Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:4sum}
+
+
+\subsubsection{描述}
+Given an array $S$ of $n$ integers, are there elements $a, b, c$, and $d$ in $S$ such that $a + b + c + d = target$? Find all unique quadruplets in the array which gives the sum of target.
+
+Note:
+\begindot
+\item Elements in a quadruplet $(a,b,c,d)$ must be in non-descending order. (ie, $a \leq b \leq c \leq d$)
+\item The solution set must not contain duplicate quadruplets.
+\myenddot
+
+For example, given array \code{S = \{1 0 -1 0 -2 2\}}, and \code{target = 0}. 
+
+A solution set is:
+\begin{Code}
+(-1,  0, 0, 1)
+(-2, -1, 1, 2)
+(-2,  0, 0, 2)
+\end{Code}
+
+
+\subsubsection{分析}
+跟 3Sum 很类似，先排序，然后二分查找，复杂度 $O(n^3 \log n)$，会超时。
+
+然后想到，可以先缓存两个数的和，最终复杂度$O(n^3)$。这个策略也适用于 3Sum 。
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, 4Sum
+// 先排序，然后二分查找，复杂度n^3*logn，会超时
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& num, int target) {
+        vector<vector<int>> result;
+        if (num.size() < 4) return result;
+        sort(num.begin(), num.end());
+
+        auto last = num.end();
+        for (auto a = num.begin(); a < prev(last, 3);
+                a = upper_bound(a, prev(last, 3), *a)) {
+            for (auto b = next(a); b < prev(last, 2);
+                    b = upper_bound(b, prev(last, 2), *b)) {
+                for (auto c = next(b); c < prev(last);
+                        c = upper_bound(c, prev(last), *c)) {
+                    const int d = target - *a - *b - *c;
+
+                    if (binary_search(next(c), last, d))
+                        result.push_back(vector<int> { *a, *b, *c, d });
+                }
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\begin{Code}
+// LeetCode, 4Sum
+// 先缓存两个数的和，复杂度O(n^3)
+class Solution {
+public:
+    vector<vector<int> > fourSum(vector<int> &num, int target) {
+        if (num.size() < 4) return  vector<vector<int> >();
+        sort(num.begin(), num.end());
+
+        map<int, vector<pair<int, int> > > cache;
+        for (size_t a = 0; a < num.size(); ++a) {
+            for (size_t b = a + 1; b < num.size(); ++b) {
+                cache[num[a] + num[b]].push_back(pair<int, int>(a, b));
+            }
+        }
+
+        set<vector<int>> result; // 去重，因为 num 里有重复元素
+        for (size_t c = 2; c < num.size(); ++c) {
+            for (size_t d = c + 1; d < num.size(); ++d) {
+                const int key = target - num[c] - num[d];
+                if (cache.find(key) != cache.end()) {
+                    for (size_t k = 0; k < cache[key].size(); ++k) {
+                        if (c <= cache[key][k].second) continue; // 有重叠
+
+                        result.insert(vector<int> { num[cache[key][k].first],
+                            num[cache[key][k].second], num[c], num[d] });
+                    }
+                }
+            }
+        }
+        return vector<vector<int> >(result.begin(), result.end());
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 3Sum, 见 \S \ref{sec:3sum}
+\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
+\myenddot
+
+
+\subsection{Remove Element} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:remove-element }
+
+
+\subsubsection{描述}
+Given an array and a value, remove all instances of that value in place and return the new length.
+
+The order of elements can be changed. It doesn't matter what you leave beyond the new length.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Remove Element
+class Solution {
+public:
+    int removeElement(int A[], int n, int elem) {
+        int index = 0;
+        for (int i = 0; i < n; ++i) {
+            if (A[i] != elem) {
+                A[index++] = A[i];
+            }
+        }
+        return index;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Next Permutation} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:next-permutation}
+
+
+\subsubsection{描述}
+Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+The replacement must be in-place, do not allocate extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+\begin{Code}
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+\end{Code}
+
+
+\subsubsection{分析}
+算法过程如图~\ref{fig:permutation}所示（来自\myurl{http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html}）。
+
+\begin{center}
+\includegraphics[width=360pt]{next-permutation.png}\\
+\figcaption{下一个排列算法流程}\label{fig:permutation}
+\end{center}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Next Permutation
+class Solution {
+public:
+    void nextPermutation(vector<int> &num) {
+        next_permutation(num.begin(), num.end());
+    }
+
+    template<typename BidiIt>
+    bool next_permutation(BidiIt first, BidiIt last) {
+        // Get a reversed range to simplify reversed traversal.
+        const auto rfirst = reverse_iterator<BidiIt>(last);
+        const auto rlast = reverse_iterator<BidiIt>(first);
+
+        // Begin from the second last element to the first element.
+        auto pivot = next(rfirst);
+
+        // Find `pivot`, which is the first element that is no less than its
+        // successor.  `Prev` is used since `pivort` is a `reversed_iterator`.
+        while (pivot != rlast and !(*pivot < *prev(pivot)))
+            ++pivot;
+
+        // No such elemenet found, current sequence is already the largest
+        // permutation, then rearrange to the first permutation and return false.
+        if (pivot == rlast) {
+            reverse(rfirst, rlast);
+            return false;
+        }
+
+        // Scan from right to left, find the first element that is greater than
+        // `pivot`.
+        auto change = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
+
+        swap(*change, *pivot);
+        reverse(rfirst, pivot);
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
+\item Permutations, 见 \S \ref{sec:permutations}
+\item Permutations II, 见 \S \ref{sec:permutations-ii}
+\item Combinations, 见 \S \ref{sec:combinations}
+\myenddot
+
+
+\subsection{Permutation Sequence} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:permutation-sequence}
+
+
+\subsubsection{描述}
+The set \fn{[1,2,3,…,n]} contains a total of $n!$ unique permutations.
+
+By listing and labeling all of the permutations in order,
+We get the following sequence (ie, for $n = 3$):
+\begin{Code}
+"123"
+"132"
+"213"
+"231"
+"312"
+"321"
+\end{Code}
+
+Given $n$ and $k$, return the kth permutation sequence.
+
+Note: Given $n$ will be between 1 and 9 inclusive.
+
+
+\subsubsection{分析}
+简单的，可以用暴力枚举法，调用 $k-1$ 次 \fn{next_permutation()}。
+
+暴力枚举法把前 $k$个排列都求出来了，比较浪费，而我们只需要第$k$个排列。
+
+利用康托编码的思路，假设有$n$个不重复的元素，第$k$个排列是$a_1, a_2, a_3, ..., a_n$，那么$a_1$是哪一个位置呢？
+
+我们把$a_1$去掉，那么剩下的排列为
+$a_2, a_3, ..., a_n$, 共计$n-1$个元素，$n-1$个元素共有$(n-1)!$个排列，于是就可以知道 $a_1 = k / (n-1)!$。
+
+同理，$a_2, a_3, ..., a_n$的值推导如下：
+
+\begin{eqnarray}
+k_2 &=& k\%(n-1)! \nonumber \\
+a_2 &=& k_2/(n-2)! \nonumber \\
+... &=& ... \nonumber \\
+k_{n-1} &=& k_{n-2}\%2! \nonumber \\
+a_{n-1} &=& k_{n-1}/1! \nonumber \\
+a_n &=& 0 \nonumber
+\end{eqnarray}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Permutation Sequence
+// 思路一：next_permutation()，TLE
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        string s(n, '0');
+        for (int i = 0; i < n; ++i)
+            s[i] += i+1;
+        for (int i = 0; i < k-1; ++i)
+            next_permutation(s.begin(), s.end());
+        return s;
+    }
+
+    template<typename BidiIt>
+    bool next_permutation(BidiIt first, BidiIt last) {
+        // 代码见上一题 Next Permutation
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Permutation Sequence
+// 康托编码
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        string s(n, '0');
+        string result;
+        for (int i = 0; i < n; ++i)
+            s[i] += i + 1;
+
+        return kth_permutation(s, k);
+    }
+private:
+    int factorial(int n) {
+        int result = 1;
+        for (int i = 1; i <= n; ++i)
+            result *= i;
+        return result;
+    }
+
+    // seq 已排好序，是第一个排列
+    template<typename Sequence>
+    Sequence kth_permutation(const Sequence &seq, int k) {
+        const int n = seq.size();
+        Sequence S(seq);
+        Sequence result;
+
+        int base = factorial(n - 1);
+        --k;  // 康托编码从0开始
+
+        for (int i = n - 1; i > 0; k %= base, base /= i, --i) {
+            auto pos = next(S.begin(), k / base);
+            result.push_back(*pos);
+            S.erase(pos);
+        }
+
+        result.push_back(S[0]); // 最后一个
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Next Permutation, 见 \S \ref{sec:next-permutation}
+\item Permutations, 见 \S \ref{sec:permutations}
+\item Permutations II, 见 \S \ref{sec:permutations-ii}
+\item Combinations, 见 \S \ref{sec:combinations}
+\myenddot
+
+
+\subsection{Valid Sudoku} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:valid-sudoku}
+
+
+\subsubsection{描述}
+Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules \myurl{http://sudoku.com.au/TheRules.aspx} .
+
+The Sudoku board could be partially filled, where empty cells are filled with the character \fn{'.'}.
+
+\begin{center}
+\includegraphics[width=200pt]{sudoku.png}\\
+\figcaption{A partially filled sudoku which is valid}\label{fig:sudoku}
+\end{center}
+
+\subsubsection{分析}
+细节实现题。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Valid Sudoku
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        bool used[9];
+
+        for (int i = 0; i < 9; ++i) {
+            fill(used, used + 9, false);
+
+            for (int j = 0; j < 9; ++j) // 检查行
+                if (!check(board[i][j], used))
+                    return false;
+
+            fill(used, used + 9, false);
+
+            for (int j = 0; j < 9; ++j) // 检查列
+                if (!check(board[j][i], used))
+                    return false;
+        }
+
+        for (int r = 0; r < 3; ++r) // 检查 9 个子格子
+            for (int c = 0; c < 3; ++c) {
+                fill(used, used + 9, false);
+
+                for (int i = r * 3; i < r * 3 + 3; ++i)
+                    for (int j = c * 3; j < c * 3 + 3; ++j)
+                        if (!check(board[i][j], used))
+                            return false;
+            }
+
+        return true;
+    }
+
+    bool check(char ch, bool used[9]) {
+        if (ch == '.') return true;
+
+        if (used[ch - '1']) return false;
+
+        used[ch - '1'] = true;
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Sudoku Solver, 见 \S \ref{sec:sudoku-solver}
+\myenddot
+
+
+\subsection{Trapping Rain Water} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:trapping-rain-water}
+
+
+\subsubsection{描述}
+Given $n$ non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
+
+For example, 
+Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
+
+\begin{center}
+\includegraphics{trapping-rain-water.png}\\
+\figcaption{Trapping Rain Water}\label{fig:trapping-rain-water}
+\end{center}
+
+
+\subsubsection{分析}
+对于每个柱子，找到其左右两边最高的柱子，该柱子能容纳的面积就是\code{min(max_left, max_right) - height}。所以，
+\begin{enumerate}
+\item 从左往右扫描一遍，对于每个柱子，求取左边最大值；
+\item 从右往左扫描一遍，对于每个柱子，求最大右值；
+\item 再扫描一遍，把每个柱子的面积并累加。
+\end{enumerate}
+
+也可以，
+\begin{enumerate}
+\item 扫描一遍，找到最高的柱子，这个柱子将数组分为两半；
+\item 处理左边一半；
+\item 处理右边一半。
+\end{enumerate}
+
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Trapping Rain Water
+// 思路1
+class Solution {
+public:
+    int trap(int A[], int n) {
+        int *max_left = new int[n]();
+        int *max_right = new int[n]();
+
+        for (int i = 1; i < n; i++) {
+            max_left[i] = max(max_left[i - 1], A[i - 1]);
+            max_right[n - 1 - i] = max(max_right[n - i], A[n - i]);
+
+        }
+
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            int height = min(max_left[i], max_right[i]);
+            if (height > A[i]) {
+                sum += height - A[i];
+            }
+        }
+
+        delete[] max_left;
+        delete[] max_right;
+        return sum;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Trapping Rain Water
+// 思路2
+class Solution {
+public:
+    int trap(int A[], int n) {
+        int max = 0; // 最高的柱子，将数组分为两半
+        for (int i = 0; i < n; i++)
+            if (A[i] > A[max]) max = i;
+
+        int water = 0;
+        for (int i = 0, peak = 0; i < max; i++)
+            if (A[i] > peak) peak = A[i];
+            else water += peak - A[i];
+        for (int i = n - 1, top = 0; i > max; i--)
+            if (A[i] > top) top = A[i];
+            else water += top - A[i];
+        return water;
+    }
+};
+\end{Code}
+
+第三种解法，用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或等于当前值的元素全部出栈处理掉。
+\begin{Code}
+// LeetCode, Trapping Rain Water
+// 用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或
+// 等于当前值的元素全部出栈处理掉，计算面积，最后把当前元素入栈
+class Solution {
+public:
+    int trap(int a[], int n) {
+        stack<pair<int, int>> s;
+        int water = 0;
+
+        for (int i = 0; i < n; ++i) {
+            int height = 0;
+
+            while (!s.empty()) { // 将栈里比当前元素矮或等高的元素全部处理掉
+                int bar = s.top().first;
+                int pos = s.top().second;
+                // bar, height, a[i] 三者夹成的凹陷
+                water += (min(bar, a[i]) - height) * (i - pos - 1);
+                height = bar;
+
+                if (a[i] < bar) // 碰到了比当前元素高的，跳出循环
+                    break;
+                else
+                    s.pop(); // 弹出栈顶，因为该元素处理完了，不再需要了
+            }
+
+            s.push(make_pair(a[i], i));
+        }
+
+        return water;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Container With Most Water, 见 \S \ref{sec:container-with-most-water}
+\item Largest Rectangle in Histogram, 见 \S \ref{sec:largest-rectangle-in-histogram}
+\myenddot
+
+
+\subsection{Rotate Image} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:rotate-image}
+
+
+\subsubsection{描述}
+You are given an $n \times n$ 2D matrix representing an image.
+
+Rotate the image by 90 degrees (clockwise).
+
+Follow up:
+Could you do this in-place?
+
+
+\subsubsection{分析}
+首先想到，纯模拟，从外到内一圈一圈的转，但这个方法太慢。
+
+如下图，首先沿着副对角线翻转一次，然后沿着水平中线翻转一次。
+
+\begin{center}
+\includegraphics{rotate-image.png}\\
+\figcaption{Rotate Image}\label{fig:rotate-image}
+\end{center}
+
+或者，首先沿着水平中线翻转一次，然后沿着主对角线翻转一次。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Trapping Rain Water
+// 思路 1
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        const int n = matrix.size();
+
+        for (int i = 0; i < n; ++i)  // 沿着副对角线反转
+            for (int j = 0; j < n - i; ++j)
+                swap(matrix[i][j], matrix[n - 1 - j][n - 1 - i]);
+
+        for (int i = 0; i < n / 2; ++i) // 沿着水平中线反转
+            for (int j = 0; j < n; ++j)
+                swap(matrix[i][j], matrix[n - 1 - i][j]);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Trapping Rain Water
+// 思路 2
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        const int n = matrix.size();
+
+        for (int i = 0; i < n / 2; ++i) // 沿着水平中线反转
+            for (int j = 0; j < n; ++j)
+                swap(matrix[i][j], matrix[n - 1 - i][j]);
+
+        for (int i = 0; i < n; ++i)  // 沿着主对角线反转
+            for (int j = i + 1; j < n; ++j)
+                swap(matrix[i][j], matrix[j][i]);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Plus One} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:plus-one}
+
+
+\subsubsection{描述}
+Given a number represented as an array of digits, plus one to the number.
+
+
+\subsubsection{分析}
+高精度加法。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Plus One
+class Solution {
+public:
+    vector<int> plusOne(vector<int> &digits) {
+        add(digits, 1);
+        return digits;
+    }
+private:
+    // 0 <= digit <= 9
+    void add(vector<int> &digits, int digit) {
+        int carry = digit;
+
+        for (auto it = digits.rbegin(); it != digits.rend(); ++it) {
+            *it += carry;
+            carry = *it / 10;
+            *it %= 10;
+        }
+
+        if (carry > 0) digits.insert(digits.begin(), 1);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Climbing Stairs} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:climbing-stairs}
+
+
+\subsubsection{描述}
+You are climbing a stair case. It takes $n$ steps to reach to the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+
+\subsubsection{分析}
+设$f(n)$表示爬$n$阶楼梯的不同方法数，为了爬到第$n$阶楼梯，有两个选择：
+\begindot
+\item 从第$n-1$阶前进1步；
+\item 从第$n-1$阶前进2步；
+\myenddot
+因此，有$f(n)=f(n-1)+f(n-2)$。
+
+这是一个斐波那契数列。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Climbing Stairs
+// 迭代
+class Solution {
+public:
+    int climbStairs(int n) {
+        int prev = 0;
+        int cur = 1;
+        for(int i = 1; i <= n ; ++i){
+            int tmp = cur;
+            cur = prev + cur;
+            prev = tmp;
+        }
+        return cur;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Climbing Stairs
+// 数学公式
+class Solution {
+    public:
+    int climbStairs(int n) {
+        double s = sqrt(5);
+        return floor((pow((1+s)/2, n+1) + pow((1-s)/2, n+1))/s + 0.5);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Decode Ways, 见 \S \ref{sec:decode-ways}
+\myenddot
+
+
+\subsection{Gray Code} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:gray-code}
+
+
+\subsubsection{描述}
+The gray code is a binary numeral system where two successive values differ in only one bit.
+
+Given a non-negative integer $n$ representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0.
+
+For example, given $n = 2$, return \fn{[0,1,3,2]}. Its gray code sequence is:
+\begin{Code}
+00 - 0
+01 - 1
+11 - 3
+10 - 2
+\end{Code}
+
+Note:
+\begindot
+\item For a given $n$, a gray code sequence is not uniquely defined.
+\item For example, \fn{[0,2,3,1]} is also a valid gray code sequence according to the above definition.
+\item For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
+\myenddot
+
+
+\subsubsection{分析}
+格雷码(Gray Code)的定义请参考 wikipedia \myurl{http://en.wikipedia.org/wiki/Gray_code}。
+
+\textbf{自然二进制码转换为格雷码：$g_0=b_0, g_i=b_i \oplus b_{i-1}$}
+
+保留自然二进制码的最高位作为格雷码的最高位，格雷码次高位为二进制码的高位与次高位异或，其余各位与次高位的求法类似。例如，将自然二进制码1001，转换为格雷码的过程是：保留最高位；然后将第1位的1和第2位的0异或，得到1，作为格雷码的第2位；将第2位的0和第3位的0异或，得到0，作为格雷码的第3位；将第3位的0和第4位的1异或，得到1，作为格雷码的第4位，最终，格雷码为1101。
+
+\textbf{格雷码转换为自然二进制码：$b_0=g_0, b_i=g_i \oplus b_{i-1}$}
+
+保留格雷码的最高位作为自然二进制码的最高位，次高位为自然二进制高位与格雷码次高位异或，其余各位与次高位的求法类似。例如，将格雷码1000转换为自然二进制码的过程是：保留最高位1，作为自然二进制码的最高位；然后将自然二进制码的第1位1和格雷码的第2位0异或，得到1，作为自然二进制码的第2位；将自然二进制码的第2位1和格雷码的第3位0异或，得到1，作为自然二进制码的第3位；将自然二进制码的第3位1和格雷码的第4位0异或，得到1，作为自然二进制码的第4位，最终，自然二进制码为1111。
+
+格雷码有\textbf{数学公式}，整数$n$的格雷码是$n \oplus (n/2)$。
+
+这题要求生成$n$比特的所有格雷码。
+
+最简单的方法，利用数学公式，对从 $0\sim2^n-1$的所有整数，转化为格雷码。
+
+$n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图\S \ref{fig:gray-code-construction}所示。
+
+\begin{center}
+\includegraphics{gray-code-construction.png}\\
+\figcaption{The first few steps of the reflect-and-prefix method.}\label{fig:gray-code-construction}
+\end{center}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Gray Code
+// 数学公式
+class Solution {
+public:
+    vector<int> grayCode(int n) {
+        vector<int> result;
+        const size_t size = 1 << n;  // 2^n
+        result.reserve(size);
+        for (size_t i = 0; i < size; ++i)
+            result.push_back(binary_to_gray(i));
+        return result;
+    }
+private:
+    static unsigned int binary_to_gray(unsigned int n) {
+        return n ^ (n >> 1);
+    }
+    static unsigned int gray_to_binary(unsigned int g) {
+        for (unsigned int mask = g >> 1; mask != 0; mask = mask >> 1)
+            g = g ^ mask;
+        return g;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Gray Code
+// reflect-and-prefix method
+class Solution {
+public:
+    vector<int> grayCode(int n) {
+        vector<int> result;
+        result.push_back(0);
+        for (int i = 0; i < n; i++) {
+            const int highest_bit = 1 << i;
+            for (int j = result.size() - 1; j >= 0; j--) // 要反着遍历，才能对称
+                result.push_back(highest_bit | result[j]);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Set Matrix Zeroes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:set-matrix-zeroes}
+
+
+\subsubsection{描述}
+Given a $m \times n$ matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+
+\textbf{Follow up:}
+Did you use extra space?
+
+A straight forward solution using $O(mn)$ space is probably a bad idea.
+
+A simple improvement uses $O(m + n)$ space, but still not the best solution.
+
+Could you devise a constant space solution?
+
+
+\subsubsection{分析}
+$O(m+n)$空间的方法很简单，设置两个数组，记录每行和每列是否存在0。
+
+想要常数空间，可以复用第一行和第一列。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Set Matrix Zeroes
+// O(m+n)空间
+class Solution {
+public:
+    void setZeroes(vector<vector<int> > &matrix) {
+        const size_t m = matrix.size();
+        const size_t n = matrix[0].size();
+        vector<bool> row(m, false); // 标记该行是否存在0
+        vector<bool> col(n, false); // 标记该列是否存在0
+
+        for (size_t i = 0; i < m; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (matrix[i][j] == 0) {
+                    row[i] = col[j] = true;
+                }
+            }
+        }
+
+        for (size_t i = 0; i < m; ++i) {
+            if (row[i])
+                fill(&matrix[i][0], &matrix[i][0] + n, 0);
+        }
+        for (size_t j = 0; j < n; ++j) {
+            if (col[j]) {
+                for (size_t i = 0; i < m; ++i) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Set Matrix Zeroes
+// 常数空间
+class Solution {
+public:
+    void setZeroes(vector<vector<int> > &matrix) {
+        const size_t m = matrix.size();
+        const size_t n = matrix[0].size();
+        bool row_has_zero = false; // 第一行是否存在 0
+        bool col_has_zero = false; // 第一列是否存在 0
+
+        for (size_t i = 0; i < n; i++)
+            if (matrix[0][i] == 0) {
+                row_has_zero = true;
+                break;
+            }
+
+        for (size_t i = 0; i < m; i++)
+            if (matrix[i][0] == 0) {
+                col_has_zero = true;
+                break;
+            }
+
+        for (size_t i = 1; i < m; i++)
+            for (size_t j = 1; j < n; j++)
+                if (matrix[i][j] == 0) {
+                    matrix[0][j] = 0;
+                    matrix[i][0] = 0;
+                }
+        for (size_t i = 1; i < m; i++)
+            for (size_t j = 1; j < n; j++)
+                if (matrix[i][0] == 0 || matrix[0][j] == 0)
+                    matrix[i][j] = 0;
+        if (row_has_zero)
+            for (size_t i = 0; i < n; i++)
+                matrix[0][i] = 0;
+        if (col_has_zero)
+            for (size_t i = 0; i < m; i++)
+                matrix[i][0] = 0;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Gas Station} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:gas-station}
+
+
+\subsubsection{描述}
+There are $N$ gas stations along a circular route, where the amount of gas at station $i$ is \fn{gas[i]}.
+
+You have a car with an unlimited gas tank and it costs \fn{cost[i]} of gas to travel from station $i$ to its next station ($i$+1). You begin the journey with an empty tank at one of the gas stations.
+
+Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
+
+Note:
+The solution is guaranteed to be unique.
+
+
+\subsubsection{分析}
+首先想到的是$O(N^2)$的解法，对每个点进行模拟。
+
+$O(N)$的解法是，设置两个变量，\fn{sum}判断当前的指针的有效性；\fn{total}则判断整个数组是否有解，有就返回通过\fn{sum}得到的下标，没有则返回-1。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Gas Station
+class Solution {
+public:
+    int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
+        int total = 0;
+        int j = -1;
+        for (int i = 0, sum = 0; i < gas.size(); ++i) {
+            sum += gas[i] - cost[i];
+            total += gas[i] - cost[i];
+            if (sum < 0) {
+                j = i;
+                sum = 0;
+            }
+        }
+        return total >= 0 ? j + 1 : -1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Candy} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:candy}
+
+
+\subsubsection{描述}
+There are $N$ children standing in a line. Each child is assigned a rating value.
+
+You are giving candies to these children subjected to the following requirements:
+\begindot
+\item Each child must have at least one candy.
+\item Children with a higher rating get more candies than their neighbors.
+\myenddot
+
+What is the minimum candies you must give?
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Candy
+class Solution {
+public:
+    int candy(vector<int> &ratings) {
+        const int n = ratings.size();
+        int result = n;
+        vector<int> increment(n);
+
+        // 左右各扫描一遍
+        for (int i = 0, inc = 1; i < n; i++)
+            if (i >= 1 && ratings[i] > ratings[i - 1])
+                increment[i] = max(inc++, increment[i]);
+            else
+                inc = 1;
+
+        for (int i = n - 1, inc = 1; i >= 0; i--)
+            if (i < n - 1 && ratings[i] > ratings[i + 1])
+                increment[i] = max(inc++, increment[i]);
+            else
+                inc = 1;
+
+        for (int i = 0; i < n; i++)
+            result += increment[i];
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Single Number} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:single-number}
+
+
+\subsubsection{描述}
+Given an array of integers, every element appears twice except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+
+\subsubsection{分析}
+异或，不仅能处理两次的情况，只要出现偶数次，都可以清零。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Single Number
+class Solution {
+public:
+    int singleNumber(int A[], int n) {
+        int x = A[0];
+        for (size_t i = 1; i < n; ++i)
+            x ^= A[i];
+        return x;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item  Single Number II, 见 \S \ref{sec:single-number-ii}
+\myenddot
+
+
+\subsection{Single Number II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:single-number-ii}
+
+
+\subsubsection{描述}
+Given an array of integers, every element appears three times except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+
+\subsubsection{分析}
+本题和上一题 Single Number，考察的是位运算。
+
+方法1：创建一个长度为\fn{sizeof(int)}的数组\fn{count[sizeof(int)]}，\fn{count[i]}表示所有元素的1在$i$位出现的次数。如果\fn{count[i]}是3的整数倍，则忽略；否则就把该位取出来组成答案。
+
+方法2：用\fn{ones}记录到当前处理的元素为止，二进制1出现“1次”（mod 3 之后的 1）的有哪些二进制位；用\fn{twos}记录到当前计算的变量为止，二进制1出现“2次”（mod 3 之后的 2）的有哪些二进制位。当\fn{ones}和\fn{twos}中的某一位同时为1时表示该二进制位上1出现了3次，此时需要清零。即\textbf{用二进制模拟三进制运算}。最终\fn{ones}记录的是最终结果。
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Single Number II
+// 方法1
+class Solution {
+public:
+    int singleNumber(int A[], int n) {
+        const int W = sizeof(int) * 8; // 整数字长
+        int count[W];  // 每个位上1出现的次数
+        fill_n(&count[0], W, 0);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < W; j++) {
+                count[j] += (A[i] >> j) & 1;
+                count[j] %= 3;
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < W; i++) {
+            result += (count[i] << i);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Single Number II
+// 方法2
+class Solution {
+public:
+    int singleNumber(int A[], int n) {
+        int ones = 0, twos = 0, threes = 0;
+        for (int i = 0; i < n; ++i) {
+            twos |= (ones & A[i]);
+            ones ^= A[i];
+            threes = ~(ones & twos);
+            ones &= threes;
+            twos &= threes;
+        }
+
+        return ones;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item  Single Number, 见 \S \ref{sec:single-number}
+\myenddot
+
+
 \section{单链表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 单链表节点的定义如下：
@@ -441,7 +1703,7 @@ public:
 \subsubsection{相关题目}
 
 \begindot
-\item Add Binary，见 \S \ref{sec:add-binary}
+\item Add Binary, 见 \S \ref{sec:add-binary}
 \myenddot
 
 
@@ -787,6 +2049,196 @@ public:
 
 \subsubsection{相关题目}
 
+\begindot
+\item 无
+\myenddot
+
+
+\subsection{Swap Nodes in Pairs}
+\label{sec:swap-nodes-in-pairs}
+
+
+\subsubsection{描述}
+Given a linked list, swap every two adjacent nodes and return its head.
+
+For example,
+Given \code{1->2->3->4}, you should return the list as \code{2->1->4->3}.
+
+Your algorithm should use only constant space. You may \emph{not} modify the values in the list, only nodes itself can be changed.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Swap Nodes in Pairs
+class Solution {
+public:
+    ListNode *swapPairs(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode dummy(-1);
+        dummy.next = head;
+
+        for(ListNode *prev = &dummy, *cur = prev->next, *next = cur->next;
+                next;
+                prev = cur, cur = cur->next, next = cur ? cur->next: nullptr) {
+            prev->next = next;
+            cur->next = next->next;
+            next->next = cur;
+        }
+        return dummy.next;
+    }
+};
+\end{Code}
+
+下面这种写法更简洁，但题目规定了不准这样做。
+\begin{Code}
+// LeetCode, Swap Nodes in Pairs
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode* p = head;
+
+        while (p && p->next) {
+            swap(p->val, p->next->val);
+            p = p->next->next;
+        }
+
+        return head;
+    }
+};
+\end{Code}
+
+\subsubsection{相关题目}
+
+\begindot
+\item Reverse Nodes in k-Group, 见 \S \ref{sec:reverse-nodes-in-k-group}
+\myenddot
+
+
+\subsection{Reverse Nodes in k-Group}
+\label{sec:reverse-nodes-in-k-group}
+
+
+\subsubsection{描述}
+Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+
+If the number of nodes is not a multiple of $k$ then left-out nodes in the end should remain as it is.
+
+You may not alter the values in the nodes, only nodes itself may be changed.
+
+Only constant memory is allowed.
+
+For example,
+Given this linked list: \code{1->2->3->4->5}
+
+For $k = 2$, you should return: \code{2->1->4->3->5}
+
+For $k = 3$, you should return: \code{3->2->1->4->5}
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Reverse Nodes in k-Group
+class Solution {
+public:
+    ListNode *reverseKGroup(ListNode *head, int k) {
+        if (head == nullptr || head->next == nullptr || k < 2) return head;
+        ListNode dummy(-1);
+        dummy.next = head;
+
+        for(ListNode *prev = &dummy, *end = head; end; end = prev->next) {
+            for (int i = 1; i < k && end; i++)
+                end = end->next;
+            if (end  == nullptr) break;  // 不足 k 个
+
+            prev = reverse(prev, prev->next, end);
+        }
+
+        return dummy.next;
+    }
+
+    // prev 是 first 前一个元素, [begin, end] 闭区间，保证三者都不为 null
+    // 返回反转后的倒数第1个元素
+    ListNode* reverse(ListNode *prev, ListNode *begin, ListNode *end) {
+        ListNode *end_next = end->next;
+        for (ListNode *p = begin, *cur = p->next, *next = cur->next;
+                cur != end_next;
+                p = cur, cur = next, next = next ? next->next : nullptr) {
+            cur->next = p;
+        }
+        begin->next = end_next;
+        prev->next = end;
+        return begin;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Swap Nodes in Pairs, 见 \S \ref{sec:swap-nodes-in-pairs}
+\myenddot
+
+
+\subsection{Copy List with Random Pointer}
+\label{sec:copy-list-with-random-pointer}
+
+
+\subsubsection{描述}
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+
+Return a deep copy of the list.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Copy List with Random Pointer
+// 两遍扫描
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        if (head == nullptr) return nullptr;
+
+        for (RandomListNode* cur = head; cur != nullptr; ) {
+            RandomListNode* node = new RandomListNode(cur->label);
+            node->next = cur->next;
+            cur->next = node;
+            cur = node->next;
+        }
+
+        for (RandomListNode* cur = head; cur != nullptr; ) {
+            if (cur->random != NULL)
+                cur->next->random = cur->random->next;
+            cur = cur->next->next;
+        }
+
+        // 分拆两个单链表
+        RandomListNode new_head(-1);
+        for (RandomListNode* cur = head, *new_cur = &new_head;
+                cur != nullptr; ) {
+            new_cur->next = cur->next;
+            new_cur = new_cur->next;
+            cur->next = cur->next->next;
+            cur = cur->next;
+        }
+        return new_head.next;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
 \begindot
 \item 无
 \myenddot

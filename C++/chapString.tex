@@ -231,7 +231,7 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item Add Two Numbers，见 \S \ref{sec:add-two-numbers}
+\item Add Two Numbers, 见 \S \ref{sec:add-two-numbers}
 \myenddot
 
 
@@ -403,6 +403,675 @@ public:
         delete[] P;
 
         return s.substr((centerIndex - 1 - maxLen) / 2, maxLen);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Regular Expression Matching} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:regular-expression-matching}
+
+
+\subsubsection{描述}
+Implement regular expression matching with support for \fn{'.'} and \fn{'*'}.
+
+\fn{'.'} Matches any single character.
+\fn{'*'} Matches zero or more of the preceding element.
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+\begin{Code}
+bool isMatch(const char *s, const char *p)
+\end{Code}
+
+Some examples:
+\begin{Code}
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "a*") → true
+isMatch("aa", ".*") → true
+isMatch("ab", ".*") → true
+isMatch("aab", "c*a*b") → true
+\end{Code}
+
+
+\subsubsection{分析}
+这是一道很有挑战的题。
+
+
+\subsubsection{代码}
+递归版。
+\begin{Code}
+// LeetCode, Regular Expression Matching
+// 递归版
+class Solution {
+public:
+    bool isMatch(const char *s, const char *p) {
+        if (*p == '\0') return *s == '\0';
+
+        if (*(p + 1) != '*') {
+            if (*p == *s || (*p == '.' && *s != '\0'))
+                return isMatch(s + 1, p + 1);
+            else
+                return false;
+        } else {
+            while (*p == *s || (*p == '.' && *s != '\0')) {
+                if (isMatch(s, p + 2))
+                    return true;
+                s++;
+            }
+            return isMatch(s, p + 2);
+        }
+    }
+};
+\end{Code}
+
+迭代版。
+\begin{Code}
+
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Wildcard Matching, 见 \S \ref{sec:wildcard-matching}
+\myenddot
+
+
+\section{Wildcard Matching} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:wildcard-matching}
+
+
+\subsubsection{描述}
+Implement wildcard pattern matching with support for \fn{'?'} and \fn{'*'}.
+
+\fn{'?'} Matches any single character.
+\fn{'*'} Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+\begin{Code}
+bool isMatch(const char *s, const char *p)
+\end{Code}
+
+Some examples:
+\begin{Code}
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+\end{Code}
+
+
+\subsubsection{分析}
+跟上一题很类似。
+
+主要是\fn{'*'}的匹配问题。\fn{p}每遇到一个\fn{'*'}，就保留住当前\fn{'*'}的坐标和\fn{s}的坐标，然后\fn{s}从前往后扫描，如果不成功，则\fn{s++}，重新扫描。
+
+
+\subsubsection{代码}
+递归版。
+\begin{Code}
+
+\end{Code}
+
+迭代版。
+\begin{Code}
+// LeetCode, Wildcard Matching
+// 迭代版
+class Solution {
+public:
+    bool isMatch(const char *s, const char *p) {
+        bool star = false;
+        const char *str, *ptr;
+        for (str = s, ptr = p; *str != '\0'; str++, ptr++) {
+            switch (*ptr) {
+            case '?':
+                break;
+            case '*':
+                star = true;
+                s = str, p = ptr;
+                while (*p == '*') p++;
+                if (*p == '\0') return true;
+                str = s - 1;
+                ptr = p - 1;
+                break;
+            default:
+                if (*str != *ptr) {
+                    // 如果前面没有'*'，则匹配不成功
+                    if (!star) return false;
+                    s++;
+                    str = s - 1;
+                    ptr = p - 1;
+                }
+            }
+        }
+        while (*ptr == '*') ptr++;
+        return (*ptr == '\0');
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Regular Expression Matching, 见 \S \ref{sec:regular-expression-matching}
+\myenddot
+
+
+\section{Longest Common Prefix} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:longest-common-prefix}
+
+
+\subsubsection{描述}
+Write a function to find the longest common prefix string amongst an array of strings.
+
+
+\subsubsection{分析}
+从位置0开始，对每一个位置比较所有字符串，直到遇到一个不匹配。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Longest Common Prefix
+// 从位置0开始，对每一个位置比较所有字符串，直到遇到一个不匹配
+class Solution {
+public:
+    string longestCommonPrefix(vector<string> &strs) {
+        if (strs.size() == 0) return "";
+        string prefix;
+        int pos = 0; // 当前位置，等于 prefix 的长度
+
+        while (true) {
+            char c;
+            int i = 0;
+            for (; i < strs.size(); i++) {
+                if (i == 0) c = strs[0][pos];
+                if (strs[i].size() == pos || c != strs[i][pos])
+                    break;
+            }
+            if (i != strs.size()) break;
+            ++pos;
+            prefix.append(1, c);
+        }
+        return prefix;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Valid Number} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:valid-number}
+
+
+\subsubsection{描述}
+Validate if a given string is numeric.
+
+Some examples:
+\begin{Code}
+"0" => true
+" 0.1 " => true
+"abc" => false
+"1 a" => false
+"2e10" => true
+\end{Code}
+
+Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front before implementing one.
+
+
+\subsubsection{分析}
+细节实现题。
+
+本题的功能与标准库中的\fn{strtod()}功能类似。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Valid Number
+// @author 龚陆安 (http://weibo.com/luangong)
+// finite automata
+class Solution {
+public:
+    bool isNumber(const char *s) {
+        enum InputType {
+            INVALID,    // 0
+            SPACE,      // 1
+            SIGN,       // 2
+            DIGIT,      // 3
+            DOT,        // 4
+            EXPONENT,   // 5
+            NUM_INPUTS  // 6
+        };
+        const int transitionTable[][NUM_INPUTS] = {
+                -1, 0, 3, 1, 2, -1, // next states for state 0
+                -1, 8, -1, 1, 4, 5,     // next states for state 1
+                -1, -1, -1, 4, -1, -1,     // next states for state 2
+                -1, -1, -1, 1, 2, -1,     // next states for state 3
+                -1, 8, -1, 4, -1, 5,     // next states for state 4
+                -1, -1, 6, 7, -1, -1,     // next states for state 5
+                -1, -1, -1, 7, -1, -1,     // next states for state 6
+                -1, 8, -1, 7, -1, -1,     // next states for state 7
+                -1, 8, -1, -1, -1, -1,     // next states for state 8
+                };
+
+        int state = 0;
+        for (; *s != '\0'; ++s) {
+            InputType inputType = INVALID;
+            if (isspace(*s))
+                inputType = SPACE;
+            else if (*s == '+' || *s == '-')
+                inputType = SIGN;
+            else if (isdigit(*s))
+                inputType = DIGIT;
+            else if (*s == '.')
+                inputType = DOT;
+            else if (*s == 'e' || *s == 'E')
+                inputType = EXPONENT;
+
+            // Get next state from current state and input symbol
+            state = transitionTable[state][inputType];
+
+            // Invalid input
+            if (state == -1) return false;
+        }
+        // If the current state belongs to one of the accepting (final) states,
+        // then the number is valid
+        return state == 1 || state == 4 || state == 7 || state == 8;
+
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Valid Number
+// @author 连城 (http://weibo.com/lianchengzju)
+// 偷懒，直接用 strtod()
+class Solution {
+public:
+    bool isNumber (char const* s) {
+        char* endptr;
+        strtod (s, &endptr);
+
+        if (endptr == s) return false;
+
+        for (; *endptr; ++endptr)
+            if (!isspace (*endptr)) return false;
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Integer to Roman} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:integer-to-roman}
+
+
+\subsubsection{描述}
+Given an integer, convert it to a roman numeral.
+
+Input is guaranteed to be within the range from 1 to 3999.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Integer to Roman
+// @author 连城 (http://weibo.com/lianchengzju)
+class Solution {
+public:
+    string intToRoman (int n) {
+        vector<pair<int, string>> radixes {
+            { 1000, "M" },
+            { 900, "CM" },
+            { 500, "D" },
+            { 400, "CD" },
+            { 100, "C" },
+            { 90, "XC" },
+            { 50, "L" },
+            { 40, "XL" },
+            { 10, "X" },
+            { 9, "IX" },
+            { 5, "V" },
+            { 4, "IV" },
+            { 1, "I" }
+        };
+
+        string roman;
+
+        while (n > 0) {
+            auto radix = radixes.begin();
+
+            for (; n / radix->first == 0; ++radix)
+                ;
+
+            for (int i = 0; i < n / radix->first; ++i)
+                roman += radix->second;
+
+            n %= radix->first;
+        }
+
+        return roman;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Roman to Integer, 见 \S \ref{sec:roman-to-integer}
+\myenddot
+
+
+\section{Roman to Integer} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:roman-to-integer}
+
+
+\subsubsection{描述}
+Given a roman numeral, convert it to an integer.
+
+Input is guaranteed to be within the range from 1 to 3999.
+
+
+\subsubsection{分析}
+从前往后扫描，用一个临时变量记录分段数字。
+
+如果当前比前一个大，说明这一段的值应该是当前这个值减去上一个值。比如\fn{IV = 5 – 1}；否则，将当前值加入到结果中，然后开始下一段记录。比如\fn{VI = 5 + 1, II=1+1}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Roman to Integer
+class Solution {
+public:
+    inline int c2n(const char c) {
+        switch (c) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0;
+        }
+    }
+
+    int romanToInt(string s) {
+        int result = 0;
+        for (size_t i = 0; i < s.size(); i++) {
+            if (i > 0 && c2n(s[i]) > c2n(s[i - 1])) {
+                result += (c2n(s[i]) - 2 * c2n(s[i - 1]));
+            } else {
+                result += c2n(s[i]);
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Integer to Roman, 见 \S \ref{sec:integer-to-roman}
+\myenddot
+
+
+\section{Count and Say} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:count-and-say}
+
+
+\subsubsection{描述}
+The count-and-say sequence is the sequence of integers beginning as follows:
+\begin{Code}
+1, 11, 21, 1211, 111221, ...
+\end{Code}
+
+\fn{1} is read off as \fn{"one 1"} or \fn{11}.
+
+\fn{11} is read off as \fn{"two 1s"} or \fn{21}.
+
+\fn{21} is read off as \fn{"one 2"}, then \fn{"one 1"} or \fn{1211}.
+
+Given an integer $n$, generate the nth sequence.
+
+Note: The sequence of integers will be represented as a string.
+
+
+\subsubsection{分析}
+模拟。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Count and Say
+// @author 连城 (http://weibo.com/lianchengzju)
+class Solution {
+public:
+    string countAndSay(int n) {
+        string s("1");
+
+        while (--n)
+            s = get_next(s);
+
+        return s;
+    }
+
+    string get_next(const string &s) {
+        stringstream ss;
+
+        for (auto i = s.begin(); i != s.end(); ) {
+            auto j = find_if(i, s.end(), bind1st(not_equal_to<char>(), *i));
+            ss << distance(i, j) << *i;
+            i = j;
+        }
+
+        return ss.str();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Anagrams} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:anagrams}
+
+
+\subsubsection{描述}
+Given an array of strings, return all groups of strings that are anagrams.
+
+Note: All inputs will be in lower-case.
+
+
+\subsubsection{分析}
+Anagram（回文构词法）是指打乱字母顺序从而得到新的单词，比如 \fn{"dormitory"} 打乱字母顺序会变成 \fn{"dirty room"} ，\fn{"tea"} 会变成\fn{"eat"}。
+
+回文构词法有一个特点：单词里的字母的种类和数目没有改变，只是改变了字母的排列顺序。因此，将几个单词按照字母顺序排序后，若它们相等，则它们属于同一组 anagrams 。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Anagrams
+class Solution {
+public:
+    vector<string> anagrams(vector<string> &strs) {
+        unordered_map<string, vector<string> > group;
+        for (const auto &s : strs) {
+            string key = s;
+            sort(key.begin(), key.end());
+            group[key].push_back(s);
+        }
+
+        vector<string> result;
+        for (auto it = group.begin(); it != group.end(); it++) {
+            if (it->second.size() > 1)
+                result.insert(result.end(), it->second.begin(), it->second.end());
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Simplify Path} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:simplify-path}
+
+
+\subsubsection{描述}
+Given an absolute path for a file (Unix-style), simplify it.
+
+For example, \\
+path = \fn{"/home/"}, => \fn{"/home"} \\
+path = \fn{"/a/./b/../../c/"}, => \fn{"/c"} \\
+
+Corner Cases:
+\begindot
+\item Did you consider the case where path = \fn{"/../"}? 
+In this case, you should return \fn{"/"}.
+\item 
+Another corner case is the path might contain multiple slashes \fn{'/'} together, such as \fn{"/home//foo/"}.
+In this case, you should ignore redundant slashes and return \fn{"/home/foo"}.
+\myenddot
+
+
+\subsubsection{分析}
+很有实际价值的题目。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Simplify Path
+class Solution {
+public:
+    string simplifyPath(string const& path) {
+        vector<string> dirs; // 当做栈
+
+        for (auto i = path.begin(); i != path.end();) {
+            ++i;
+
+            auto j = find(i, path.end(), '/');
+            auto dir = string(i, j);
+
+            if (!dir.empty() && dir != ".") {// 当有连续 '///'时，dir 为空
+                if (dir == "..") {
+                    if (!dirs.empty())
+                        dirs.pop_back();
+                } else
+                    dirs.push_back(dir);
+            }
+
+            i = j;
+        }
+
+        stringstream out;
+        if (dirs.empty()) {
+            out << "/";
+        } else {
+            for (auto dir : dirs)
+                out << '/' << dir;
+        }
+
+        return out.str();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Length of Last Word} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:length-of-last-word}
+
+
+\subsubsection{描述}
+Given a string s consists of upper/lower-case alphabets and empty space characters \fn{' '}, return the length of last word in the string.
+
+If the last word does not exist, return 0.
+
+Note: A word is defined as a character sequence consists of non-space characters only.
+
+For example, 
+Given \fn{s = "Hello World"},
+return 5.
+
+
+\subsubsection{分析}
+细节实现题。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Length of Last Word
+// 偷懒，用 STL
+class Solution {
+public:
+    int lengthOfLastWord(const char *s) {
+        const string str(s);
+        auto first = find_if(str.rbegin(), str.rend(), ::isalpha);
+        auto last = find_if_not(first, str.rend(), ::isalpha);
+        return distance(first, last);
+    }
+};
+\end{Code}
+
+
+\begin{Code}
+// LeetCode, Length of Last Word
+// 顺序扫描，记录每个 word 的长度
+class Solution {
+public:
+    int lengthOfLastWord(const char *s) {
+        int len = 0;
+        while (*s) {
+            if (*(s++) != ' ')
+                ++len;
+            else if (*s && *s != ' ')
+                len = 0;
+        }
+        return len;
     }
 };
 \end{Code}

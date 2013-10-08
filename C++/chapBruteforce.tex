@@ -279,9 +279,16 @@ private:
 \label{sec:permutations}
 
 
+\subsubsection{描述}
+Given a collection of numbers, return all possible permutations.
+
+For example,
+\fn{[1,2,3]} have the following permutations:
+\fn{[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2]}, and \fn{[3,2,1]}.
+
+
 \subsection{next_permutation()}
-\label{sec:next-permutation}
-偷懒的做法，可以直接使用\fn{next_permutation}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
+偷懒的做法，可以直接使用\fn{std::next_permutation()}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
 
 \subsubsection{代码}
 \begin{Code}
@@ -302,13 +309,7 @@ public:
 
 
 \subsection{重新实现next_permutation()}
-\label{sec:next-permutation-implement}
-算法过程如图~\ref{fig:permutation}所示（来自\myurl{http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html}）。
-
-\begin{center}
-\includegraphics[width=360pt]{next-permutation.png}\\
-\figcaption{下一个排列算法流程}\label{fig:permutation}
-\end{center}
+见第 \S \ref{sec:next-permutation} 节。
 
 
 \subsubsection{代码}
@@ -324,40 +325,9 @@ public:
 
         do {
             permutations.push_back(num);
-        } while (next_permutation(num.begin(), num.end()));
+        } while (next_permutation(num.begin(), num.end())); // 见第2.1节
 
         return permutations;
-    }
-
-    template<typename BidiIt>
-    bool next_permutation(BidiIt first, BidiIt last) {
-        // Get a reversed range to simplify reversed traversal.
-        const auto rfirst = reverse_iterator<BidiIt>(last);
-        const auto rlast = reverse_iterator<BidiIt>(first);
-
-        // Begin from the second last element to the first element.
-        auto pivot = next(rfirst);
-
-        // Find `pivot`, which is the first element that is no less than its
-        // successor.  `Prev` is used since `pivort` is a `reversed_iterator`.
-        while (pivot != rlast and !(*pivot < *prev(pivot)))
-            ++pivot;
-
-        // No such elemenet found, current sequence is already the largest
-        // permutation, then rearrange to the first permutation and return false.
-        if (pivot == rlast) {
-            reverse(rfirst, rlast);
-            return false;
-        }
-
-        // Scan from right to left, find the first element that is greater than
-        // `pivot`.
-        auto change = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
-
-        swap(*change, *pivot);
-        reverse(rfirst, pivot);
-
-        return true;
     }
 };
 \end{Code}
@@ -373,40 +343,35 @@ public:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Permutations
-// 深搜
+// 深搜，增量构造法
 class Solution {
 public:
     vector<vector<int> > permute(vector<int>& num) {
         sort(num.begin(), num.end());
 
         vector<vector<int>> result;
-        vector<int> p(num.size(), 0);  // 中间结果
+        vector<int> path;  // 中间结果
 
-        permute(num.begin(), num.end(), 0, p, result);
+        dfs(num, path, result);
         return result;
     }
 private:
-    typedef vector<int>::const_iterator Iter;
-    void permute(Iter first, Iter last, int cur, vector<int> &p,
+    void dfs(const vector<int>& num, vector<int> &path,
             vector<vector<int> > &result) {
-        if ((first + cur) == last) {  // 收敛条件
-            result.push_back(p);
+        if (path.size() == num.size()) {  // 收敛条件
+            result.push_back(path);
+            return;
         }
 
         // 扩展状态
-        for (auto i = first; i != last; i++) {
-            bool used = false;
-            // 查找 *i 是否在p[0, cur) 中出现过
-            for (auto j = p.begin(); j != p.begin() + cur; j++) {
-                if (*i == *j) {
-                    used = true;
-                    break;
-                }
-            }
-            if (!used) {
-                p[cur] = *i;
-                permute(first, last, cur + 1, p, result);
-                // 不需要恢复P[cur]，返回上层cur会自动减1，P[cur]会被覆盖
+        for (auto i : num) {
+            // 查找 i 是否在path 中出现过
+            auto pos = find(path.begin(), path.end(), i);
+
+            if (pos == path.end()) {
+                path.push_back(i);
+                dfs(num, path, result);
+                path.pop_back();
             }
         }
     }
@@ -416,7 +381,10 @@ private:
 
 \subsubsection{相关题目}
 \begindot
-\item Permutations II ，见 \S \ref{sec:permutations-ii}
+\item Next Permutation, 见 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
+\item Permutations II, 见 \S \ref{sec:permutations-ii}
+\item Combinations, 见 \S \ref{sec:combinations}
 \myenddot
 
 
@@ -424,12 +392,20 @@ private:
 \label{sec:permutations-ii}
 
 
+\subsubsection{描述}
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+\fn{[1,1,2]} have the following unique permutations:
+\fn{[1,1,2], [1,2,1]}, and \fn{[2,1,1]}.
+
+
 \subsection{next_permutation()}
-上一题中的代码，见\S \ref{sec:next-permutation} 节，也适用于本题。
+直接使用\fn{std::next_permutation()}，代码与上一题相同。
 
 
 \subsection{重新实现next_permutation()}
-上一题中的代码，见\S \ref{sec:next-permutation-implement} 节，也适用于本题。
+重新实现\fn{std::next_permutation()}，代码与上一题相同。
 
 
 \subsection{深搜}
@@ -503,5 +479,71 @@ private:
 
 \subsubsection{相关题目}
 \begindot
-\item Permutations ，见 \S \ref{sec:permutations}
+\item Next Permutation, 见 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
+\item Permutations, 见 \S \ref{sec:permutations}
+\item Combinations, 见 \S \ref{sec:combinations}
+\myenddot
+
+
+\section{Combinations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:combinations}
+
+
+\subsubsection{描述}
+Given two integers $n$ and $k$, return all possible combinations of $k$ numbers out of $1 ... n$.
+
+For example,
+If $n = 4$ and $k = 2$, a solution is:
+\begin{Code}
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+\end{Code}
+
+
+\subsubsection{分析}
+生成组合问题。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Combinations
+// 深搜，递归
+class Solution {
+public:
+    vector<vector<int> > combine(int n, int k) {
+        vector<vector<int> > result;
+        vector<int> path;
+        dfs(n, k, 1, 0, path, result);
+        return result;
+    }
+private:
+    // start，开始的数, cur，已经选择的数目
+    static void dfs(int n, int k, int start, int cur,
+            vector<int> &path, vector<vector<int> > &result) {
+        if (cur == k) {
+            result.push_back(path);
+        }
+        for (int i = start; i <= n; ++i) {
+            path.push_back(i);
+            dfs(n, k, i + 1, cur + 1, path, result);
+            path.pop_back();
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Next Permutation, 见 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
+\item Permutations, 见 \S \ref{sec:permutations}
+\item Permutations II, 见 \S \ref{sec:permutations-ii}
 \myenddot

@@ -741,6 +741,193 @@ public:
 \myenddot
 
 
+\subsection{Populating Next Right Pointers in Each Node II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:populating-next-right-pointers-in-each-node-ii}
+
+
+\subsubsection{描述}
+Follow up for problem "Populating Next Right Pointers in Each Node".
+
+What if the given tree could be any binary tree? Would your previous solution still work?
+
+Note: You may only use constant extra space.
+
+For example,
+Given the following binary tree,
+\begin{Code}
+         1
+       /  \
+      2    3
+     / \    \
+    4   5    7
+\end{Code}
+
+After calling your function, the tree should look like:
+\begin{Code}
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \    \
+    4-> 5 -> 7 -> NULL
+\end{Code}
+
+
+\subsubsection{分析}
+要处理一个节点，可能需要最右边的兄弟节点，因此用广搜。
+
+同时注意，这题的代码原封不动，可以解决上一题！
+
+\subsubsection{代码}
+
+\begin{Code}
+// LeetCode, Populating Next Right Pointers in Each Node II
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        vector<vector<int> > result;
+        if (root == nullptr)
+            return;
+
+        vector<TreeLinkNode*> nextLevel, currentLevel;
+        currentLevel.push_back(root);
+        while (!currentLevel.empty()) {
+            while (!currentLevel.empty()) {
+                TreeLinkNode* node = currentLevel.front();
+                currentLevel.erase(currentLevel.begin());
+
+                if (!currentLevel.empty())
+                    node->next = currentLevel.front();
+                else
+                    node->next = nullptr;
+
+                if (node->left != nullptr)
+                    nextLevel.push_back(node->left);
+                if (node->right != nullptr)
+                    nextLevel.push_back(node->right);
+            }
+            swap(nextLevel, currentLevel); //!!! how to use swap
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Populating Next Right Pointers in Each Node，见 \S \ref{sec:populating-next-right-pointers-in-each-node}
+\myenddot
+
+
+\section{二叉树的构建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Construct Binary Tree from Preorder and Inorder Traversal}
+\label{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
+
+
+\subsubsection{描述}
+Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return buildTree(begin(preorder), end(preorder),
+                begin(inorder), end(inorder));
+    }
+
+    template<typename InputIterator>
+    TreeNode* buildTree(InputIterator pre_first, InputIterator pre_last,
+            InputIterator in_first, InputIterator in_last) {
+        if (pre_first == pre_last) return nullptr;
+        if (in_first == in_last) return nullptr;
+
+        auto root = new TreeNode(*pre_first);
+
+        auto inRootPos = find(in_first, in_last, *pre_first);
+        auto leftSize = distance(in_first, inRootPos);
+
+        root->left = buildTree(next(pre_first), next(pre_first,
+                leftSize + 1), in_first, next(in_first, leftSize));
+        root->right = buildTree(next(pre_first, leftSize + 1), pre_last,
+                next(inRootPos), in_last);
+
+        return root;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Construct Binary Tree from Inorder and Postorder Traversal，见 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+\myenddot
+
+
+\subsection{Construct Binary Tree from Inorder and Postorder Traversal}
+\label{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+
+
+\subsubsection{描述}
+Given inorder and postorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        return buildTree(begin(inorder), end(inorder),
+                begin(postorder), end(postorder));
+    }
+
+    template<typename BidiIt>
+    TreeNode* buildTree(BidiIt in_first, BidiIt in_last,
+            BidiIt post_first, BidiIt post_last) {
+        if (in_first ==in_last) return nullptr;
+        if (post_first == post_last) return nullptr;
+
+        const auto val = *prev(post_last);
+        TreeNode* root = new TreeNode(val);
+
+        auto in_root_pos = find(in_first, in_last, val);
+        auto left_size = distance(in_first, in_root_pos);
+        auto post_left_last = next(post_first, left_size);
+
+        root->left = buildTree(in_first, in_root_pos, post_first, post_left_last);
+        root->right = buildTree(next(in_root_pos), in_last, post_left_last,
+                prev(post_last));
+
+        return root;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Construct Binary Tree from Preorder and Inorder Traversal，见 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
+\myenddot
+
+
 \section{二叉查找树} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -1088,7 +1275,12 @@ private:
 \myenddot
 
 
-\section{二叉树的深度} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{二叉树的递归} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+二叉树是一个递归的数据结构，因此是一个用来考察递归思维能力的绝佳数据结构。
+
+递归一定是深搜（见 \S \ref{sec:dfs-vs-recursion}节 “深搜与递归的区别”），由于在二叉树上，递归的味道更浓些，因此本节用“二叉树的递归”作为标题，而不是“二叉树的深搜”，尽管本节所有的算法都属于深搜。
+
+二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他顺序的深度优先遍历，共有$3!=6$种。其他3种顺序是 \fn{root->r->l，r->root->l, r->l->root}。
 
 
 \subsection{Minimum Depth of Binary Tree}
@@ -1212,120 +1404,6 @@ public:
 \begindot
 \item Minimum Depth of Binary Tree，见 \S \ref{sec:minimum-depth-of-binary-tree}
 \myenddot
-
-
-\section{二叉树的构建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\subsection{Construct Binary Tree from Preorder and Inorder Traversal}
-\label{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
-
-
-\subsubsection{描述}
-Given preorder and inorder traversal of a tree, construct the binary tree.
-
-Note:
-You may assume that duplicates do not exist in the tree.
-
-
-\subsubsection{分析}
-无
-
-
-\subsubsection{代码}
-\begin{Code}
-// LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
-class Solution {
-public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return buildTree(begin(preorder), end(preorder),
-                begin(inorder), end(inorder));
-    }
-
-    template<typename InputIterator>
-    TreeNode* buildTree(InputIterator pre_first, InputIterator pre_last,
-            InputIterator in_first, InputIterator in_last) {
-        if (pre_first == pre_last) return nullptr;
-        if (in_first == in_last) return nullptr;
-
-        auto root = new TreeNode(*pre_first);
-
-        auto inRootPos = find(in_first, in_last, *pre_first);
-        auto leftSize = distance(in_first, inRootPos);
-
-        root->left = buildTree(next(pre_first), next(pre_first,
-                leftSize + 1), in_first, next(in_first, leftSize));
-        root->right = buildTree(next(pre_first, leftSize + 1), pre_last,
-                next(inRootPos), in_last);
-
-        return root;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item Construct Binary Tree from Inorder and Postorder Traversal，见 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
-\myenddot
-
-
-\subsection{Construct Binary Tree from Inorder and Postorder Traversal}
-\label{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
-
-
-\subsubsection{描述}
-Given inorder and postorder traversal of a tree, construct the binary tree.
-
-Note:
-You may assume that duplicates do not exist in the tree.
-
-
-\subsubsection{分析}
-无
-
-
-\subsubsection{代码}
-\begin{Code}
-// LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
-class Solution {
-public:
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
-        return buildTree(begin(inorder), end(inorder),
-                begin(postorder), end(postorder));
-    }
-
-    template<typename BidiIt>
-    TreeNode* buildTree(BidiIt in_first, BidiIt in_last,
-            BidiIt post_first, BidiIt post_last) {
-        if (in_first ==in_last) return nullptr;
-        if (post_first == post_last) return nullptr;
-
-        const auto val = *prev(post_last);
-        TreeNode* root = new TreeNode(val);
-
-        auto in_root_pos = find(in_first, in_last, val);
-        auto left_size = distance(in_first, in_root_pos);
-        auto post_left_last = next(post_first, left_size);
-
-        root->left = buildTree(in_first, in_root_pos, post_first, post_left_last);
-        root->right = buildTree(next(in_root_pos), in_last, post_left_last,
-                prev(post_last));
-
-        return root;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item Construct Binary Tree from Preorder and Inorder Traversal，见 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
-\myenddot
-
-
-\section{二叉树的DFS} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他遍历顺序，共有$3!=6$种。其他3种顺序是 \fn{root->r->l，r->root->l, r->l->root}。
 
 
 \subsection{Path Sum}
@@ -1511,7 +1589,7 @@ private:
 \myenddot
 
 
-\section{Populating Next Right Pointers in Each Node} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Populating Next Right Pointers in Each Node} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:populating-next-right-pointers-in-each-node}
 
 
@@ -1590,73 +1668,50 @@ private:
 \myenddot
 
 
-
-\section{Populating Next Right Pointers in Each Node II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:populating-next-right-pointers-in-each-node-ii}
+\subsection{Sum Root to Leaf Numbers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sum-root-to-leaf-numbers}
 
 
 \subsubsection{描述}
-Follow up for problem "Populating Next Right Pointers in Each Node".
+Given a binary tree containing digits from \fn{0-9} only, each root-to-leaf path could represent a number.
 
-What if the given tree could be any binary tree? Would your previous solution still work?
+An example is the root-to-leaf path \fn{1->2->3} which represents the number \fn{123}.
 
-Note: You may only use constant extra space.
+Find the total sum of all root-to-leaf numbers.
 
 For example,
-Given the following binary tree,
 \begin{Code}
-         1
-       /  \
-      2    3
-     / \    \
-    4   5    7
+    1
+   / \
+  2   3
 \end{Code}
 
-After calling your function, the tree should look like:
-\begin{Code}
-         1 -> NULL
-       /  \
-      2 -> 3 -> NULL
-     / \    \
-    4-> 5 -> 7 -> NULL
-\end{Code}
+The root-to-leaf path \fn{1->2} represents the number \fn{12}.
+The root-to-leaf path \fn{1->3} represents the number \fn{13}.
+
+Return the sum = \fn{12 + 13 = 25}.
 
 
 \subsubsection{分析}
-要处理一个节点，可能需要最右边的兄弟节点，因此用广搜。
-
-同时注意，这题的代码原封不动，可以解决上一题！
+无
 
 \subsubsection{代码}
 
 \begin{Code}
-// LeetCode, Populating Next Right Pointers in Each Node II
+// LeetCode, Decode Ways
 class Solution {
 public:
-    void connect(TreeLinkNode *root) {
-        vector<vector<int> > result;
-        if (root == nullptr)
-            return;
+    int sumNumbers(TreeNode *root) {
+        return dfs(root, 0);
+    }
+private:
+    int dfs(TreeNode *root, int sum) {
+        if (root == nullptr) return 0;
+        if (root->left == nullptr && root->right == nullptr)
+            return sum * 10 + root->val;
 
-        vector<TreeLinkNode*> nextLevel, currentLevel;
-        currentLevel.push_back(root);
-        while (!currentLevel.empty()) {
-            while (!currentLevel.empty()) {
-                TreeLinkNode* node = currentLevel.front();
-                currentLevel.erase(currentLevel.begin());
-
-                if (!currentLevel.empty())
-                    node->next = currentLevel.front();
-                else
-                    node->next = nullptr;
-
-                if (node->left != nullptr)
-                    nextLevel.push_back(node->left);
-                if (node->right != nullptr)
-                    nextLevel.push_back(node->right);
-            }
-            swap(nextLevel, currentLevel); //!!! how to use swap
-        }
+        return dfs(root->left, sum * 10 + root->val) +
+                dfs(root->right, sum * 10 + root->val);
     }
 };
 \end{Code}
@@ -1664,5 +1719,5 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item Populating Next Right Pointers in Each Node，见 \S \ref{sec:populating-next-right-pointers-in-each-node}
+\item 无
 \myenddot

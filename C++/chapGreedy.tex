@@ -278,3 +278,48 @@ public:
 \begindot
 \item 无
 \myenddot
+
+
+\section{Container With Most Water}
+\label{sec:container-with-most-water}
+
+
+\subsubsection{描述}
+Given $n$ non-negative integers $a_1, a_2, ..., a_n$, where each represents a point at coordinate $(i, a_i)$. n vertical lines are drawn such that the two endpoints of line $i$ is at $(i, a_i)$ and $(i, 0)$. Find two lines, which together with x-axis forms a container, such that the container contains the most water.
+
+Note: You may not slant the container.
+
+
+\subsubsection{分析}
+每个容器的面积，取决于最短的木板。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Container With Most Water
+class Solution {
+public:
+    int maxArea(vector<int> &height) {
+        int start = 0;
+        int end = height.size() - 1;
+        int result = INT_MIN;
+        while (start < end) {
+            int area = min(height[end], height[start]) * (end - start);
+            result = max(result, area);
+            if (height[start] <= height[end]) {
+                start++;
+            } else {
+                end--;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Trapping Rain Water, 见 \S \ref{sec:trapping-rain-water}
+\item Largest Rectangle in Histogram, 见 \S \ref{sec:largest-rectangle-in-histogram}
+\myenddot

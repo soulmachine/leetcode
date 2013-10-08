@@ -258,6 +258,7 @@ public:
 \subsubsection{相关题目}
 \begindot
 \item Unique Paths II，见 \S \ref{sec:unique-paths-ii}
+\item Minimum Path Sum, 见 \S \ref{sec:minimum-path-sum}
 \myenddot
 
 
@@ -378,6 +379,7 @@ public:
 \subsubsection{相关题目}
 \begindot
 \item Unique Paths，见 \S \ref{sec:unique-paths}
+\item Minimum Path Sum, 见 \S \ref{sec:minimum-path-sum}
 \myenddot
 
 
@@ -766,3 +768,400 @@ private:
 \begindot
 \item Combination Sum ，见 \S \ref{sec:combination-sum}
 \myenddot
+
+
+\section{Letter Combinations of a Phone Number } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:letter-combinations-of-a-phone-number }
+
+
+\subsubsection{描述}
+Given a digit string, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below.
+
+\begin{center}
+\includegraphics{phone-keyboard.png}\\
+\figcaption{Phone Keyboard}\label{fig:phone-keyboard}
+\end{center}
+
+\textbf{Input:}Digit string \code{"23"}
+
+\textbf{Output:} \code{["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]}.
+
+\textbf{Note:}
+Although the above answer is in lexicographical order, your answer could be in any order you want.
+
+
+\subsubsection{分析}
+无
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Letter Combinations of a Phone Number
+class Solution {
+public:
+    const vector<string> keyboard {
+        " ",   // '0'
+        "",    // '1'
+        "abc", // '2'
+        "def", // ...
+        "ghi",
+        "jkl",
+        "mno",
+        "pqrs",
+        "tuv",
+        "wxyz"
+    };
+
+    vector<string> letterCombinations (const string &digits) {
+        vector<string> result;
+        dfs(digits, 0, "", result);
+        return result;
+    }
+
+    void dfs(const string &digits, size_t cur, string path,
+            vector<string> &result) {
+        if (cur == digits.size()) {
+            result.push_back(path);
+            return;
+        }
+        for (auto c : keyboard[digits[cur] - '0']) {
+            dfs(digits, cur + 1, path + c, result);
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{Generate Parentheses } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:generate-parentheses}
+
+
+\subsubsection{描述}
+Given $n$ pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given $n = 3$, a solution set is:
+\begin{Code}
+"((()))", "(()())", "(())()", "()(())", "()()()"
+\end{Code}
+
+\subsubsection{分析}
+小括号串是一个递归结构，跟单链表、二叉树等递归结构一样，首先想到用递归。
+
+一步步构造字符串。当左括号出现次数$<n$时，就可以放置新的左括号。当右括号出现次数小于左括号出现次数时，就可以放置新的右括号。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Generate Parentheses
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> result;
+        if (n > 0) generator(n, "", 0, 0, result);
+        return result;
+    }
+    // l 表示 ( 出现的次数, r 表示 ) 出现的次数
+    void generator(int n, string s, int l, int r, vector<string> &result) {
+        if (l == n) {
+            result.push_back(s.append(n - r, ')'));
+            return;
+        }
+        generator(n, s + '(', l + 1, r, result);
+        if (l > r) generator(n, s + ")", l, r + 1, result);
+    }
+};
+\end{Code}
+
+另一种递归写法，更加简洁。
+\begin{Code}
+// LeetCode, Generate Parentheses
+// @author 连城 (http://weibo.com/lianchengzju)
+class Solution {
+public:
+    vector<string> generateParenthesis (int n) {
+        if (n == 0) return vector<string>(1, "");
+        if (n == 1) return vector<string> (1, "()");
+        vector<string> result;
+
+        for (int i = 0; i < n; ++i)
+            for (auto inner : generateParenthesis (i))
+                for (auto outer : generateParenthesis (n - 1 - i))
+                    result.push_back ("(" + inner + ")" + outer);
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Valid Parentheses, 见 \S \ref{sec:valid-parentheses}
+\item Longest Valid Parentheses, 见 \S \ref{sec:longest-valid-parentheses}
+\myenddot
+
+
+\section{Sudoku Solver} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sudoku-solver}
+
+
+\subsubsection{描述}
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+Empty cells are indicated by the character \fn{'.'}.
+
+You may assume that there will be only one unique solution.
+
+\begin{center}
+\includegraphics[width=200pt]{sudoku.png}\\
+\figcaption{A sudoku puzzle...}\label{fig:sudoku}
+\end{center}
+
+\begin{center}
+\includegraphics[width=200pt]{sudoku-solution.png}\\
+\figcaption{...and its solution numbers marked in red}\label{fig:sudoku-solution}
+\end{center}
+
+
+\subsubsection{分析}
+无。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Sudoku Solver
+class Solution {
+public:
+    bool solveSudoku(vector<vector<char> > &board) {
+        for (int i = 0; i < 9; ++i)
+            for (int j = 0; j < 9; ++j) {
+                if (board[i][j] == '.') {
+                    for (int k = 0; k < 9; ++k) {
+                        board[i][j] = '1' + k;
+                        if (isValid(board, i, j) && solveSudoku(board))
+                            return true;
+                        board[i][j] = '.';
+                    }
+                    return false;
+                }
+            }
+        return true;
+    }
+private:
+    // 检查 (x, y) 是否合法
+    bool isValid(const vector<vector<char> > &board, int x, int y) {
+        int i, j;
+        for (i = 0; i < 9; i++) // 检查 y 列
+            if (i != x && board[i][y] == board[x][y])
+                return false;
+        for (j = 0; j < 9; j++) // 检查 x 行
+            if (j != y && board[x][j] == board[x][y])
+                return false;
+        for (i = 3 * (x / 3); i < 3 * (x / 3 + 1); i++)
+            for (j = 3 * (y / 3); j < 3 * (y / 3 + 1); j++)
+                if (i != x && j != y && board[i][j] == board[x][y])
+                    return false;
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Valid Sudoku, 见 \S \ref{sec:valid-sudoku}
+\myenddot
+
+
+\section{Word Search} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:word-search}
+
+
+\subsubsection{描述}
+Given a 2D board and a word, find if the word exists in the grid.
+
+The word can be constructed from letters of sequentially adjacent cell, where \fn{"adjacent"} cells are those horizontally or vertically neighbouring. The same letter cell may not be used more than once.
+
+For example,
+Given board =
+\begin{Code}
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+\end{Code}
+word = \fn{"ABCCED"}, -> returns \fn{true},\\
+word = \fn{"SEE"}, -> returns \fn{true},\\
+word = \fn{"ABCB"}, -> returns \fn{false}.
+
+
+\subsubsection{分析}
+无。
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, Word Search
+// 深搜，递归
+class Solution {
+public:
+    bool exist(vector<vector<char> > &board, string word) {
+        const int m = board.size();
+        const int n = board[0].size();
+        vector<vector<bool> > visited(m, vector<bool>(n, false));
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j)
+                if (dfs(board, word, 0, i, j, visited))
+                    return true;
+        return false;
+    }
+private:
+    static bool dfs(const vector<vector<char> > &board, const string &word,
+            int index, int x, int y, vector<vector<bool> > &visited) {
+        if (index == word.size())
+            return true; // 收敛条件
+
+        if (x < 0 || y < 0 || x >= board.size() || y >= board[0].size())
+            return false;  // 越界，终止条件
+
+        if (visited[x][y]) return false; // 已经访问过，剪枝
+
+        if (board[x][y] != word[index]) return false; // 不相等，剪枝
+
+        visited[x][y] = true;
+        bool ret = dfs(board, word, index + 1, x - 1, y, visited) || // 上
+                dfs(board, word, index + 1, x + 1, y, visited)    || // 下
+                dfs(board, word, index + 1, x, y - 1, visited)    || // 左
+                dfs(board, word, index + 1, x, y + 1, visited);      // 右
+        visited[x][y] = false;
+        return ret;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
+
+\section{小结} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:dfs-template}
+
+
+\subsection{适用场景}
+
+注意，这里的总结是一种经验，一种概率，不是绝对的结论！
+
+\textbf{输入数据}：如果是递归数据结构，如单链表，二叉树，集合，则百分之百可以用深搜；如果是非递归数据结构，如一维数组，二维数组，字符串，图，则概率小一些。
+
+\textbf{状态转换图}：树或者图。
+
+\textbf{求解目标}：必须要走到最深（例如对于树，必须要走到叶子节点）才能得到一个解，这种情况适合用深搜。
+
+
+\subsection{思考的步骤}
+\begin{enumerate}
+\item 是求路径条数，还是路径本身（或动作序列）？深搜最常见的三个问题，求可行解的总数，求一个可行解，求所有可行解。
+    \begin{enumerate}
+    \item 如果是求路径本身，则要用一个数组\fn{path[]}存储路径。跟宽搜不同，宽搜虽然最终求的也是一条路径，但是需要存储扩展过程中的所有路径，在没找到答案之前所有路径都不能放弃；而深搜，在搜索过程中始终只有一条路径，因此用一个数组就足够了。
+    \item 如果是路径条数，则不需要存储路径。
+    \end{enumerate}
+
+\item 只要求一个解，还是要求所有解？如果只要求一个解，那找到一个就可以返回；如果要求所有解，找到了一个后，还要继续扩展，直到遍历完。广搜一般只要求一个解，因而不需要考虑这个问题（广搜当然也可以求所有解，这时需要扩展到所有叶子节点，相当于在内存中存储整个状态转换图，非常占内存，因此广搜不适合解这类问题）。
+
+\item 如何表示状态？即一个状态需要存储哪些些必要的数据，才能够完整提供如何扩展到下一步状态的所有信息。跟广搜不同，深搜的惯用写法，不是把数据记录在状态\fn{struct}里，而是添加函数参数（有时为了节省递归堆栈，用全局变量），\fn{struct}里的字段与函数参数一一对应。
+
+\item 如何扩展状态？这一步跟上一步相关。状态里记录的数据不同，扩展方法就不同。对于固定不变的数据结构（一般题目直接给出，作为输入数据），如二叉树，图等，扩展方法很简单，直接往下一层走，对于隐式图，要先在第1步里想清楚状态所带的数据，想清楚了这点，那如何扩展就很简单了。
+
+\item 关于判重
+    \begin{enumerate}
+    \item 如果状态转换图是一棵树，则不需要判重，因为在遍历过程中不可能重复。
+    \item 如果状态转换图是一个图，则需要判重，方法跟广搜相同，见第 \S \ref{sec:bfs-template} 节。这里跟第8步中的加缓存是相同的，如果有重叠子问题，则需要判重，此时加缓存自然也是有效果的。
+    \end{enumerate}
+
+\item 终止条件是什么？终止条件是指到了不能扩展的末端节点。对于树，是叶子节点，对于图或隐式图，是出度为0的节点。
+
+\item {收敛条件是什么？收敛条件是指找到了一个合法解的时刻。如果是正向深搜（父状态处理完了才进行递归，即父状态不依赖子状态，递归语句一定是在最后，尾递归），则是指是否达到目标状态；如果是逆向深搜（处理父状态时需要先知道子状态的结果，此时递归语句不在最后），则是指是否到达初始状态。
+
+由于很多时候终止条件和收敛条件是是合二为一的，因此很多人不区分这两种条件。仔细区分这两种条件，还是很有必要的。
+
+为了判断是否到了收敛条件，要在函数接口里用一个参数记录当前的位置（或距离目标还有多远）。如果是求一个解，直接返回这个解；如果是求所有解，要在这里收集解，即把第一步中表示路径的数组\fn{path[]}复制到解集合里。}
+
+\item 如何加速？
+    \begin{enumerate}
+    \item 剪枝。深搜一定要好好考虑怎么剪枝，成本小收益大，加几行代码，就能大大加速。这里没有通用方法，只能具体问题具体分析，要充分观察，充分利用各种信息来剪枝，在中间节点提前返回。
+    \item 缓存。如果子问题的解会被重复利用，可以考虑使用缓存。
+        \begin{enumerate}
+            \item 前提条件：子问题的解会被重复利用，即子问题之间的依赖关系是有向无环图(DAG)。如果依赖关系是树状的（例如树，单链表），没必要加缓存，因为子问题只会一层层往下，用一次就再也不会用到，加了缓存也没什么加速效果。
+            \item 具体实现：可以用数组或HashMap。维度简单的，用数组；维度复杂的，用HashMap，C++有\fn{map}，C++ 11以后有\fn{unordered_map}，比\fn{map}快。
+        \end{enumerate}
+    
+    \end{enumerate}
+\end{enumerate}
+
+拿到一个题目，当感觉它适合用深搜解决时，在心里面把上面8个问题默默回答一遍，代码基本上就能写出来了。对于树，不需要回答第5和第8个问题。如果读者对上面的经验总结看不懂或感觉“不实用”，很正常，因为这些经验总结是笔者做了很多深搜题后总结出来的，从思维的发展过程看，“经验总结”要晚于感性认识，所以这时候建议读者先做做后面的题目，积累一定的感性认识后，在回过头来看这一节的总结，相信会和笔者有共鸣。
+
+
+\subsection{代码模板}
+
+\begin{Codex}[label=dfs_template.cpp]
+/**
+ * dfs模板.
+ * @param[in] input 输入数据指针
+ * @param[inout] cur or gap 标记当前位置或距离目标的距离
+ * @param[out] path 当前路径，也是中间结果
+ * @param[out] result 存放最终结果
+ * @return 路径长度，如果是求路径本身，则不需要返回长度
+ */
+void dfs(type *input, type *path, int cur or gap, type *result) {
+    if (数据非法) return 0;   // 终止条件
+    if (cur == input.size( or gap == 0)) { // 收敛条件
+        将path放入result
+    }
+
+    if (可以剪枝) return;
+
+    for(...) { // 执行所有可能的扩展动作
+        执行动作，修改path
+        dfs(input, step + 1 or gap--, result);
+        恢复path
+    }
+}
+\end{Codex}
+
+
+\subsection{深搜与回溯法的区别}
+深搜(Depth-first search, DFS)的定义见\myurl{http://en.wikipedia.org/wiki/Depth_first_search}，回溯法(backtracking)的定义见\myurl{http://en.wikipedia.org/wiki/Backtracking}
+
+\textbf{回溯法 = 深搜 + 剪枝}。一般大家用深搜时，或多或少会剪枝，因此深搜与回溯法没有什么不同，可以在它们之间画上一个等号。本书同时使用深搜和回溯法两个术语，但读者可以认为二者等价。
+
+深搜一般用递归(recursion)来实现，这样比较简洁。
+
+深搜能够在候选答案生成到一半时，就进行判断，抛弃不满足要求的答案，所以深搜比暴力搜索法要快。
+
+
+\subsection{深搜与递归的区别}
+\label{sec:dfs-vs-recursion}
+
+深搜经常用递归(recursion)来实现，二者常常同时出现，导致很多人误以为他俩是一个东西。
+
+深搜，是逻辑意义上的算法，递归，是一种物理意义上的实现，它和迭代(iteration)是对应的。深搜，可以用递归来实现，也可以用栈来实现；而递归，一般总是用来实现深搜。可以说，\textbf{递归一定是深搜，深搜不一定用递归}。
+
+递归有两种加速策略，一种是\textbf{剪枝(prunning)}，对中间结果进行判断，提前返回；一种是\textbf{加缓存}（就变成了memoization，备忘录法），缓存中间结果，防止重复计算，用空间换时间。
+
+其实，递归+缓存，就是一种 memorization 。所谓\textbf{memorization}（翻译为备忘录法，见第 \S \ref{sec:dp-vs-memorization}节），就是"top-down with cache"（自顶向下+缓存），它是Donald Michie 在1968年创造的术语，表示一种优化技术，在top-down 形式的程序中，使用缓存来避免重复计算，从而达到加速的目的。
+
+\textbf{memorization 不一定用递归}，就像深搜不一定用递归一样，可以在迭代(iterative)中使用 memorization 。\textbf{递归也不一定用 memorization}，可以用memorization来加速，但不是必须的。只有当递归使用了缓存，它才是 memorization 。
+
+既然递归一定是深搜，为什么很多书籍都同时使用这两个术语呢？在递归味道更浓的地方，一般用递归这个术语，在深搜更浓的场景下，用深搜这个术语，读者心里要弄清楚他俩大部分时候是一回事。在单链表、二叉树等递归数据结构上，递归的味道更浓，这时用递归这个术语；在图、隐士图等数据结构上，递归的比重不大，深搜的意图更浓，这时用深搜这个术语。
