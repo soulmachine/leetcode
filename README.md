@@ -1,6 +1,7 @@
 #LeetCode题解
 -----------------
-**下载**：<a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/LeetCodet%E9%A2%98%E8%A7%A3(C%2B%2B%E7%89%88).pdf">LeetCode题解(C++版).pdf</a>
+##PDF下载
+<a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/LeetCodet%E9%A2%98%E8%A7%A3(C%2B%2B%E7%89%88).pdf">LeetCode题解(C++版).pdf</a>
 
 C++ 文件夹下是C++版，内容一摸一样，代码是用C++写的，
 
