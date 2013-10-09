@@ -26,6 +26,7 @@ Your function should return length = 2, and A is now \code{[1,2]}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
@@ -41,9 +42,20 @@ public:
 };
 \end{Code}
 
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted Array
+// 使用STL，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    int removeDuplicates(int A[], int n) {
+        return distance(A, unique(A, A + n));
+    }
+};
+\end{Code}
 
 \begin{Code}
-// LeetCode, Remove Duplicates from Sorted Array，使用STL
+// LeetCode, Remove Duplicates from Sorted Array
+// 使用STL，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
@@ -92,6 +104,7 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
@@ -119,6 +132,7 @@ public:
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
 // @author 虞航仲 (http://weibo.com/u/1666779725)
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
@@ -163,6 +177,7 @@ You may assume no duplicate exists in the array.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Search in Rotated Sorted Array
+// 时间复杂度O(log n)，空间复杂度O(1)
 class Solution {
 public:
     int search(int A[], int n, int target) {
@@ -220,6 +235,7 @@ Write a function to determine if a given target is in the array.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Search in Rotated Sorted Array II
+// 时间复杂度O(log n)，空间复杂度O(1)
 class Solution {
 public:
     bool search(int A[], int n, int target) {
@@ -296,6 +312,7 @@ $O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的�
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Median of Two Sorted Arrays
+// 时间复杂度O(log(m+n))，空间复杂度O(log(m+n))
 class Solution {
 public:
     double findMedianSortedArrays(int A[], int m, int B[], int n) {
@@ -358,6 +375,7 @@ Your algorithm should run in $O(n)$ complexity.
 \subsubsection{代码}
 \begin{Code}
 // Leet Code, Longest Consecutive Sequence
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int longestConsecutive(vector<int> const& num) {
@@ -428,7 +446,7 @@ A solution set is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, 3Sum
-// 先排序，然后二分查找
+// 先排序，然后二分查找，时间复杂度O(n^2*logn)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int>> threeSum(vector<int>& num) {
@@ -480,7 +498,7 @@ The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, 3Sum Closest
-// 先排序，然后左右夹逼
+// 先排序，然后左右夹逼，时间复杂度O(n^3)，空间复杂度O(1)
 class Solution {
 public:
     int threeSumClosest(vector<int>& num, int target) {
@@ -554,7 +572,7 @@ A solution set is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, 4Sum
-// 先排序，然后二分查找，复杂度n^3*logn，会超时
+// 先排序，然后二分查找，复杂度O(n^3*logn)，会超时
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& num, int target) {
@@ -585,7 +603,7 @@ public:
 
 \begin{Code}
 // LeetCode, 4Sum
-// 先缓存两个数的和，复杂度O(n^3)
+// 先缓存两个数的和，时间复杂度O(n^3)，空间复杂度O(n^2)
 class Solution {
 public:
     vector<vector<int> > fourSum(vector<int> &num, int target) {
@@ -643,6 +661,7 @@ The order of elements can be changed. It doesn't matter what you leave beyond th
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Element
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int removeElement(int A[], int n, int elem) {
@@ -653,6 +672,17 @@ public:
             }
         }
         return index;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Remove Element
+// 使用remove()，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    int removeElement(int A[], int n, int elem) {
+        return distance(A, remove(A, A+n, elem));
     }
 };
 \end{Code}
@@ -695,6 +725,7 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Next Permutation
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void nextPermutation(vector<int> &num) {
@@ -813,7 +844,7 @@ public:
 
 \begin{Code}
 // LeetCode, Permutation Sequence
-// 康托编码
+// 康托编码，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     string getPermutation(int n, int k) {
@@ -885,6 +916,7 @@ The Sudoku board could be partially filled, where empty cells are filled with th
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Valid Sudoku
+// 时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
     bool isValidSudoku(vector<vector<char>>& board) {
@@ -971,7 +1003,7 @@ Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
 
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路1
+// 思路1，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int trap(int A[], int n) {
@@ -1001,7 +1033,7 @@ public:
 
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路2
+// 思路2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int trap(int A[], int n) {
@@ -1026,6 +1058,7 @@ public:
 // LeetCode, Trapping Rain Water
 // 用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或
 // 等于当前值的元素全部出栈处理掉，计算面积，最后把当前元素入栈
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int trap(int a[], int n) {
@@ -1093,7 +1126,7 @@ Could you do this in-place?
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路 1
+// 思路 1，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
     void rotate(vector<vector<int>>& matrix) {
@@ -1112,7 +1145,7 @@ public:
 
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路 2
+// 思路 2，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
     void rotate(vector<vector<int>>& matrix) {
@@ -1151,6 +1184,7 @@ Given a number represented as an array of digits, plus one to the number.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Plus One
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> plusOne(vector<int> &digits) {
@@ -1167,6 +1201,31 @@ private:
             carry = *it / 10;
             *it %= 10;
         }
+
+        if (carry > 0) digits.insert(digits.begin(), 1);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Plus One
+// 时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<int> plusOne(vector<int> &digits) {
+        add(digits, 1);
+        return digits;
+    }
+private:
+    // 0 <= digit <= 9
+    void add(vector<int> &digits, int digit) {
+        int carry = digit;
+
+        for_each(digits.rbegin(), digits.rend(), [&carry](int &d){
+            d += carry;
+            carry = d / 10;
+            d %= 10;
+        });
 
         if (carry > 0) digits.insert(digits.begin(), 1);
     }
@@ -1204,7 +1263,7 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Climbing Stairs
-// 迭代
+// 迭代，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int climbStairs(int n) {
@@ -1222,7 +1281,7 @@ public:
 
 \begin{Code}
 // LeetCode, Climbing Stairs
-// 数学公式
+// 数学公式，时间复杂度O(1)，空间复杂度O(1)
 class Solution {
     public:
     int climbStairs(int n) {
@@ -1292,7 +1351,7 @@ $n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Gray Code
-// 数学公式
+// 数学公式，时间复杂度O(2^n)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> grayCode(int n) {
@@ -1318,6 +1377,7 @@ private:
 \begin{Code}
 // LeetCode, Gray Code
 // reflect-and-prefix method
+// 时间复杂度O(2^n)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> grayCode(int n) {
@@ -1366,7 +1426,7 @@ $O(m+n)$空间的方法很简单，设置两个数组，记录每行和每列是
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
-// O(m+n)空间
+// 时间复杂度O(m*n)，空间复杂度O(m+n)
 class Solution {
 public:
     void setZeroes(vector<vector<int> > &matrix) {
@@ -1400,7 +1460,7 @@ public:
 
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
-// 常数空间
+// 时间复杂度O(m*n)，空间复杂度O(1)
 class Solution {
 public:
     void setZeroes(vector<vector<int> > &matrix) {
@@ -1472,6 +1532,7 @@ $O(N)$的解法是，设置两个变量，\fn{sum}判断当前的指针的有效
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Gas Station
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
@@ -1520,6 +1581,7 @@ What is the minimum candies you must give?
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Candy
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int candy(vector<int> &ratings) {
@@ -1573,6 +1635,7 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Single Number
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int singleNumber(int A[], int n) {
@@ -1612,7 +1675,7 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Single Number II
-// 方法1
+// 方法1，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int singleNumber(int A[], int n) {
@@ -1636,7 +1699,7 @@ public:
 
 \begin{Code}
 // LeetCode, Single Number II
-// 方法2
+// 方法2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int singleNumber(int A[], int n) {
@@ -1692,8 +1755,9 @@ Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
 
 \subsubsection{代码}
 \begin{Code}
-//LeetCode, Add Two Numbers
-//跟Add Binary 很类似
+// LeetCode, Add Two Numbers
+// 跟Add Binary 很类似
+// 时间复杂度O(m+n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
@@ -1750,41 +1814,29 @@ $1 \leq m \leq  n \leq $ length of list.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Reverse Linked List II
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *reverseBetween(ListNode *head, int m, int n) {
-        if(m >= n) return head;
-        ListNode dummy(0);
-        ListNode *h = &dummy;
-        h->next = head;
+        ListNode dummy(-1);
+        dummy.next = head;
 
-        int count = 0;
-        ListNode *p = h, *pm, *pn;
-        for (; p; p = p->next) {
-            if (count == m-1) pm = p;
-            if (count == n) {
-                pn = p;
-                break;
+        ListNode *prev_m, *prev = &dummy;
+        for (int i = 1; i <= n; ++i) {
+            if (i == m) prev_m = prev;
+
+            if (i > m && i <= n) { // prev_m 和 prev 静止不动
+                prev->next = head->next;
+                head->next = prev_m->next;
+                prev_m->next = head;
+                head = prev;
             }
-            count++;
-        }
-        p = pm;
-        pm = pm->next;
-        if (m == 1) head = pn;  // 若m=1，则pn就变为首节点
 
-        p->next = pn;
-        p = pm->next;
-        pm->next = pn->next;
-
-        ListNode *q = p->next; // pm->p->q
-        while(pm != pn) {
-            p->next = pm;
-            pm = p;
-            p = q;
-            if(q) q = q->next;
+            prev = head;
+            head = head->next;
         }
 
-        return head;
+        return dummy.next;
     }
 };
 \end{Code}
@@ -1817,6 +1869,7 @@ Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->4->3->5}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Partition List
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
@@ -1875,22 +1928,46 @@ Given \code{1->1->2->3->3}, return \code{1->2->3}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List
+// 递归版，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (!head) return head;
+        ListNode dummy(head->val + 1); // 值只要跟head不同即可
+        dummy.next = head;
+
+        recur(&dummy, head);
+        return dummy.next;
+    }
+private:
+    static void recur(ListNode *prev, ListNode *cur) {
+        if (cur == nullptr) return;
+
+        if (prev->val == cur->val) { // 删除head
+            prev->next = cur->next;
+            delete cur;
+            recur(prev, prev->next);
+        } else {
+            recur(prev->next, cur->next);
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted List
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
         if (head == nullptr) return nullptr;
-        ListNode * prev = head;
-        ListNode *cur = head->next;
-        while (cur != nullptr) {
+
+        for (ListNode *prev = head, *cur = head->next; cur; cur = cur->next) {
             if (prev->val == cur->val) {
-                ListNode* tmp = cur;
-                cur = cur->next;
-                prev->next = cur;
-                delete tmp;
-                continue;
+                prev->next = cur->next;
+                delete cur;
             } else {
-                prev = prev->next;
-                cur = cur->next;
+                prev = cur;
             }
         }
         return head;
@@ -1927,6 +2004,32 @@ Given \code{1->1->1->2->3}, return \code{2->3}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
+// 递归版，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (!head || !head->next) return head;
+
+        ListNode *p = head->next;
+        if (head->val == p->val) {
+            while (p && head->val == p->val) {
+                ListNode *tmp = p;
+                p = p->next;
+                delete tmp;
+            }
+            delete head;
+            return deleteDuplicates(p);
+        } else {
+            head->next = deleteDuplicates(head->next);
+            return head;
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted List II
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
@@ -1985,6 +2088,7 @@ Given \code{1->2->3->4->5->nullptr} and \code{k = 2}, return \code{4->5->1->2->3
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Rotate List
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *rotateRight(ListNode *head, int k) {
@@ -2042,6 +2146,7 @@ Note:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Remove Nth Node From End of List
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *removeNthFromEnd(ListNode *head, int n) {
@@ -2049,9 +2154,8 @@ public:
         dummy.next = head;
         ListNode *p = &dummy, *q = &dummy;
 
-        for (int i = 0; i < n; i++) { // q先走n步
+        for (int i = 0; i < n; i++)  // q先走n步
             q = q->next;
-        }
 
         while(q->next) { // 一起走
             p = p->next;
@@ -2093,6 +2197,7 @@ Your algorithm should use only constant space. You may \emph{not} modify the val
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Swap Nodes in Pairs
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *swapPairs(ListNode *head) {
@@ -2115,6 +2220,7 @@ public:
 下面这种写法更简洁，但题目规定了不准这样做。
 \begin{Code}
 // LeetCode, Swap Nodes in Pairs
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode* swapPairs(ListNode* head) {
@@ -2165,6 +2271,7 @@ For $k = 3$, you should return: \code{3->2->1->4->5}
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Reverse Nodes in k-Group
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *reverseKGroup(ListNode *head, int k) {

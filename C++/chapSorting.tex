@@ -218,7 +218,6 @@ Could you come up with an one-pass algorithm using only constant space?
 
 
 \subsubsection{代码}
-
 \begin{Code}
 // LeetCode, Sort Colors
 // Counting Sort
@@ -261,18 +260,28 @@ public:
 
 \begin{Code}
 // LeetCode, Sort Colors
-// @author 连城 (http://weibo.com/lianchengzju)
-// partition
+// use partition()
 class Solution {
 public:
-    void sortColors(int a[], int n) {
-        split(split(a, a + n, bind1st(equal_to<int>(), 0)), a + n,
+    void sortColors(int A[], int n) {
+        partition(partition(A, A + n, bind1st(equal_to<int>(), 0)), A + n,
+                bind1st(equal_to<int>(), 1));
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Sort Colors
+// 重新实现 partition()
+class Solution {
+public:
+    void sortColors(int A[], int n) {
+        partition(partition(A, A + n, bind1st(equal_to<int>(), 0)), A + n,
                 bind1st(equal_to<int>(), 1));
     }
 private:
-    //@return pivot 的位置
     template<typename ForwardIterator, typename UnaryPredicate>
-    ForwardIterator split(ForwardIterator first, ForwardIterator last,
+    ForwardIterator partition(ForwardIterator first, ForwardIterator last,
             UnaryPredicate pred) {
         auto pos = first;
 
