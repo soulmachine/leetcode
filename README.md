@@ -1,6 +1,6 @@
 #LeetCode题解
 -----------------
-**下载**：<a href="https://gitcafe.com/soulmachine/LeetCode/raw/master/C++/LeetCodet%E9%A2%98%E8%A7%A3(C++%E7%89%88).pdf">LeetCode题解(C++版).pdf</a>
+**下载**：<a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/LeetCodet%E9%A2%98%E8%A7%A3(C%2B%2B%E7%89%88).pdf">LeetCode题解(C++版).pdf</a>
 
 C++ 文件夹下是C++版，内容一摸一样，代码是用C++写的，
 
@@ -36,3 +36,6 @@ Java 文件夹下是Java版，内容一摸一样，代码是用Java写的
 本书模板已经写好了，基本上不需要很多LaTeX知识就可以动手了。
 
 欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
+
+##北美求职微博群
+我和我的小伙伴们在这里：<http://q.weibo.com/1312378>
