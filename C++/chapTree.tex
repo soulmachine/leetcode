@@ -55,28 +55,53 @@ return its level order traversal as:
 
 \subsubsection{代码}
 \begin{Code}
-//LeetCode, Binary Tree Level Order Traversal
+// LeetCode, Binary Tree Level Order Traversal
+// 递归版，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<int> > levelOrder(TreeNode *root) {
+        vector<vector<int>> result;
+        traverse(root, 1, result);
+        return result;
+    }
+
+    void traverse(TreeNode *root, size_t level, vector<vector<int>> &result) {
+        if (!root) return;
+
+        if (level > result.size())
+            result.push_back(vector<int>());
+
+        result[level-1].push_back(root->val);
+        traverse(root->left, level+1, result);
+        traverse(root->right, level+1, result);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Binary Tree Level Order Traversal
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int> > levelOrder(TreeNode *root) {
         vector<vector<int> > result;
         if(root == nullptr) return result;
 
-        queue<TreeNode*> current_level, next_level;
+        queue<TreeNode*> current, next;
         vector<int> level; // elments in level level
 
-        current_level.push(root);
-        while (!current_level.empty()) {
-            while (!current_level.empty()) {
-                TreeNode* node = current_level.front();
-                current_level.pop();
+        current.push(root);
+        while (!current.empty()) {
+            while (!current.empty()) {
+                TreeNode* node = current.front();
+                current.pop();
                 level.push_back(node->val);
-                if (node->left != nullptr) next_level.push(node->left);
-                if (node->right != nullptr) next_level.push(node->right);
+                if (node->left != nullptr) next.push(node->left);
+                if (node->right != nullptr) next.push(node->right);
             }
             result.push_back(level);
             level.clear();
-            swap(next_level, current_level); //!!! how to use swap
+            swap(next, current);
         }
         return result;
     }
@@ -118,45 +143,62 @@ return its bottom-up level order traversal as:
 
 
 \subsubsection{分析}
-在Binary Tree Level Order Traversal I（见\S \ref{sec:binary-tree-tevel-order-traversal}）的基础上，用一个list作为栈，每次在头部插入，就可以实现倒着输出
+在上一题（见\S \ref{sec:binary-tree-tevel-order-traversal}）的基础上，\fn{reverse()}一下即可。
 
 
 \subsubsection{代码}
 \begin{Code}
-//LeetCode, Binary Tree Level Order Traversal II
-//在Binary Tree Level Order Traversal I的基础上，用一个list作为栈
-//每次在头部插入，就可以实现倒着输出
+// LeetCode, Binary Tree Level Order Traversal II
+// 递归版，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > levelOrderBottom(TreeNode *root) {
-        list<vector<int> > tmp_result;
+        vector<vector<int>> result;
+        traverse(root, 1, result);
+        std::reverse(result.begin(), result.end()); // 比上一题多此一行
+        return result;
+    }
 
-        queue<TreeNode *> q;
-        q.push(root);
-        q.push(nullptr); // level separator
+    void traverse(TreeNode *root, size_t level, vector<vector<int>> &result) {
+        if (!root) return;
 
-        vector<int> level;  // elements in one level
-        while(!q.empty()) {
-            TreeNode *cur = q.front(); q.pop();
+        if (level > result.size())
+            result.push_back(vector<int>());
 
-            if(cur) {
-                level.push_back(cur->val);
-                if(cur->left) q.push(cur->left);
-                if(cur->right) q.push(cur->right);
-            } else {
-                if(level.size() > 0) {
-                    tmp_result.push_front(level);
-                    level.clear();
-                    q.push(nullptr);
-                }
+        result[level-1].push_back(root->val);
+        traverse(root->left, level+1, result);
+        traverse(root->right, level+1, result);
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Binary Tree Level Order Traversal II
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<int> > levelOrderBottom(TreeNode *root) {
+        vector<vector<int> > result;
+        if(root == nullptr) return result;
+
+        queue<TreeNode*> current, next;
+        vector<int> level; // elments in level level
+
+        current.push(root);
+        while (!current.empty()) {
+            while (!current.empty()) {
+                TreeNode* node = current.front();
+                current.pop();
+                level.push_back(node->val);
+                if (node->left != nullptr) next.push(node->left);
+                if (node->right != nullptr) next.push(node->right);
             }
+            result.push_back(level);
+            level.clear();
+            swap(next, current);
         }
-
-        vector<vector<int> > ret;
-        for (auto e : tmp_result) {
-            ret.push_back(e);
-        }
-        return ret;
+        reverse(result.begin(), result.end()); // 比上一题多此一行
+        return result;
     }
 };
 \end{Code}
@@ -201,8 +243,38 @@ return its zigzag level order traversal as:
 
 \subsubsection{代码}
 \begin{Code}
+// LeetCode, Binary Tree Zigzag Level Order Traversal
+// 递归版，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
+        vector<vector<int>> result;
+        traverse(root, 1, result, true);
+        return result;
+    }
+
+    void traverse(TreeNode *root, size_t level, vector<vector<int>> &result,
+            bool left_to_right) {
+        if (!root) return;
+
+        if (level > result.size())
+            result.push_back(vector<int>());
+
+        if (left_to_right)
+            result[level-1].push_back(root->val);
+        else
+            result[level-1].insert(result[level-1].begin(), root->val);
+
+        traverse(root->left, level+1, result, !left_to_right);
+        traverse(root->right, level+1, result, !left_to_right);
+    }
+};
+\end{Code}
+
+\begin{Code}
 //LeetCode, Binary Tree Zigzag Level Order Traversal
 //广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
+// 迭代版，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
@@ -210,7 +282,7 @@ public:
         if (nullptr == root) return result;
 
         queue<TreeNode*> q;
-        bool l2r = true;  //left to right
+        bool left_to_right = true;  //left to right
         vector<int> level;  // one level's elements
 
         q.push(root);
@@ -223,17 +295,14 @@ public:
                 if (cur->left) q.push(cur->left);
                 if (cur->right) q.push(cur->right);
             } else {
-                if (l2r) {
+                if (left_to_right) {
                     result.push_back(level);
                 } else {
-                    vector<int> tmp;
-                    for (auto iter = level.rbegin(); iter != level.rend(); ++iter) {
-                        tmp.push_back(*iter);
-                    }
-                    result.push_back(tmp);
+                    reverse(level.begin(), level.end());
+                    result.push_back(level);
                 }
                 level.clear();
-                l2r = !l2r;
+                left_to_right = !left_to_right;
 
                 if (q.size() > 0) q.push(nullptr);
             }
@@ -274,7 +343,7 @@ Note: Recursive solution is trivial, could you do it iteratively?
 
 
 \subsubsection{分析}
-不用递归，可用栈，Morris中序遍历或者线索二叉树哦。
+不用递归，可用栈，Morris中序遍历或者线索二叉树。
 
 
 \subsubsection{代码}
@@ -282,7 +351,7 @@ Note: Recursive solution is trivial, could you do it iteratively?
 栈
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
-// 使用栈
+// 使用栈，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
@@ -306,10 +375,9 @@ public:
 };
 \end{Code}
 
-Morris中序遍历
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
-// Morris中序遍历
+// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
@@ -374,7 +442,7 @@ $O(n)$空间的解法是，开一个指针数组，中序遍历，将节点指�
 
 \begin{Code}
 // LeetCode, Recover Binary Search Tree
-// Morris中序遍历
+// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void recoverTree(TreeNode* root) {
@@ -447,12 +515,12 @@ Two binary trees are considered equal if they are structurally identical and the
 递归版
 \begin{Code}
 // LeetCode, Same Tree
-// 迭代
+// 递归版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
         if (!p && !q) return true;   // 终止条件
-        if (!p || !q) return false;  // 剪纸
+        if (!p || !q) return false;  // 剪枝
         return p->val == q->val      // 三方合并
                 && isSameTree(p->left, q->left)
                 && isSameTree(p->right, q->right);
@@ -460,10 +528,10 @@ public:
 };
 \end{Code}
 
-迭代版
+
 \begin{Code}
 // LeetCode, Same Tree
-// 迭代
+// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
@@ -512,10 +580,9 @@ Two binary trees are considered equal if they are structurally identical and the
 
 
 \subsubsection{代码}
-递归版
 \begin{Code}
 // LeetCode, Symmetric Tree
-// 递归版
+// 递归版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool isSymmetric(TreeNode *root) {
@@ -531,10 +598,9 @@ public:
 };
 \end{Code}
 
-迭代版
 \begin{Code}
 // LeetCode, Symmetric Tree
-// 迭代版
+// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool isSymmetric (TreeNode* root) {
@@ -588,6 +654,7 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Balanced Binary Tree
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool isBalanced (TreeNode* root) {
@@ -601,12 +668,12 @@ public:
     int balancedHeight (TreeNode* root) {
         if (root == nullptr) return 0;  // 终止条件
 
-        int lhs = balancedHeight (root->left);
-        int rhs = balancedHeight (root->right);
+        int left = balancedHeight (root->left);
+        int right = balancedHeight (root->right);
 
-        if (lhs < 0 || rhs < 0 || abs(lhs - rhs) > 1) return -1;  // 剪枝
+        if (left < 0 || right < 0 || abs(left - right) > 1) return -1;  // 剪枝
 
-        return max(lhs, rhs) + 1; // 三方合并
+        return max(left, right) + 1; // 三方合并
     }
 };
 \end{Code}
@@ -657,7 +724,9 @@ The flattened tree should look like:
 递归版
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 递归版1，作者：王顺达，http://weibo.com/u/1234984145
+// 递归版1
+// @author 王顺达(http://weibo.com/u/1234984145)
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     void flatten(TreeNode *root) {
@@ -677,7 +746,7 @@ private:
 
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 递归版2
+// 递归版2，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     void flatten(TreeNode *root) {
@@ -708,7 +777,7 @@ public:
 迭代版
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 迭代版
+// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     void flatten(TreeNode* root) {
@@ -775,12 +844,42 @@ After calling your function, the tree should look like:
 \subsubsection{分析}
 要处理一个节点，可能需要最右边的兄弟节点，因此用广搜。
 
-同时注意，这题的代码原封不动，可以解决上一题！
+注意，这题的代码原封不动，也可以解决 Populating Next Right Pointers in Each Node I.
 
 \subsubsection{代码}
+\begin{Code}
+// LeetCode, Populating Next Right Pointers in Each Node II
+// 递归版，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        vector<vector<TreeLinkNode *>> result;
+        traverse(root, 1, result);
+        // 开始修改next指针
+        for (auto level : result) {
+            for (auto iter = level.begin(); iter != prev(level.end()); ++iter)
+                (*iter)->next = *next(iter);
+            (*prev(level.end()))->next = nullptr;
+        }
+    }
+
+    void traverse(TreeLinkNode *root, size_t level,
+            vector<vector<TreeLinkNode *>> &result) {
+        if (!root) return;
+
+        if (level > result.size())
+            result.push_back(vector<TreeLinkNode *>());
+
+        result[level - 1].push_back(root);
+        traverse(root->left, level + 1, result);
+        traverse(root->right, level + 1, result);
+    }
+};
+\end{Code}
 
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
+// 迭代版，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
@@ -788,24 +887,24 @@ public:
         if (root == nullptr)
             return;
 
-        vector<TreeLinkNode*> nextLevel, currentLevel;
-        currentLevel.push_back(root);
-        while (!currentLevel.empty()) {
-            while (!currentLevel.empty()) {
-                TreeLinkNode* node = currentLevel.front();
-                currentLevel.erase(currentLevel.begin());
+        vector<TreeLinkNode*> next, current;
+        current.push_back(root);
+        while (!current.empty()) {
+            while (!current.empty()) {
+                TreeLinkNode* node = current.front();
+                current.erase(current.begin());
 
-                if (!currentLevel.empty())
-                    node->next = currentLevel.front();
+                if (!current.empty())
+                    node->next = current.front();
                 else
                     node->next = nullptr;
 
                 if (node->left != nullptr)
-                    nextLevel.push_back(node->left);
+                    next.push_back(node->left);
                 if (node->right != nullptr)
-                    nextLevel.push_back(node->right);
+                    next.push_back(node->right);
             }
-            swap(nextLevel, currentLevel); //!!! how to use swap
+            swap(next, current);
         }
     }
 };
@@ -839,6 +938,7 @@ You may assume that duplicates do not exist in the tree.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
+// 递归版，时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
@@ -892,6 +992,7 @@ You may assume that duplicates do not exist in the tree.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
+// 递归版，时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
@@ -999,6 +1100,7 @@ $$
 
 \begin{Code}
 // LeetCode, Unique Binary Search Trees
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int numTrees(int n) {
@@ -1049,6 +1151,7 @@ Given $n = 3$, your program should return all 5 unique BST's shown below.
 
 \begin{Code}
 // LeetCode, Unique Binary Search Trees II
+// 时间复杂度TODO，空间复杂度TODO
 class Solution {
 public:
     vector<TreeNode *> generateTrees(int n) {
@@ -1108,6 +1211,7 @@ Assume a BST is defined as follows:
 
 \begin{Code}
 // LeetCode, Validate Binary Search Tree
+// 时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
     bool isValidBST(TreeNode* root) {
@@ -1147,7 +1251,7 @@ Given an array where elements are sorted in ascending order, convert it to a hei
 
 \begin{Code}
 // LeetCode, Convert Sorted Array to Binary Search Tree
-// 分治法
+// 分治法，时间复杂度O(nlogn)，空间复杂度O(logn)
 class Solution {
 public:
     TreeNode* sortedArrayToBST (vector<int>& num) {
@@ -1199,7 +1303,7 @@ Given a singly linked list where elements are sorted in ascending order, convert
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
 // 分治法，类似于 Convert Sorted Array to Binary Search Tree，
-// 自顶向下，复杂度O(nlogn)
+// 自顶向下，时间复杂度O(n^2)，空间复杂度O(logn)
 class Solution {
 public:
     TreeNode* sortedListToBST (ListNode* head) {
@@ -1241,7 +1345,7 @@ public:
 自底向上，复杂度$O(n)$。
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
-// bottom-up，复杂度O(nlogn)
+// bottom-up，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     TreeNode *sortedListToBST(ListNode *head) {
@@ -1301,30 +1405,18 @@ The minimum depth is the number of nodes along the shortest path from the root n
 递归版
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
-// 递归版
+// 递归版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
-    int minDepth(TreeNode *root) {
-        if (root == nullptr) return 0;
-        else {
-            d = INT_MAX;
-            minDepth(root, 1);
-            return d;
-        }
+    int minDepth(const TreeNode *root) {
+        return minDepth(root, false);
     }
 private:
-    int d;
-    void minDepth(TreeNode *root, int cur) {
-        if (root != nullptr) {
-            if (root->left == nullptr && root->right == nullptr) { // 叶子节点
-                d = min(cur, d);
-                return;
-            }
-            if (cur < d) { // 剪枝
-                minDepth(root->left, cur+1);
-                minDepth(root->right, cur+1);
-            }
-        }
+    static int minDepth(const TreeNode *root, bool hasbrother) {
+        if (!root) return hasbrother ? INT_MAX : 0;
+
+        return 1 + min(minDepth(root->left, root->right != NULL),
+                minDepth(root->right, root->left != NULL));
     }
 };
 \end{Code}
@@ -1332,7 +1424,7 @@ private:
 迭代版
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
-// 迭代版
+// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     int minDepth(TreeNode* root) {
@@ -1387,14 +1479,13 @@ The maximum depth is the number of nodes along the longest path from the root no
 
 \begin{Code}
 // LeetCode, Maximum Depth of Binary Tree
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     int maxDepth(TreeNode *root) {
         if (root == nullptr) return 0;
 
-        int lmax = maxDepth(root->left);
-        int rmax = maxDepth(root->right);
-        return max(lmax, rmax) + 1;
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
     }
 };
 \end{Code}
@@ -1438,17 +1529,17 @@ return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 
 
 \begin{Code}
 // LeetCode, Path Sum
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     bool hasPathSum(TreeNode *root, int sum) {
         if (root == nullptr) return false;
 
-        if (root->left == nullptr && root->right == nullptr) { // leaf
-            if (sum == root->val) return true;
-            else return false;
-        }
-        if (hasPathSum(root->left, sum - root->val)) return true;
-        if (hasPathSum(root->right, sum - root->val)) return true;
+        if (root->left == nullptr && root->right == nullptr) // leaf
+            return sum == root->val;
+
+        return hasPathSum(root->left, sum - root->val)
+                || hasPathSum(root->right, sum - root->val);
     }
 };
 \end{Code}
@@ -1494,6 +1585,7 @@ return
 
 \begin{Code}
 // LeetCode, Path Sum II
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     vector<vector<int> > pathSum(TreeNode *root, int sum) {
@@ -1510,9 +1602,8 @@ private:
         cur.push_back(root->val);
 
         if (root->left == nullptr && root->right == nullptr) { // leaf
-            if (gap == root->val) {
+            if (gap == root->val)
                 result.push_back(cur);
-            }
         }
         pathSum(root->left, gap - root->val, cur, result);
         pathSum(root->right, gap - root->val, cur, result);
@@ -1558,6 +1649,7 @@ Return $6$.
 
 \begin{Code}
 // LeetCode, Binary Tree Maximum Path Sum
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     int maxPathSum(TreeNode *root) {
@@ -1634,12 +1726,13 @@ After calling your function, the tree should look like:
 
 
 \subsubsection{分析}
-
+无
 
 \subsubsection{代码}
 
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
@@ -1699,6 +1792,7 @@ Return the sum = \fn{12 + 13 = 25}.
 
 \begin{Code}
 // LeetCode, Decode Ways
+// 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     int sumNumbers(TreeNode *root) {
