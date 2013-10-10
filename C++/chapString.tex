@@ -25,26 +25,16 @@ For the purpose of this problem, we define empty string as valid palindrome.
 \subsubsection{代码}
 \begin{Code}
 // Leet Code, Valid Palindrome
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     bool isPalindrome(string s) {
         transform(s.begin(), s.end(), s.begin(), ::tolower);
         auto left = s.begin(), right = prev(s.end());
         while (left < right) {
-            if (!::isalnum(*left)) {
-                ++left;
-                continue;
-            }
-            if (!::isalnum(*right)) {
-                --right;
-                continue;
-            }
-            if (*left == *right) {
-                ++left;
-                --right;
-            } else {
-                return false;
-            }
+            if (!::isalnum(*left))  ++left;
+            else if (!::isalnum(*right)) --right;
+            else if (*left != *right) return false;
         }
         return true;
     }
@@ -75,7 +65,7 @@ Returns a pointer to the first occurrence of needle in haystack, or null if need
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Implement strStr()
-// 暴力解法，复杂度O(N*M)
+// 暴力解法，时间复杂度O(N*M)，空间复杂度O(1)
 class Solution {
 public:
     char *strStr(const char *haystack, const char *needle) {
@@ -100,7 +90,73 @@ public:
 
             p1 = p1_old + 1;
         }
-        return NULL;
+        return nullptr;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Implement strStr()
+// KMP，时间复杂度O(N+M)，空间复杂度O(M)
+class Solution {
+public:
+    char *strStr(const char *haystack, const char *needle) {
+        int pos = kmp(haystack, needle);
+        if (pos == -1) return nullptr;
+        else return (char*)haystack + pos;
+    }
+private:
+    /*
+     * @brief 计算部分匹配表，即next数组.
+     *
+     * @param[in] pattern 模式串
+     * @param[out] next next数组
+     * @return 无
+     */
+    static void compute_prefix(const char *pattern, int next[]) {
+        int i;
+        int j = -1;
+        const int m = strlen(pattern);
+
+        next[0] = j;
+        for (i = 1; i < m; i++) {
+            while (j > -1 && pattern[j + 1] != pattern[i]) j = next[j];
+
+            if (pattern[i] == pattern[j + 1]) j++;
+            next[i] = j;
+        }
+    }
+
+    /*
+     * @brief KMP算法.
+     *
+     * @param[in] text 文本
+     * @param[in] pattern 模式串
+     * @return 成功则返回第一次匹配的位置，失败则返回-1
+     */
+    static int kmp(const char *text, const char *pattern) {
+        int i;
+        int j = -1;
+        const int n = strlen(text);
+        const int m = strlen(pattern);
+        if (n == 0 && m == 0) return 0; /* "","" */
+        if (m == 0) return 0;  /* "a","" */
+        int *next = (int*)malloc(sizeof(int) * m);
+
+        compute_prefix(pattern, next);
+
+        for (i = 0; i < n; i++) {
+            while (j > -1 && pattern[j + 1] != text[i]) j = next[j];
+
+            if (text[i] == pattern[j + 1]) j++;
+            if (j == m - 1) {
+                free(next);
+                return i-j;
+            }
+        }
+
+        free(next);
+        return -1;
     }
 };
 \end{Code}
@@ -144,6 +200,7 @@ If no valid conversion could be performed, a zero value is returned. If the corr
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, String to Integer (atoi)
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int atoi(const char *str) {
@@ -205,6 +262,7 @@ Return {\small \fontspec{Latin Modern Mono} "100"}.
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Add Binary
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     string addBinary(string a, string b) {
@@ -271,7 +329,8 @@ $$
 
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
-// 备忘录法，TLE
+// 备忘录法，会超时
+// 时间复杂度O(n^2)，空间复杂度O(n^2)
 typedef string::const_iterator Iterator;
 
 namespace std {
@@ -323,26 +382,28 @@ private:
 
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
-// 动规
+// 动规，时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
     string longestPalindrome(string s) {
         const int len = s.size();
-        int f[len][len];
-        memset(f, 0, len * len * sizeof(int)); //TODO: fill, fill_n
-        int maxL = 1, start = 0;  // 最长回文子串的长度，起点
+        bool f[len][len];
+        fill_n(&f[0][0], len * len, false);
+        // 用 vector 会超时
+        //vector<vector<bool> > f(len, vector<bool>(len, false));
+        size_t max_len = 1, start = 0;  // 最长回文子串的长度，起点
 
         for (size_t i = 0; i < s.size(); i++) {
-            f[i][i] = 1;
+            f[i][i] = true;
             for (size_t j = 0; j < i; j++) {  // [j, i]
                 f[j][i] = (s[j] == s[i] && (i - j < 2 || f[j + 1][i - 1]));
-                if (f[j][i] && maxL < (i - j + 1)) {
-                    maxL = i - j + 1;
+                if (f[j][i] && max_len < (i - j + 1)) {
+                    max_len = i - j + 1;
                     start = j;
                 }
             }
         }
-        return s.substr(start, maxL);
+        return s.substr(start, max_len);
     }
 };
 \end{Code}
@@ -350,6 +411,7 @@ public:
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
 // Manacher’s Algorithm
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     // Transform S into T.
@@ -368,10 +430,10 @@ public:
 
     string longestPalindrome(string s) {
         string T = preProcess(s);
-        int n = T.length();
+        const int n = T.length();
         // 以T[i]为中心，向左/右扩张的长度，不包含T[i]自己，
         // 因此 P[i]是源字符串中回文串的长度
-        int *P = new int[n];
+        int P[n];
         int C = 0, R = 0;
 
         for (int i = 1; i < n - 1; i++) {
@@ -392,17 +454,16 @@ public:
         }
 
         // Find the maximum element in P.
-        int maxLen = 0;
-        int centerIndex = 0;
+        int max_len = 0;
+        int center_index = 0;
         for (int i = 1; i < n - 1; i++) {
-            if (P[i] > maxLen) {
-                maxLen = P[i];
-                centerIndex = i;
+            if (P[i] > max_len) {
+                max_len = P[i];
+                center_index = i;
             }
         }
-        delete[] P;
 
-        return s.substr((centerIndex - 1 - maxLen) / 2, maxLen);
+        return s.substr((center_index - 1 - max_len) / 2, max_len);
     }
 };
 \end{Code}
@@ -451,18 +512,19 @@ isMatch("aab", "c*a*b") → true
 递归版。
 \begin{Code}
 // LeetCode, Regular Expression Matching
-// 递归版
+// 递归版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     bool isMatch(const char *s, const char *p) {
         if (*p == '\0') return *s == '\0';
 
+        // next char is not '*', then must match current character
         if (*(p + 1) != '*') {
             if (*p == *s || (*p == '.' && *s != '\0'))
                 return isMatch(s + 1, p + 1);
             else
                 return false;
-        } else {
+        } else { // next char is '*'
             while (*p == *s || (*p == '.' && *s != '\0')) {
                 if (isMatch(s, p + 2))
                     return true;
@@ -522,15 +584,30 @@ isMatch("aab", "c*a*b") → false
 
 
 \subsubsection{代码}
-递归版。
 \begin{Code}
+// LeetCode, Wildcard Matching
+// 递归版，会超时，时间复杂度O(n*m)，空间复杂度O(n)
+class Solution {
+public:
+    bool isMatch(const char *s, const char *p) {
+        if (*p == '*') {
+            while (*p == '*') ++p;
+            if (*p == '\0') return true;
+            while (*s != '\0' && !isMatch(s, p)) ++s;
 
+            return *s != '\0';
+        }
+        else if (*p == '\0' || *s == '\0') return *p == *s;
+        else if (*p == *s || *p == '?') return isMatch(++s, ++p);
+        else return false;
+    }
+};
 \end{Code}
 
 迭代版。
 \begin{Code}
 // LeetCode, Wildcard Matching
-// 迭代版
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     bool isMatch(const char *s, const char *p) {
@@ -587,26 +664,19 @@ Write a function to find the longest common prefix string amongst an array of st
 \begin{Code}
 // LeetCode, Longest Common Prefix
 // 从位置0开始，对每一个位置比较所有字符串，直到遇到一个不匹配
+// 时间复杂度O(n1+n2+...)
 class Solution {
 public:
     string longestCommonPrefix(vector<string> &strs) {
-        if (strs.size() == 0) return "";
-        string prefix;
-        int pos = 0; // 当前位置，等于 prefix 的长度
+        if (strs.empty()) return "";
 
-        while (true) {
-            char c;
-            int i = 0;
-            for (; i < strs.size(); i++) {
-                if (i == 0) c = strs[0][pos];
-                if (strs[i].size() == pos || c != strs[i][pos])
-                    break;
-            }
-            if (i != strs.size()) break;
-            ++pos;
-            prefix.append(1, c);
-        }
-        return prefix;
+        int right_most = strs[0].size() - 1;
+        for (size_t i = 1; i < strs.size(); i++)
+            for (int j = 0; j <= right_most; j++)
+                if (strs[i][j] != strs[0][j])
+                    right_most = j - 1;
+
+        return strs[0].substr(0, right_most + 1);
     }
 };
 \end{Code}
@@ -647,7 +717,7 @@ Note: It is intended for the problem statement to be ambiguous. You should gathe
 \begin{Code}
 // LeetCode, Valid Number
 // @author 龚陆安 (http://weibo.com/luangong)
-// finite automata
+// finite automata，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     bool isNumber(const char *s) {
@@ -703,7 +773,7 @@ public:
 \begin{Code}
 // LeetCode, Valid Number
 // @author 连城 (http://weibo.com/lianchengzju)
-// 偷懒，直接用 strtod()
+// 偷懒，直接用 strtod()，时间复杂度O(n)
 class Solution {
 public:
     bool isNumber (char const* s) {
@@ -744,40 +814,21 @@ Input is guaranteed to be within the range from 1 to 3999.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Integer to Roman
-// @author 连城 (http://weibo.com/lianchengzju)
+// 时间复杂度O(num)，空间复杂度O(1)
 class Solution {
 public:
-    string intToRoman (int n) {
-        vector<pair<int, string>> radixes {
-            { 1000, "M" },
-            { 900, "CM" },
-            { 500, "D" },
-            { 400, "CD" },
-            { 100, "C" },
-            { 90, "XC" },
-            { 50, "L" },
-            { 40, "XL" },
-            { 10, "X" },
-            { 9, "IX" },
-            { 5, "V" },
-            { 4, "IV" },
-            { 1, "I" }
-        };
+    string intToRoman(int num) {
+        const int radix[] = {1000, 900, 500, 400, 100, 90,
+                50, 40, 10, 9, 5, 4, 1};
+        const string symbol[] = {"M", "CM", "D", "CD", "C", "XC",
+                "L", "XL", "X", "IX", "V", "IV", "I"};
 
         string roman;
-
-        while (n > 0) {
-            auto radix = radixes.begin();
-
-            for (; n / radix->first == 0; ++radix)
-                ;
-
-            for (int i = 0; i < n / radix->first; ++i)
-                roman += radix->second;
-
-            n %= radix->first;
+        for (size_t i = 0; num > 0; ++i) {
+            int count = num / radix[i];
+            num %= radix[i];
+            for (; count > 0; --count) roman += symbol[i];
         }
-
         return roman;
     }
 };
@@ -809,9 +860,10 @@ Input is guaranteed to be within the range from 1 to 3999.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Roman to Integer
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    inline int c2n(const char c) {
+    inline int map(const char c) {
         switch (c) {
         case 'I': return 1;
         case 'V': return 5;
@@ -827,10 +879,10 @@ public:
     int romanToInt(string s) {
         int result = 0;
         for (size_t i = 0; i < s.size(); i++) {
-            if (i > 0 && c2n(s[i]) > c2n(s[i - 1])) {
-                result += (c2n(s[i]) - 2 * c2n(s[i - 1]));
+            if (i > 0 && map(s[i]) > map(s[i - 1])) {
+                result += (map(s[i]) - 2 * map(s[i - 1]));
             } else {
-                result += c2n(s[i]);
+                result += map(s[i]);
             }
         }
         return result;
@@ -874,18 +926,19 @@ Note: The sequence of integers will be represented as a string.
 \begin{Code}
 // LeetCode, Count and Say
 // @author 连城 (http://weibo.com/lianchengzju)
+// 时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     string countAndSay(int n) {
         string s("1");
 
         while (--n)
-            s = get_next(s);
+            s = getNext(s);
 
         return s;
     }
 
-    string get_next(const string &s) {
+    string getNext(const string &s) {
         stringstream ss;
 
         for (auto i = s.begin(); i != s.end(); ) {
@@ -925,6 +978,7 @@ Anagram（回文构词法）是指打乱字母顺序从而得到新的单词，�
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Anagrams
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<string> anagrams(vector<string> &strs) {
@@ -980,6 +1034,7 @@ In this case, you should ignore redundant slashes and return \fn{"/home/foo"}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Simplify Path
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     string simplifyPath(string const& path) {
@@ -1046,6 +1101,7 @@ return 5.
 \begin{Code}
 // LeetCode, Length of Last Word
 // 偷懒，用 STL
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int lengthOfLastWord(const char *s) {
@@ -1061,12 +1117,13 @@ public:
 \begin{Code}
 // LeetCode, Length of Last Word
 // 顺序扫描，记录每个 word 的长度
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int lengthOfLastWord(const char *s) {
         int len = 0;
         while (*s) {
-            if (*(s++) != ' ')
+            if (*s++ != ' ')
                 ++len;
             else if (*s && *s != ' ')
                 len = 0;
