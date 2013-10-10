@@ -724,7 +724,30 @@ The flattened tree should look like:
 递归版
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 递归版1
+// 递归版1，时间复杂度O(n)，空间复杂度O(logn)
+class Solution {
+public:
+    void flatten(TreeNode *root) {
+        if (root == nullptr) return;  // 终止条件
+
+        flatten(root->left);
+        flatten(root->right);
+
+        if (nullptr == root->left) return;
+
+        // 三方合并，将左子树所形成的链表插入到root和root->right之间
+        TreeNode *p = root->left;
+        while(p->right) p = p->right; //寻找左链表最后一个节点
+        p->right = root->right;
+        root->right = root->left;
+        root->left = nullptr;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Flatten Binary Tree to Linked List
+// 递归版2
 // @author 王顺达(http://weibo.com/u/1234984145)
 // 时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
@@ -740,36 +763,6 @@ private:
         root->right = flatten(root->left, flatten(root->right, tail));
         root->left = NULL;
         return root;
-    }
-};
-\end{Code}
-
-\begin{Code}
-// LeetCode, Flatten Binary Tree to Linked List
-// 递归版2，时间复杂度O(n)，空间复杂度O(logn)
-class Solution {
-public:
-    void flatten(TreeNode *root) {
-        if (root == nullptr) return;  // 终止条件
-        //1.flat the left subtree
-        if (root->left) flatten(root->left);
-
-        //2.flatten the right subtree
-        if (root->right) flatten(root->right);
-
-        //3.if no left return
-        if (nullptr == root->left) return;
-
-        //4.insert left sub tree between root and root->right
-        //4.1.find the last node in left
-        TreeNode *p = root->left;
-        while(p->right) p = p->right;
-        p->right = root->right;
-        //4.2.connect right sub tree after left sub tree
-        p->right = root->right;
-        //4.3.move left sub tree to the root's right sub tree
-        root->right = root->left;
-        root->left = nullptr;
     }
 };
 \end{Code}

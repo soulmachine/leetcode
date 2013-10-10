@@ -18,6 +18,7 @@ You may assume that A has enough space to hold additional elements from B. The n
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Merge Sorted Array
+// 时间复杂度O(m+n)，空间复杂度O(1)
 class Solution {
 public:
     void merge(int A[], int m, int B[], int n) {
@@ -55,6 +56,7 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Merge Two Sorted Lists
+// 时间复杂度O(m+n)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
@@ -98,6 +100,7 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Merge k Sorted Lists
+// 时间复杂度O(n1+n2+...)，空间复杂度O(1)
 class Solution {
 public:
     ListNode *mergeKLists(vector<ListNode *> &lists) {
@@ -158,6 +161,7 @@ Your algorithm should run in $O(n)$ time and uses constant space.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, First Missing Positive
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int firstMissingPositive(int A[], int n) {
@@ -221,6 +225,7 @@ Could you come up with an one-pass algorithm using only constant space?
 \begin{Code}
 // LeetCode, Sort Colors
 // Counting Sort
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void sortColors(int A[], int n) {
@@ -239,7 +244,7 @@ public:
 
 \begin{Code}
 // LeetCode, Sort Colors
-// 双指针
+// 双指针，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void sortColors(int A[], int n) {
@@ -261,6 +266,7 @@ public:
 \begin{Code}
 // LeetCode, Sort Colors
 // use partition()
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void sortColors(int A[], int n) {
@@ -273,6 +279,7 @@ public:
 \begin{Code}
 // LeetCode, Sort Colors
 // 重新实现 partition()
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void sortColors(int A[], int n) {

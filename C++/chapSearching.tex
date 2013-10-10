@@ -24,7 +24,8 @@ return \code{[3, 4]}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Search for a Range
-// 偷懒的做法
+// 偷懒的做法，使用STL
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> searchRange(int A[], int n, int target) {
@@ -41,6 +42,7 @@ public:
 \begin{Code}
 // LeetCode, Search for a Range
 // 重新实现 lower_bound 和 upper_bound
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     vector<int> searchRange (int A[], int n, int target) {
@@ -113,6 +115,7 @@ Here are few examples.
 \begin{Code}
 // LeetCode, Search Insert Position
 // 重新实现 lower_bound
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     int searchInsert(int A[], int n, int target) {
@@ -170,6 +173,7 @@ Given \fn{target = 3}, return true.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Search a 2D Matrix
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     bool searchMatrix(const vector<vector<int>>& matrix, int target) {
