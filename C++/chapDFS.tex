@@ -26,7 +26,7 @@ Return
 一个长度为n的字符串，有n+1个地方可以砍断，每个地方可断可不断，前后两个隔板默认已经使用，因此复杂度为$O(2^{n-1})$
 
 
-\subsubsection{代码}
+\subsubsection{深搜1}
 \begin{Code}
 //LeetCode, Palindrome Partitioning
 // 时间复杂度O(2^n)，空间复杂度O(n)
@@ -72,6 +72,7 @@ public:
 };
 \end{Code}
 
+\subsubsection{深搜2}
 另一种写法，更加简洁。这种写法也在 Combination Sum, Combination Sum II 中出现过。
 \begin{Code}
 //LeetCode, Palindrome Partitioning
@@ -110,6 +111,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Palindrome Partitioning
 // 动规，时间复杂度O(n^2)，空间复杂度O(1)
@@ -814,7 +817,7 @@ For example, given $n = 3$, a solution set is:
 一步步构造字符串。当左括号出现次数$<n$时，就可以放置新的左括号。当右括号出现次数小于左括号出现次数时，就可以放置新的右括号。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Generate Parentheses
 // 时间复杂度O(TODO)，空间复杂度O(n)
@@ -837,6 +840,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 另一种递归写法，更加简洁。
 \begin{Code}
 // LeetCode, Generate Parentheses
@@ -1019,8 +1024,6 @@ private:
 
 
 \subsection{适用场景}
-
-注意，这里的总结是一种经验，一种概率，不是绝对的结论！
 
 \textbf{输入数据}：如果是递归数据结构，如单链表，二叉树，集合，则百分之百可以用深搜；如果是非递归数据结构，如一维数组，二维数组，字符串，图，则概率小一些。
 

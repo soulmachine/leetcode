@@ -221,7 +221,7 @@ Could you come up with an one-pass algorithm using only constant space?
 第3种思路，利用快速排序里 partition 的思想，第一次将数组按0分割，第二次按1分割，排序完毕，可以推广到$n$种颜色，每种颜色有重复元素的情况。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Sort Colors
 // Counting Sort
@@ -242,6 +242,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Sort Colors
 // 双指针，时间复杂度O(n)，空间复杂度O(1)
@@ -263,6 +265,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码3}
 \begin{Code}
 // LeetCode, Sort Colors
 // use partition()
@@ -276,6 +280,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码4}
 \begin{Code}
 // LeetCode, Sort Colors
 // 重新实现 partition()

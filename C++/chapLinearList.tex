@@ -20,10 +20,10 @@ Your function should return length = 2, and A is now \code{[1,2]}.
 
 
 \subsubsection{分析}
+无
 
 
-
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
 // 时间复杂度O(n)，空间复杂度O(1)
@@ -42,6 +42,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
 // 使用STL，时间复杂度O(n)，空间复杂度O(1)
@@ -53,6 +55,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码3}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
 // 使用STL，时间复杂度O(n)，空间复杂度O(1)
@@ -101,7 +105,7 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 加一个变量记录一下元素出现的次数即可。这题因为是已经排序的数组，所以一个变量即可解决。如果是没有排序的数组，则需要引入一个hashmap来记录出现次数。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
 // 时间复杂度O(n)，空间复杂度O(1)
@@ -128,6 +132,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 下面是一个更简洁的版本。上面的代码略长，不过扩展性好一些，例如将\fn{occur < 2}改为\fn{occur < 3}，就变成了允许重复最多3次。
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
@@ -569,7 +575,8 @@ A solution set is:
 
 然后想到，可以先缓存两个数的和，最终复杂度$O(n^3)$。这个策略也适用于 3Sum 。
 
-\subsubsection{代码}
+
+\subsubsection{二分查找}
 \begin{Code}
 // LeetCode, 4Sum
 // 先排序，然后二分查找，复杂度O(n^3*logn)，会超时
@@ -601,6 +608,7 @@ public:
 \end{Code}
 
 
+\subsubsection{map做缓存}
 \begin{Code}
 // LeetCode, 4Sum
 // 先缓存两个数的和，时间复杂度O(n^3)，空间复杂度O(n^2)
@@ -658,7 +666,7 @@ The order of elements can be changed. It doesn't matter what you leave beyond th
 无
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Remove Element
 // 时间复杂度O(n)，空间复杂度O(1)
@@ -676,6 +684,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Remove Element
 // 使用remove()，时间复杂度O(n)，空间复杂度O(1)
@@ -820,10 +830,10 @@ a_n &=& 0 \nonumber
 \end{eqnarray}
 
 
-\subsubsection{代码}
+\subsubsection{使用next_permutation()}
 \begin{Code}
 // LeetCode, Permutation Sequence
-// 思路一：next_permutation()，TLE
+// 使用next_permutation()，TLE
 class Solution {
 public:
     string getPermutation(int n, int k) {
@@ -842,6 +852,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{康托编码}
 \begin{Code}
 // LeetCode, Permutation Sequence
 // 康托编码，时间复杂度O(n)，空间复杂度O(1)
@@ -999,8 +1011,7 @@ Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
 \end{enumerate}
 
 
-\subsubsection{代码}
-
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Trapping Rain Water
 // 思路1，时间复杂度O(n)，空间复杂度O(n)
@@ -1031,6 +1042,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Trapping Rain Water
 // 思路2，时间复杂度O(n)，空间复杂度O(1)
@@ -1053,6 +1066,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码3}
 第三种解法，用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或等于当前值的元素全部出栈处理掉。
 \begin{Code}
 // LeetCode, Trapping Rain Water
@@ -1123,9 +1138,9 @@ Could you do this in-place?
 或者，首先沿着水平中线翻转一次，然后沿着主对角线翻转一次。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
-// LeetCode, Trapping Rain Water
+// LeetCode, Rotate Image
 // 思路 1，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
@@ -1143,8 +1158,9 @@ public:
 };
 \end{Code}
 
+\subsubsection{代码2}
 \begin{Code}
-// LeetCode, Trapping Rain Water
+// LeetCode, Rotate Image
 // 思路 2，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
@@ -1181,7 +1197,7 @@ Given a number represented as an array of digits, plus one to the number.
 高精度加法。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Plus One
 // 时间复杂度O(n)，空间复杂度O(1)
@@ -1207,6 +1223,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Plus One
 // 时间复杂度O(n)，空间复杂度O(1)
@@ -1260,7 +1278,7 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 这是一个斐波那契数列。
 
 
-\subsubsection{代码}
+\subsubsection{迭代}
 \begin{Code}
 // LeetCode, Climbing Stairs
 // 迭代，时间复杂度O(n)，空间复杂度O(1)
@@ -1279,6 +1297,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{数学公式}
 \begin{Code}
 // LeetCode, Climbing Stairs
 // 数学公式，时间复杂度O(1)，空间复杂度O(1)
@@ -1348,7 +1368,7 @@ $n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图
 \end{center}
 
 
-\subsubsection{代码}
+\subsubsection{数学公式}
 \begin{Code}
 // LeetCode, Gray Code
 // 数学公式，时间复杂度O(2^n)，空间复杂度O(1)
@@ -1374,6 +1394,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{Reflect-and-prefix method}
 \begin{Code}
 // LeetCode, Gray Code
 // reflect-and-prefix method
@@ -1423,7 +1445,7 @@ $O(m+n)$空间的方法很简单，设置两个数组，记录每行和每列是
 想要常数空间，可以复用第一行和第一列。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
 // 时间复杂度O(m*n)，空间复杂度O(m+n)
@@ -1458,6 +1480,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
 // 时间复杂度O(m*n)，空间复杂度O(1)
@@ -1672,7 +1696,7 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 
 方法2：用\fn{ones}记录到当前处理的元素为止，二进制1出现“1次”（mod 3 之后的 1）的有哪些二进制位；用\fn{twos}记录到当前计算的变量为止，二进制1出现“2次”（mod 3 之后的 2）的有哪些二进制位。当\fn{ones}和\fn{twos}中的某一位同时为1时表示该二进制位上1出现了3次，此时需要清零。即\textbf{用二进制模拟三进制运算}。最终\fn{ones}记录的是最终结果。
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Single Number II
 // 方法1，时间复杂度O(n)，空间复杂度O(1)
@@ -1697,6 +1721,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Single Number II
 // 方法2，时间复杂度O(n)，空间复杂度O(1)
@@ -1925,7 +1951,7 @@ Given \code{1->1->2->3->3}, return \code{1->2->3}.
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List
 // 递归版，时间复杂度O(n)，空间复杂度O(1)
@@ -1954,6 +1980,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)
@@ -2001,7 +2029,7 @@ Given \code{1->1->1->2->3}, return \code{2->3}.
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
 // 递归版，时间复杂度O(n)，空间复杂度O(1)
@@ -2027,6 +2055,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)
@@ -2268,7 +2298,7 @@ For $k = 3$, you should return: \code{3->2->1->4->5}
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Reverse Nodes in k-Group
 // 递归版，时间复杂度O(n)，空间复杂度O(1)
@@ -2300,6 +2330,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Reverse Nodes in k-Group
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)

@@ -53,7 +53,7 @@ return its level order traversal as:
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal
 // 递归版，时间复杂度O(n)，空间复杂度O(n)
@@ -78,6 +78,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)
@@ -146,7 +148,7 @@ return its bottom-up level order traversal as:
 在上一题（见\S \ref{sec:binary-tree-tevel-order-traversal}）的基础上，\fn{reverse()}一下即可。
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal II
 // 递归版，时间复杂度O(n)，空间复杂度O(n)
@@ -172,6 +174,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal II
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)
@@ -241,7 +245,7 @@ return its zigzag level order traversal as:
 广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Binary Tree Zigzag Level Order Traversal
 // 递归版，时间复杂度O(n)，空间复杂度O(n)
@@ -271,6 +275,7 @@ public:
 };
 \end{Code}
 
+\subsubsection{迭代版}
 \begin{Code}
 //LeetCode, Binary Tree Zigzag Level Order Traversal
 //广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
@@ -346,9 +351,7 @@ Note: Recursive solution is trivial, could you do it iteratively?
 不用递归，可用栈，Morris中序遍历或者线索二叉树。
 
 
-\subsubsection{代码}
-
-栈
+\subsubsection{使用栈}
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
 // 使用栈，时间复杂度O(n)，空间复杂度O(n)
@@ -375,6 +378,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{Morris中序遍历}
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
 // Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
@@ -511,7 +516,7 @@ Two binary trees are considered equal if they are structurally identical and the
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 递归版
 \begin{Code}
 // LeetCode, Same Tree
@@ -529,6 +534,7 @@ public:
 \end{Code}
 
 
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Same Tree
 // 迭代版，时间复杂度O(n)，空间复杂度O(logn)
@@ -579,7 +585,7 @@ Two binary trees are considered equal if they are structurally identical and the
 无
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Symmetric Tree
 // 递归版，时间复杂度O(n)，空间复杂度O(logn)
@@ -598,6 +604,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Symmetric Tree
 // 迭代版，时间复杂度O(n)，空间复杂度O(logn)
@@ -720,8 +728,7 @@ The flattened tree should look like:
 无
 
 
-\subsubsection{代码}
-递归版
+\subsubsection{递归版1}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
 // 递归版1，时间复杂度O(n)，空间复杂度O(logn)
@@ -745,6 +752,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{递归版2}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
 // 递归版2
@@ -767,7 +776,8 @@ private:
 };
 \end{Code}
 
-迭代版
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
 // 迭代版，时间复杂度O(n)，空间复杂度O(logn)
@@ -839,7 +849,7 @@ After calling your function, the tree should look like:
 
 注意，这题的代码原封不动，也可以解决 Populating Next Right Pointers in Each Node I.
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
 // 递归版，时间复杂度O(n)，空间复杂度O(n)
@@ -870,6 +880,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
 // 迭代版，时间复杂度O(n)，空间复杂度O(n)
@@ -931,7 +943,7 @@ You may assume that duplicates do not exist in the tree.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
-// 递归版，时间复杂度O(n)，空间复杂度O(\logn)
+// 递归，时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
@@ -985,7 +997,7 @@ You may assume that duplicates do not exist in the tree.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
-// 递归版，时间复杂度O(n)，空间复杂度O(\logn)
+// 递归，时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
@@ -1290,8 +1302,8 @@ Given a singly linked list where elements are sorted in ascending order, convert
 
 存在一种自底向上(bottom-up)的方法，见\myurl{http://leetcode.com/2010/11/convert-sorted-list-to-balanced-binary.html}
 
-\subsubsection{代码}
 
+\subsubsection{分治法，自顶向下}
 分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度$O(n\log n)$。
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
@@ -1335,7 +1347,8 @@ public:
 };
 \end{Code}
 
-自底向上，复杂度$O(n)$。
+
+\subsubsection{自底向上}
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
 // bottom-up，时间复杂度O(n)，空间复杂度O(logn)
@@ -1393,9 +1406,8 @@ The minimum depth is the number of nodes along the shortest path from the root n
 \subsubsection{分析}
 无
 
-\subsubsection{代码}
 
-递归版
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
 // 递归版，时间复杂度O(n)，空间复杂度O(logn)
@@ -1414,7 +1426,8 @@ private:
 };
 \end{Code}
 
-迭代版
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
 // 迭代版，时间复杂度O(n)，空间复杂度O(logn)

@@ -62,7 +62,7 @@ Returns a pointer to the first occurrence of needle in haystack, or null if need
 暴力算法的复杂度是 $O(m*n)$，代码如下。更高效的的算法有KMP算法、Boyer-Mooer算法和Rabin-Karp算法。面试中暴力算法足够了，一定要写得没有BUG。
 
 
-\subsubsection{代码}
+\subsubsection{暴力匹配}
 \begin{Code}
 // LeetCode, Implement strStr()
 // 暴力解法，时间复杂度O(N*M)，空间复杂度O(1)
@@ -95,6 +95,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{KMP}
 \begin{Code}
 // LeetCode, Implement strStr()
 // KMP，时间复杂度O(N+M)，空间复杂度O(M)
@@ -325,8 +327,7 @@ $$
 思路三：Manacher’s Algorithm, 复杂度$O(n)$。详细解释见 \myurl{http://leetcode.com/2011/11/longest-palindromic-substring-part-ii.html} 。
 
 
-\subsubsection{代码}
-
+\subsubsection{备忘录法}
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
 // 备忘录法，会超时
@@ -380,6 +381,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
 // 动规，时间复杂度O(n^2)，空间复杂度O(n^2)
@@ -408,6 +411,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{Manacher’s Algorithm}
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
 // Manacher’s Algorithm
@@ -508,8 +513,7 @@ isMatch("aab", "c*a*b") → true
 这是一道很有挑战的题。
 
 
-\subsubsection{代码}
-递归版。
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Regular Expression Matching
 // 递归版，时间复杂度O(n)，空间复杂度O(1)
@@ -536,7 +540,8 @@ public:
 };
 \end{Code}
 
-迭代版。
+
+\subsubsection{迭代版}
 \begin{Code}
 
 \end{Code}
@@ -583,7 +588,7 @@ isMatch("aab", "c*a*b") → false
 主要是\fn{'*'}的匹配问题。\fn{p}每遇到一个\fn{'*'}，就保留住当前\fn{'*'}的坐标和\fn{s}的坐标，然后\fn{s}从前往后扫描，如果不成功，则\fn{s++}，重新扫描。
 
 
-\subsubsection{代码}
+\subsubsection{递归版}
 \begin{Code}
 // LeetCode, Wildcard Matching
 // 递归版，会超时，时间复杂度O(n*m)，空间复杂度O(n)
@@ -604,7 +609,8 @@ public:
 };
 \end{Code}
 
-迭代版。
+
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Wildcard Matching
 // 迭代版，时间复杂度O(n)，空间复杂度O(1)
@@ -713,7 +719,7 @@ Note: It is intended for the problem statement to be ambiguous. You should gathe
 本题的功能与标准库中的\fn{strtod()}功能类似。
 
 
-\subsubsection{代码}
+\subsubsection{有限自动机}
 \begin{Code}
 // LeetCode, Valid Number
 // @author 龚陆安 (http://weibo.com/luangong)
@@ -770,6 +776,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{使用strtod()}
 \begin{Code}
 // LeetCode, Valid Number
 // @author 连城 (http://weibo.com/lianchengzju)
@@ -1097,7 +1105,7 @@ return 5.
 细节实现题。
 
 
-\subsubsection{代码}
+\subsubsection{用 STL}
 \begin{Code}
 // LeetCode, Length of Last Word
 // 偷懒，用 STL
@@ -1114,6 +1122,7 @@ public:
 \end{Code}
 
 
+\subsubsection{顺序扫描}
 \begin{Code}
 // LeetCode, Length of Last Word
 // 顺序扫描，记录每个 word 的长度
