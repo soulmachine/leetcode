@@ -44,7 +44,7 @@ public:
 
 \subsubsection{相关题目}
 \begindot
-\item 无
+\item Palindrome Number, 见 \S \ref{sec:palindrome-number}
 \myenddot
 
 
@@ -206,10 +206,10 @@ public:
     int atoi(const char *str) {
         int num = 0;
         int sign = 1;
-        const int len = strlen(str);
+        const int n = strlen(str);
         int i = 0;
 
-        while (str[i] == ' ' && i < len) i++;
+        while (str[i] == ' ' && i < n) i++;
 
         if (str[i] == '+') i++;
 
@@ -218,7 +218,7 @@ public:
             i++;
         }
 
-        for (; i < len; i++) {
+        for (; i < n; i++) {
             if (str[i] < '0' || str[i] > '9')
                 break;
             if (num > INT_MAX / 10 ||
@@ -267,11 +267,11 @@ class Solution {
 public:
     string addBinary(string a, string b) {
         string result;
-        const size_t max_len = a.size() > b.size() ? a.size() : b.size();
+        const size_t n = a.size() > b.size() ? a.size() : b.size();
         reverse(a.begin(), a.end());
         reverse(b.begin(), b.end());
         int carry = 0;
-        for (size_t i = 0; i < max_len; i++) {
+        for (size_t i = 0; i < n; i++) {
             const int ai = i < a.size() ? a[i] - '0' : 0;
             const int bi = i < b.size() ? b[i] - '0' : 0;
             const int val = (ai + bi + carry) % 2;
@@ -386,11 +386,11 @@ private:
 class Solution {
 public:
     string longestPalindrome(string s) {
-        const int len = s.size();
-        bool f[len][len];
-        fill_n(&f[0][0], len * len, false);
+        const int n = s.size();
+        bool f[n][n];
+        fill_n(&f[0][0], n * n, false);
         // 用 vector 会超时
-        //vector<vector<bool> > f(len, vector<bool>(len, false));
+        //vector<vector<bool> > f(n, vector<bool>(n, false));
         size_t max_len = 1, start = 0;  // 最长回文子串的长度，起点
 
         for (size_t i = 0; i < s.size(); i++) {
