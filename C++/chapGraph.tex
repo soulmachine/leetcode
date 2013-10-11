@@ -22,10 +22,10 @@ Clone an undirected graph. Each node in the graph contains a \code{label} and a 
 OJ's undirected graph serialization:
 Nodes are labeled uniquely.
 
-We use \code{#} as a separator for each node, and \code{,} as a separator for node label and each neighbour of the node.
-As an example, consider the serialized graph \code{\{0,1,2#1,2#2,2\}}.
+We use \code{\#} as a separator for each node, and \code{,} as a separator for node label and each neighbour of the node.
+As an example, consider the serialized graph \code{\{0,1,2\#1,2\#2,2\}}.
 
-The graph has a total of three nodes, and therefore contains three parts as separated by \code{#}.
+The graph has a total of three nodes, and therefore contains three parts as separated by \code{\#}.
 \begin{enumerate}
 \item First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
 \item Second node is labeled as 1. Connect node 1 to node 2.
@@ -50,7 +50,7 @@ Visually, the graph looks like the following:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Clone Graph
-// DFS
+// DFS，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {
@@ -80,7 +80,7 @@ private:
 
 \begin{Code}
 // LeetCode, Clone Graph
-// BFS
+// BFS，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {

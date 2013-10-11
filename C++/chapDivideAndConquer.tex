@@ -17,6 +17,7 @@ Implement pow(x, n).
 \begin{Code}
 //LeetCode, Pow(x, n)
 // 二分法，$x^n = x^{n/2} * x^{n/2} * x^{n\%2}$
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     double pow(double x, int n) {
@@ -58,6 +59,7 @@ Compute and return the square root of \fn{x}.
 \begin{Code}
 // LeetCode, Longest Substring Without Repeating Characters
 // 二分查找
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     int sqrt(int x) {

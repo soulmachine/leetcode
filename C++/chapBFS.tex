@@ -41,6 +41,7 @@ Note:
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Word Ladder
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     typedef string state_t;
@@ -141,6 +142,7 @@ Note:
 
 \begin{Code}
 //LeetCode, Word Ladder II
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<string> > findLadders(string start, string end,
@@ -250,6 +252,7 @@ X O X X
 \begin{Code}
 // LeetCode, Surrounded Regions
 // BFS
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     void solve(vector<vector<char>> &board) {
@@ -278,8 +281,8 @@ private:
         visit(board, i, j, q);
         while (!q.empty()) {
             int cur = q.front(); q.pop();
-            const int x = cur / board[0].size();
-            const int y = cur % board[0].size();
+            int x = cur / board[0].size();
+            int y = cur % board[0].size();
             visit(board, x - 1, y, q);
             visit(board, x, y - 1, q);
             visit(board, x + 1, y, q);
