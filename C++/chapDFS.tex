@@ -29,6 +29,7 @@ Return
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Palindrome Partitioning
+// 时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<string>> partition(string s) {
@@ -74,6 +75,7 @@ public:
 另一种写法，更加简洁。这种写法也在 Combination Sum, Combination Sum II 中出现过。
 \begin{Code}
 //LeetCode, Palindrome Partitioning
+// 时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<string>> partition(string s) {
@@ -104,6 +106,39 @@ public:
             end--;
         }
         return true;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Palindrome Partitioning
+// 动规，时间复杂度O(n^2)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<string> > partition(string s) {
+        const int n = s.size();
+        bool p[n][n]; // whether s[i,j] is palindrome
+        fill_n(&p[0][0], n * n, false);
+        for (int i = n - 1; i >= 0; --i)
+            for (int j = i; j < n; ++j)
+                p[i][j] = s[i] == s[j] && ((j - i < 2) || p[i + 1][j - 1]);
+
+        vector<vector<string> > sub_palins[n]; // sub palindromes of s[0,i]
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i; j < n; ++j)
+                if (p[i][j]) {
+                    const string palindrome = s.substr(i, j - i + 1);
+                    if (j + 1 < n) {
+                        for (auto v : sub_palins[j + 1]) {
+                            v.insert(v.begin(), palindrome);
+                            sub_palins[i].push_back(v);
+                        }
+                    } else {
+                        sub_palins[i].push_back(vector<string> { palindrome });
+                    }
+                }
+        }
+        return sub_palins[0];
     }
 };
 \end{Code}
@@ -142,6 +177,7 @@ How many possible unique paths are there?
 \begin{Code}
 // LeetCode, Unique Paths
 // 深搜，小集合可以过，大集合会超时
+// 时间复杂度O(n^4)，空间复杂度O(n)
 class Solution {
 public:
     int uniquePaths(int m, int n) {
@@ -162,6 +198,7 @@ public:
 \begin{Code}
 // LeetCode, Unique Paths
 // 深搜 + 缓存，即备忘录法
+// 时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
     int uniquePaths(int m, int n) {
@@ -201,6 +238,7 @@ f[i][j]=f[i-1][j]+f[i][j-1]
 \begin{Code}
 // LeetCode, Unique Paths
 // 动规，滚动数组
+// 时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     int uniquePaths(int m, int n) {
@@ -338,6 +376,7 @@ private:
 \begin{Code}
 // LeetCode, Unique Paths II
 // 动规，滚动数组
+// 时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     int uniquePathsWithObstacles(vector<vector<int> > &obstacleGrid) {
@@ -346,30 +385,12 @@ public:
         if (obstacleGrid[0][0] || obstacleGrid[m-1][n-1]) return 0;
 
         vector<int> f(n, 0);
+        f[0] = obstacleGrid[0][0] ? 0 : 1;
 
-        // 寻找第一列的第一个障碍在哪一行
-        int first_col_obstacle = INT_MAX;
-        for (int i = 0; i < m; i++) {
-            if (obstacleGrid[i][0]) {
-                first_col_obstacle = i;
-                break;
-            }
-        }
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                f[j] = obstacleGrid[i][j] ? 0 : (j == 0 ? 0 : f[j - 1]) + f[j];
 
-        for (int i = 0; i < m; i++) {
-            // 第一列如果某一行有障碍物，那么后面的行应该为0。
-            if(i >= first_col_obstacle) f[0] = 0;
-            else f[0] = 1;
-            for (int j = 1; j < n; j++) {
-                if (!obstacleGrid[i][j]) {
-                    // 左边的f[j]，表示更新后的f[j]，与公式中的f[i[[j]对应
-                    // 右边的f[j]，表示老的f[j]，与公式中的f[i-1][j]对应
-                    f[j] = f[j - 1] + f[j];
-                } else {
-                    f[j] = 0;
-                }
-            }
-        }
         return f[n - 1];
     }
 };
@@ -423,6 +444,7 @@ There exist two distinct solutions to the 4-queens puzzle:
 \begin{Code}
 // LeetCode, N-Queens
 // 深搜+剪枝
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<string> > solveNQueens(int n) {
@@ -502,6 +524,7 @@ Now, instead outputting board configurations, return the total number of distinc
 \begin{Code}
 // LeetCode, N-Queens II
 // 深搜+剪枝
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     int totalNQueens(int n) {
@@ -575,6 +598,7 @@ return \code{["255.255.11.135", "255.255.111.35"]}. (Order does not matter)
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Restore IP Addresses
+// 时间复杂度O(n^4)，空间复杂度O(n)
 class Solution {
 public:
     vector<string> restoreIpAddresses(string s) {
@@ -658,6 +682,7 @@ A solution set is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Combination Sum
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > combinationSum(vector<int> &nums, int target) {
@@ -726,6 +751,7 @@ A solution set is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Combination Sum II
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > combinationSum2(vector<int> &nums, int target) {
@@ -770,76 +796,6 @@ private:
 \myenddot
 
 
-\section{Letter Combinations of a Phone Number } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:letter-combinations-of-a-phone-number }
-
-
-\subsubsection{描述}
-Given a digit string, return all possible letter combinations that the number could represent.
-
-A mapping of digit to letters (just like on the telephone buttons) is given below.
-
-\begin{center}
-\includegraphics{phone-keyboard.png}\\
-\figcaption{Phone Keyboard}\label{fig:phone-keyboard}
-\end{center}
-
-\textbf{Input:}Digit string \code{"23"}
-
-\textbf{Output:} \code{["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]}.
-
-\textbf{Note:}
-Although the above answer is in lexicographical order, your answer could be in any order you want.
-
-
-\subsubsection{分析}
-无
-
-
-\subsubsection{代码}
-\begin{Code}
-// LeetCode, Letter Combinations of a Phone Number
-class Solution {
-public:
-    const vector<string> keyboard {
-        " ",   // '0'
-        "",    // '1'
-        "abc", // '2'
-        "def", // ...
-        "ghi",
-        "jkl",
-        "mno",
-        "pqrs",
-        "tuv",
-        "wxyz"
-    };
-
-    vector<string> letterCombinations (const string &digits) {
-        vector<string> result;
-        dfs(digits, 0, "", result);
-        return result;
-    }
-
-    void dfs(const string &digits, size_t cur, string path,
-            vector<string> &result) {
-        if (cur == digits.size()) {
-            result.push_back(path);
-            return;
-        }
-        for (auto c : keyboard[digits[cur] - '0']) {
-            dfs(digits, cur + 1, path + c, result);
-        }
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item 无
-\myenddot
-
-
 \section{Generate Parentheses } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:generate-parentheses}
 
@@ -861,21 +817,22 @@ For example, given $n = 3$, a solution set is:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Generate Parentheses
+// 时间复杂度O(TODO)，空间复杂度O(n)
 class Solution {
 public:
     vector<string> generateParenthesis(int n) {
         vector<string> result;
-        if (n > 0) generator(n, "", 0, 0, result);
+        if (n > 0) generate(n, "", 0, 0, result);
         return result;
     }
     // l 表示 ( 出现的次数, r 表示 ) 出现的次数
-    void generator(int n, string s, int l, int r, vector<string> &result) {
+    void generate(int n, string s, int l, int r, vector<string> &result) {
         if (l == n) {
             result.push_back(s.append(n - r, ')'));
             return;
         }
-        generator(n, s + '(', l + 1, r, result);
-        if (l > r) generator(n, s + ")", l, r + 1, result);
+        generate(n, s + '(', l + 1, r, result);
+        if (l > r) generate(n, s + ")", l, r + 1, result);
     }
 };
 \end{Code}
@@ -938,6 +895,7 @@ You may assume that there will be only one unique solution.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Sudoku Solver
+// 时间复杂度O(9^4)，空间复杂度O(1)
 class Solution {
 public:
     bool solveSudoku(vector<vector<char> > &board) {
@@ -1012,6 +970,7 @@ word = \fn{"ABCB"}, -> returns \fn{false}.
 \begin{Code}
 // LeetCode, Word Search
 // 深搜，递归
+// 时间复杂度O(n^2*m^2)，空间复杂度O(n^2)
 class Solution {
 public:
     bool exist(vector<vector<char> > &board, string word) {

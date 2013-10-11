@@ -454,7 +454,7 @@ public:
 \end{Code}
 
 
-\subsection{深搜}
+\subsection{递归}
 本题是求路径本身，求所有解，函数参数需要标记当前走到了哪步，还需要中间结果的引用，最终结果的引用。
 
 扩展节点，每次从左到右，选一个没有出现过的元素。
@@ -530,7 +530,7 @@ For example,
 重新实现\fn{std::next_permutation()}，代码与上一题相同。
 
 
-\subsection{深搜}
+\subsection{递归}
 递归函数\fn{permute()}的参数\fn{p}，是中间结果，它的长度又能标记当前走到了哪一步，用于判断收敛条件。
 
 扩展节点，每次从小到大，选一个没有被用光的元素，直到所有元素被用光。
@@ -629,7 +629,7 @@ If $n = 4$ and $k = 2$, a solution is:
 \end{Code}
 
 
-\subsection{深搜}
+\subsection{递归}
 \begin{Code}
 // LeetCode, Combinations
 // 深搜，递归
@@ -663,7 +663,7 @@ private:
 \begin{Code}
 // LeetCode, Combinations
 // use prev_permutation()
-// 时间复杂度O(n!)，空间复杂度O(n)
+// 时间复杂度O((n-k)!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > combine(int n, int k) {
@@ -693,4 +693,97 @@ public:
 \item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
 \item Permutations, 见 \S \ref{sec:permutations}
 \item Permutations II, 见 \S \ref{sec:permutations-ii}
+\myenddot
+
+
+\section{Letter Combinations of a Phone Number } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:letter-combinations-of-a-phone-number }
+
+
+\subsubsection{描述}
+Given a digit string, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below.
+
+\begin{center}
+\includegraphics{phone-keyboard.png}\\
+\figcaption{Phone Keyboard}\label{fig:phone-keyboard}
+\end{center}
+
+\textbf{Input:}Digit string \code{"23"}
+
+\textbf{Output:} \code{["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]}.
+
+\textbf{Note:}
+Although the above answer is in lexicographical order, your answer could be in any order you want.
+
+
+\subsubsection{分析}
+无
+
+
+\subsection{递归}
+\begin{Code}
+// LeetCode, Letter Combinations of a Phone Number
+// 时间复杂度O(3^n)，空间复杂度O(n)
+class Solution {
+public:
+    const vector<string> keyboard { " ", "", "abc", "def", // '0','1','2',...
+            "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
+
+    vector<string> letterCombinations (const string &digits) {
+        vector<string> result;
+        dfs(digits, 0, "", result);
+        return result;
+    }
+
+    void dfs(const string &digits, size_t cur, string path,
+            vector<string> &result) {
+        if (cur == digits.size()) {
+            result.push_back(path);
+            return;
+        }
+        for (auto c : keyboard[digits[cur] - '0']) {
+            dfs(digits, cur + 1, path + c, result);
+        }
+    }
+};
+\end{Code}
+
+
+\subsection{迭代}
+\begin{Code}
+// LeetCode, Letter Combinations of a Phone Number
+// 时间复杂度O(3^n)，空间复杂度O(1)
+class Solution {
+public:
+    const vector<string> keyboard { " ", "", "abc", "def", // '0','1','2',...
+            "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
+
+    vector<string> letterCombinations (const string &digits) {
+        vector<string> result(1, "");
+        for (auto d : digits) {
+            const size_t n = result.size();
+            const size_t m = keyboard[d - '0'].size();
+
+            result.resize(n * m);
+            for (size_t i = 0; i < m; ++i)
+                copy(result.begin(), result.begin() + n, result.begin() + n * i);
+
+            for (size_t i = 0; i < m; ++i) {
+                auto begin = result.begin();
+                for_each(begin + n * i, begin + n * (i+1), [&](string &s) {
+                    s += keyboard[d - '0'][i];
+                });
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
 \myenddot
