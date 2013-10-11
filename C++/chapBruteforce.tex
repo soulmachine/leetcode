@@ -29,57 +29,56 @@ For example, If \code{S = [1,2,3]}, a solution is:
 \end{Code}
 
 
-\subsection{增量构造法}
+\subsection{递归}
+
+
+\subsubsection{增量构造法}
 每个元素，都有两种选择，选或者不选。
 
-\subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets
-// 增量构造法，朴素深搜
+// 增量构造法，深搜，时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
+        sort(S.begin(), S.end());  // 输出要求有序
         vector<vector<int> > result;
-        vector<int> cur;
-        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
-
-        subsets(S, cur, 0, result);
+        vector<int> path;
+        subsets(S, path, 0, result);
         return result;
     }
 
 private:
-    static void subsets(const vector<int> &S, vector<int> &cur, int step,
+    static void subsets(const vector<int> &S, vector<int> &path, int step,
             vector<vector<int> > &result) {
         if (step == S.size()) {
-            result.push_back(cur);
+            result.push_back(path);
             return;
         }
         // 不选S[step]
-        subsets(S, cur, step + 1, result);
+        subsets(S, path, step + 1, result);
         // 选S[step]
-        cur.push_back(S[step]);
-        subsets(S, cur, step + 1, result);
-        cur.pop_back();
+        path.push_back(S[step]);
+        subsets(S, path, step + 1, result);
+        path.pop_back();
     }
 };
 \end{Code}
 
 
-\subsection{位向量法}
+\subsubsection{位向量法}
 开一个位向量\fn{bool selected[n]}，每个元素可以选或者不选。
 
-
-\subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets
-// 位向量法，也属于朴素深搜
+// 位向量法，深搜，时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
+        sort(S.begin(), S.end());  // 输出要求有序
+
         vector<vector<int> > result;
         vector<bool> selected(S.size(), false);
-        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
-
         subsets(S, selected, 0, result);
         return result;
     }
@@ -106,22 +105,47 @@ private:
 \end{Code}
 
 
-\subsection{二进制法}
+\subsection{迭代}
+
+
+\subsubsection{增量构造法}
+\begin{Code}
+// LeetCode, Subsets
+// 迭代版，时间复杂度O(2^n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<int> > subsets(vector<int> &S) {
+        sort(S.begin(), S.end()); // 输出要求有序
+        vector<vector<int> > result(1);
+        for (auto elem : S) {
+            result.reserve(result.size() * 2);
+            auto half = result.begin() + result.size();
+            copy(result.begin(), half, back_inserter(result));
+            for_each(half, result.end(), [&elem](decltype(result[0]) &e){
+                e.push_back(elem);
+            });
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{二进制法}
 本方法的前提是：集合的元素不超过int位数。用一个int整数表示位向量，第$i$位为1，则表示选择$S[i]$，为0则不选择。例如\fn{S=\{A,B,C,D\}}，则\fn{0110=6}表示子集\fn{\{B,C\}}。
 
 这种方法最巧妙。因为它不仅能生成子集，还能方便的表示集合的并、交、差等集合运算。设两个集合的位向量分别为$B_1$和$B_2$，则$B_1|B_2, B_1 \& B_2, B_1 \^ B_2$分别对应集合的并、交、对称差。
 
 二进制法，也可以看做是位向量法，只不过更加优化。
 
-\subsubsection{代码}
 \begin{Code}
 // LeetCode, Subsets
-// 二进制法
+// 二进制法，时间复杂度O(2^n)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
+        sort(S.begin(), S.end()); // 输出要求有序
         vector<vector<int> > result;
-        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
         const size_t n = S.size();
         vector<int> v;
 
@@ -173,15 +197,48 @@ If \fn{S = [1,2,2]}, a solution is:
 这题有重复元素，但本质上，跟上一题很类似，上一题中元素没有重复，相当于每个元素只能选0或1次，这里扩充到了每个元素可以选0到若干次而已。
 
 
-\subsubsection{代码}
+\subsection{递归}
+
+
+\subsubsection{增量构造法}
 \begin{Code}
 // LeetCode, Subsets II
-// 增量构造法
+// 增量构造法，版本1，时间复杂度O(2^n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        sort(S.begin(), S.end());  // 必须排序
+
+        vector<vector<int> > result;
+        vector<int> path;
+
+        dfs(S, S.begin(), path, result);
+        return result;
+    }
+
+private:
+    static void dfs(const vector<int> &S, vector<int>::iterator start,
+            vector<int> &path, vector<vector<int> > &result) {
+        result.push_back(path);
+
+        for (auto i = start; i < S.end(); i++) {
+            if (i != start && *i == *(i-1)) continue;
+            path.push_back(*i);
+            dfs(S, i + 1, path, result);
+            path.pop_back();
+        }
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, Subsets II
+// 增量构造法，版本2，时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
         vector<vector<int> > result;
-        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        sort(S.begin(), S.end()); // 必须排序
 
         unordered_map<int, int> count_map; // 记录每个元素的出现次数
         for_each(S.begin(), S.end(), [&count_map](int e) {
@@ -225,14 +282,16 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{位向量法}
 \begin{Code}
 // LeetCode, Subsets II
-// 位向量法
+// 位向量法，时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
-        vector<vector<int> > result;
-        sort(S.begin(), S.end()); // 本题对顺序有要求，需要排序
+        vector<vector<int> > result; // 必须排序
+        sort(S.begin(), S.end());
         vector<int> count(S.back() - S.front() + 1, 0);
         // 计算所有元素的个数
         for (auto i : S) {
@@ -269,6 +328,66 @@ private:
 \end{Code}
 
 
+\subsection{迭代}
+
+
+\subsubsection{增量构造法}
+\begin{Code}
+// LeetCode, Subsets II
+// 增量构造法
+// 时间复杂度O(2^n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        sort(S.begin(), S.end()); // 必须排序
+        vector<vector<int> > result(1);
+
+        size_t previous_size = 0;
+        for (size_t i = 0; i < S.size(); ++i) {
+            const size_t size = result.size();
+            for (size_t j = 0; j < size; ++j) {
+                if (i == 0 || S[i] != S[i-1] || j >= previous_size) {
+                    result.push_back(result[j]);
+                    result.back().push_back(S[i]);
+                }
+            }
+            previous_size = size;
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{二进制法}
+\begin{Code}
+// LeetCode, Subsets II
+// 二进制法，时间复杂度O(2^n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        sort(S.begin(), S.end()); // 必须排序
+        // 用 set 去重，不能用 unordered_set，因为输出要求有序
+        set<vector<int> > result;
+        const size_t n = S.size();
+        vector<int> v;
+
+        for (size_t i = 0; i < 1U << n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (i & 1 << j)
+                    v.push_back(S[j]);
+            }
+            result.insert(v);
+            v.clear();
+        }
+        vector<vector<int> > real_result;
+        copy(result.begin(), result.end(), back_inserter(real_result));
+        return real_result;
+    }
+};
+\end{Code}
+
+
 \subsubsection{相关题目}
 \begindot
 \item Subsets，见 \S \ref{sec:subsets}
@@ -293,6 +412,7 @@ For example,
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Permutations
+// 时间复杂度O(n!)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int> > permute(vector<int> &num) {
@@ -316,6 +436,7 @@ public:
 \begin{Code}
 // LeetCode, Permutations
 // 重新实现 next_permutation()
+// 时间复杂度O(n!)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int>> permute(vector<int>& num) {
@@ -344,6 +465,7 @@ public:
 \begin{Code}
 // LeetCode, Permutations
 // 深搜，增量构造法
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > permute(vector<int>& num) {
@@ -419,7 +541,7 @@ For example,
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Permutations II
-// 深搜
+// 深搜，时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > permuteUnique(vector<int>& num) {
@@ -507,14 +629,11 @@ If $n = 4$ and $k = 2$, a solution is:
 \end{Code}
 
 
-\subsubsection{分析}
-生成组合问题。
-
-
-\subsubsection{代码}
+\subsection{深搜}
 \begin{Code}
 // LeetCode, Combinations
 // 深搜，递归
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > combine(int n, int k) {
@@ -539,9 +658,12 @@ private:
 };
 \end{Code}
 
+
+\subsection{迭代}
 \begin{Code}
 // LeetCode, Combinations
 // use prev_permutation()
+// 时间复杂度O(n!)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > combine(int n, int k) {
