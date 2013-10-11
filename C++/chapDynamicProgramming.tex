@@ -32,6 +32,7 @@ $$
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Triangle
+// 时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
     int minimumTotal (vector<vector<int>>& triangle) {
@@ -72,79 +73,72 @@ the contiguous subarray \code{[4,−1,2,1]} has the largest \code{sum = 6}.
 
 如果之前SubArray的总体和为0或者小于0的话，我们认为其对后续结果是没有贡献，甚至是有害的（小于0时）。这种情况下我们选择以这个数字开始，另起一个SubArray。
 
-设状态为d[j]，表示以S[j]结尾的最大连续子序列和，则状态转移方程如下：
+设状态为\fn{f[j]}，表示以\fn{S[j]}结尾的最大连续子序列和，则状态转移方程如下：
 \begin{eqnarray}
-d[j] &=& \max\left\{d[j-1]+S[j],S[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber \\
-target &=& \max\left\{d[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
+f[j] &=& \max\left\{f[j-1]+S[j],S[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber \\
+target &=& \max\left\{f[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
 \end{eqnarray}
 
 解释如下：
 \begindot
-\item 情况一，S[j]不独立，与前面的某些数组成一个连续子序列，则最大连续子序列和为$d[j-1]+S[j]$。
+\item 情况一，S[j]不独立，与前面的某些数组成一个连续子序列，则最大连续子序列和为$f[j-1]+S[j]$。
 \item 情况二，S[j]独立划分成为一段，即连续子序列仅包含一个数S[j]，则最大连续子序列和为$S[j]$。
 \myenddot  
 
 其他思路：
 \begindot
-\item 思路1：直接在i到j之间暴力枚举，复杂度是$O(n^3)$
-\item 思路2：处理后枚举，连续子序列的和等于两个前缀和之差，复杂度$O(n^2)$。
-\item 思路3：分治法，把序列分为两段，分别求最大连续子序列和，然后归并，复杂度$O(n\log n)$
-\item 思路4：把思路2$O(n^2)$的代码稍作处理，得到$O(n)$的算法
-\item 思路5：当成M=1的最大M子段和
+\item 思路2：直接在i到j之间暴力枚举，复杂度是$O(n^3)$
+\item 思路3：处理后枚举，连续子序列的和等于两个前缀和之差，复杂度$O(n^2)$。
+\item 思路4：分治法，把序列分为两段，分别求最大连续子序列和，然后归并，复杂度$O(n\log n)$
+\item 思路5：把思路2$O(n^2)$的代码稍作处理，得到$O(n)$的算法
+\item 思路6：当成M=1的最大M子段和
 \myenddot
 
 
-\subsubsection{代码}
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Maximum Subarray
+// 时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    int maxSubArray(int A[], int n) {
+        int result = INT_MIN, f = 0;
+        for (int i = 0; i < n; ++i) {
+            f = max(f + A[i], A[i]);
+            result = max(result, f);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{思路5}
+\begin{Code}
+// LeetCode, Maximum Subarray
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int maxSubArray(int A[], int n) {
         return mcss(A, n);
-        //return mcss_dp(A, n);
     }
 private:
-    /**
-     * @brief 最大连续子序列和，思路四
-     * @param[in] S 数列
-     * @param[in] n 数组的长度
-     * @return 最大连续子序列和
-     */
-    static int mcss(int S[], int n) {
+    // 思路5，求最大连续子序列和
+    static int mcss(int A[], int n) {
         int i, result, cur_min;
-        int *sum = (int*) malloc((n + 1) * sizeof(int));  // 前n项和
+        int *sum = new int[n + 1];  // 前n项和
 
         sum[0] = 0;
         result = INT_MIN;
         cur_min = sum[0];
         for (i = 1; i <= n; i++) {
-            sum[i] = sum[i - 1] + S[i - 1];
+            sum[i] = sum[i - 1] + A[i - 1];
         }
         for (i = 1; i <= n; i++) {
             result = max(result, sum[i] - cur_min);
             cur_min = min(cur_min, sum[i]);
         }
-        free(sum);
-        return result;
-    }
-
-    /**
-     * @brief 最大连续子序列和，动规
-     * @param[in] S 数列
-     * @param[in] n 数组的长度
-     * @return 最大连续子序列和
-     */
-    static int mcss_dp(int S[], int n) {
-        int i, result;
-        int *d = (int*) malloc(n * sizeof(int));
-        d[0] = S[0];
-        result = d[0];
-        for (i = 1; i < n; i++) {
-            d[i] = max(S[i], d[i - 1] + S[i]);
-            if (result < d[i])
-                result = d[i];
-        }
-        free(d);
+        delete[] sum;
         return result;
     }
 };
@@ -240,6 +234,7 @@ Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle con
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Maximal Rectangle
+// 时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     int maximalRectangle(vector<vector<char> > &matrix) {
@@ -309,6 +304,7 @@ Note: You may not engage in multiple transactions at the same time (ie, you must
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Best Time to Buy and Sell Stock III
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
@@ -360,18 +356,48 @@ When \code{s3 = "aadbbbaccc"}, return false.
 
 
 \subsubsection{分析}
-这题用二维动态规划。
-
 设状态\fn{f[i][j]}，表示\fn{s1[0,i]}和\fn{s2[0,j]}，匹配\fn{s3[0, i+j]}。如果s1的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i-1][j]}；如果s2的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i][j-1]}。因此状态转移方程如下：
 \begin{Code}
 f[i][j] = (s1[i - 1] == s3 [i + j - 1] && f[i - 1][j])
        || (s2[j - 1] == s3 [i + j - 1] && f[i][j - 1]);
 \end{Code}
 
-\subsubsection{代码}
+
+\subsubsection{递归}
 \begin{Code}
 // LeetCode, Interleaving String
-// 动规，二维数组
+// 递归，会超时，仅用来帮助理解
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if (s3.length() != s1.length() + s2.length())
+            return false;
+
+        return isInterleave(begin(s1), end(s1), begin(s2), end(s2),
+                begin(s3), end(s3));
+    }
+
+    template<typename InIt>
+    bool isInterleave(InIt first1, InIt last1, InIt first2, InIt last2,
+            InIt first3, InIt last3) {
+        if (first3 == last3)
+            return first1 == last1 && first2 == last2;
+
+        return (*first1 == *first3
+                && isInterleave(next(first1), last1, first2, last2,
+                        next(first3), last3))
+                || (*first2 == *first3
+                        && isInterleave(first1, last1, next(first2), last2,
+                                next(first3), last3));
+    }
+};
+\end{Code}
+
+
+\subsubsection{动规}
+\begin{Code}
+// LeetCode, Interleaving String
+// 二维动规，时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
     bool isInterleave(string s1, string s2, string s3) {
@@ -397,9 +423,11 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{动规+滚动数组}
 \begin{Code}
 // LeetCode, Interleaving String
-// 动规，滚动数组
+// 二维动规+滚动数组，时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     bool isInterleave(string s1, string s2, string s3) {
@@ -427,34 +455,6 @@ public:
 };
 \end{Code}
 
-\begin{Code}
-// LeetCode, Interleaving String
-// 递归，小集合可以过，大集合会超时
-class Solution {
-public:
-    bool isInterleave(string s1, string s2, string s3) {
-        if (s3.length() != s1.length() + s2.length())
-            return false;
-
-        return isInterleave(begin(s1), end(s1), begin(s2), end(s2),
-                begin(s3), end(s3));
-    }
-
-    template<typename InIt>
-    bool isInterleave(InIt first1, InIt last1, InIt first2, InIt last2,
-            InIt first3, InIt last3) {
-        if (first3 == last3)
-            return first1 == last1 && first2 == last2;
-
-        return (*first1 == *first3
-                && isInterleave(next(first1), last1, first2, last2,
-                        next(first3), last3))
-                || (*first2 == *first3
-                        && isInterleave(first1, last1, next(first2), last2,
-                                next(first3), last3));
-    }
-};
-\end{Code}
 
 \subsubsection{相关题目}
 \begindot
@@ -518,18 +518,19 @@ Given two strings $s1$ and $s2$ of the same length, determine if $s2$ is a scram
 
 加缓存，可以用数组或HashMap。本题维数较高，用HashMap，\fn{map}和\fn{unordered_map}均可。
 
-既然可以用记忆化搜索，这题也一定可以用动规。设状态为\fn{f[i][j][k]}，表示长度为$i$，起点为\fn{s1[j]}和起点为\fn{s2[]}两个字符串是否互为scramble，则状态转移方程为
+既然可以用记忆化搜索，这题也一定可以用动规。设状态为\fn{f[n][i][j]}，表示长度为$n$，起点为\fn{s1[i]}和起点为\fn{s2[j]}两个字符串是否互为scramble，则状态转移方程为
 \begin{Code}
-f[i][j][k]} =  (f[s][j][k] && f[i-s][j+s][k+s]) 
-            || (f[s][j][k-s] && f[i-s][j+s][k])
+f[n][i][j]} =  (f[k][i][j] && f[n-k][i+k][j+k]) 
+            || (f[k][i][j+n-k] && f[n-k][i+k][j])
 \end{Code}
 
 
-\subsubsection{代码}
+\subsubsection{递归}
 
 \begin{Code}
 // LeetCode, Interleaving String
-// 递归，小集合可以过，大集合会超时
+// 递归，会超时，仅用来帮助理解
+// 时间复杂度O(n^6)，空间复杂度O(1)
 class Solution {
 public:
     bool isScramble(string s1, string s2) {
@@ -555,9 +556,50 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{动规}
+\begin{Code}
+// LeetCode, Interleaving String
+// 动规，时间复杂度O(n^3)，空间复杂度O(n^3)
+class Solution {
+public:
+    bool isScramble(string s1, string s2) {
+        const int N = s1.size();
+        if (N != s2.size()) return false;
+
+        // f[n][i][j]，表示长度为n，起点为s1[i]和
+        // 起点为s2[j]两个字符串是否互为scramble
+        bool f[N + 1][N][N];
+        fill_n(&f[0][0][0], (N + 1) * N * N, false);
+
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                f[1][i][j] = s1[i] == s2[j];
+
+        for (int n = 1; n <= N; ++n) {
+            for (int i = 0; i + n <= N; ++i) {
+                for (int j = 0; j + n <= N; ++j) {
+                    for (int k = 1; k < n; ++k) {
+                        if ((f[k][i][j] && f[n - k][i + k][j + k]) ||
+                                (f[k][i][j + n - k] && f[n - k][i + k][j])) {
+                            f[n][i][j] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return f[N][0][0];
+    }
+};
+\end{Code}
+
+
+\subsubsection{递归+剪枝}
 \begin{Code}
 // LeetCode, Interleaving String
 // 递归+剪枝
+// 时间复杂度O(n^6)，空间复杂度O(1)
 class Solution {
 public:
     bool isScramble(string s1, string s2) {
@@ -589,9 +631,12 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{备忘录法}
 \begin{Code}
 // LeetCode, Interleaving String
 // 递归+map做cache
+// 时间复杂度O(n^3)，空间复杂度O(n^3)
 class Solution {
 public:
     bool isScramble(string s1, string s2) {
@@ -609,16 +654,16 @@ private:
         if (length == 1) return *first1 == *first2;
 
         for (int i = 1; i < length; ++i)
-            if ((cachedIsScramble(first1, first1 + i, first2)
-                    && cachedIsScramble(first1 + i, last1, first2 + i))
-                    || (cachedIsScramble(first1, first1 + i, last2 - i)
-                            && cachedIsScramble(first1 + i, last1, first2)))
+            if ((getOrUpdate(first1, first1 + i, first2)
+                    && getOrUpdate(first1 + i, last1, first2 + i))
+                    || (getOrUpdate(first1, first1 + i, last2 - i)
+                            && getOrUpdate(first1 + i, last1, first2)))
                 return true;
 
         return false;
     }
 
-    bool cachedIsScramble(Iterator first1, Iterator last1, Iterator first2) {
+    bool getOrUpdate(Iterator first1, Iterator last1, Iterator first2) {
         auto key = make_tuple(first1, last1, first2);
         auto pos = cache.find(key);
 
@@ -628,6 +673,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{备忘录法}
 \begin{Code}
 typedef string::const_iterator Iterator;
 typedef tuple<Iterator, Iterator, Iterator> Key;
@@ -649,6 +696,7 @@ template<> struct hash<Key> {
 
 // LeetCode, Interleaving String
 // 递归+unordered_map做cache，比map快
+// 时间复杂度O(n^3)，空间复杂度O(n^3)
 class Solution {
 public:
     unordered_map<Key, bool> cache;
@@ -666,16 +714,16 @@ public:
             return *first1 == *first2;
 
         for (int i = 1; i < length; ++i)
-            if ((cachedIsScramble(first1, first1 + i, first2)
-                    && cachedIsScramble(first1 + i, last1, first2 + i))
-                    || (cachedIsScramble(first1, first1 + i, last2 - i)
-                            && cachedIsScramble(first1 + i, last1, first2)))
+            if ((getOrUpdate(first1, first1 + i, first2)
+                    && getOrUpdate(first1 + i, last1, first2 + i))
+                    || (getOrUpdate(first1, first1 + i, last2 - i)
+                            && getOrUpdate(first1 + i, last1, first2)))
                 return true;
 
         return false;
     }
 
-    bool cachedIsScramble(Iterator first1, Iterator last1, Iterator first2) {
+    bool getOrUpdate(Iterator first1, Iterator last1, Iterator first2) {
         auto key = make_tuple(first1, last1, first2);
         auto pos = cache.find(key);
 
@@ -711,7 +759,7 @@ f[i][j]=min(f[i-1][j], f[i][j-1])+grid[i][j]
 \end{Code}
 
 
-\subsubsection{代码}
+\subsubsection{备忘录法}
 \begin{Code}
 // LeetCode, Minimum Path Sum
 // 备忘录法
@@ -743,6 +791,8 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Minimum Path Sum
 // 二维动规
@@ -772,6 +822,8 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{动规+滚动数组}
 \begin{Code}
 // LeetCode, Minimum Path Sum
 // 二维动规+滚动数组
@@ -833,22 +885,24 @@ You have the following 3 operations permitted on a word:
 \end{enumerate}
 
 
-\subsubsection{代码}
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Edit Distance
-// 二维动规
+// 二维动规，时间复杂度O(n*m)，空间复杂度O(n*m)
 class Solution {
 public:
     int minDistance(const string &word1, const string &word2) {
+        const size_t n = word1.size();
+        const size_t m = word2.size();
         // 长度为n的字符串，有n+1个隔板
-        int f[word1.size() + 1][word2.size() + 1];
-        for (size_t i = 0; i <= word1.size(); i++)
+        int f[n + 1][m + 1];
+        for (size_t i = 0; i <= n; i++)
             f[i][0] = i;
-        for (size_t j = 0; j <= word2.size(); j++)
+        for (size_t j = 0; j <= m; j++)
             f[0][j] = j;
 
-        for (size_t i = 1; i <= word1.size(); i++) {
-            for (size_t j = 1; j <= word2.size(); j++) {
+        for (size_t i = 1; i <= n; i++) {
+            for (size_t j = 1; j <= m; j++) {
                 if (word1[i - 1] == word2[j - 1])
                     f[i][j] = f[i - 1][j - 1];
                 else {
@@ -857,14 +911,17 @@ public:
                 }
             }
         }
-        return f[word1.size()][word2.size()];
+        return f[n][m];
     }
 };
 \end{Code}
 
+
+\subsubsection{动规+滚动数组}
 \begin{Code}
 // LeetCode, Edit Distance
 // 二维动规+滚动数组
+// 时间复杂度O(n*m)，空间复杂度O(n)
 class Solution {
 public:
     int minDistance(const string &word1, const string &word2) {
@@ -933,7 +990,7 @@ The number of ways decoding \fn{"12"} is 2.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Decode Ways
-// 动规
+// 动规，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int numDecodings(const string &s) {
@@ -986,8 +1043,9 @@ Return 3.
 
 \subsubsection{代码}
 \begin{Code}
-// LeetCode, Decode Ways
+// LeetCode, Distinct Subsequences
 // 二维动规+滚动数组
+// 时间复杂度O(m*n)，空间复杂度O(n)
 class Solution {
 public:
     int numDistinct(const string &S, const string &T) {
@@ -1028,14 +1086,15 @@ Return true because \fn{"leetcode"} can be segmented as \fn{"leet code"}.
 \subsubsection{分析}
 设状态为$f(i)$，表示\fn{s[0,i]}是否可以分词，则状态转移方程为
 $$
-f(i) = any_of(f(j) and s[j+1,i] in dict),  0 \leq j < i
+f(i) = any\_of(f(j) \&\& s[j+1,i] \in dict),  0 \leq j < i
 $$
 
 
-\subsubsection{代码}
+\subsubsection{深搜}
 \begin{Code}
 // LeetCode, Word Break
 // 深搜，超时
+// 时间复杂度O(2^n)，空间复杂度O(n)
 class Solution {
 public:
     bool wordBreak(string s, unordered_set<string> &dict) {
@@ -1055,9 +1114,11 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{动规}
 \begin{Code}
 // LeetCode, Word Break
-// 动规
+// 动规，时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     bool wordBreak(string s, unordered_set<string> &dict) {
@@ -1107,7 +1168,7 @@ A solution is \fn{["cats and dog", "cat sand dog"]}.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Word Break II
-// 动规
+// 动规，时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
     vector<string> wordBreak(string s, unordered_set<string> &dict) {
