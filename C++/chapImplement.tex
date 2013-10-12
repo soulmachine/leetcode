@@ -32,6 +32,7 @@ Throw an exception? Good, but what if throwing an exception is not an option? Yo
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Reverse Integer
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     int reverse (int x) {
@@ -79,6 +80,7 @@ There is a more generic way of solving this problem.
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Palindrome Number
+// 时间复杂度O(1)，空间复杂度O(1)
 class Solution {
 public:
     bool isPalindrome(int x) {
@@ -131,7 +133,8 @@ Output: \code{index1=1, index2=2}
 \subsubsection{代码}
 \begin{Code}
 //LeetCode, Two Sum
-// 方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度O(n)，代码如下，
+// 方法2：hash。用一个哈希表，存储每个数对应的下标
+// 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     vector<int> twoSum(vector<int> &numbers, int target) {
@@ -193,6 +196,7 @@ struct Interval {
 };
  
 //LeetCode, Insert Interval
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
@@ -251,6 +255,7 @@ struct Interval {
  
 //LeetCode, Merge Interval
 //复用一下Insert Intervals的解法即可
+// 时间复杂度O(n1+n2+...)，空间复杂度O(1)
 class Solution {
 public:
     vector<Interval> merge(vector<Interval> &intervals) {
@@ -315,8 +320,7 @@ Note:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Minimum Window Substring
-// 双指针，动态维护一个区间。尾指针不断往后扫，当扫到有一个窗口包含了所有T的字符
-// 后，然后再收缩头指针，直到不能再收缩为止。最后记录所有可能的情况中窗口最小的
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     string minWindow(string S, string T) {
@@ -385,19 +389,19 @@ Note: The numbers can be arbitrarily large and are non-negative.
 常见的做法是将字符转化为一个int，一一对应，形成一个int数组。但是这样很浪费空间，一个int32的最大值是$2^{31}-1=2147483647$，可以与9个字符对应，由于有乘法，减半，则至少可以与4个字符一一对应。一个int64可以与9个字符对应。
 
 
-\subsubsection{代码}
-
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Multiply Strings
 // @author 连城 (http://weibo.com/lianchengzju)
 // 一个字符对应一个int
+// 时间复杂度O(n*m)，空间复杂度O(n+m)
 typedef vector<int> bigint;
 
 bigint make_bigint(string const& repr) {
     bigint n;
     transform(repr.rbegin(), repr.rend(), back_inserter(n),
             [](char c) { return c - '0'; });
-    return move(n);
+    return n;
 }
 
 string to_string(bigint const& n) {
@@ -405,7 +409,7 @@ string to_string(bigint const& n) {
     transform(find_if(n.rbegin(), prev(n.rend()),
             [](char c) { return c > '\0'; }), n.rend(), back_inserter(str),
             [](char c) { return c + '0'; });
-    return move(str);
+    return str;
 }
 
 bigint operator*(bigint const& x, bigint const& y) {
@@ -418,7 +422,7 @@ bigint operator*(bigint const& x, bigint const& y) {
             z[i + j] %= 10;
         }
 
-    return move(z);
+    return z;
 }
 
 class Solution {
@@ -429,9 +433,12 @@ public:
 };
 \end{Code}
 
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, Multiply Strings
 // 9个字符对应一个int64_t
+// 时间复杂度O(n*m/81)，空间复杂度O((n+m)/9)
 /** 大整数类. */
 class BigInt {
 public:
@@ -552,10 +559,10 @@ You should return the indices: \code{[0,9]}.(order does not matter).
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Substring with Concatenation of All Words
+// 时间复杂度O(n*m)，空间复杂度O(m)
 class Solution {
 public:
-    vector<int> findSubstring(string s, vector<string>& dict)
-    {
+    vector<int> findSubstring(string s, vector<string>& dict) {
         size_t wordLength = dict.front().length();
         size_t catLength = wordLength * dict.size();
         vector<int> result;
@@ -620,10 +627,10 @@ Return
 另一种思路，下一行第一个元素和最后一个元素赋值为1，中间的每个元素，等于上一行的左上角和右上角元素之和。
 
 
-\subsubsection{代码}
-
+\subsubsection{从左到右}
 \begin{Code}
 // LeetCode, Pascal's Triangle
+// 时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
     vector<vector<int> > generate(int numRows) {
@@ -640,6 +647,28 @@ public:
                 current[j] = prev[j-1] + prev[j]; // 左上角和右上角之和
             }
             result.push_back(current);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{从右到左}
+\begin{Code}
+// LeetCode, Pascal's Triangle
+// 时间复杂度O(n^2)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<int> > generate(int numRows) {
+        vector<vector<int> > result;
+        vector<int> array;
+        for (int i = 1; i <= numRows; i++) {
+            for (int j = i - 2; j > 0; j--) {
+                array[j] = array[j - 1] + array[j];
+            }
+            array.push_back(1);
+            result.push_back(array);
         }
         return result;
     }
@@ -675,21 +704,19 @@ Note: Could you optimize your algorithm to use only $O(k)$ extra space?
 
 \begin{Code}
 // LeetCode, Pascal's Triangle II
-// 滚动数组
+// 滚动数组，时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
-    vector<int> getRow(int rowIndex) {
-        vector<int> result(rowIndex + 2, 0);
-
-        result[1] = 1;
-        for (int i = 0; i < rowIndex; i++) {
-            for (int j = rowIndex + 1; j > 0; j--) {
-                result[j] = result[j - 1] + result[j];
-            }
-        }
-        result.erase(result.begin());
-        return result;
-    }
+	vector<int> getRow(int rowIndex) {
+		vector<int> array;
+		for (int i = 0; i <= rowIndex; i++) {
+			for (int j = i - 1; j > 0; j--){
+				array[j] = array[j - 1] + array[j];
+			}
+			array.push_back(1);
+		}
+		return array;
+	}
 };
 \end{Code}
 
@@ -720,45 +747,33 @@ You should return \fn{[1,2,3,6,9,8,7,4,5]}.
 
 
 \subsubsection{分析}
-无
+模拟。
 
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Spiral Matrix
+// @author 龚陆安 (http://weibo.com/luangong)
+// 时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
-    vector<int> spiralOrder(vector<vector<int> > &matrix) {
-        const int m = matrix.size();
-        if (m == 0) return vector<int>();
-        const int n = matrix[0].size();
-        if (n == 0) return vector<int>();
-
-        vector<int> result(m * n, 0);
-
-        int layer, index;
-        for (layer = min(m, n), index = 0; layer > 1; layer -= 2) {
-            const int offset = (min(m, n) - layer) / 2;
-            // left to right
-            for (int i = offset; i < n - offset - 1; i++)
-                result[index++] = matrix[offset][i];
-            // top to bottom
-            for (int i = offset; i < m - offset - 1; i++)
-                result[index++] = matrix[i][n - offset - 1];
-            // right to left
-            for (int i = n - offset - 1; i > offset; i--)
-                result[index++] = matrix[m - offset - 1][i];
-            // bottom to top
-            for (int i = m - offset - 1; i > offset; i--)
-                result[index++] = matrix[i][offset];
-        }
-
-        if (layer == 1) {  // 最后一行
-            if (m < n)
-                for (int i = m / 2; i < n - m / 2; i++)
-                    result[index++] = matrix[m / 2][i];
-            else
-                for (int i = n / 2; i < m - n / 2; i++)
-                       result[index++] = matrix[i][n / 2];
+    vector<int> spiralOrder(vector<vector<int> >& matrix) {
+        vector<int> result;
+        if (matrix.empty()) return result;
+        int beginX = 0, endX = matrix[0].size() - 1;
+        int beginY = 0, endY = matrix.size() - 1;
+        while (true) {
+            // From left to right
+            for (int j = beginX; j <= endX; ++j) result.push_back(matrix[beginY][j]);
+            if (++beginY > endY) break;
+            // From top to bottom
+            for (int i = beginY; i <= endY; ++i) result.push_back(matrix[i][endX]);
+            if (beginX > --endX) break;
+            // From right to left
+            for (int j = endX; j >= beginX; --j) result.push_back(matrix[endY][j]);
+            if (beginY > --endY) break;
+            // From bottom to top
+            for (int i = endY; i >= beginY; --i) result.push_back(matrix[i][beginX]);
+            if (++beginX > endX) break;
         }
         return result;
     }
@@ -796,34 +811,60 @@ You should return the following matrix:
 这题比上一题要简单。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Spiral Matrix II
+// 时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
     vector<vector<int> > generateMatrix(int n) {
-        if (n == 0) return vector<vector<int> >();
+        vector<vector<int> > matrix(n, vector<int>(n));
+        int begin = 0, end = n - 1;
+        int num = 1;
 
-        vector<vector<int> > matrix(n, vector<int>(n, 0));
-
-        int num = 1, layer;
-        for (layer = n; layer > 1; layer -= 2) {
-            const int offset = (n - layer) / 2;
-            // left to right
-            for (int i = offset; i < n - offset - 1; i++)
-                matrix[offset][i] = num++;
-            // top to bottom
-            for (int i = offset; i < n - offset - 1; i++)
-                matrix[i][n - offset - 1] = num++;
-            // right to left
-            for (int i = n - offset - 1; i > offset; i--)
-                matrix[n - offset - 1][i] = num++;
-            // bottom to top
-            for (int i = n - offset - 1; i > offset; i--)
-                matrix[i][offset] = num++;
+        while (begin < end) {
+            for (int j = begin; j < end; ++j) matrix[begin][j] = num++;
+            for (int i = begin; i < end; ++i) matrix[i][end] = num++;
+            for (int j = end; j > begin; --j) matrix[end][j] = num++;
+            for (int i = end; i > begin; --i) matrix[i][begin] = num++;
+            ++begin;
+            --end;
         }
-        if (layer == 1) matrix[n / 2][n / 2] = num;
 
+        if (begin == end) matrix[begin][begin] = num;
+
+        return matrix;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
+\begin{Code}
+// LeetCode, Spiral Matrix II
+// @author 龚陆安 (http://weibo.com/luangong)
+// 时间复杂度O(n^2)，空间复杂度O(n^2)
+class Solution {
+public:
+    vector<vector<int> > generateMatrix(int n) {
+        vector< vector<int> > matrix(n, vector<int>(n));
+        if (n == 0) return matrix;
+        int beginX = 0, endX = n - 1;
+        int beginY = 0, endY = n - 1;
+        int num = 1;
+        while (true) {
+            for (int j = beginX; j <= endX; ++j) matrix[beginY][j] = num++;
+            if (++beginY > endY) break;
+
+            for (int i = beginY; i <= endY; ++i) matrix[i][endX] = num++;
+            if (beginX > --endX) break;
+
+            for (int j = endX; j >= beginX; --j) matrix[endY][j] = num++;
+            if (beginY > --endY) break;
+
+            for (int i = endY; i >= beginY; --i) matrix[i][beginX] = num++;
+            if (++beginX > endX) break;
+        }
         return matrix;
     }
 };
@@ -883,7 +924,8 @@ A       N
 
 \subsubsection{代码}
 \begin{Code}
-//LeetCode, ZigZag Conversion
+// LeetCode, ZigZag Conversion
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     string convert(string s, int nRows) {
@@ -924,17 +966,45 @@ Divide two integers without using multiplication, division and mod operator.
 最简单的方法，是不断减去被除数。在这个基础上，可以做一点优化，每次把被除数翻倍，从而加速。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Divide Two Integers
+// 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
     int divide(int dividend, int divisor) {
-        int result = 0;
+        // 当 dividend = INT_MIN时，-dividend会溢出，所以用 long long
+        long long a = dividend >= 0 ? dividend : -(long long)dividend;
+        long long b = divisor >= 0 ? divisor : -(long long)divisor;
+
+        // 当 dividend = INT_MIN时，divisor = -1时，结果会溢出，所以用 long long
+        long long result = 0;
+        while (a >= b) {
+            long long c = b;
+            for (int i = 0; a >= c; ++i, c <<= 1) {
+                a -= c;
+                result += 1 << i;
+            }
+        }
+
+        return ((dividend^divisor) >> 31) ? (-result) : (result);
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
+\begin{Code}
+// LeetCode, Divide Two Integers
+// 时间复杂度O(logn)，空间复杂度O(1)
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        int result = 0; // 当 dividend = INT_MIN时，divisor = -1时，结果会溢出
         const bool sign = (dividend > 0 && divisor < 0) ||
                 (dividend < 0 && divisor > 0); // 异号
 
-        // 当 dividend = INT_MIN, divisor =-1 时，会溢出，所以用 unsigned int
+        // 当 dividend = INT_MIN时，-dividend会溢出，所以用 unsigned int
         unsigned int a = dividend >= 0 ? dividend : -dividend;
         unsigned int b = divisor >= 0 ? divisor : -divisor;
 
@@ -1006,6 +1076,7 @@ Corner Cases:
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Text Justification
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     vector<string> fullJustify(vector<string> &words, int L) {

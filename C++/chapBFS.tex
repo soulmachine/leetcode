@@ -151,12 +151,10 @@ public:
         unordered_map<string, vector<string> > father; // 树
         unordered_set<string> current, next;  // 当前层，下一层，用集合是为了去重
 
-        int level = 0; // 层数
         bool found = false;
 
         current.insert(start);
         while (!current.empty() && !found) {
-            ++level;
             // 先将本层全部置为已访问，防止同层之间互相指向
             for (auto word : current)
                 visited.insert(word);
