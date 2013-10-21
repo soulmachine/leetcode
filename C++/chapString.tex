@@ -591,7 +591,8 @@ isMatch("aab", "c*a*b") → false
 \subsubsection{递归版}
 \begin{Code}
 // LeetCode, Wildcard Matching
-// 递归版，会超时，时间复杂度O(n*m)，空间复杂度O(n)
+// 递归版，会超时，用于帮助理解题意
+// 时间复杂度O(n!*m!)，空间复杂度O(n)
 class Solution {
 public:
     bool isMatch(const char *s, const char *p) {
