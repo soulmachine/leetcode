@@ -409,8 +409,8 @@ vector<state_t> bfs(state_t &start, bool (*state_is_target)(const state_t&),
             const state_t state = current.front();
             current.pop();
             vector<state_t> new_states = state_extend(state, visited);
-            for (auto iter = new_states.begin();
-                    iter != new_states.end() && ! found; ++iter) {
+            for (auto iter = new_states.cbegin();
+                    iter != new_states.cend() && ! found; ++iter) {
                 const state_t new_state(*iter);
 
                 if (state_is_target(new_state)) {

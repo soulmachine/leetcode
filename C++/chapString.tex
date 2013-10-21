@@ -596,7 +596,7 @@ class Solution {
 public:
     bool isMatch(const char *s, const char *p) {
         if (*p == '*') {
-            while (*p == '*') ++p;
+            while (*p == '*') ++p;  //skip continuous '*'
             if (*p == '\0') return true;
             while (*s != '\0' && !isMatch(s, p)) ++s;
 
@@ -613,7 +613,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Wildcard Matching
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，时间复杂度O(n*m)，空间复杂度O(1)
 class Solution {
 public:
     bool isMatch(const char *s, const char *p) {
@@ -626,7 +626,7 @@ public:
             case '*':
                 star = true;
                 s = str, p = ptr;
-                while (*p == '*') p++;
+                while (*p == '*') p++;  //skip continuous '*'
                 if (*p == '\0') return true;
                 str = s - 1;
                 ptr = p - 1;
@@ -998,7 +998,7 @@ public:
         }
 
         vector<string> result;
-        for (auto it = group.begin(); it != group.end(); it++) {
+        for (auto it = group.cbegin(); it != group.cend(); it++) {
             if (it->second.size() > 1)
                 result.insert(result.end(), it->second.begin(), it->second.end());
         }
