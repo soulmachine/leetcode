@@ -498,13 +498,51 @@ The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
 
 
 \subsubsection{分析}
-先排序，然后左右夹逼，复杂度 $O(n^3)$。
+先排序，然后左右夹逼，复杂度 $O(n^2)$。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, 3Sum Closest
-// 先排序，然后左右夹逼，时间复杂度O(n^3)，空间复杂度O(1)
+// 先排序，然后左右夹逼，时间复杂度O(n^2)，空间复杂度O(1)
+class Solution {
+public:
+    int threeSumClosest(vector<int>& num, int target) {
+        int result = 0;
+        int min_gap = INT_MAX;
+
+        sort(num.begin(), num.end());
+
+        for (auto a = num.begin(); a != prev(num.end(), 2);
+                a = upper_bound(a, prev(num.end(), 2), *a)) {
+            auto b = next(a);
+            auto c = prev(num.end());
+
+            while (b < c) {
+                const int sum = *a + *b + *c;
+                const int gap = abs(sum - target);
+
+                if (gap < min_gap) {
+                    result = sum;
+                    min_gap = gap;
+                }
+
+                if (sum < target) ++b;
+                else              --c;
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
+\begin{Code}
+// LeetCode, 3Sum Closest
+// 先排序，然后左右夹逼
+// 时间复杂度O(n^2)，空间复杂度O(1)，与代码1比，有常数级的优化
 class Solution {
 public:
     int threeSumClosest(vector<int>& num, int target) {
