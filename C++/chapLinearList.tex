@@ -1640,7 +1640,7 @@ What is the minimum candies you must give?
 无
 
 
-\subsubsection{代码}
+\subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Candy
 // 时间复杂度O(n)，空间复杂度O(n)
@@ -1668,6 +1668,34 @@ public:
             result += increment[i];
 
         return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{递归版}
+\begin{Code}
+// LeetCode, Candy
+// 备忘录法，时间复杂度O(n)，空间复杂度O(n)
+// @author fancymouse (http://weibo.com/u/1928162822)
+class Solution {
+public:
+    int candy(const vector<int>& ratings) {
+        vector<int> f(ratings.size());
+        int sum = 0;
+        for (int i = 0; i < ratings.size(); ++i)
+            sum += solve(ratings, f, i);
+        return sum;
+    }
+    int solve(const vector<int>& ratings, vector<int>& f, int i) {
+        if (f[i] == 0) {
+            f[i] = 1;
+            if (i > 0 && ratings[i] > ratings[i - 1])
+                f[i] = max(f[i], solve(ratings, f, i - 1) + 1);
+            if (i < ratings.size() - 1 && ratings[i] > ratings[i + 1])
+                f[i] = max(f[i], solve(ratings, f, i + 1) + 1);
+        }
+        return f[i];
     }
 };
 \end{Code}
@@ -2468,4 +2496,95 @@ public:
 \subsubsection{相关题目}
 \begindot
 \item 无
+\myenddot
+
+
+\subsection{Linked List Cycle}
+\label{sec:Linked-List-Cycle}
+
+
+\subsubsection{描述}
+Given a linked list, determine if it has a cycle in it.
+
+Follow up:
+Can you solve it without using extra space?
+
+
+\subsubsection{分析}
+最容易想到的方法是，用一个哈希表\fn{unordered_map<int, bool> visited}，记录每个元素是否被访问过，一旦出现某个元素被重复访问，说明存在环。空间复杂度$O(n)$，时间复杂度$O(N)$。
+
+最好的方法是时间复杂度O(n)，空间复杂度O(1)的。设置两个指针，一个快一个慢，快的指针每次走两步，慢的指针每次走一步，如果快指针和慢指针相遇，则说明有环。参考\myurl{ http://leetcode.com/2010/09/detecting-loop-in-singly-linked-list.html}
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Linked List Cycle
+// 时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        // 设置两个指针，一个快一个慢
+        ListNode *slow = head, *fast = head;
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast) return true;
+        }
+        return false;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Linked List Cycle II, 见 \S \ref{sec:Linked-List-Cycle-II}
+\myenddot
+
+
+\subsection{Linked List Cycle II}
+\label{sec:Linked-List-Cycle-II}
+
+
+\subsubsection{描述}
+Given a linked list, return the node where the cycle begins. If there is no cycle, return \fn{null}.
+
+Follow up:
+Can you solve it without using extra space?
+
+
+\subsubsection{分析}
+当\fn{slow}和\fn{fast}两个指针相遇后，另外设一个指针\fn{slow2}，从\fn{head}开始，两个慢指针每次前进一步，它俩一定会在环的开始处相遇。
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Linked List Cycle II
+// 时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *slow = head, *fast = head;
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast) {
+                ListNode *slow2 = head;
+
+                while (slow2 != slow) {
+                    slow2 = slow2->next;
+                    slow = slow->next;
+                }
+                return slow2;
+            }
+        }
+        return nullptr;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Linked List Cycle, 见 \S \ref{sec:Linked-List-Cycle}
 \myenddot
