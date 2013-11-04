@@ -2025,8 +2025,7 @@ class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
         if (!head) return head;
-        ListNode dummy(head->val + 1); // 值只要跟head不同即可
-        dummy.next = head;
+        ListNode dummy{head->val + 1, head}; // 值只要跟head不同即可
 
         recur(&dummy, head);
         return dummy.next;
@@ -2246,8 +2245,7 @@ Note:
 class Solution {
 public:
     ListNode *removeNthFromEnd(ListNode *head, int n) {
-        ListNode dummy(0);
-        dummy.next = head;
+        ListNode dummy{-1, head};
         ListNode *p = &dummy, *q = &dummy;
 
         for (int i = 0; i < n; i++)  // q先走n步
@@ -2513,7 +2511,7 @@ Can you solve it without using extra space?
 \subsubsection{分析}
 最容易想到的方法是，用一个哈希表\fn{unordered_map<int, bool> visited}，记录每个元素是否被访问过，一旦出现某个元素被重复访问，说明存在环。空间复杂度$O(n)$，时间复杂度$O(N)$。
 
-最好的方法是时间复杂度O(n)，空间复杂度O(1)的。设置两个指针，一个快一个慢，快的指针每次走两步，慢的指针每次走一步，如果快指针和慢指针相遇，则说明有环。参考\myurl{ http://leetcode.com/2010/09/detecting-loop-in-singly-linked-list.html}
+最好的方法是时间复杂度$O(n)$，空间复杂度$O(1)$的。设置两个指针，一个快一个慢，快的指针每次走两步，慢的指针每次走一步，如果快指针和慢指针相遇，则说明有环。参考\myurl{ http://leetcode.com/2010/09/detecting-loop-in-singly-linked-list.html}
 
 
 \subsubsection{代码}
@@ -2554,7 +2552,19 @@ Can you solve it without using extra space?
 
 
 \subsubsection{分析}
-当\fn{slow}和\fn{fast}两个指针相遇后，另外设一个指针\fn{slow2}，从\fn{head}开始，两个慢指针每次前进一步，它俩一定会在环的开始处相遇。
+当fast与slow相遇时，slow肯定没有遍历完链表，而fast已经在环内循环了$n$圈($1 \leq n$)。假设slow走了$s$步，则fast走了$2s$步（fast步数还等于$s$加上在环上多转的$n$圈），设环长为$r$，则：
+\begin{eqnarray}
+2s &=& s + nr \nonumber \\
+s &=& nr \nonumber
+\end{eqnarray}
+
+设整个链表长$L$，环入口点与相遇点距离为$a$，起点到环入口点的距离为$x$，则
+\begin{eqnarray}
+x + a &=& nr = (n – 1)r +r = (n-1)r + L - x \nonumber \\
+x &=& (n-1)r + (L – x – a) \nonumber
+\end{eqnarray}
+
+$L – x – a$为相遇点到环入口点的距离，由此可知，从链表头到环入口点等于$n-1$圈内环+相遇点到环入口点，于是我们可以从\fn{head}开始另设一个指针\fn{slow2}，两个慢指针每次前进一步，它俩一定会在环入口点相遇。
 
 
 \subsubsection{代码}
