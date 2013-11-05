@@ -845,37 +845,33 @@ After calling your function, the tree should look like:
 
 
 \subsubsection{分析}
-要处理一个节点，可能需要最右边的兄弟节点，因此用广搜。
+要处理一个节点，可能需要最右边的兄弟节点，首先想到用广搜。但广搜不是常数空间的，本题要求常数空间。
 
 注意，这题的代码原封不动，也可以解决 Populating Next Right Pointers in Each Node I.
+
 
 \subsubsection{递归版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
-// 递归版，时间复杂度O(n)，空间复杂度O(n)
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
-        vector<vector<TreeLinkNode *>> result;
-        traverse(root, 1, result);
-        // 开始修改next指针
-        for (auto level : result) {
-            for (auto iter = level.begin(); iter != prev(level.end()); ++iter)
-                (*iter)->next = *next(iter);
-            (*prev(level.end()))->next = nullptr;
+        if (root == nullptr) return;
+
+        TreeLinkNode dummy(-1);
+        for (TreeLinkNode *curr = root, *prev = &dummy; 
+                curr; curr = curr->next) {
+            if (curr->left != nullptr){
+                prev->next = curr->left;
+                prev = prev->next;
+            }
+            if (curr->right != nullptr){
+                prev->next = curr->right;
+                prev = prev->next;
+            }
         }
-    }
-
-    void traverse(TreeLinkNode *root, size_t level,
-            vector<vector<TreeLinkNode *>> &result) {
-        if (!root) return;
-
-        if (level > result.size())
-            result.push_back(vector<TreeLinkNode *>());
-
-        result[level - 1].push_back(root);
-        traverse(root->left, level + 1, result);
-        traverse(root->right, level + 1, result);
+        connect(dummy.next);
     }
 };
 \end{Code}
@@ -884,32 +880,26 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
-// 迭代版，时间复杂度O(n)，空间复杂度O(n)
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
-        vector<vector<int> > result;
-        if (root == nullptr)
-            return;
+        while (root) {
+            TreeLinkNode * next = nullptr; // the first node of next level
+            TreeLinkNode * prev = nullptr; // previous node on the same level
+            for (; root; root = root->next) {
+                if (!next) next = root->left ? root->left : root->right;
 
-        vector<TreeLinkNode*> next, current;
-        current.push_back(root);
-        while (!current.empty()) {
-            while (!current.empty()) {
-                TreeLinkNode* node = current.front();
-                current.erase(current.begin());
-
-                if (!current.empty())
-                    node->next = current.front();
-                else
-                    node->next = nullptr;
-
-                if (node->left != nullptr)
-                    next.push_back(node->left);
-                if (node->right != nullptr)
-                    next.push_back(node->right);
+                if (root->left) {
+                    if (prev) prev->next = root->left;
+                    prev = root->left;
+                }
+                if (root->right) {
+                    if (prev) prev->next = root->right;
+                    prev = root->right;
+                }
             }
-            swap(next, current);
+            root = next; // turn to next level
         }
     }
 };
