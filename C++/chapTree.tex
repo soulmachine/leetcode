@@ -1246,7 +1246,7 @@ Given an array where elements are sorted in ascending order, convert it to a hei
 
 \begin{Code}
 // LeetCode, Convert Sorted Array to Binary Search Tree
-// 分治法，时间复杂度O(nlogn)，空间复杂度O(logn)
+// 分治法，时间复杂度O(n)，空间复杂度O(logn)
 class Solution {
 public:
     TreeNode* sortedArrayToBST (vector<int>& num) {
@@ -1258,8 +1258,7 @@ public:
             RandomAccessIterator last) {
         const auto length = distance(first, last);
 
-        if (length == 0) return nullptr;  // 终止条件
-        if (length == 1) return new TreeNode(*first); // 收敛条件
+        if (length <= 0) return nullptr;  // 终止条件
 
         // 三方合并
         auto mid = first + length / 2;
