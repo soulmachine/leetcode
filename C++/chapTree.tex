@@ -23,6 +23,357 @@ struct TreeNode {
 二叉树的先根遍历有：\textbf{先序遍历}(root->left->right)，root->right->left；后根遍历有：\textbf{后序遍历}(left->right->root)，right->left->root；二叉树还有个一般的树没有的遍历次序，\textbf{中序遍历}(left->root->right)。
 
 
+\subsection{Binary Tree Preorder Traversal}
+\label{sec:binary-tree-preorder-traversal}
+
+
+\subsubsection{描述}
+Given a binary tree, return the \emph{preorder} traversal of its nodes' values.
+
+For example:
+Given binary tree \code{\{1,\#,2,3\}},
+\begin{Code}
+ 1
+  \
+   2
+  /
+ 3
+\end{Code}
+return \code{[1,2,3]}.
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+\subsubsection{分析}
+用栈或者Morris遍历。
+
+
+\subsubsection{栈}
+\begin{Code}
+// LeetCode, Binary Tree Preorder Traversal
+// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode *root) {
+        vector<int> result;
+        const TreeNode *p;
+        stack<const TreeNode *> s;
+
+        p = root;
+        if (p != nullptr) s.push(p);
+
+        while (!s.empty()) {
+            p = s.top();
+            s.pop();
+            result.push_back(p->val);
+
+            if (p->right != nullptr) s.push(p->right);
+            if (p->left != nullptr) s.push(p->left);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{Morris先序遍历}
+\begin{Code}
+// LeetCode, Binary Tree Preorder Traversal
+// Morris先序遍历，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode *root) {
+        vector<int> result;
+        TreeNode *cur, *prev;
+
+        cur = root;
+        while (cur != nullptr) {
+            if (cur->left == nullptr) {
+                result.push_back(cur->val);
+                prev = cur; /* cur刚刚被访问过 */
+                cur = cur->right;
+            } else {
+                /* 查找前驱 */
+                TreeNode *node = cur->left;
+                while (node->right != nullptr && node->right != cur)
+                    node = node->right;
+
+                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
+                    result.push_back(cur->val); /* 仅这一行的位置与中序不同 */
+                    node->right = cur;
+                    prev = cur; /* cur刚刚被访问过 */
+                    cur = cur->left;
+                } else {    /* 已经线索化，则删除线索  */
+                    node->right = nullptr;
+                    /* prev = cur; 不能有这句，cur已经被访问 */
+                    cur = cur->right;
+                }
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
+\item Binary Tree Postorder Traversal，见 \S \ref{sec:binary-tree-postorder-traversal}
+\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\myenddot
+
+
+\subsection{Binary Tree Inorder Traversal}
+\label{sec:binary-tree-inorder-traversal}
+
+
+\subsubsection{描述}
+Given a binary tree, return the \emph{inorder} traversal of its nodes' values.
+
+For example:
+Given binary tree \code{\{1,\#,2,3\}},
+\begin{Code}
+ 1
+  \
+   2
+  /
+ 3
+\end{Code}
+return \code{[1,3,2]}.
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+\subsubsection{分析}
+用栈或者Morris遍历。
+
+
+\subsubsection{栈}
+\begin{Code}
+// LeetCode, Binary Tree Inorder Traversal
+// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+        vector<int> result;
+        const TreeNode *p = root;
+        stack<const TreeNode *> s;
+
+        while (!s.empty() || p != nullptr) {
+            if (p != nullptr) {
+                s.push(p);
+                p = p->left;
+            } else {
+                p = s.top();
+                s.pop();
+                result.push_back(p->val);
+                p = p->right;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{Morris中序遍历}
+\begin{Code}
+// LeetCode, Binary Tree Inorder Traversal
+// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+        vector<int> result;
+        TreeNode *cur, *prev;
+
+        cur = root;
+        while (cur != nullptr) {
+            if (cur->left == nullptr) {
+                result.push_back(cur->val);
+                prev = cur;
+                cur = cur->right;
+            } else {
+                /* 查找前驱 */
+                TreeNode *node = cur->left;
+                while (node->right != nullptr && node->right != cur)
+                    node = node->right;
+
+                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
+                    node->right = cur;
+                    /* prev = cur; 不能有这句，cur还没有被访问 */
+                    cur = cur->left;
+                } else {    /* 已经线索化，则访问节点，并删除线索  */
+                    result.push_back(cur->val);
+                    node->right = nullptr;
+                    prev = cur;
+                    cur = cur->right;
+                }
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Binary Tree Preorder Traversal，见 \S \ref{sec:binary-tree-preorder-traversal}
+\item Binary Tree Postorder Traversal，见 \S \ref{sec:binary-tree-postorder-traversal}
+\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\myenddot
+
+
+\subsection{Binary Tree Postorder Traversal}
+\label{sec:binary-tree-postorder-traversal}
+
+
+\subsubsection{描述}
+Given a binary tree, return the \emph{postorder} traversal of its nodes' values.
+
+For example:
+Given binary tree \code{\{1,\#,2,3\}},
+\begin{Code}
+ 1
+  \
+   2
+  /
+ 3
+\end{Code}
+return \code{[3,2,1]}.
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+\subsubsection{分析}
+用栈或者Morris遍历。
+
+
+\subsubsection{栈}
+\begin{Code}
+// LeetCode, Binary Tree Postorder Traversal
+// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode *root) {
+        vector<int> result;
+        /* p，正在访问的结点，q，刚刚访问过的结点*/
+        const TreeNode *p, *q;
+        stack<const TreeNode *> s;
+
+        p = root;
+
+        do {
+            while (p != nullptr) { /* 往左下走*/
+                s.push(p);
+                p = p->left;
+            }
+            q = nullptr;
+            while (!s.empty()) {
+                p = s.top();
+                s.pop();
+                /* 右孩子不存在或已被访问，访问之*/
+                if (p->right == q) {
+                    result.push_back(p->val);
+                    q = p; /* 保存刚访问过的结点*/
+                } else {
+                    /* 当前结点不能访问，需第二次进栈*/
+                    s.push(p);
+                    /* 先处理右子树*/
+                    p = p->right;
+                    break;
+                }
+            }
+        } while (!s.empty());
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{Morris后序遍历}
+\begin{Code}
+// LeetCode, Binary Tree Postorder Traversal
+// Morris后序遍历，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode *root) {
+        vector<int> result;
+        TreeNode dummy(-1);
+        TreeNode *cur, *prev = nullptr;
+        std::function < void(const TreeNode*)> visit = 
+            [&result](const TreeNode *node){
+            result.push_back(node->val); 
+        };
+
+        dummy.left = root;
+        cur = &dummy;
+        while (cur != nullptr) {
+            if (cur->left == nullptr) {
+                prev = cur; /* 必须要有 */
+                cur = cur->right;
+            } else {
+                TreeNode *node = cur->left;
+                while (node->right != nullptr && node->right != cur)
+                    node = node->right;
+
+                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
+                    node->right = cur;
+                    prev = cur; /* 必须要有 */
+                    cur = cur->left;
+                } else { /* 已经线索化，则访问节点，并删除线索  */
+                    visit_reverse(cur->left, prev, visit);
+                    prev->right = nullptr;
+                    prev = cur; /* 必须要有 */
+                    cur = cur->right;
+                }
+            }
+        }
+        return result;
+    }
+private:
+    // 逆转路径
+    static void reverse(TreeNode *from, TreeNode *to) {
+        TreeNode *x = from, *y = from->right, *z;
+        if (from == to) return;
+
+        while (x != to) {
+            z = y->right;
+            y->right = x;
+            x = y;
+            y = z;
+        }
+    }
+
+    // 访问逆转后的路径上的所有结点
+    static void visit_reverse(TreeNode* from, TreeNode *to, 
+                     std::function< void(const TreeNode*) >& visit) {
+        TreeNode *p = to;
+        reverse(from, to);
+
+        while (true) {
+            visit(p);
+            if (p == from)
+                break;
+            p = p->right;
+        }
+
+        reverse(to, from);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item Binary Tree Preorder Traversal，见 \S \ref{sec:binary-tree-preorder-traversal}
+\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
+\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\myenddot
+
+
 \subsection{Binary Tree Level Order Traversal}
 \label{sec:binary-tree-tevel-order-traversal}
 
@@ -323,105 +674,6 @@ public:
 \begindot
 \item Binary Tree Level Order Traversal，见 \S \ref{sec:binary-tree-tevel-order-traversal}
 \item Binary Tree Level Order Traversal II，见 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
-\myenddot
-
-
-\subsection{Binary Tree Inorder Traversal}
-\label{sec:binary-tree-inorder-traversal}
-
-
-\subsubsection{描述}
-Given a binary tree, return the inorder traversal of its nodes' values.
-
-For example:
-Given binary tree \code{\{1,\#,2,3\}},
-\begin{Code}
- 1
-  \
-   2
-  /
- 3
-\end{Code}
-return \code{[1,3,2]}.
-
-Note: Recursive solution is trivial, could you do it iteratively?
-
-
-\subsubsection{分析}
-不用递归，可用栈，Morris中序遍历或者线索二叉树。
-
-
-\subsubsection{使用栈}
-\begin{Code}
-// LeetCode, Binary Tree Inorder Traversal
-// 使用栈，时间复杂度O(n)，空间复杂度O(n)
-class Solution {
-public:
-    vector<int> inorderTraversal(TreeNode *root) {
-        vector<int> result;
-        const TreeNode *p = root;
-        stack<const TreeNode *> s;
-
-        while (!s.empty() || p != nullptr) {
-            if (p != nullptr) {
-                s.push(p);
-                p = p->left;
-            } else {
-                p = s.top();
-                s.pop();
-                result.push_back(p->val);
-                p = p->right;
-            }
-        }
-        return result;
-    }
-};
-\end{Code}
-
-
-\subsubsection{Morris中序遍历}
-\begin{Code}
-// LeetCode, Binary Tree Inorder Traversal
-// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
-class Solution {
-public:
-    vector<int> inorderTraversal(TreeNode *root) {
-        vector<int> result;
-        TreeNode* prev = nullptr;
-        TreeNode* cur = root;
-
-        while (cur != nullptr) {
-            if (cur->left == nullptr) {
-                result.push_back(cur->val);
-                prev = cur;
-                cur = cur->right;
-            } else {
-                auto node = cur->left;
-
-                while (node->right != nullptr && node->right != cur)
-                    node = node->right;
-
-                if (node->right == nullptr) {
-                    node->right = cur;
-                    //prev = cur; 不能有这句，因为cur还没有被访问
-                    cur = cur->left;
-                } else {
-                    result.push_back(cur->val);
-                    node->right = nullptr;
-                    prev = cur;
-                    cur = cur->right;
-                }
-            }
-        }
-        return result;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-\begindot
-\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
 \myenddot
 
 
