@@ -68,7 +68,7 @@ Another example is \code{")()())"}, where the longest valid parentheses substrin
 无
 
 
-\subsubsection{代码}
+\subsubsection{使用栈}
 \begin{Code}
 // LeetCode, Longest Valid Parenthese
 // 使用栈，时间复杂度O(n)，空间复杂度O(n)
@@ -97,6 +97,50 @@ public:
             }
         }
         return max_len;
+    }
+};
+\end{Code}
+
+
+\subsubsection{两遍扫描}
+\begin{Code}
+// LeetCode, Longest Valid Parenthese
+// 两遍扫描，时间复杂度O(n)，空间复杂度O(1)
+// @author 曹鹏(http://weibo.com/cpcs)
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        int answer = 0, depth = 0, start = -1;
+        for (int i = 0; i < s.size(); ++i) {
+            if (s[i] == '(') {
+                ++depth;
+            } else {
+                --depth;
+                if (depth < 0) {
+                    start = i;
+                    depth = 0;
+                } else if (depth == 0) {
+                    answer = max(answer, i - start);
+                }
+            } 
+        }
+
+        depth = 0;
+        start = s.size();
+        for (int i = s.size() - 1; i >= 0; --i) {
+            if (s[i] == ')') {
+                ++depth;
+            } else {
+                --depth;
+                if (depth < 0) {
+                    start = i;
+                    depth = 0;
+                } else if (depth == 0) {
+                    answer = max(answer, start - i);
+                }
+            } 
+        }
+        return answer;
     }
 };
 \end{Code}
