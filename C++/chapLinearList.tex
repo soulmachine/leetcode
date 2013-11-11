@@ -112,8 +112,7 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
-        if(n <= 2)
-            return n;
+        if(n <= 2) return n;
         
         int index = 2;
         for(int i = 2; i < n; i ++){
