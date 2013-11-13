@@ -112,22 +112,15 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
-        if (n == 0) return 0;
-
-        int occur = 1;
-        int index = 0;
-        for (int i = 1; i < n; i++) {
-            if (A[index] == A[i]) {
-                if (occur < 2) {
-                    A[++index] = A[i];
-                    occur++;
-                }
-            } else {
-                A[++index] = A[i];
-                occur = 1;
-            }
+        if(n <= 2) return n;
+        
+        int index = 2;
+        for(int i = 2; i < n; i ++){
+            if(A[i] != A[index - 2])
+                A[index ++] = A[i];
         }
-        return index + 1;
+        
+        return index;
     }
 };
 \end{Code}
@@ -241,7 +234,7 @@ Write a function to determine if a given target is in the array.
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Search in Rotated Sorted Array II
-// 时间复杂度O(log n)，空间复杂度O(1)
+// 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     bool search(int A[], int n, int target) {
