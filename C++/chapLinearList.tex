@@ -109,17 +109,18 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
 // 时间复杂度O(n)，空间复杂度O(1)
+// @author hex108 (https://github.com/hex108)
 class Solution {
 public:
     int removeDuplicates(int A[], int n) {
-        if(n <= 2) return n;
-        
+        if (n <= 2) return n;
+
         int index = 2;
-        for(int i = 2; i < n; i ++){
-            if(A[i] != A[index - 2])
-                A[index ++] = A[i];
+        for (int i = 2; i < n; i++){
+            if (A[i] != A[index - 2])
+                A[index++] = A[i];
         }
-        
+
         return index;
     }
 };
