@@ -287,18 +287,18 @@ public:
     int lengthOfLongestSubstring(string s) {
         const int ASCII_MAX = 26;
         int last[ASCII_MAX]; // 记录字符上次出现过的位置
+        int start = 0; // 记录当前子串的起始位置
+
         fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化为-1
-        int len = 0, max_len = 0;
-        for (size_t i = 0; i < s.size(); i++, len++) {
-            if (last[s[i] - 'a'] >= 0) {
-                max_len = max(len, max_len);
-                len = 0;
-                i = last[s[i] - 'a'] + 1;
-                fill(last, last + ASCII_MAX, -1);   // 重新开始
+        int max_len = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (last[s[i] - 'a'] >= start) {
+                max_len = max(i - start, max_len);
+                start = last[s[i] - 'a'] + 1;
             }
             last[s[i] - 'a'] = i;
         }
-        return max(len, max_len);  // 别忘了最后一次，例如"abcd"
+        return max((int)s.size() - start, max_len);  // 别忘了最后一次，例如"abcd"
     }
 };
 \end{Code}
