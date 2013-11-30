@@ -2664,3 +2664,86 @@ public:
 \begindot
 \item 无
 \myenddot
+
+
+\subsection{LRU Cache}
+\label{sec:LRU-Cachet}
+
+
+\subsubsection{描述}
+Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and set.
+
+\fn{get(key)} - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
+
+\fn{set(key, value)} - Set or insert the value if the key is not already present. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item.
+
+
+\subsubsection{分析}
+为了使查找、插入和删除都有较高的性能，我们使用一个双向链表(\fn{std::list})和一个哈希表(\fn{std::unordered_map})，因为：
+\begin{itemize}
+\item{哈希表保存每个节点的地址，可以基本保证在$O(1)$时间内查找节点}
+\item{双向链表插入和删除效率高，单向链表插入和删除时，还要查找节点的前驱节点}
+\end{itemize}
+
+具体实现细节：
+\begin{itemize}
+\item{越靠近链表头部，表示节点上次访问距离现在时间最短，尾部的节点表示最近访问最少}
+\item{访问节点时，如果节点存在，把该节点交换到链表头部，同时更新hash表中该节点的地址}
+\item{插入节点时，如果cache的size达到了上限capacity，则删除尾部节点，同时要在hash表中删除对应的项；新节点插入链表头部}              
+\end{itemize}
+
+
+\subsubsection{代码}
+\begin{Code}
+// LeetCode, LRU Cache
+// 时间复杂度O(logn)，空间复杂度O(n)
+class LRUCache{
+private:
+    struct CacheNode {
+        int key;
+        int value;
+        CacheNode(int k, int v) :key(k), value(v){}
+    };
+public:
+    LRUCache(int capacity) {
+        this->capacity = capacity;
+    }
+
+    int get(int key) {
+        if (cacheMap.find(key) == cacheMap.end()) return -1;
+        
+        // 把当前访问的节点移到链表头部，并且更新map中该节点的地址
+        cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]); 
+        cacheMap[key] = cacheList.begin();
+        return cacheMap[key]->value;
+    }
+
+    void set(int key, int value) {
+        if (cacheMap.find(key) == cacheMap.end()) {
+            if (cacheList.size() == capacity) { //删除链表尾部节点（最少访问的节点）
+                cacheMap.erase(cacheList.back().key);
+                cacheList.pop_back();
+            }
+            // 插入新节点到链表头部, 并且在map中增加该节点
+            cacheList.push_front(CacheNode(key, value));
+            cacheMap[key] = cacheList.begin();
+        } else {
+            //更新节点的值，把当前访问的节点移到链表头部,并且更新map中该节点的地址
+            cacheMap[key]->value = value;
+            cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]);
+            cacheMap[key] = cacheList.begin();
+        }
+    }
+private:
+    list<CacheNode> cacheList;
+    unordered_map<int, list<CacheNode>::iterator> cacheMap;
+    int capacity;
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 无
+\myenddot
+
