@@ -70,8 +70,7 @@ public:
     OutIt removeDuplicates(InIt first, InIt last, OutIt output) {
         while (first != last) {
             *output++ = *first;
-            first = find_if(first, last,
-                    bind1st(not_equal_to<int>(), *first));
+            first = upper_bound(first, last, *first);
         }
 
         return output;
@@ -417,6 +416,65 @@ public:
 \myenddot
 
 
+\subsection{Two Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:Two-sum}
+
+
+\subsubsection{描述}
+Given an array of integers, find two numbers such that they add up to a specific target number.
+
+The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+You may assume that each input would have exactly one solution.
+
+Input:  \code{numbers=\{2, 7, 11, 15\}, target=9}
+
+Output: \code{index1=1, index2=2}
+
+
+\subsubsection{分析}
+方法1：暴力，复杂度$O(n^2)$，会超时
+
+方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度$O(n)$.
+
+方法3：先排序，然后左右夹逼，排序$O(n\log n)$，左右夹逼$O(n)$，最终$O(n\log n)$。但是注意，这题需要返回的是下标，而不是数字本身，因此这个方法行不通。
+
+
+\subsubsection{代码}
+\begin{Code}
+//LeetCode, Two Sum
+// 方法2：hash。用一个哈希表，存储每个数对应的下标
+// 时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<int> twoSum(vector<int> &num, int target) {
+        unordered_map<int, int> mapping;
+        vector<int> result;
+        for (int i = 0; i < num.size(); i++) {
+            mapping[num[i]] = i;
+        }
+        for (int i = 0; i < num.size(); i++) {
+            const int gap = target - num[i];
+            if (mapping.find(gap) != mapping.end()) {
+                result.push_back(i + 1);
+                result.push_back(mapping[gap] + 1);
+                break;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+\begindot
+\item 3Sum, 见 \S \ref{sec:3sum}
+\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
+\item 4Sum, 见 \S \ref{sec:4sum}
+\myenddot
+
+
 \subsection{3Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:3sum}
 
@@ -440,13 +498,15 @@ A solution set is:
 
 
 \subsubsection{分析}
-先排序，然后二分查找，复杂度 $O(n^2 \log n)$。
+先排序，然后左右夹逼，复杂度 $O(n^2)$。
+
+这个方法可以推广到$k$-sum，先排序，然后做$k-2$次循环，在最内层循环左右夹逼，时间复杂度是 $O(\max\{n \log n, n^{k-1}\})$。
 
 
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, 3Sum
-// 先排序，然后二分查找，时间复杂度O(n^2*logn)，空间复杂度O(1)
+// 先排序，然后左右夹逼，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
     vector<vector<int>> threeSum(vector<int>& num) {
@@ -456,17 +516,23 @@ public:
         const int target = 0;
 
         auto last = num.end();
-        for (auto a = num.begin(); a < prev(last, 2);
-                a = upper_bound(a, prev(last, 2), *a)) {
-            for (auto b = next(a); b < prev(last);
-                    b = upper_bound(b, prev(last), *b)) {
-                const int c = target - *a - *b;
-
-                if (binary_search(next(b), last, c))
-                    result.push_back(vector<int> { *a, *b, c });
+        for (auto a = num.begin(); a < prev(last, 2); ++a) {
+            auto b = next(a);
+            auto c = prev(last);
+            while (b < c) {
+                if (*a + *b + *c < target) {
+                    ++b;
+                } else if (*a + *b + *c > target) {
+                    --c;
+                } else {
+                    result.push_back({ *a, *b, *c });
+                    ++b;
+                    --c;
+                }
             }
         }
-
+        sort(result.begin(), result.end());
+        result.erase(unique(result.begin(), result.end()), result.end());
         return result;
     }
 };
@@ -475,6 +541,7 @@ public:
 
 \subsubsection{相关题目}
 \begindot
+\item Two sum, 见 \S \ref{sec:Two-sum}
 \item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
 \item 4Sum, 见 \S \ref{sec:4sum}
 \myenddot
@@ -495,7 +562,7 @@ The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
 先排序，然后左右夹逼，复杂度 $O(n^2)$。
 
 
-\subsubsection{代码1}
+\subsubsection{代码}
 \begin{Code}
 // LeetCode, 3Sum Closest
 // 先排序，然后左右夹逼，时间复杂度O(n^2)，空间复杂度O(1)
@@ -507,8 +574,7 @@ public:
 
         sort(num.begin(), num.end());
 
-        for (auto a = num.begin(); a != prev(num.end(), 2);
-                a = upper_bound(a, prev(num.end(), 2), *a)) {
+        for (auto a = num.begin(); a != prev(num.end(), 2); ++a) {
             auto b = next(a);
             auto c = prev(num.end());
 
@@ -532,48 +598,9 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
-\begin{Code}
-// LeetCode, 3Sum Closest
-// 先排序，然后左右夹逼
-// 时间复杂度O(n^2)，空间复杂度O(1)，与代码1比，有常数级的优化
-class Solution {
-public:
-    int threeSumClosest(vector<int>& num, int target) {
-        int result = 0;
-        int min_gap = INT_MAX;
-
-        sort(num.begin(), num.end());
-
-        for (auto a = num.begin(); a != prev(num.end(), 2);
-                a = upper_bound(a, prev(num.end(), 2), *a)) {
-            auto b = next(a);
-            auto c = prev(num.end());
-
-            while (b < c) {
-                const int sum = *a + *b + *c;
-                const int gap = abs(sum - target);
-
-                if (gap < min_gap) {
-                    result = sum;
-                    min_gap = gap;
-                }
-
-                if (sum < target)
-                    b = upper_bound(b, c, *b);
-                else
-                    c = prev(lower_bound(b, c, *c));
-            }
-        }
-
-        return result;
-    }
-};
-\end{Code}
-
-
 \subsubsection{相关题目}
 \begindot
+\item Two sum, 见 \S \ref{sec:Two-sum}
 \item 3Sum, 见 \S \ref{sec:3sum}
 \item 4Sum, 见 \S \ref{sec:4sum}
 \myenddot
@@ -603,15 +630,95 @@ A solution set is:
 
 
 \subsubsection{分析}
-跟 3Sum 很类似，先排序，然后二分查找，复杂度 $O(n^3 \log n)$，会超时。
+先排序，然后左右夹逼，复杂度 $O(n^3)$，会超时。
 
-然后想到，可以先缓存两个数的和，最终复杂度$O(n^3)$。这个策略也适用于 3Sum 。
+可以用一个hashmap先缓存两个数的和，最终复杂度$O(n^3)$。这个策略也适用于 3Sum 。
 
 
-\subsubsection{二分查找}
+\subsubsection{左右夹逼}
 \begin{Code}
 // LeetCode, 4Sum
-// 先排序，然后二分查找，复杂度O(n^3*logn)，会超时
+// 先排序，然后左右夹逼，时间复杂度O(n^3)，空间复杂度O(1)
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& num, int target) {
+        vector<vector<int>> result;
+        if (num.size() < 4) return result;
+        sort(num.begin(), num.end());
+
+        auto last = num.end();
+        for (auto a = num.begin(); a < prev(last, 3); ++a) {
+            for (auto b = next(a); b < prev(last, 2); ++b) {
+                auto c = next(b);
+                auto d = prev(last);
+                while (c < d) {
+                    if (*a + *b + *c + *d < target) {
+                        ++c;
+                    } else if (*a + *b + *c + *d > target) {
+                        --d;
+                    } else {
+                        result.push_back({ *a, *b, *c, *d });
+                        ++c;
+                        --d;
+                    }
+                }
+            }
+        }
+        sort(result.begin(), result.end());
+        result.erase(unique(result.begin(), result.end()), result.end());
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{map做缓存}
+\begin{Code}
+// LeetCode, 4Sum
+// 用一个hashmap先缓存两个数的和
+// 时间复杂度，平均O(n^2)，最坏O(n^4)，空间复杂度O(n^2)
+class Solution {
+public:
+    vector<vector<int> > fourSum(vector<int> &num, int target) {
+        vector<vector<int>> result;
+        if (num.size() < 4) return result;
+        sort(num.begin(), num.end());
+
+        unordered_map<int, vector<pair<int, int> > > cache;
+        for (size_t a = 0; a < num.size(); ++a) {
+            for (size_t b = a + 1; b < num.size(); ++b) {
+                cache[num[a] + num[b]].push_back(pair<int, int>(a, b));
+            }
+        }
+
+        for (int c = 0; c < num.size(); ++c) {
+            for (size_t d = c + 1; d < num.size(); ++d) {
+                const int key = target - num[c] - num[d];
+                if (cache.find(key) == cache.end()) continue;
+
+                const auto& vec = cache[key];
+                for (size_t k = 0; k < vec.size(); ++k) {
+                    if (c <= vec[k].second)
+                        continue; // 有重叠
+
+                    result.push_back( { num[vec[k].first],
+                            num[vec[k].second], num[c], num[d] });
+                }
+            }
+        }
+        sort(result.begin(), result.end());
+        result.erase(unique(result.begin(), result.end()), result.end());
+        return vector<vector<int> >(result.begin(), result.end());
+    }
+};
+\end{Code}
+
+
+\subsubsection{方法3}
+\begin{Code}
+// LeetCode, 4Sum
+// 先排序，然后左右夹逼，时间复杂度O(n^3logn)，空间复杂度O(1)，会超时
+// 跟方法1相比，表面上优化了，实际上更慢了，切记！
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& num, int target) {
@@ -624,54 +731,22 @@ public:
                 a = upper_bound(a, prev(last, 3), *a)) {
             for (auto b = next(a); b < prev(last, 2);
                     b = upper_bound(b, prev(last, 2), *b)) {
-                for (auto c = next(b); c < prev(last);
-                        c = upper_bound(c, prev(last), *c)) {
-                    const int d = target - *a - *b - *c;
-
-                    if (binary_search(next(c), last, d))
-                        result.push_back(vector<int> { *a, *b, *c, d });
-                }
-            }
-        }
-
-        return result;
-    }
-};
-\end{Code}
-
-
-\subsubsection{map做缓存}
-\begin{Code}
-// LeetCode, 4Sum
-// 先缓存两个数的和，时间复杂度O(n^3)，空间复杂度O(n^2)
-class Solution {
-public:
-    vector<vector<int> > fourSum(vector<int> &num, int target) {
-        if (num.size() < 4) return  vector<vector<int> >();
-        sort(num.begin(), num.end());
-
-        map<int, vector<pair<int, int> > > cache;
-        for (size_t a = 0; a < num.size(); ++a) {
-            for (size_t b = a + 1; b < num.size(); ++b) {
-                cache[num[a] + num[b]].push_back(pair<int, int>(a, b));
-            }
-        }
-
-        set<vector<int>> result; // 去重，因为 num 里有重复元素
-        for (size_t c = 2; c < num.size(); ++c) {
-            for (size_t d = c + 1; d < num.size(); ++d) {
-                const int key = target - num[c] - num[d];
-                if (cache.find(key) != cache.end()) {
-                    for (size_t k = 0; k < cache[key].size(); ++k) {
-                        if (c <= cache[key][k].second) continue; // 有重叠
-
-                        result.insert(vector<int> { num[cache[key][k].first],
-                            num[cache[key][k].second], num[c], num[d] });
+                auto c = next(b);
+                auto d = prev(last);
+                while (c < d) {
+                    if (*a + *b + *c + *d < target) {
+                        c = upper_bound(c, d, *c);
+                    } else if (*a + *b + *c + *d > target) {
+                        d = prev(lower_bound(c, d, *d));
+                    } else {
+                        result.push_back({ *a, *b, *c, *d });
+                        c = upper_bound(c, d, *c);
+                        d = prev(lower_bound(c, d, *d));
                     }
                 }
             }
         }
-        return vector<vector<int> >(result.begin(), result.end());
+        return result;
     }
 };
 \end{Code}
@@ -679,6 +754,7 @@ public:
 
 \subsubsection{相关题目}
 \begindot
+\item Two sum, 见 \S \ref{sec:Two-sum}
 \item 3Sum, 见 \S \ref{sec:3sum}
 \item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
 \myenddot

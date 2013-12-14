@@ -108,62 +108,6 @@ public:
 \myenddot
 
 
-\section{Two Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:wordladder}
-
-
-\subsubsection{描述}
-Given an array of integers, find two numbers such that they add up to a specific target number.
-
-The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
-
-You may assume that each input would have exactly one solution.
-
-Input:  \code{numbers=\{2, 7, 11, 15\}, target=9}
-
-Output: \code{index1=1, index2=2}
-
-
-\subsubsection{分析}
-方法1：暴力，复杂度$O(n^2)$，会超时
-
-方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度$O(n)$
-
-
-\subsubsection{代码}
-\begin{Code}
-//LeetCode, Two Sum
-// 方法2：hash。用一个哈希表，存储每个数对应的下标
-// 时间复杂度O(n)，空间复杂度O(n)
-class Solution {
-public:
-    vector<int> twoSum(vector<int> &numbers, int target) {
-        unordered_map<int, int> mapping;
-        vector<int> result;
-        for (int i = 0; i < numbers.size(); i++) {
-            mapping[numbers[i]] = i;
-        }
-        for (int i = 0; i < numbers.size(); i++) {
-            const int gap = target - numbers[i];
-            if (mapping.find(gap) != mapping.end()) {
-                result.push_back(i + 1);
-                result.push_back(mapping[gap] + 1);
-                break;
-            }
-        }
-        return result;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相关题目}
-
-\begindot
-\item 无
-\myenddot
-
-
 \section{Insert Interval} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:insert-interval}
 
