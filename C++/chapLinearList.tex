@@ -249,12 +249,12 @@ public:
                 else
                     first = mid + 1;
             } else if (A[first] > A[mid]) {
-                if (A[mid] <= target && target <= A[last-1])
+                if (A[mid] < target && target <= A[last-1])
                     first = mid + 1;
                 else
                     last = mid;
             } else
-                //skip duplicate one, A[start] == A[mid]
+                //skip duplicate one
                 first++;
         }
         return false;
@@ -320,23 +320,23 @@ public:
             return find_kth(A, m, B, n, total / 2 + 1);
         else
             return (find_kth(A, m, B, n, total / 2)
-                    + find_kth(A, m, B, n, total / 2 + 1)) / 2;
+                    + find_kth(A, m, B, n, total / 2 + 1)) / 2.0;
     }
 private:
-    static double find_kth(int A[], int m, int B[], int n, int k) {
+    static int find_kth(int A[], int m, int B[], int n, int k) {
         //always assume that m is equal or smaller than n
         if (m > n) return find_kth(B, n, A, m, k);
         if (m == 0) return B[k - 1];
         if (k == 1) return min(A[0], B[0]);
 
         //divide k into two parts
-        int pa = min(k / 2, m), pb = k - pa;
-        if (A[pa - 1] < B[pb - 1])
-            return find_kth(A + pa, m - pa, B, n, k - pa);
-        else if (A[pa - 1] > B[pb - 1])
-            return find_kth(A, m, B + pb, n - pb, k - pb);
+        int ia = min(k / 2, m), ib = k - ia;
+        if (A[ia - 1] < B[ib - 1])
+            return find_kth(A + ia, m - ia, B, n, k - ia);
+        else if (A[ia - 1] > B[ib - 1])
+            return find_kth(A, m, B + ib, n - ib, k - ib);
         else
-            return A[pa - 1];
+            return A[ia - 1];
     }
 };
 \end{Code}
@@ -377,7 +377,7 @@ Your algorithm should run in $O(n)$ complexity.
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int longestConsecutive(vector<int> const& num) {
+    int longestConsecutive(const vector<int> &num) {
         unordered_map<int, bool> used;
 
         for (auto i : num) used[i] = false;
@@ -708,13 +708,54 @@ public:
         }
         sort(result.begin(), result.end());
         result.erase(unique(result.begin(), result.end()), result.end());
-        return vector<vector<int> >(result.begin(), result.end());
+        return result;
     }
 };
 \end{Code}
 
 
-\subsubsection{方法3}
+\subsubsection{multimap}
+\begin{Code}
+// LeetCode, 4Sum
+// 用一个 hashmap 先缓存两个数的和
+// 时间复杂度O(n^2)，空间复杂度O(n^2)
+// @author 龚陆安(http://weibo.com/luangong)
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& num, int target) {
+        vector<vector<int>> result;
+        if (num.size() < 4) return result;
+        sort(num.begin(), num.end());
+
+        unordered_multimap<int, pair<int, int>> cache;
+        for (int i = 0; i + 1 < num.size(); ++i)
+            for (int j = i + 1; j < num.size(); ++j)
+                cache.insert(make_pair(num[i] + num[j], make_pair(i, j)));
+
+        for (auto i = cache.begin(); i != cache.end(); ++i) {
+            int x = target - i->first;
+            auto range = cache.equal_range(x);
+            for (auto j = range.first; j != range.second; ++j) {
+                auto a = i->second.first;
+                auto b = i->second.second;
+                auto c = j->second.first;
+                auto d = j->second.second;
+                if (a != c && a != d && b != c && b != d) {
+                    vector<int> vec = { num[a], num[b], num[c], num[d] };
+                    sort(vec.begin(), vec.end());
+                    result.push_back(vec);
+                }
+            }
+        }
+        sort(result.begin(), result.end());
+        result.erase(unique(result.begin(), result.end()), result.end());
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{方法4}
 \begin{Code}
 // LeetCode, 4Sum
 // 先排序，然后左右夹逼，时间复杂度O(n^3logn)，空间复杂度O(1)，会超时
@@ -861,7 +902,7 @@ public:
 
         // Find `pivot`, which is the first element that is no less than its
         // successor.  `Prev` is used since `pivort` is a `reversed_iterator`.
-        while (pivot != rlast and !(*pivot < *prev(pivot)))
+        while (pivot != rlast && *pivot >= *prev(pivot))
             ++pivot;
 
         // No such elemenet found, current sequence is already the largest
@@ -931,7 +972,7 @@ $a_2, a_3, ..., a_n$, 共计$n-1$个元素，$n-1$个元素共有$(n-1)!$个排�
 \begin{eqnarray}
 k_2 &=& k\%(n-1)! \nonumber \\
 a_2 &=& k_2/(n-2)! \nonumber \\
-... &=& ... \nonumber \\
+\quad & \cdots \nonumber \\
 k_{n-1} &=& k_{n-2}\%2! \nonumber \\
 a_{n-1} &=& k_{n-1}/1! \nonumber \\
 a_n &=& 0 \nonumber
@@ -994,9 +1035,9 @@ private:
         --k;  // 康托编码从0开始
 
         for (int i = n - 1; i > 0; k %= base, base /= i, --i) {
-            auto pos = next(S.begin(), k / base);
-            result.push_back(*pos);
-            S.erase(pos);
+            auto a = next(S.begin(), k / base);
+            result.push_back(*a);
+            S.erase(a);
         }
 
         result.push_back(S[0]); // 最后一个
@@ -1039,7 +1080,7 @@ The Sudoku board could be partially filled, where empty cells are filled with th
 // 时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
-    bool isValidSudoku(vector<vector<char>>& board) {
+    bool isValidSudoku(const vector<vector<char>>& board) {
         bool used[9];
 
         for (int i = 0; i < 9; ++i) {
@@ -1074,8 +1115,7 @@ public:
 
         if (used[ch - '1']) return false;
 
-        used[ch - '1'] = true;
-        return true;
+        return used[ch - '1'] = true;
     }
 };
 \end{Code}
@@ -1318,15 +1358,15 @@ public:
 private:
     // 0 <= digit <= 9
     void add(vector<int> &digits, int digit) {
-        int carry = digit;
+        int c = digit;  // carry, 进位
 
         for (auto it = digits.rbegin(); it != digits.rend(); ++it) {
-            *it += carry;
-            carry = *it / 10;
+            *it += c;
+            c = *it / 10;
             *it %= 10;
         }
 
-        if (carry > 0) digits.insert(digits.begin(), 1);
+        if (c > 0) digits.insert(digits.begin(), 1);
     }
 };
 \end{Code}
@@ -1345,15 +1385,15 @@ public:
 private:
     // 0 <= digit <= 9
     void add(vector<int> &digits, int digit) {
-        int carry = digit;
+        int c = digit;  // carry, 进位
 
-        for_each(digits.rbegin(), digits.rend(), [&carry](int &d){
-            d += carry;
-            carry = d / 10;
+        for_each(digits.rbegin(), digits.rend(), [&c](int &d){
+            d += c;
+            c = d / 10;
             d %= 10;
         });
 
-        if (carry > 0) digits.insert(digits.begin(), 1);
+        if (c > 0) digits.insert(digits.begin(), 1);
     }
 };
 \end{Code}
@@ -1385,6 +1425,10 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 
 这是一个斐波那契数列。
 
+方法1，递归，太慢；方法2，迭代。
+
+方法3，数学公式。斐波那契数列的通项公式为 $a_n=\dfrac{1}{\sqrt{5}}\left[\left(\dfrac{1+\sqrt{5}}{2}\right)^n-\left(\dfrac{1-\sqrt{5}}{2}\right)^n\right]$。
+
 
 \subsubsection{迭代}
 \begin{Code}
@@ -1397,7 +1441,7 @@ public:
         int cur = 1;
         for(int i = 1; i <= n ; ++i){
             int tmp = cur;
-            cur = prev + cur;
+            cur += prev;
             prev = tmp;
         }
         return cur;
@@ -1413,7 +1457,7 @@ public:
 class Solution {
     public:
     int climbStairs(int n) {
-        double s = sqrt(5);
+        const double s = sqrt(5);
         return floor((pow((1+s)/2, n+1) + pow((1-s)/2, n+1))/s + 0.5);
     }
 };
@@ -1452,7 +1496,7 @@ Note:
 
 
 \subsubsection{分析}
-格雷码(Gray Code)的定义请参考 wikipedia \myurl{http://en.wikipedia.org/wiki/Gray_code}。
+格雷码(Gray Code)的定义请参考 \myurl{http://en.wikipedia.org/wiki/Gray_code}。
 
 \textbf{自然二进制码转换为格雷码：$g_0=b_0, g_i=b_i \oplus b_{i-1}$}
 
@@ -1466,9 +1510,9 @@ Note:
 
 这题要求生成$n$比特的所有格雷码。
 
-最简单的方法，利用数学公式，对从 $0\sim2^n-1$的所有整数，转化为格雷码。
+方法1，最简单的方法，利用数学公式，对从 $0\sim2^n-1$的所有整数，转化为格雷码。
 
-$n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图\S \ref{fig:gray-code-construction}所示。
+方法2，$n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图\S \ref{fig:gray-code-construction}所示。
 
 \begin{center}
 \includegraphics[width=160pt]{gray-code-construction.png}\\
@@ -1494,11 +1538,6 @@ private:
     static unsigned int binary_to_gray(unsigned int n) {
         return n ^ (n >> 1);
     }
-    static unsigned int gray_to_binary(unsigned int g) {
-        for (unsigned int mask = g >> 1; mask != 0; mask = mask >> 1)
-            g = g ^ mask;
-        return g;
-    }
 };
 \end{Code}
 
@@ -1512,6 +1551,7 @@ class Solution {
 public:
     vector<int> grayCode(int n) {
         vector<int> result;
+        result.reserve(1<<n);
         result.push_back(0);
         for (int i = 0; i < n; i++) {
             const int highest_bit = 1 << i;
@@ -1548,7 +1588,7 @@ Could you devise a constant space solution?
 
 
 \subsubsection{分析}
-$O(m+n)$空间的方法很简单，设置两个数组，记录每行和每列是否存在0。
+$O(m+n)$空间的方法很简单，设置两个bool数组，记录每行和每列是否存在0。
 
 想要常数空间，可以复用第一行和第一列。
 
@@ -1718,26 +1758,24 @@ class Solution {
 public:
     int candy(vector<int> &ratings) {
         const int n = ratings.size();
-        int result = n;
         vector<int> increment(n);
 
         // 左右各扫描一遍
-        for (int i = 1, inc = 1; i < n; i++)
+        for (int i = 1, inc = 1; i < n; i++) {
             if (ratings[i] > ratings[i - 1])
                 increment[i] = max(inc++, increment[i]);
             else
                 inc = 1;
+        }
 
-        for (int i = n - 2, inc = 1; i >= 0; i--)
+        for (int i = n - 2, inc = 1; i >= 0; i--) {
             if (ratings[i] > ratings[i + 1])
                 increment[i] = max(inc++, increment[i]);
             else
                 inc = 1;
-
-        for (int i = 0; i < n; i++)
-            result += increment[i];
-
-        return result;
+        }
+        // 初始值为n，因为每个小朋友至少一颗糖
+        return accumulate(&increment[0], &increment[0]+n, n);
     }
 };
 \end{Code}
@@ -1792,17 +1830,30 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 异或，不仅能处理两次的情况，只要出现偶数次，都可以清零。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, Single Number
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
     int singleNumber(int A[], int n) {
-        int x = A[0];
-        for (size_t i = 1; i < n; ++i)
+        int x = 0;
+        for (size_t i = 0; i < n; ++i)
             x ^= A[i];
         return x;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
+\begin{Code}
+// LeetCode, Single Number
+// 时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    int singleNumber(int A[], int n) {
+        return accumulate(A, A + n, 0, bit_xor<int>());
     }
 };
 \end{Code}
@@ -1828,9 +1879,9 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 \subsubsection{分析}
 本题和上一题 Single Number，考察的是位运算。
 
-方法1：创建一个长度为\fn{sizeof(int)}的数组\fn{count[sizeof(int)]}，\fn{count[i]}表示所有元素的1在$i$位出现的次数。如果\fn{count[i]}是3的整数倍，则忽略；否则就把该位取出来组成答案。
+方法1：创建一个长度为\fn{sizeof(int)}的数组\fn{count[sizeof(int)]}，\fn{count[i]}表示在在$i$位出现的1的次数。如果\fn{count[i]}是3的整数倍，则忽略；否则就把该位取出来组成答案。
 
-方法2：用\fn{ones}记录到当前处理的元素为止，二进制1出现“1次”（mod 3 之后的 1）的有哪些二进制位；用\fn{twos}记录到当前计算的变量为止，二进制1出现“2次”（mod 3 之后的 2）的有哪些二进制位。当\fn{ones}和\fn{twos}中的某一位同时为1时表示该二进制位上1出现了3次，此时需要清零。即\textbf{用二进制模拟三进制运算}。最终\fn{ones}记录的是最终结果。
+方法2：用\fn{one}记录到当前处理的元素为止，二进制1出现“1次”（mod 3 之后的 1）的有哪些二进制位；用\fn{two}记录到当前计算的变量为止，二进制1出现“2次”（mod 3 之后的 2）的有哪些二进制位。当\fn{one}和\fn{two}中的某一位同时为1时表示该二进制位上1出现了3次，此时需要清零。即\textbf{用二进制模拟三进制运算}。最终\fn{one}记录的是最终结果。
 
 \subsubsection{代码1}
 \begin{Code}
@@ -1839,8 +1890,8 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 class Solution {
 public:
     int singleNumber(int A[], int n) {
-        const int W = sizeof(int) * 8; // 整数字长
-        int count[W];  // 每个位上1出现的次数
+        const int W = sizeof(int) * 8; // 一个整数的bit数，即整数字长
+        int count[W];  // count[i]表示在在i位出现的1的次数
         fill_n(&count[0], W, 0);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < W; j++) {
@@ -1865,16 +1916,16 @@ public:
 class Solution {
 public:
     int singleNumber(int A[], int n) {
-        int ones = 0, twos = 0, threes = 0;
+        int one = 0, two = 0, three = 0;
         for (int i = 0; i < n; ++i) {
-            twos |= (ones & A[i]);
-            ones ^= A[i];
-            threes = ~(ones & twos);
-            ones &= threes;
-            twos &= threes;
+            two |= (one & A[i]);
+            one ^= A[i];
+            three = ~(one & two);
+            one &= three;
+            two &= three;
         }
 
-        return ones;
+        return one;
     }
 };
 \end{Code}
@@ -1923,9 +1974,9 @@ Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
 class Solution {
 public:
     ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-        ListNode head(-1); // 头节点
+        ListNode dummy(-1); // 头节点
         int carry = 0;
-        ListNode *prev = &head;
+        ListNode *prev = &dummy;
         for (ListNode *pa = l1, *pb = l2;
              pa != nullptr || pb != nullptr;
              pa = pa == nullptr ? nullptr : pa->next,
@@ -1939,7 +1990,7 @@ public:
         }
         if (carry > 0)
             prev->next = new ListNode(carry);
-        return head.next;
+        return dummy.next;
     }
 };
 \end{Code}
@@ -1983,19 +2034,18 @@ public:
         ListNode dummy(-1);
         dummy.next = head;
 
-        ListNode *prev_m, *prev = &dummy;
-        for (int i = 1; i <= n; ++i) {
-            if (i == m) prev_m = prev;
+        ListNode *prev = &dummy;
+        for (int i = 0; i < m-1; ++i)
+            prev = prev->next;
+        ListNode* const head2 = prev;
 
-            if (i > m && i <= n) { // prev_m 和 prev 静止不动
-                prev->next = head->next;
-                head->next = prev_m->next;
-                prev_m->next = head;
-                head = prev;
-            }
-
-            prev = head;
-            head = head->next;
+        prev = head2->next;
+        ListNode *cur = prev->next;
+        for (int i = m; i < n; ++i) {
+            prev->next = cur->next;
+            cur->next = head2->next;
+            head2->next = cur;  // 头插法
+            cur = prev->next;
         }
 
         return dummy.next;
@@ -2035,21 +2085,19 @@ Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->4->3->5}.
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
-        if (head == nullptr) return head;
-
-        ListNode left_dummy(0); // 头结点
-        ListNode right_dummy(0); // 头结点
+        ListNode left_dummy(-1); // 头结点
+        ListNode right_dummy(-1); // 头结点
 
         auto left_cur = &left_dummy;
         auto right_cur = &right_dummy;
 
-        for (; head; head = head->next) {
-            if (head->val < x) {
-                left_cur->next = head;
-                left_cur = head;
+        for (ListNode *cur = head; cur; cur = cur->next) {
+            if (cur->val < x) {
+                left_cur->next = cur;
+                left_cur = cur;
             } else {
-                right_cur->next = head;
-                right_cur = head;
+                right_cur->next = cur;
+                right_cur = cur;
             }
         }
 
@@ -2095,7 +2143,8 @@ class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
         if (!head) return head;
-        ListNode dummy{head->val + 1, head}; // 值只要跟head不同即可
+        ListNode dummy(head->val + 1); // 值只要跟head不同即可
+        dummy.next = head;
 
         recur(&dummy, head);
         return dummy.next;
@@ -2531,8 +2580,6 @@ Return a deep copy of the list.
 class Solution {
 public:
     RandomListNode *copyRandomList(RandomListNode *head) {
-        if (head == nullptr) return nullptr;
-
         for (RandomListNode* cur = head; cur != nullptr; ) {
             RandomListNode* node = new RandomListNode(cur->label);
             node->next = cur->next;
@@ -2547,15 +2594,15 @@ public:
         }
 
         // 分拆两个单链表
-        RandomListNode new_head(-1);
-        for (RandomListNode* cur = head, *new_cur = &new_head;
+        RandomListNode dummy(-1);
+        for (RandomListNode* cur = head, *new_cur = &dummy;
                 cur != nullptr; ) {
             new_cur->next = cur->next;
             new_cur = new_cur->next;
             cur->next = cur->next->next;
             cur = cur->next;
         }
-        return new_head.next;
+        return dummy.next;
     }
 };
 \end{Code}
