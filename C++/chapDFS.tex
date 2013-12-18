@@ -23,7 +23,7 @@ Return
 \subsubsection{分析}
 在每一步都可以判断中间结果是否为合法结果，用回溯法。
 
-一个长度为n的字符串，有n+1个地方可以砍断，每个地方可断可不断，前后两个隔板默认已经使用，因此复杂度为$O(2^{n-1})$
+一个长度为n的字符串，有$n-1$个地方可以砍断，每个地方可断可不断，因此复杂度为$O(2^{n-1})$
 
 
 \subsubsection{深搜1}
@@ -34,40 +34,40 @@ class Solution {
 public:
     vector<vector<string>> partition(string s) {
         vector<vector<string>> result;
-        vector<string> output;  // 一个partition方案
-        DFS(s, 0, 1, output, result);
+        vector<string> path;  // 一个partition方案
+        dfs(s, path, result, 0, 1);
         return result;
     }
 
     // s[0, prev-1]之间已经处理，保证是回文串
     // prev 表示s[prev-1]与s[prev]之间的空隙位置，start同理
-    void DFS(string &s, size_t prev, size_t start, vector<string>& output,
-            vector<vector<string>> &result) {
+    void dfs(string &s, vector<string>& path,
+            vector<vector<string>> &result, size_t prev, size_t start) {
         if (start == s.size()) { // 最后一个隔板
             if (isPalindrome(s, prev, start - 1)) { // 必须使用
-                output.push_back(s.substr(prev, start - prev));
-                result.push_back(output);
-                output.pop_back();
+                path.push_back(s.substr(prev, start - prev));
+                result.push_back(path);
+                path.pop_back();
             }
             return;
         }
         // 不断开
-        DFS(s, prev, start + 1, output, result);
+        dfs(s, path, result, prev, start + 1);
         // 如果[prev, start-1] 是回文，则可以断开，也可以不断开（上一行已经做了）
         if (isPalindrome(s, prev, start - 1)) {
-            // 不断开，if 上一行已经做了
             // 断开
-            output.push_back(s.substr(prev, start - prev));
-            DFS(s, start, start + 1, output, result);
-            output.pop_back();
+            path.push_back(s.substr(prev, start - prev));
+            dfs(s, path, result, start, start + 1);
+            path.pop_back();
         }
     }
 
-    bool isPalindrome(string &s, int start, int end) {
-        while (start < end) {
-            if (s[start++] != s[end--]) return false;
+    bool isPalindrome(const string &s, int start, int end) {
+        while (s[start] == s[end]) {
+            ++start;
+            --end;
         }
-        return true;
+        return start >= end;
     }
 };
 \end{Code}
@@ -81,32 +81,31 @@ class Solution {
 public:
     vector<vector<string>> partition(string s) {
         vector<vector<string>> result;
-        vector<string> output;  // 一个partition方案
-        DFS(s, 0, output, result);
+        vector<string> path;  // 一个partition方案
+        DFS(s, path, result, 0);
         return result;
     }
     // 搜索必须以s[start]开头的partition方案
-    void DFS(string &s, int start, vector<string>& output,
-            vector<vector<string>> &result) {
+    void DFS(string &s, vector<string>& path,
+            vector<vector<string>> &result, int start) {
         if (start == s.size()) {
-            result.push_back(output);
+            result.push_back(path);
             return;
         }
         for (int i = start; i < s.size(); i++) {
             if (isPalindrome(s, start, i)) { // 从i位置砍一刀
-                output.push_back(s.substr(start, i - start + 1));
-                DFS(s, i + 1, output, result);  // 继续往下砍
-                output.pop_back(); // 撤销上一个push_back的砍
+                path.push_back(s.substr(start, i - start + 1));
+                DFS(s, path, result, i + 1);  // 继续往下砍
+                path.pop_back(); // 撤销上上行
             }
         }
     }
-    bool isPalindrome(string &s, int start, int end) {
-        while (start < end) {
-            if (s[start] != s[end]) return false;
-            start++;
-            end--;
+    bool isPalindrome(const string &s, int start, int end) {
+        while (s[start] == s[end]) {
+            ++start;
+            --end;
         }
-        return true;
+        return start >= end;
     }
 };
 \end{Code}
@@ -452,22 +451,21 @@ class Solution {
 public:
     vector<vector<string> > solveNQueens(int n) {
         this->columns = vector<int>(n, 0);
-        this->principal_diagonals = vector<int>(2 * n, 0);
-        this->counter_diagonals = vector<int>(2 * n, 0);
+        this->main_diag = vector<int>(2 * n, 0);
+        this->anti_diag = vector<int>(2 * n, 0);
 
         vector<vector<string> > result;
         vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
-        dfs(0, C, result);
+        dfs(C, result, 0);
         return result;
     }
 private:
     // 这三个变量用于剪枝
     vector<int> columns;  // 表示已经放置的皇后占据了哪些列
-    vector<int> principal_diagonals;  // 占据了哪些主对角线
-    vector<int> counter_diagonals;  // 占据了哪些副对角线
+    vector<int> main_diag;  // 占据了哪些主对角线
+    vector<int> anti_diag;  // 占据了哪些副对角线
 
-    void dfs(int row, vector<int> &C,
-            vector<vector<string> > &result) {
+    void dfs(vector<int> &C, vector<vector<string> > &result, int row) {
         const int N = C.size();
         if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
             vector<string> solution;
@@ -483,20 +481,16 @@ private:
         }
 
         for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
-            const bool ok = columns[j] == 0 &&
-                    principal_diagonals[row + j] == 0
-                    && counter_diagonals[row - j + N] == 0;
-            if (ok) {  // 剪枝：如果合法，继续递归
-                // 执行扩展动作
-                C[row] = j;
-                columns[j] = principal_diagonals[row + j] =
-                        counter_diagonals[row - j + N] = 1;
-                dfs(row + 1, C, result);
-                // 撤销动作
-                // C[row] = 0;
-                columns[j] = principal_diagonals[row + j] =
-                        counter_diagonals[row - j + N] = 0;
-            }
+            const bool ok = columns[j] == 0 && main_diag[row + j] == 0 &&
+                    anti_diag[row - j + N] == 0;
+            if (！ok) continue;  // 剪枝：如果合法，继续递归
+            // 执行扩展动作
+            C[row] = j;
+            columns[j] = main_diag[row + j] = anti_diag[row - j + N] = 1;
+            dfs(C, result, row + 1);
+            // 撤销动作
+            // C[row] = 0;
+            columns[j] = main_diag[row + j] = anti_diag[row - j + N] = 0;
         }
     }
 };
@@ -533,42 +527,41 @@ public:
     int totalNQueens(int n) {
         this->count = 0;
         this->columns = vector<int>(n, 0);
-        this->principal_diagonals = vector<int>(2 * n, 0);
-        this->counter_diagonals = vector<int>(2 * n, 0);
+        this->main_diag = vector<int>(2 * n, 0);
+        this->anti_diag = vector<int>(2 * n, 0);
 
         vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
-        dfs(0, C);
+        dfs(C, 0);
         return this->count;
     }
 private:
     int count; // 解的个数
     // 这三个变量用于剪枝
     vector<int> columns;  // 表示已经放置的皇后占据了哪些列
-    vector<int> principal_diagonals;  // 占据了哪些主对角线
-    vector<int> counter_diagonals;  // 占据了哪些副对角线
+    vector<int> main_diag;  // 占据了哪些主对角线
+    vector<int> anti_diag;  // 占据了哪些副对角线
 
-    void dfs(int row, vector<int> &C) {
+    void dfs(vector<int> &C, int row) {
         const int N = C.size();
         if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
-            this->count++;
+            ++this->count;
             return;
         }
 
         for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
             const bool ok = columns[j] == 0 &&
-                    principal_diagonals[row + j] == 0
-                    && counter_diagonals[row - j + N] == 0;
-            if (ok) {  // 剪枝：如果合法，继续递归
-                // 执行扩展动作
-                C[row] = j;
-                columns[j] = principal_diagonals[row + j] =
-                        counter_diagonals[row - j + N] = 1;
-                dfs(row + 1, C);
-                // 撤销动作
-                // C[row] = 0;
-                columns[j] = principal_diagonals[row + j] =
-                        counter_diagonals[row - j + N] = 0;
-            }
+                    main_diag[row + j] == 0 &&
+                    anti_diag[row - j + N] == 0;
+            if (!ok) continue;  // 剪枝：如果合法，继续递归
+            // 执行扩展动作
+            C[row] = j;
+            columns[j] = main_diag[row + j] =
+                    anti_diag[row - j + N] = 1;
+            dfs(C, row + 1);
+            // 撤销动作
+            // C[row] = 0;
+            columns[j] = main_diag[row + j] =
+                    anti_diag[row - j + N] = 0;
         }
     }
 };
@@ -1036,8 +1029,8 @@ private:
 \begin{enumerate}
 \item 是求路径条数，还是路径本身（或动作序列）？深搜最常见的三个问题，求可行解的总数，求一个可行解，求所有可行解。
     \begin{enumerate}
+	\item 如果是路径条数，则不需要存储路径。
     \item 如果是求路径本身，则要用一个数组\fn{path[]}存储路径。跟宽搜不同，宽搜虽然最终求的也是一条路径，但是需要存储扩展过程中的所有路径，在没找到答案之前所有路径都不能放弃；而深搜，在搜索过程中始终只有一条路径，因此用一个数组就足够了。
-    \item 如果是路径条数，则不需要存储路径。
     \end{enumerate}
 
 \item 只要求一个解，还是要求所有解？如果只要求一个解，那找到一个就可以返回；如果要求所有解，找到了一个后，还要继续扩展，直到遍历完。广搜一般只要求一个解，因而不需要考虑这个问题（广搜当然也可以求所有解，这时需要扩展到所有叶子节点，相当于在内存中存储整个状态转换图，非常占内存，因此广搜不适合解这类问题）。
@@ -1048,8 +1041,8 @@ private:
 
 \item 关于判重
     \begin{enumerate}
-    \item 如果状态转换图是一棵树，则不需要判重，因为在遍历过程中不可能重复。
-    \item 如果状态转换图是一个图，则需要判重，方法跟广搜相同，见第 \S \ref{sec:bfs-template} 节。这里跟第8步中的加缓存是相同的，如果有重叠子问题，则需要判重，此时加缓存自然也是有效果的。
+    \item 是否需要判重？如果状态转换图是一棵树，则不需要判重，因为在遍历过程中不可能重复；如果状态转换图是一个DAG，则需要判重。这一点跟BFS不一样，BFS的状态转换图总是DAG，必须要判重。
+    \item 怎样判重？跟广搜相同，见第 \S \ref{sec:bfs-template} 节。同时，DAG说明存在重叠子问题，此时可以用缓存加速，见第8步。
     \end{enumerate}
 
 \item 终止条件是什么？终止条件是指到了不能扩展的末端节点。对于树，是叶子节点，对于图或隐式图，是出度为0的节点。
@@ -1063,16 +1056,16 @@ private:
 \item 如何加速？
     \begin{enumerate}
     \item 剪枝。深搜一定要好好考虑怎么剪枝，成本小收益大，加几行代码，就能大大加速。这里没有通用方法，只能具体问题具体分析，要充分观察，充分利用各种信息来剪枝，在中间节点提前返回。
-    \item 缓存。如果子问题的解会被重复利用，可以考虑使用缓存。
+    \item 缓存。
         \begin{enumerate}
-            \item 前提条件：子问题的解会被重复利用，即子问题之间的依赖关系是有向无环图(DAG)。如果依赖关系是树状的（例如树，单链表），没必要加缓存，因为子问题只会一层层往下，用一次就再也不会用到，加了缓存也没什么加速效果。
+            \item 前提条件：状态转换图是一个DAG。DAG=>存在重叠子问题=>子问题的解会被重复利用，用缓存自然会有加速效果。如果依赖关系是树状的（例如树，单链表等），没必要加缓存，因为子问题只会一层层往下，用一次就再也不会用到，加了缓存也没什么加速效果。
             \item 具体实现：可以用数组或HashMap。维度简单的，用数组；维度复杂的，用HashMap，C++有\fn{map}，C++ 11以后有\fn{unordered_map}，比\fn{map}快。
         \end{enumerate}
     
     \end{enumerate}
 \end{enumerate}
 
-拿到一个题目，当感觉它适合用深搜解决时，在心里面把上面8个问题默默回答一遍，代码基本上就能写出来了。对于树，不需要回答第5和第8个问题。如果读者对上面的经验总结看不懂或感觉“不实用”，很正常，因为这些经验总结是笔者做了很多深搜题后总结出来的，从思维的发展过程看，“经验总结”要晚于感性认识，所以这时候建议读者先做做后面的题目，积累一定的感性认识后，在回过头来看这一节的总结，相信会和笔者有共鸣。
+拿到一个题目，当感觉它适合用深搜解决时，在心里面把上面8个问题默默回答一遍，代码基本上就能写出来了。对于树，不需要回答第5和第8个问题。如果读者对上面的经验总结看不懂或感觉“不实用”，很正常，因为这些经验总结是我做了很多题目后总结出来的，从思维的发展过程看，“经验总结”要晚于感性认识，所以这时候建议读者先做做前面的题目，积累一定的感性认识后，再回过头来看这一节的总结，一定会有共鸣。
 
 
 \subsection{代码模板}
@@ -1081,14 +1074,15 @@ private:
 /**
  * dfs模板.
  * @param[in] input 输入数据指针
- * @param[inout] cur or gap 标记当前位置或距离目标的距离
  * @param[out] path 当前路径，也是中间结果
  * @param[out] result 存放最终结果
+ * @param[inout] cur or gap 标记当前位置或距离目标的距离
  * @return 路径长度，如果是求路径本身，则不需要返回长度
  */
-void dfs(type *input, type *path, int cur or gap, type *result) {
+void dfs(type &input, type &path, type &result, int cur or gap) {
     if (数据非法) return 0;   // 终止条件
-    if (cur == input.size( or gap == 0)) { // 收敛条件
+    if (cur == input.size()) { // 收敛条件
+    // if (gap == 0) {
         将path放入result
     }
 
@@ -1120,10 +1114,10 @@ void dfs(type *input, type *path, int cur or gap, type *result) {
 
 深搜，是逻辑意义上的算法，递归，是一种物理意义上的实现，它和迭代(iteration)是对应的。深搜，可以用递归来实现，也可以用栈来实现；而递归，一般总是用来实现深搜。可以说，\textbf{递归一定是深搜，深搜不一定用递归}。
 
-递归有两种加速策略，一种是\textbf{剪枝(prunning)}，对中间结果进行判断，提前返回；一种是\textbf{加缓存}（就变成了memoization，备忘录法），缓存中间结果，防止重复计算，用空间换时间。
+递归有两种加速策略，一种是\textbf{剪枝(prunning)}，对中间结果进行判断，提前返回；一种是\textbf{缓存}，缓存中间结果，防止重复计算，用空间换时间。
 
-其实，递归+缓存，就是一种 memorization 。所谓\textbf{memorization}（翻译为备忘录法，见第 \S \ref{sec:dp-vs-memorization}节），就是"top-down with cache"（自顶向下+缓存），它是Donald Michie 在1968年创造的术语，表示一种优化技术，在top-down 形式的程序中，使用缓存来避免重复计算，从而达到加速的目的。
+其实，递归+缓存，就是 memorization。所谓\textbf{memorization}（翻译为备忘录法，见第 \S \ref{sec:dp-vs-memorization}节），就是"top-down with cache"（自顶向下+缓存），它是Donald Michie 在1968年创造的术语，表示一种优化技术，在top-down 形式的程序中，使用缓存来避免重复计算，从而达到加速的目的。
 
 \textbf{memorization 不一定用递归}，就像深搜不一定用递归一样，可以在迭代(iterative)中使用 memorization 。\textbf{递归也不一定用 memorization}，可以用memorization来加速，但不是必须的。只有当递归使用了缓存，它才是 memorization 。
 
-既然递归一定是深搜，为什么很多书籍都同时使用这两个术语呢？在递归味道更浓的地方，一般用递归这个术语，在深搜更浓的场景下，用深搜这个术语，读者心里要弄清楚他俩大部分时候是一回事。在单链表、二叉树等递归数据结构上，递归的味道更浓，这时用递归这个术语；在图、隐士图等数据结构上，递归的比重不大，深搜的意图更浓，这时用深搜这个术语。
+既然递归一定是深搜，为什么很多书籍都同时使用这两个术语呢？在递归味道更浓的地方，一般用递归这个术语，在深搜更浓的场景下，用深搜这个术语，读者心里要弄清楚他俩大部分时候是一回事。在单链表、二叉树等递归数据结构上，递归的味道更浓，这时用递归这个术语；在图、隐式图等数据结构上，深搜的味道更浓，这时用深搜这个术语。
