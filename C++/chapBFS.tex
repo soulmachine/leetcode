@@ -44,12 +44,9 @@ Note:
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int ladderLength(string start, string end,
+    int ladderLength(const string& start, const string &end,
             const unordered_set<string> &dict) {
-        if (start.size() != end.size()) return 0;
-        if (start.empty() || end.empty()) return 0;
-
-        queue<string> next, current; // 当前层，下一层
+        queue<string> current, next; // 当前层，下一层
         unordered_set<string> visited; // 判重
         unordered_map<string, string > father;
         int level = 0;  // 层次
@@ -59,7 +56,8 @@ public:
         while (!current.empty() && !found) {
             ++level;
             while (!current.empty() && !found) {
-                const string str(current.front()); current.pop();
+                const string str = current.front();
+                current.pop();
 
                 for (size_t i = 0; i < str.size(); ++i) {
                     string new_word(str);
@@ -146,9 +144,9 @@ class Solution {
 public:
     vector<vector<string> > findLadders(string start, string end,
             const unordered_set<string> &dict) {
+        unordered_set<string> current, next;  // 当前层，下一层，用集合是为了去重
         unordered_set<string> visited; // 判重
         unordered_map<string, vector<string> > father; // 树
-        unordered_set<string> current, next;  // 当前层，下一层，用集合是为了去重
 
         bool found = false;
 
@@ -171,7 +169,7 @@ public:
                                         new_word == end)) {
                             next.insert(new_word);
                             father[new_word].push_back(word);
-                            // visited.insert(new_word)移动到最上面了
+                            // visited.insert(new_word); // 移动到最上面了
                         }
 
                         swap(c, new_word[i]);  // restore
@@ -185,12 +183,12 @@ public:
         vector<vector<string> > result;
         if (found) {
             vector<string> path;
-            buildPath(father, path, start, end, result);
+            gen_path(father, path, start, end, result);
         }
         return result;
     }
 private:
-    void buildPath(unordered_map<string, vector<string> > &father,
+    void gen_path(unordered_map<string, vector<string> > &father,
             vector<string> &path, const string &start, const string &word,
             vector<vector<string> > &result) {
         path.push_back(word);
@@ -199,7 +197,7 @@ private:
             reverse(result.back().begin(), result.back().end());
         } else {
             for (auto f : father[word]) {
-                buildPath(father, path, start, f, result);
+                gen_path(father, path, start, f, result);
             }
         }
         path.pop_back();
@@ -242,18 +240,17 @@ X O X X
 
 
 \subsubsection{分析}
-广搜。从上下左右四个边界往里走，凡是能碰到的\fn{'O'}，都是跟边界接壤的，应该删除。
+广搜。从上下左右四个边界往里走，凡是能碰到的\fn{'O'}，都是跟边界接壤的，应该保留。
 
 
 \subsubsection{代码}
 \begin{Code}
 // LeetCode, Surrounded Regions
-// BFS
-// 时间复杂度O(n)，空间复杂度O(n)
+// BFS，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
     void solve(vector<vector<char>> &board) {
-        if (board.size() == 0) return;
+        if (board.empty()) return;
 
         const int m = board.size();
         const int n = board[0].size();
@@ -265,8 +262,8 @@ public:
             bfs(board, j, 0);
             bfs(board, j, n - 1);
         }
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
                 if (board[i][j] == 'O')
                     board[i][j] = 'X';
                 else if (board[i][j] == '+')
@@ -274,25 +271,48 @@ public:
     }
 private:
     void bfs(vector<vector<char>> &board, int i, int j) {
-        queue<int> q;
-        visit(board, i, j, q);
-        while (!q.empty()) {
-            int cur = q.front(); q.pop();
-            int x = cur / board[0].size();
-            int y = cur % board[0].size();
-            visit(board, x - 1, y, q);
-            visit(board, x, y - 1, q);
-            visit(board, x + 1, y, q);
-            visit(board, x, y + 1, q);
-        }
-    }
-    void visit(vector<vector<char>> &board, int i, int j, queue<int> &q) {
+        typedef pair<int, int> state_t;
+        queue<state_t> q;
         const int m = board.size();
         const int n = board[0].size();
-        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] != 'O')
-            return;
-        board[i][j] = '+'; // 既有标记功能又有去重功能
-        q.push(i * n + j);
+
+        auto is_valid = [&](const state_t &s) {
+            const int x = s.first;
+            const int y = s.second;
+            if (x < 0 || x >= m || y < 0 || y >= n || board[x][y] != 'O')
+                return false;
+            return true;
+        };
+
+        auto state_extend = [&](const state_t &s) {
+            vector<state_t> result;
+            const int x = s.first;
+            const int y = s.second;
+            // 上下左右
+            const state_t new_states[4] = {{x-1,y}, {x+1,y},
+                    {x,y-1}, {x,y+1}};
+            for (int k = 0; k < 4;  ++k) {
+                if (is_valid(new_states[k])) {
+                    // 既有标记功能又有去重功能
+                    board[new_states[k].first][new_states[k].second] = '+';
+                    result.push_back(new_states[k]);
+                }
+            }
+
+            return result;
+        };
+
+        state_t start = { i, j };
+        if (is_valid(start)) {
+            board[i][j] = '+';
+            q.push(start);
+        }
+        while (!q.empty()) {
+            auto cur = q.front();
+            q.pop();
+            auto new_states = state_extend(cur);
+            for (auto s : new_states) q.push(s);
+        }
     }
 };
 \end{Code}
@@ -322,7 +342,7 @@ private:
 \begin{enumerate}
 \item 是求路径长度，还是路径本身（或动作序列）？
     \begin{enumerate}
-    \item 如果是求路径长度，则状态里面要存路径长度
+    \item 如果是求路径长度，则状态里面要存路径长度（或双队列+一个全局变量）
     \item 如果是求路径本身或动作序列
         \begin{enumerate}
             \item 要用一棵树存储宽搜过程中的路径
@@ -408,11 +428,10 @@ vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
     vector<state_t> path;
     path.push_back(target);
 
-    state_t cur = target;
-    while (father.find(cur) != father.end()) {
-        cur = father.at(cur);
+    for (state_t cur = target; father.find(cur) != father.end(); 
+            cur = father.at(cur))
         path.push_back(cur);
-    }
+
     reverse(path.begin(), path.end());
 
     return path;
@@ -426,7 +445,7 @@ vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
  * @return 从起点到目标状态的一条最短路径
  */
 template<typename state_t>
-vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
+vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     queue<state_t> next, current; // 当前层，下一层
     unordered_set<state_t> visited; // 判重
     unordered_map<state_t, state_t> father; // 树
