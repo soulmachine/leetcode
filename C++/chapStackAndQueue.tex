@@ -101,6 +101,36 @@ public:
 };
 \end{Code}
 
+\subsubsection{Dynamic Programming, One Pass}
+\begin{Code}
+// LeetCode, Longest Valid Parenthese
+// 时间复杂度O(n)，空间复杂度O(1)
+// @author 一只杰森(http://weibo.com/2197839961)
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        if (s.empty()) return 0;
+        int ret = 0;
+        int* d = new int[s.size()];
+        d[s.size() - 1] = 0;
+        for (int i = s.size() - 2; i >= 0; --i) {
+            if (s[i] == ')') d[i] = 0;
+            else {
+                int match = i + d[i + 1] + 1;  // case: "((...))"
+                if (match < s.size() && s[match] == ')') {  // found matching ')'
+                    d[i] = match - i + 1;
+                    if (match + 1 < s.size()) d[i] += d[match + 1];  // more valid sequence after j: "((...))(...)"
+                } else {
+                    d[i] = 0;  // no matching ')'
+                }
+            }
+            ret = max(ret, d[i]);
+        }
+        return ret;
+    }
+};
+\end{Code}
+
 
 \subsubsection{两遍扫描}
 \begin{Code}
