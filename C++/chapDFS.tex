@@ -923,7 +923,7 @@ private:
                 return false;
         for (i = 3 * (x / 3); i < 3 * (x / 3 + 1); i++)
             for (j = 3 * (y / 3); j < 3 * (y / 3 + 1); j++)
-                if (i != x && j != y && board[i][j] == board[x][y])
+                if ((i != x || j != y) && board[i][j] == board[x][y])
                     return false;
         return true;
     }
