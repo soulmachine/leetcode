@@ -109,21 +109,18 @@ public:
 class Solution {
 public:
     int longestValidParentheses(string s) {
-        if (s.empty()) return 0;
-        int* d = new int[s.size()];
-        d[s.size() - 1] = 0;
+        vector<int> f(s.size(), 0);
         int ret = 0;
         for (int i = s.size() - 2; i >= 0; --i) {
-            int match = i + d[i + 1] + 1;
+            int match = i + f[i + 1] + 1;
+            // case: "((...))"
             if (s[i] == '(' && match < s.size() && s[match] == ')') {
-                d[i] = d[i + 1] + 2;
-                if (match + 1 < s.size()) d[i] += d[match + 1];
-            } else {
-                d[i] = 0;
+                f[i] = f[i + 1] + 2;
+                // if a valid sequence exist afterwards "((...))()"
+                if (match + 1 < s.size()) f[i] += f[match + 1];
             }
-            ret = max(ret, d[i]);
+            ret = max(ret, f[i]);
         }
-        delete[] d;
         return ret;
     }
 };
