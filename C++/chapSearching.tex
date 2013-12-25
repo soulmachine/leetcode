@@ -179,6 +179,7 @@ Given \fn{target = 3}, return true.
 class Solution {
 public:
     bool searchMatrix(const vector<vector<int>>& matrix, int target) {
+        if (matrix.empty()) return false;
         const size_t  m = matrix.size();
         const size_t n = matrix.front().size();
 
