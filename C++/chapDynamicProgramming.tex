@@ -1174,7 +1174,7 @@ public:
     vector<string> wordBreak(string s, unordered_set<string> &dict) {
         // 长度为n的字符串有n+1个隔板
         vector<bool> f(s.length() + 1, false);
-        // path[i][j]为true，表示s[j, i)是一个合法单词，可以从j处切开
+        // prev[i][j]为true，表示s[j, i)是一个合法单词，可以从j处切开
         // 第一行未用
         vector<vector<bool> > prev(s.length() + 1, vector<bool>(s.length()));
         f[0] = true;
