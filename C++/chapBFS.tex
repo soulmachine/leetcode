@@ -46,11 +46,34 @@ class Solution {
 public:
     int ladderLength(const string& start, const string &end,
             const unordered_set<string> &dict) {
-        queue<string> current, next; // 当前层，下一层
-        unordered_set<string> visited; // 判重
-        unordered_map<string, string > father;
+        queue<string> current, next;    // 当前层，下一层
+        unordered_set<string> visited;  // 判重
+
         int level = 0;  // 层次
         bool found = false;
+
+        auto state_is_target = [&](const string &s) {return s == end;};
+        auto state_extend = [&](const string &s) {
+            vector<string> result;
+
+            for (size_t i = 0; i < s.size(); ++i) {
+                string new_word(s);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c == new_word[i]) continue;
+
+                    swap(c, new_word[i]);
+
+                    if (dict.count(new_word) > 0 &&
+                            !visited.count(new_word)) {
+                        result.push_back(new_word);
+                        visited.insert(new_word);
+                    }
+                    swap(c, new_word[i]); // 恢复该单词
+                }
+            }
+
+            return result;
+        };
 
         current.push(start);
         while (!current.empty() && !found) {
@@ -59,31 +82,18 @@ public:
                 const string str = current.front();
                 current.pop();
 
-                for (size_t i = 0; i < str.size(); ++i) {
-                    string new_word(str);
-                    for (char c = 'a'; c <= 'z'; c++) {
-                        if (c == new_word[i]) continue;
-
-                        swap(c, new_word[i]);
-                        if (new_word == end) {
-                            found = true; //找到了
-                            father[new_word] = str;
-                            break;
-                        }
-
-                        if (dict.count(new_word) > 0
-                                && !visited.count(new_word)) {
-                            next.push(new_word);
-                            visited.insert(new_word);
-                            father[new_word] = str;
-                        }
-                        swap(c, new_word[i]); // 恢复该单词
+                const auto& new_states = state_extend(str);
+                for (const auto& state : new_states) {
+                    next.push(state);
+                    if (state_is_target(state)) {
+                        found = true; //找到了
+                        break;
                     }
                 }
             }
-            swap(next, current); //!!! 交换两个队列
+            swap(next, current);
         }
-        if (found) return level+1;
+        if (found) return level + 1;
         else return 0;
     }
 };
@@ -150,30 +160,40 @@ public:
 
         bool found = false;
 
+        auto state_is_target = [&](const string &s) {return s == end;};
+        auto state_extend = [&](const string &s) {
+            unordered_set<string> result;
+
+            for (size_t i = 0; i < s.size(); ++i) {
+                string new_word(s);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c == new_word[i]) continue;
+
+                    swap(c, new_word[i]);
+
+                    if ((dict.count(new_word) > 0|| new_word == end) &&
+                             !visited.count(new_word)) {
+                        result.insert(new_word);
+                    }
+                    swap(c, new_word[i]); // 恢复该单词
+                }
+            }
+
+            return result;
+        };
+
         current.insert(start);
         while (!current.empty() && !found) {
             // 先将本层全部置为已访问，防止同层之间互相指向
-            for (auto word : current)
+            for (const auto& word : current)
                 visited.insert(word);
-            for (auto word : current) {
-                for (size_t i = 0; i < word.size(); ++i) {
-                    string new_word = word;
-                    for (char c = 'a'; c <= 'z'; ++c) {
-                        if (c == new_word[i]) continue;
-                        swap(c, new_word[i]);
-
-                        if (new_word == end) found = true; //找到了
-
-                        if (visited.count(new_word) == 0
-                                && (dict.count(new_word) > 0 ||
-                                        new_word == end)) {
-                            next.insert(new_word);
-                            father[new_word].push_back(word);
-                            // visited.insert(new_word); // 移动到最上面了
-                        }
-
-                        swap(c, new_word[i]);  // restore
-                    }
+            for (const auto& word : current) {
+                const auto new_states = state_extend(word);
+                for (const auto &state : new_states) {
+                    if (state_is_target(state)) found = true;
+                    next.insert(state);
+                    father[state].push_back(word);
+                    // visited.insert(state); // 移动到最上面了
                 }
             }
 
@@ -196,7 +216,7 @@ private:
             result.push_back(path);
             reverse(result.back().begin(), result.back().end());
         } else {
-            for (auto f : father[word]) {
+            for (const auto& f : father[word]) {
                 gen_path(father, path, start, f, result);
             }
         }
