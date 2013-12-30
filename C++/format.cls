@@ -52,8 +52,8 @@ body={390pt,530pt},marginparsep=10pt,marginpar=50pt]{geometry}
 
 \setlength\abovecaptionskip{0pt}
   
-%\setmainfont{Times New Roman}
-\setmainfont{Linux Libertine O}
+\setmainfont{Times New Roman}
+%\setmainfont{Linux Libertine}
 %\setmainfont{TeX Gyre Pagella}
 \newfontfamily\urlfont{PT Sans Narrow}
 %\setmonofont[AutoFakeBold=1.6,AutoFakeSlant=0.17,Mapping=tex-text-tt]{Inconsolata}
