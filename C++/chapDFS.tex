@@ -63,7 +63,7 @@ public:
     }
 
     bool isPalindrome(const string &s, int start, int end) {
-        while (s[start] == s[end]) {
+        while (start < end && s[start] == s[end]) {
             ++start;
             --end;
         }
@@ -101,7 +101,7 @@ public:
         }
     }
     bool isPalindrome(const string &s, int start, int end) {
-        while (s[start] == s[end]) {
+        while (start < end && s[start] == s[end]) {
             ++start;
             --end;
         }
