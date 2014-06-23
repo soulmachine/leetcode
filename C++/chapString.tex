@@ -35,6 +35,7 @@ public:
             if (!::isalnum(*left))  ++left;
             else if (!::isalnum(*right)) --right;
             else if (*left != *right) return false;
+            else{ left++, right--; }
         }
         return true;
     }
