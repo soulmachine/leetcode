@@ -214,9 +214,9 @@ public:
 
         while (str[i] == ' ' && i < n) i++;
 
-        if (str[i] == '+') i++;
-
-        if (str[i] == '-') {
+        if (str[i] == '+') {
+            i++;
+        } else if (str[i] == '-') {
             sign = -1;
             i++;
         }
