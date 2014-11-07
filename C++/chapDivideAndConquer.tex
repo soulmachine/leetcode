@@ -21,7 +21,7 @@ Implement pow(x, n).
 class Solution {
 public:
     double pow(double x, int n) {
-        if (n < 0) return 1.0 / power(x, -n);
+        if (n < 0) return 1.0 / (x * power(x, -(n+1)));
         else return power(x, n);
     }
 private:
