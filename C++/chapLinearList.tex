@@ -579,6 +579,49 @@ public:
 };
 \end{Code}
 
+\subsubsection{分析}
+先排序，然后左右夹逼，复杂度 $O(n^2)$。
+需要返回没有duplicate的结果。每次寻找新结果就排除那些可能重复的数字，外层i如果与之前一样则进行下一个，
+同理对里层夹逼的两个数也是这样来避免。
+\subsubsection{代码}
+\begin{Code}
+class Solution {
+public:
+vector<vector<int> > threeSum(vector<int> &num){
+    sort(num.begin(), num.end());
+    vector<vector<int> > result;
+    if(num.size() < 3) return result;
+    for(int i = 0; i < num.size() - 2; ++i){
+        if(i  && num[i] == num[i - 1]) continue;
+        int j = i + 1;
+        int k = num.size() - 1;
+        while(j < k){
+            if(num[i] + num[j] + num[k] == 0){
+                result.push_back({num[i], num[j], num[k]});
+                ++j, --k;
+                while(num[j] == num[j - 1] && num[k] == num[k + 1] && j < k){
+                    ++j, --k;
+                }
+            }
+            else if(num[i] + num[j] + num[k] < 0){
+                ++j;
+                while(num[j] == num[j - 1] && j < k){
+                    ++j;
+                }
+            }
+            else{
+                --k;
+                while(num[k] == num[k + 1] && j < k){
+                    --k;
+                }
+            }
+        }
+    }
+    return result;
+  }
+};
+\end{Code}
+
 
 \subsubsection{相关题目}
 \begindot
