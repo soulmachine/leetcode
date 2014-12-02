@@ -182,7 +182,7 @@ public:
     int search(int A[], int n, int target) {
         int first = 0, last = n;
         while (first != last) {
-            const int mid = (first + last) / 2;
+            const int mid = first  + (last - first) / 2;
             if (A[mid] == target)
                 return mid;
             if (A[first] <= A[mid]) {
@@ -240,7 +240,7 @@ public:
     bool search(int A[], int n, int target) {
         int first = 0, last = n;
         while (first != last) {
-            const int mid = (first + last) / 2;
+            const int mid = first  + (last - first) / 2;
             if (A[mid] == target)
                 return true;
             if (A[first] < A[mid]) {
