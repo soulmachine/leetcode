@@ -157,23 +157,28 @@ class Solution {
 public:
     ListNode *insertionSortList(ListNode *head) {
         ListNode dummy(INT_MIN);
-        //dummy.next = head;
+        dummy.next = head;
 
-        for (ListNode *cur = head; cur != nullptr;) {
-            auto pos = findInsertPos(&dummy, cur->val);
-            ListNode *tmp = cur->next;
-            cur->next = pos->next;
-            pos->next = cur;
-            cur = tmp;
-        }
+        for (ListNode *p = &dummy; p->next != nullptr;) {
+        auto pos = findInsertPos(&dummy, p->next, p->next->val);
+        if(pos->next == p->next){
+            p = p->next;
+        }else{
+            ListNode *tmp = p->next->next;
+            p->next->next = pos->next;
+            pos->next = p->next;
+            p->next = tmp;
+            }
+    }
         return dummy.next;
     }
 
-    ListNode* findInsertPos(ListNode *head, int x) {
+    ListNode* findInsertPos(ListNode *head, ListNode *last, int x) {
         ListNode *pre = nullptr;
-        for (ListNode *cur = head; cur != nullptr && cur->val <= x;
-            pre = cur, cur = cur->next)
-            ;
+             
+        for (ListNode *cur = head; cur != last && cur->val <= x; cur = cur->next)
+              pre = cur;
+    
         return pre;
     }
 };
