@@ -62,7 +62,7 @@ Java 文件夹下是Java版，内容一摸一样，代码是用Java写的
 1. 编译。用TeXstudio打开`leetcode-cpp.tex`，点击界面上的绿色箭头就可以开始编译了。
 
     在下方的窗口可以看到TeXstudio正在使用的编译命令是`xelatex -synctex=1 -interaction=nonstopmode "leetcode-cpp".tex`
-1. 懒人版镜像。如果不想进行上面繁琐的安装过程，我做好了一个Ubuntu VMware虚拟机镜像，已经装好了TexLive 2013, TexStudio和字体(详细的安装日志见压缩包注释)，开箱即用，下载地址 <http://pan.baidu.com/s/1eQEFLHw>。
+1. 懒人版镜像。如果不想进行上面繁琐的安装过程，我做好了一个Ubuntu VMware虚拟机镜像，已经装好了TexLive 2013, TexStudio和字体(详细的安装日志见压缩包注释)，开箱即用，下载地址 <http://pan.baidu.com/s/1jGj5uQi>。
 
 ##如何贡献代码
 编译通过后，就具备了完整的LaTeX编译环境了。
