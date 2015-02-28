@@ -40,8 +40,11 @@ public:
 
         for (; x; x /= 10)
             r = r * 10 + x % 10;
-
-        return r;
+        if (abs(r) > (pow(2, 31) - 1)) {
+            return 0;
+        } else {
+            return r;
+        }
     }
 };
 \end{Code}
