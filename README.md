@@ -3,9 +3,11 @@
 ##PDF下载
 <a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/leetcode-cpp.pdf">LeetCode题解(C++版).pdf</a>
 
+<font color="red">**本书即将由电子工业出版社出版，因此这个Repo暂时不再更新。朋友们可以去购买纸质版，或者阅读这个稍微旧一点的电子版。**</font>
+
 C++ 文件夹下是C++版，内容一摸一样，代码是用C++写的，
 
-Java 文件夹下是Java版，内容一摸一样，代码是用Java写的
+Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知道猴年马月能完成。
 
 ##LaTeX模板
 本书使用的是陈硕开源的[模板](https://github.com/chenshuo/typeset)。这个模板制作精良，很有taste，感谢陈硕 :)
@@ -73,3 +75,4 @@ Java 文件夹下是Java版，内容一摸一样，代码是用Java写的
 
 ##北美求职微博群
 我和我的小伙伴们在这里：<http://q.weibo.com/1312378>
+
