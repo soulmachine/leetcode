@@ -74,9 +74,10 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 ##北美求职微博群
 我和我的小伙伴们在这里：<http://q.weibo.com/1312378>
 
-## 【广告】九章算法
+## 【友情推荐】九章算法
 
 1. 算法辅导在线视频直播课程：<http://www.jiuzhang.com?source=soulmachine>
 1. Leetcode在线答案：<http://www.jiuzhang.com/solution/?source=soulmachine>
 1. 新一代刷题网站，比LeetCode题型更多，质量更高 ：<http://www.lintcode.com/?source=soulmachine>
+
     <font color="red">**本书即将由电子工业出版社出版，书中题目将全部切换到 lintcode.com, 因此这本电子书不再更新。新的电子书在这里开源: [LintCode题解](https://github.com/soulmachine/lintcode)**</font>
