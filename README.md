@@ -3,7 +3,7 @@
 ##PDF下载
 <a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/leetcode-cpp.pdf">LeetCode题解(C++版).pdf</a>
 
-C++ 文件夹下是C++版，内容一摸一样，代码是用C++写的，
+C++ 文件夹下是C++版，内容一模一样，代码是用C++写的。
 
 Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知道猴年马月能完成。
 
