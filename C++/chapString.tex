@@ -206,10 +206,10 @@ If no valid conversion could be performed, a zero value is returned. If the corr
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int atoi(const char *str) {
+    int myAtoi(const string &str) {
         int num = 0;
         int sign = 1;
-        const int n = strlen(str);
+        const int n = str.length();
         int i = 0;
 
         while (str[i] == ' ' && i < n) i++;
