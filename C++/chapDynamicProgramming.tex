@@ -25,7 +25,7 @@ Note: Bonus point if you are able to do this using only $O(n)$ extra space, wher
 \subsubsection{分析}
 设状态为$f(i, j)$，表示从从位置$(i,j)$出发，路径的最小和，则状态转移方程为
 $$
-f(i,j)=\min\left\{f(i,j+1),f(i+1,j+1)\right\}+(i,j)
+f(i,j)=\min\left\{f(i+1,j),f(i+1,j+1)\right\}+(i,j)
 $$
 
 
