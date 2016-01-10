@@ -111,13 +111,13 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 // @author hex108 (https://github.com/hex108)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
-        if (n <= 2) return n;
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.size() <= 2) return nums.size();
 
         int index = 2;
-        for (int i = 2; i < n; i++){
-            if (A[i] != A[index - 2])
-                A[index++] = A[i];
+        for (int i = 2; i < nums.size(); i++){
+            if (nums[i] != nums[index - 2])
+                nums[index++] = nums[i];
         }
 
         return index;
@@ -134,13 +134,14 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
+    int removeDuplicates(vector<int>& nums) {
+        const int n = nums.size();
         int index = 0;
         for (int i = 0; i < n; ++i) {
-            if (i > 0 && i < n - 1 && A[i] == A[i - 1] && A[i] == A[i + 1])
+            if (i > 0 && i < n - 1 && nums[i] == nums[i - 1] && nums[i] == nums[i + 1])
                 continue;
 
-            A[index++] = A[i];
+            nums[index++] = nums[i];
         }
         return index;
     }
@@ -179,19 +180,19 @@ You may assume no duplicate exists in the array.
 // 时间复杂度O(log n)，空间复杂度O(1)
 class Solution {
 public:
-    int search(int A[], int n, int target) {
-        int first = 0, last = n;
+    int search(const vector<int>& nums, int target) {
+        int first = 0, last = nums.size();
         while (first != last) {
             const int mid = first  + (last - first) / 2;
-            if (A[mid] == target)
+            if (nums[mid] == target)
                 return mid;
-            if (A[first] <= A[mid]) {
-                if (A[first] <= target && target < A[mid])
+            if (nums[first] <= nums[mid]) {
+                if (nums[first] <= target && target < nums[mid])
                     last = mid;
                 else
                     first = mid + 1;
             } else {
-                if (A[mid] < target && target <= A[last-1])
+                if (nums[mid] < target && target <= nums[last-1])
                     first = mid + 1;
                 else
                     last = mid;
@@ -237,19 +238,19 @@ Write a function to determine if a given target is in the array.
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    bool search(int A[], int n, int target) {
-        int first = 0, last = n;
+    bool search(const vector<int>& nums, int target) {
+        int first = 0, last = nums.size();
         while (first != last) {
             const int mid = first  + (last - first) / 2;
-            if (A[mid] == target)
+            if (nums[mid] == target)
                 return true;
-            if (A[first] < A[mid]) {
-                if (A[first] <= target && target < A[mid])
+            if (nums[first] < nums[mid]) {
+                if (nums[first] <= target && target < nums[mid])
                     last = mid;
                 else
                     first = mid + 1;
-            } else if (A[first] > A[mid]) {
-                if (A[mid] < target && target <= A[last-1])
+            } else if (nums[first] > nums[mid]) {
+                if (nums[mid] < target && target <= nums[last-1])
                     first = mid + 1;
                 else
                     last = mid;
@@ -283,7 +284,7 @@ There are two sorted arrays A and B of size m and n respectively. Find the media
 
 $O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的元素。
 
-不过我们仅仅需要第$k$大的元素，是不需要“排序”这么复杂的操作的。可以用一个计数器，记录当前已经找到第$m$大的元素了。同时我们使用两个指针\fn{pA}和\fn{pB}，分别指向A和B数组的第一个元素，使用类似于merge sort的原理，如果数组A当前元素小，那么\fn{pA++}，同时\fn{m++}；如果数组B当前元素小，那么\fn{pB++}，同时\fn{m++}。最终当$m$等于$k$的时候，就得到了我们的答案，$O(k)$时间，$O(1)$空间。但是，当$k$很接近$m+n$的时候，这个方法还是$O(m+n)$的。
+不过我们仅仅需要第$k$大的元素，是不需要“排序”这么昂贵的操作的。可以用一个计数器，记录当前已经找到第$m$大的元素了。同时我们使用两个指针\fn{pA}和\fn{pB}，分别指向A和B数组的第一个元素，使用类似于merge sort的原理，如果数组A当前元素小，那么\fn{pA++}，同时\fn{m++}；如果数组B当前元素小，那么\fn{pB++}，同时\fn{m++}。最终当$m$等于$k$的时候，就得到了我们的答案，$O(k)$时间，$O(1)$空间。但是，当$k$很接近$m+n$的时候，这个方法还是$O(m+n)$的。
 
 有没有更好的方案呢？我们可以考虑从$k$入手。如果我们每次都能够删除一个一定在第$k$大元素之前的元素，那么我们需要进行$k$次。但是如果每次我们都删除一半呢？由于A和B都是有序的，我们应该充分利用这里面的信息，类似于二分查找，也是充分利用了“有序”。
 
@@ -314,26 +315,29 @@ $O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的�
 // 时间复杂度O(log(m+n))，空间复杂度O(log(m+n))
 class Solution {
 public:
-    double findMedianSortedArrays(int A[], int m, int B[], int n) {
+    double findMedianSortedArrays(const vector<int>& A, const vector<int>& B) {
+        const int m = A.size();
+        const int n = B.size();
         int total = m + n;
         if (total & 0x1)
-            return find_kth(A, m, B, n, total / 2 + 1);
+            return find_kth(A.begin(), m, B.begin(), n, total / 2 + 1);
         else
-            return (find_kth(A, m, B, n, total / 2)
-                    + find_kth(A, m, B, n, total / 2 + 1)) / 2.0;
+            return (find_kth(A.begin(), m, B.begin(), n, total / 2)
+                    + find_kth(A.begin(), m, B.begin(), n, total / 2 + 1)) / 2.0;
     }
 private:
-    static int find_kth(int A[], int m, int B[], int n, int k) {
+    static int find_kth(std::vector<int>::const_iterator A, int m, 
+            std::vector<int>::const_iterator B, int n, int k) {
         //always assume that m is equal or smaller than n
         if (m > n) return find_kth(B, n, A, m, k);
-        if (m == 0) return B[k - 1];
-        if (k == 1) return min(A[0], B[0]);
+        if (m == 0) return *(B + k - 1);
+        if (k == 1) return min(*A, *B);
 
         //divide k into two parts
         int ia = min(k / 2, m), ib = k - ia;
-        if (A[ia - 1] < B[ib - 1])
+        if (*(A + ia - 1) < *(B + ib - 1))
             return find_kth(A + ia, m - ia, B, n, k - ia);
-        else if (A[ia - 1] > B[ib - 1])
+        else if (*(A + ia - 1) > *(B + ib - 1))
             return find_kth(A, m, B + ib, n - ib, k - ib);
         else
             return A[ia - 1];
@@ -377,14 +381,14 @@ Your algorithm should run in $O(n)$ complexity.
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int longestConsecutive(const vector<int> &num) {
+    int longestConsecutive(const vector<int> &nums) {
         unordered_map<int, bool> used;
 
-        for (auto i : num) used[i] = false;
+        for (auto i : nums) used[i] = false;
 
         int longest = 0;
 
-        for (auto i : num) {
+        for (auto i : nums) {
             if (used[i]) continue;
 
             int length = 1;
@@ -422,18 +426,18 @@ public:
 // Author: @advancedxy
 class Solution {
 public:
-    int longestConsecutive(vector<int> &num) {
+    int longestConsecutive(vector<int> &nums) {
         unordered_map<int, int> map;
-        int size = num.size();
+        int size = nums.size();
         int l = 1;
         for (int i = 0; i < size; i++) {
-            if (map.find(num[i]) != map.end()) continue;
-            map[num[i]] = 1;
-            if (map.find(num[i] - 1) != map.end()) {
-                l = max(l, mergeCluster(map, num[i] - 1, num[i]));
+            if (map.find(nums[i]) != map.end()) continue;
+            map[nums[i]] = 1;
+            if (map.find(nums[i] - 1) != map.end()) {
+                l = max(l, mergeCluster(map, nums[i] - 1, nums[i]));
             }
-            if (map.find(num[i] + 1) != map.end()) {
-                l = max(l, mergeCluster(map, num[i], num[i] + 1));
+            if (map.find(nums[i] + 1) != map.end()) {
+                l = max(l, mergeCluster(map, nums[i], nums[i] + 1));
             }
         }
         return size == 0 ? 0 : l;
@@ -488,14 +492,14 @@ Output: \code{index1=1, index2=2}
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    vector<int> twoSum(vector<int> &num, int target) {
+    vector<int> twoSum(vector<int> &nums, int target) {
         unordered_map<int, int> mapping;
         vector<int> result;
-        for (int i = 0; i < num.size(); i++) {
-            mapping[num[i]] = i;
+        for (int i = 0; i < nums.size(); i++) {
+            mapping[nums[i]] = i;
         }
-        for (int i = 0; i < num.size(); i++) {
-            const int gap = target - num[i];
+        for (int i = 0; i < nums.size(); i++) {
+            const int gap = target - nums[i];
             if (mapping.find(gap) != mapping.end() && mapping[gap] > i) {
                 result.push_back(i + 1);
                 result.push_back(mapping[gap] + 1);
@@ -550,16 +554,16 @@ A solution set is:
 // 先排序，然后左右夹逼，注意跳过重复的数，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
     public:
-    vector<vector<int>> threeSum(vector<int>& num) {
+    vector<vector<int>> threeSum(vector<int>& nums) {
         vector<vector<int>> result;
-        if (num.size() < 3) return result;
-        sort(num.begin(), num.end());
+        if (nums.size() < 3) return result;
+        sort(nums.begin(), nums.end());
         const int target = 0;
 		
-        auto last = num.end();
-        for (auto i = num.begin(); i < last-2; ++i) {
+        auto last = nums.end();
+        for (auto i = nums.begin(); i < last-2; ++i) {
             auto j = i+1;
-            if (i > num.begin() && *i == *(i-1)) continue;
+            if (i > nums.begin() && *i == *(i-1)) continue;
             auto k = last-1;
             while (j < k) {
                 if (*i + *j + *k < target) {
@@ -611,15 +615,15 @@ The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
 // 先排序，然后左右夹逼，时间复杂度O(n^2)，空间复杂度O(1)
 class Solution {
 public:
-    int threeSumClosest(vector<int>& num, int target) {
+    int threeSumClosest(vector<int>& nums, int target) {
         int result = 0;
         int min_gap = INT_MAX;
 
-        sort(num.begin(), num.end());
+        sort(nums.begin(), nums.end());
 
-        for (auto a = num.begin(); a != prev(num.end(), 2); ++a) {
+        for (auto a = nums.begin(); a != prev(nums.end(), 2); ++a) {
             auto b = next(a);
-            auto c = prev(num.end());
+            auto c = prev(nums.end());
 
             while (b < c) {
                 const int sum = *a + *b + *c;
@@ -684,13 +688,13 @@ A solution set is:
 // 先排序，然后左右夹逼，时间复杂度O(n^3)，空间复杂度O(1)
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& num, int target) {
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
         vector<vector<int>> result;
-        if (num.size() < 4) return result;
-        sort(num.begin(), num.end());
+        if (nums.size() < 4) return result;
+        sort(nums.begin(), nums.end());
 
-        auto last = num.end();
-        for (auto a = num.begin(); a < prev(last, 3); ++a) {
+        auto last = nums.end();
+        for (auto a = nums.begin(); a < prev(last, 3); ++a) {
             for (auto b = next(a); b < prev(last, 2); ++b) {
                 auto c = next(b);
                 auto d = prev(last);
@@ -722,21 +726,21 @@ public:
 // 时间复杂度，平均O(n^2)，最坏O(n^4)，空间复杂度O(n^2)
 class Solution {
 public:
-    vector<vector<int> > fourSum(vector<int> &num, int target) {
+    vector<vector<int> > fourSum(vector<int> &nums, int target) {
         vector<vector<int>> result;
-        if (num.size() < 4) return result;
-        sort(num.begin(), num.end());
+        if (nums.size() < 4) return result;
+        sort(nums.begin(), nums.end());
 
         unordered_map<int, vector<pair<int, int> > > cache;
-        for (size_t a = 0; a < num.size(); ++a) {
-            for (size_t b = a + 1; b < num.size(); ++b) {
-                cache[num[a] + num[b]].push_back(pair<int, int>(a, b));
+        for (size_t a = 0; a < nums.size(); ++a) {
+            for (size_t b = a + 1; b < nums.size(); ++b) {
+                cache[nums[a] + nums[b]].push_back(pair<int, int>(a, b));
             }
         }
 
-        for (int c = 0; c < num.size(); ++c) {
-            for (size_t d = c + 1; d < num.size(); ++d) {
-                const int key = target - num[c] - num[d];
+        for (int c = 0; c < nums.size(); ++c) {
+            for (size_t d = c + 1; d < nums.size(); ++d) {
+                const int key = target - nums[c] - nums[d];
                 if (cache.find(key) == cache.end()) continue;
 
                 const auto& vec = cache[key];
@@ -744,8 +748,8 @@ public:
                     if (c <= vec[k].second)
                         continue; // 有重叠
 
-                    result.push_back( { num[vec[k].first],
-                            num[vec[k].second], num[c], num[d] });
+                    result.push_back( { nums[vec[k].first],
+                            nums[vec[k].second], nums[c], nums[d] });
                 }
             }
         }
@@ -765,15 +769,15 @@ public:
 // @author 龚陆安(http://weibo.com/luangong)
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& num, int target) {
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
         vector<vector<int>> result;
-        if (num.size() < 4) return result;
-        sort(num.begin(), num.end());
+        if (nums.size() < 4) return result;
+        sort(nums.begin(), nums.end());
 
         unordered_multimap<int, pair<int, int>> cache;
-        for (int i = 0; i + 1 < num.size(); ++i)
-            for (int j = i + 1; j < num.size(); ++j)
-                cache.insert(make_pair(num[i] + num[j], make_pair(i, j)));
+        for (int i = 0; i + 1 < nums.size(); ++i)
+            for (int j = i + 1; j < nums.size(); ++j)
+                cache.insert(make_pair(nums[i] + nums[j], make_pair(i, j)));
 
         for (auto i = cache.begin(); i != cache.end(); ++i) {
             int x = target - i->first;
@@ -784,7 +788,7 @@ public:
                 auto c = j->second.first;
                 auto d = j->second.second;
                 if (a != c && a != d && b != c && b != d) {
-                    vector<int> vec = { num[a], num[b], num[c], num[d] };
+                    vector<int> vec = { nums[a], nums[b], nums[c], nums[d] };
                     sort(vec.begin(), vec.end());
                     result.push_back(vec);
                 }
@@ -805,13 +809,13 @@ public:
 // 跟方法1相比，表面上优化了，实际上更慢了，切记！
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& num, int target) {
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
         vector<vector<int>> result;
-        if (num.size() < 4) return result;
-        sort(num.begin(), num.end());
+        if (nums.size() < 4) return result;
+        sort(nums.begin(), nums.end());
 
-        auto last = num.end();
-        for (auto a = num.begin(); a < prev(last, 3);
+        auto last = nums.end();
+        for (auto a = nums.begin(); a < prev(last, 3);
                 a = upper_bound(a, prev(last, 3), *a)) {
             for (auto b = next(a); b < prev(last, 2);
                     b = upper_bound(b, prev(last, 2), *b)) {
@@ -864,11 +868,11 @@ The order of elements can be changed. It doesn't matter what you leave beyond th
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeElement(int A[], int n, int elem) {
+    int removeElement(vector<int>& nums, int target) {
         int index = 0;
-        for (int i = 0; i < n; ++i) {
-            if (A[i] != elem) {
-                A[index++] = A[i];
+        for (int i = 0; i < nums.size(); ++i) {
+            if (nums[i] != target) {
+                nums[index++] = nums[i];
             }
         }
         return index;
@@ -883,8 +887,8 @@ public:
 // 使用remove()，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeElement(int A[], int n, int elem) {
-        return distance(A, remove(A, A+n, elem));
+    int removeElement(vector<int>& nums, int target) {
+        return distance(nums.begin(), remove(nums.begin(), nums.end(), target));
     }
 };
 \end{Code}
@@ -930,8 +934,8 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    void nextPermutation(vector<int> &num) {
-        next_permutation(num.begin(), num.end());
+    void nextPermutation(vector<int> &nums) {
+        next_permutation(nums.begin(), nums.end());
     }
 
     template<typename BidiIt>
@@ -1208,7 +1212,8 @@ Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
 // 思路1，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int trap(int A[], int n) {
+    int trap(const vector<int>& A) {
+        const int n = A.size();
         int *max_left = new int[n]();
         int *max_right = new int[n]();
 
@@ -1240,7 +1245,8 @@ public:
 // 思路2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int trap(int A[], int n) {
+    int trap(const vector<int>& A) {
+        const int n = A.size();
         int max = 0; // 最高的柱子，将数组分为两半
         for (int i = 0; i < n; i++)
             if (A[i] > A[max]) max = i;
@@ -1267,7 +1273,8 @@ public:
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int trap(int a[], int n) {
+    int trap(const vector<int>& A) {
+        const int n = A.size();
         stack<pair<int, int>> s;
         int water = 0;
 
@@ -1277,17 +1284,17 @@ public:
             while (!s.empty()) { // 将栈里比当前元素矮或等高的元素全部处理掉
                 int bar = s.top().first;
                 int pos = s.top().second;
-                // bar, height, a[i] 三者夹成的凹陷
-                water += (min(bar, a[i]) - height) * (i - pos - 1);
+                // bar, height, A[i] 三者夹成的凹陷
+                water += (min(bar, A[i]) - height) * (i - pos - 1);
                 height = bar;
 
-                if (a[i] < bar) // 碰到了比当前元素高的，跳出循环
+                if (A[i] < bar) // 碰到了比当前元素高的，跳出循环
                     break;
                 else
                     s.pop(); // 弹出栈顶，因为该元素处理完了，不再需要了
             }
 
-            s.push(make_pair(a[i], i));
+            s.push(make_pair(A[i], i));
         }
 
         return water;
@@ -1879,10 +1886,11 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int singleNumber(int A[], int n) {
+    int singleNumber(vector<int>& nums) {
         int x = 0;
-        for (size_t i = 0; i < n; ++i)
-            x ^= A[i];
+        for (auto i : nums) {
+            x ^= i;
+        }
         return x;
     }
 };
@@ -1895,8 +1903,8 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int singleNumber(int A[], int n) {
-        return accumulate(A, A + n, 0, bit_xor<int>());
+    int singleNumber(vector<int>& nums) {
+        return accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
     }
 };
 \end{Code}
@@ -1932,13 +1940,13 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 // 方法1，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int singleNumber(int A[], int n) {
+    int singleNumber(vector<int>& nums) {
         const int W = sizeof(int) * 8; // 一个整数的bit数，即整数字长
         int count[W];  // count[i]表示在在i位出现的1的次数
         fill_n(&count[0], W, 0);
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < nums.size(); i++) {
             for (int j = 0; j < W; j++) {
-                count[j] += (A[i] >> j) & 1;
+                count[j] += (nums[i] >> j) & 1;
                 count[j] %= 3;
             }
         }
@@ -1958,11 +1966,11 @@ public:
 // 方法2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int singleNumber(int A[], int n) {
+    int singleNumber(vector<int>& nums) {
         int one = 0, two = 0, three = 0;
-        for (int i = 0; i < n; ++i) {
-            two |= (one & A[i]);
-            one ^= A[i];
+        for (auto i : nums) {
+            two |= (one & i);
+            one ^= i;
             three = ~(one & two);
             one &= three;
             two &= three;
