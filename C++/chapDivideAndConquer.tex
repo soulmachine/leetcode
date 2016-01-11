@@ -20,7 +20,7 @@ Implement pow(x, n).
 // 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
-    double pow(double x, int n) {
+    double myPow(double x, int n) {
         if (n < 0) return 1.0 / power(x, -n);
         else return power(x, n);
     }
@@ -62,7 +62,7 @@ Compute and return the square root of \fn{x}.
 // 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
-    int sqrt(int x) {
+    int mySqrt(int x) {
         int left = 1, right = x / 2;
         int last_mid;  // 记录最近一次mid
 
