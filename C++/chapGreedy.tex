@@ -38,11 +38,11 @@ $$
 // 思路1，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    bool canJump(int A[], int n) {
+    bool canJump(const vector<int>& nums) {
         int reach = 1; // 最右能跳到哪里
-        for (int i = 0; i < reach && reach < n; ++i)
-            reach = max(reach,  i + 1 + A[i]);
-        return reach >= n;
+        for (int i = 0; i < reach && reach < nums.size(); ++i)
+            reach = max(reach,  i + 1 + nums[i]);
+        return reach >= nums.size();
     }
 };
 \end{Code}
@@ -54,13 +54,13 @@ public:
 // 思路2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    bool canJump (int A[], int n) {
-        if (n == 0) return true;
+    bool canJump (const vector<int>& nums) {
+        if (nums.empty()) return true;
         // 逆向下楼梯，最左能下降到第几层
-        int left_most = n - 1;
+        int left_most = nums.size() - 1;
 
-        for (int i = n - 2; i >= 0; --i)
-            if (i + A[i] >= left_most)
+        for (int i = nums.size() - 2; i >= 0; --i)
+            if (i + nums[i] >= left_most)
                 left_most = i;
 
         return left_most == 0;
@@ -75,14 +75,14 @@ public:
 // 思路三，动规，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    bool canJump(int A[], int n) {
-        vector<int> f(n, 0);
+    bool canJump(const vector<int>& nums) {
+        vector<int> f(nums.size(), 0);
         f[0] = 0;
-        for (int i = 1; i < n; i++) {
-            f[i] = max(f[i - 1], A[i - 1]) - 1;
+        for (int i = 1; i < nums.size(); i++) {
+            f[i] = max(f[i - 1], nums[i - 1]) - 1;
             if (f[i] < 0) return false;;
         }
-        return f[n - 1] >= 0;
+        return f[nums.size() - 1] >= 0;
     }
 };
 \end{Code}
@@ -121,18 +121,18 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int jump(int A[], int n) {
+    int jump(const vector<int>& nums) {
         int step = 0; // 最小步数
         int left = 0;
         int right = 0;  // [left, right]是当前能覆盖的区间
-        if (n == 1) return 0;
+        if (nums.size() == 1) return 0;
 
         while (left <= right) { // 尝试从每一层跳最远
             ++step;
             const int old_right = right;
             for (int i = left; i <= old_right; ++i) {
-                int new_right = i + A[i];
-                if (new_right >= n - 1) return step;
+                int new_right = i + nums[i];
+                if (new_right >= nums.size() - 1) return step;
 
                 if (new_right > right) right = new_right;
             }
@@ -150,18 +150,18 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int jump(int A[], int n) {
+    int jump(const vector<int>& nums) {
         int result = 0;
         // the maximum distance that has been reached
         int last = 0;
         // the maximum distance that can be reached by using "ret+1" steps
         int cur = 0;
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < nums.size(); ++i) {
             if (i > last) {
                 last = cur;
                 ++result;
             }
-            cur = max(cur, i + A[i]);
+            cur = max(cur, i + nums[i]);
         }
 
         return result;
