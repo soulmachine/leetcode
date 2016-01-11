@@ -21,7 +21,7 @@ You may assume that A has enough space to hold additional elements from B. The n
 // 时间复杂度O(m+n)，空间复杂度O(1)
 class Solution {
 public:
-    void merge(int A[], int m, int B[], int n) {
+    void merge(vector<int>& A, int m, vector<int>& B, int n) {
         int ia = m - 1, ib = n - 1, icur = m + n - 1;
         while(ia >= 0 && ib >= 0) {
             A[icur--] = A[ia] >= B[ib] ? A[ia--] : B[ib--];
@@ -98,6 +98,7 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 \begin{Code}
 //LeetCode, Merge k Sorted Lists
 // 时间复杂度O(n1+n2+...)，空间复杂度O(1)
+// TODO: 会超时
 class Solution {
 public:
     ListNode *mergeKLists(vector<ListNode *> &lists) {
@@ -273,16 +274,17 @@ Your algorithm should run in $O(n)$ time and uses constant space.
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int firstMissingPositive(int A[], int n) {
-        bucket_sort(A, n);
+    int firstMissingPositive(vector<int>& nums) {
+        bucket_sort(nums);
         
-        for (int i = 0; i < n; ++i)
-            if (A[i] != (i + 1))
+        for (int i = 0; i < nums.size(); ++i)
+            if (nums[i] != (i + 1))
                 return i + 1;
-        return n + 1;
+        return nums.size() + 1;
     }
 private:
-    static void bucket_sort(int A[], int n) {
+    static void bucket_sort(vector<int>& A) {
+        const int n = A.size();
         for (int i = 0; i < n; i++) {
             while (A[i] != i + 1) {
                 if (A[i] <= 0 || A[i] > n || A[i] == A[A[i] - 1])
@@ -337,10 +339,10 @@ Could you come up with an one-pass algorithm using only constant space?
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    void sortColors(int A[], int n) {
+    void sortColors(vector<int>& A) {
         int counts[3] = { 0 }; // 记录每个颜色出现的次数
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < A.size(); i++)
             counts[A[i]]++;
 
         for (int i = 0, index = 0; i < 3; i++)
@@ -358,9 +360,9 @@ public:
 // 双指针，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    void sortColors(int A[], int n) {
+    void sortColors(vector<int>& A) {
         // 一个是red的index，一个是blue的index，两边往中间走
-        int red = 0, blue = n - 1;
+        int red = 0, blue = A.size() - 1;
 
         for (int i = 0; i < blue + 1;) {
             if (A[i] == 0)
@@ -382,9 +384,9 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    void sortColors(int A[], int n) {
-        partition(partition(A, A + n, bind1st(equal_to<int>(), 0)), A + n,
-                bind1st(equal_to<int>(), 1));
+    void sortColors(vector<int>& nums) {
+        partition(partition(nums.begin(), nums.end(), bind1st(equal_to<int>(), 0)), 
+                nums.end(), bind1st(equal_to<int>(), 1));
     }
 };
 \end{Code}
@@ -397,9 +399,9 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    void sortColors(int A[], int n) {
-        partition(partition(A, A + n, bind1st(equal_to<int>(), 0)), A + n,
-                bind1st(equal_to<int>(), 1));
+    void sortColors(vector<int>& nums) {
+        partition(partition(nums.begin(), nums.end(), bind1st(equal_to<int>(), 0)),
+                 nums.end(), bind1st(equal_to<int>(), 1));
     }
 private:
     template<typename ForwardIterator, typename UnaryPredicate>
