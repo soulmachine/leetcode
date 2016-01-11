@@ -101,10 +101,10 @@ target &=& \max\left\{f[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int maxSubArray(int A[], int n) {
+    int maxSubArray(vector<int>& nums) {
         int result = INT_MIN, f = 0;
-        for (int i = 0; i < n; ++i) {
-            f = max(f + A[i], A[i]);
+        for (int i = 0; i < nums.size(); ++i) {
+            f = max(f + nums[i], nums[i]);
             result = max(result, f);
         }
         return result;
@@ -119,22 +119,24 @@ public:
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int maxSubArray(int A[], int n) {
-        return mcss(A, n);
+    int maxSubArray(vector<int>& A) {
+        return mcss(A.begin(), A.end());
     }
 private:
     // 思路5，求最大连续子序列和
-    static int mcss(int A[], int n) {
-        int i, result, cur_min;
+    template <typename Iter>
+    static int mcss(Iter begin, Iter end) {
+        int result, cur_min;
+        const int n = distance(begin, end);
         int *sum = new int[n + 1];  // 前n项和
 
         sum[0] = 0;
         result = INT_MIN;
         cur_min = sum[0];
-        for (i = 1; i <= n; i++) {
-            sum[i] = sum[i - 1] + A[i - 1];
+        for (int i = 1; i <= n; i++) {
+            sum[i] = sum[i - 1] + *(begin  + i - 1);
         }
-        for (i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             result = max(result, sum[i] - cur_min);
             cur_min = min(cur_min, sum[i]);
         }
@@ -191,7 +193,7 @@ P[i][j] = str[i] == str[j] && P[i+1][j-1]
 // 时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
-    int minCut(string s) {
+    int minCut(const string& s) {
         const int n = s.size();
         int f[n+1];
         bool p[n][n];
@@ -369,7 +371,7 @@ f[i][j] = (s1[i - 1] == s3 [i + j - 1] && f[i - 1][j])
 // 递归，会超时，仅用来帮助理解
 class Solution {
 public:
-    bool isInterleave(string s1, string s2, string s3) {
+    bool isInterleave(const string& s1, const string& s2, const string& s3) {
         if (s3.length() != s1.length() + s2.length())
             return false;
 
@@ -400,7 +402,7 @@ public:
 // 二维动规，时间复杂度O(n^2)，空间复杂度O(n^2)
 class Solution {
 public:
-    bool isInterleave(string s1, string s2, string s3) {
+    bool isInterleave(const string& s1, const string& s2, const string& s3) {
         if (s3.length() != s1.length() + s2.length())
             return false;
 
@@ -430,7 +432,7 @@ public:
 // 二维动规+滚动数组，时间复杂度O(n^2)，空间复杂度O(n)
 class Solution {
 public:
-    bool isInterleave(string s1, string s2, string s3) {
+    bool isInterleave(const string& s1, const string& s2, const string& s3) {
         if (s1.length() + s2.length() != s3.length())
             return false;
 
@@ -528,12 +530,12 @@ f[n][i][j]} =  (f[k][i][j] && f[n-k][i+k][j+k])
 \subsubsection{递归}
 
 \begin{Code}
-// LeetCode, Interleaving String
+// LeetCode, Scramble String
 // 递归，会超时，仅用来帮助理解
 // 时间复杂度O(n^6)，空间复杂度O(1)
 class Solution {
 public:
-    bool isScramble(string s1, string s2) {
+    bool isScramble(const string& s1, const string& s2) {
         return isScramble(s1.begin(), s1.end(), s2.begin());
     }
 private:
@@ -559,11 +561,11 @@ private:
 
 \subsubsection{动规}
 \begin{Code}
-// LeetCode, Interleaving String
+// LeetCode, Scramble String
 // 动规，时间复杂度O(n^3)，空间复杂度O(n^3)
 class Solution {
 public:
-    bool isScramble(string s1, string s2) {
+    bool isScramble(const string& s1, const string& s2) {
         const int N = s1.size();
         if (N != s2.size()) return false;
 
@@ -597,16 +599,16 @@ public:
 
 \subsubsection{递归+剪枝}
 \begin{Code}
-// LeetCode, Interleaving String
+// LeetCode, Scramble String
 // 递归+剪枝
 // 时间复杂度O(n^6)，空间复杂度O(1)
 class Solution {
 public:
-    bool isScramble(string s1, string s2) {
+    bool isScramble(const string& s1, const string& s2) {
         return isScramble(s1.begin(), s1.end(), s2.begin());
     }
 private:
-    typedef string::iterator Iterator;
+    typedef string::const_iterator Iterator;
     bool isScramble(Iterator first1, Iterator last1, Iterator first2) {
         auto length = distance(first1, last1);
         auto last2 = next(first2, length);
@@ -634,12 +636,12 @@ private:
 
 \subsubsection{备忘录法}
 \begin{Code}
-// LeetCode, Interleaving String
+// LeetCode, Scramble String
 // 递归+map做cache
-// 时间复杂度O(n^3)，空间复杂度O(n^3)
+// 时间复杂度O(n^3)，空间复杂度O(n^3), TLE
 class Solution {
 public:
-    bool isScramble(string s1, string s2) {
+    bool isScramble(const string& s1, const string& s2) {
         cache.clear();
         return isScramble(s1.begin(), s1.end(), s2.begin());
     }
@@ -694,14 +696,14 @@ template<> struct hash<Key> {
 };
 }
 
-// LeetCode, Interleaving String
+// LeetCode, Scramble String
 // 递归+unordered_map做cache，比map快
 // 时间复杂度O(n^3)，空间复杂度O(n^3)
 class Solution {
 public:
     unordered_map<Key, bool> cache;
 
-    bool isScramble(string s1, string s2) {
+    bool isScramble(const string& s1, const string& s2) {
         cache.clear();
         return isScramble(s1.begin(), s1.end(), s2.begin());
     }
