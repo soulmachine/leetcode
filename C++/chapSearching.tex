@@ -28,10 +28,10 @@ return \code{[3, 4]}.
 // 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
-    vector<int> searchRange(int A[], int n, int target) {
-        const int l = distance(A, lower_bound(A, A + n, target));
-        const int u = distance(A, prev(upper_bound(A, A + n, target)));
-        if (A[l] != target) // not found
+    vector<int> searchRange(vector<int>& nums, int target) {
+        const int l = distance(nums.begin(), lower_bound(nums.begin(), nums.end(), target));
+        const int u = distance(nums.begin(), prev(upper_bound(nums.begin(), nums.end(), target)));
+        if (nums[l] != target) // not found
             return vector<int> { -1, -1 };
         else
             return vector<int> { l, u };
@@ -47,14 +47,14 @@ public:
 // 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
-    vector<int> searchRange (int A[], int n, int target) {
-        auto lower = lower_bound(A, A + n, target);
-        auto uppper = upper_bound(lower, A + n, target);
+    vector<int> searchRange (vector<int>& nums, int target) {
+        auto lower = lower_bound(nums.begin(), nums.end(), target);
+        auto uppper = upper_bound(lower, nums.end(), target);
 
-        if (lower == A + n || *lower != target)
+        if (lower == nums.end() || *lower != target)
             return vector<int> { -1, -1 };
         else
-            return vector<int> {distance(A, lower), distance(A, prev(uppper))};
+            return vector<int> {distance(nums.begin(), lower), distance(nums.begin(), prev(uppper))};
     }
 
     template<typename ForwardIterator, typename T>
@@ -120,8 +120,8 @@ Here are few examples.
 // 时间复杂度O(logn)，空间复杂度O(1)
 class Solution {
 public:
-    int searchInsert(int A[], int n, int target) {
-        return lower_bound(A, A + n, target) - A;
+    int searchInsert(vector<int>& nums, int target) {
+        return distance(nums.begin(), lower_bound(nums.begin(), nums.end(), target));
     }
 
     template<typename ForwardIterator, typename T>
