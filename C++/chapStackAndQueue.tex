@@ -74,7 +74,7 @@ Another example is \code{")()())"}, where the longest valid parentheses substrin
 // 使用栈，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int longestValidParentheses(string s) {
+    int longestValidParentheses(const string& s) {
         int max_len = 0, last = -1; // the position of the last ')'
         stack<int> lefts;  // keep track of the positions of non-matching '('s
 
@@ -108,7 +108,7 @@ public:
 // @author 一只杰森(http://weibo.com/wjson)
 class Solution {
 public:
-    int longestValidParentheses(string s) {
+    int longestValidParentheses(const string& s) {
         vector<int> f(s.size(), 0);
         int ret = 0;
         for (int i = s.size() - 2; i >= 0; --i) {
@@ -134,7 +134,7 @@ public:
 // @author 曹鹏(http://weibo.com/cpcs)
 class Solution {
 public:
-    int longestValidParentheses(string s) {
+    int longestValidParentheses(const string& s) {
         int answer = 0, depth = 0, start = -1;
         for (int i = 0; i < s.size(); ++i) {
             if (s[i] == '(') {
