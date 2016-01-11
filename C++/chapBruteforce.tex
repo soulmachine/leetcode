@@ -733,6 +733,7 @@ public:
 
     vector<string> letterCombinations (const string &digits) {
         vector<string> result;
+        if (digits.empty()) return result;
         dfs(digits, 0, "", result);
         return result;
     }
@@ -761,6 +762,7 @@ public:
             "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
 
     vector<string> letterCombinations (const string &digits) {
+        if (digits.empty()) return vector<string>();
         vector<string> result(1, "");
         for (auto d : digits) {
             const size_t n = result.size();
