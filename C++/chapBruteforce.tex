@@ -439,16 +439,16 @@ public:
 // 时间复杂度O(n!)，空间复杂度O(1)
 class Solution {
 public:
-    vector<vector<int>> permute(vector<int>& num) {
+    vector<vector<int> > permute(vector<int> &num) {
+        vector<vector<int> > result;
         sort(num.begin(), num.end());
 
-        vector<vector<int>> permutations;
-
         do {
-            permutations.push_back(num);
-        } while (next_permutation(num.begin(), num.end())); // 见第2.1节
-
-        return permutations;
+            result.push_back(num);
+        // 调用的是 2.1.12 节的 next_permutation()
+        // 而不是 std::next_permutation()
+        } while(next_permutation(num.begin(), num.end()));
+        return result;
     }
 };
 \end{Code}
