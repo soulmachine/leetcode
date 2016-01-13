@@ -630,35 +630,29 @@ class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
         vector<vector<int> > result;
-        if (nullptr == root) return result;
-
-        queue<TreeNode*> q;
-        bool left_to_right = true;  //left to right
-        vector<int> level;  // one level's elements
-
-        q.push(root);
-        q.push(nullptr);  // level separator
-        while (!q.empty()) {
-            TreeNode *cur = q.front();
-            q.pop();
-            if (cur) {
-                level.push_back(cur->val);
-                if (cur->left) q.push(cur->left);
-                if (cur->right) q.push(cur->right);
-            } else {
-                if (left_to_right) {
-                    result.push_back(level);
-                } else {
-                    reverse(level.begin(), level.end());
-                    result.push_back(level);
-                }
-                level.clear();
-                left_to_right = !left_to_right;
-
-                if (q.size() > 0) q.push(nullptr);
-            }
+        queue<TreeNode*> current, next;
+        bool left_to_right = true;
+        
+        if(root == nullptr) {
+            return result;
+        } else {
+            current.push(root);
         }
 
+        while (!current.empty()) {
+            vector<int> level; // elments in one level
+            while (!current.empty()) {
+                TreeNode* node = current.front();
+                current.pop();
+                level.push_back(node->val);
+                if (node->left != nullptr) next.push(node->left);
+                if (node->right != nullptr) next.push(node->right);
+            }
+            if (!left_to_right) reverse(level.begin(), level.end());
+            result.push_back(level);
+            left_to_right = !left_to_right;
+            swap(next, current);
+        }
         return result;
     }
 };
