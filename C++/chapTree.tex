@@ -56,14 +56,11 @@ class Solution {
 public:
     vector<int> preorderTraversal(TreeNode *root) {
         vector<int> result;
-        const TreeNode *p;
         stack<const TreeNode *> s;
-
-        p = root;
-        if (p != nullptr) s.push(p);
+        if (root != nullptr) s.push(root);
 
         while (!s.empty()) {
-            p = s.top();
+            const TreeNode *p = s.top();
             s.pop();
             result.push_back(p->val);
 
@@ -84,9 +81,8 @@ class Solution {
 public:
     vector<int> preorderTraversal(TreeNode *root) {
         vector<int> result;
-        TreeNode *cur, *prev;
+        TreeNode *cur = root, *prev = nullptr;
 
-        cur = root;
         while (cur != nullptr) {
             if (cur->left == nullptr) {
                 result.push_back(cur->val);
@@ -157,8 +153,8 @@ class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
         vector<int> result;
-        const TreeNode *p = root;
         stack<const TreeNode *> s;
+        const TreeNode *p = root;
 
         while (!s.empty() || p != nullptr) {
             if (p != nullptr) {
@@ -185,9 +181,8 @@ class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
         vector<int> result;
-        TreeNode *cur, *prev;
+        TreeNode *cur = root, *prev = nullptr;
 
-        cur = root;
         while (cur != nullptr) {
             if (cur->left == nullptr) {
                 result.push_back(cur->val);
@@ -258,11 +253,9 @@ class Solution {
 public:
     vector<int> postorderTraversal(TreeNode *root) {
         vector<int> result;
-        /* p，正在访问的结点，q，刚刚访问过的结点*/
-        const TreeNode *p, *q;
         stack<const TreeNode *> s;
-
-        p = root;
+        /* p，正在访问的结点，q，刚刚访问过的结点*/
+        const TreeNode *p = root, *q = nullptr;
 
         do {
             while (p != nullptr) { /* 往左下走*/
@@ -438,13 +431,16 @@ class Solution {
 public:
     vector<vector<int> > levelOrder(TreeNode *root) {
         vector<vector<int> > result;
-        if(root == nullptr) return result;
-
         queue<TreeNode*> current, next;
-        vector<int> level; // elments in level level
+        
+        if(root == nullptr) {
+            return result;
+        } else {
+            current.push(root);
+        }
 
-        current.push(root);
         while (!current.empty()) {
+            vector<int> level; // elments in one level
             while (!current.empty()) {
                 TreeNode* node = current.front();
                 current.pop();
@@ -453,7 +449,6 @@ public:
                 if (node->right != nullptr) next.push(node->right);
             }
             result.push_back(level);
-            level.clear();
             swap(next, current);
         }
         return result;
