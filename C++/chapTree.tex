@@ -833,14 +833,15 @@ Two binary trees are considered equal if they are structurally identical and the
 class Solution {
 public:
     bool isSymmetric(TreeNode *root) {
-        return root ? isSymmetric(root->left, root->right) : true;
+        if (root == nullptr) return true;
+        return isSymmetric(root->left, root->right);
     }
-    bool isSymmetric(TreeNode *left, TreeNode *right) {
-        if (!left && !right) return true;   // 终止条件
-        if (!left || !right) return false;  // 终止条件
-        return left->val == right->val      // 三方合并
-                && isSymmetric(left->left, right->right)
-                && isSymmetric(left->right, right->left);
+    bool isSymmetric(TreeNode *p, TreeNode *q) {
+        if (p == nullptr && q == nullptr) return true;   // 终止条件
+        if (p == nullptr || q == nullptr) return false;  // 终止条件
+        return p->val == q->val      // 三方合并
+                && isSymmetric(p->left, q->right)
+                && isSymmetric(p->right, q->left);
     }
 };
 \end{Code}
