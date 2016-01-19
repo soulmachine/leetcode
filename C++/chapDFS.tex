@@ -39,8 +39,7 @@ public:
         return result;
     }
 
-    // s[0, prev-1]之间已经处理，保证是回文串
-    // prev 表示s[prev-1]与s[prev]之间的空隙位置，start同理
+    // prev 表示前一个隔板, start 表示当前隔板
     void dfs(string &s, vector<string>& path,
             vector<vector<string>> &result, size_t prev, size_t start) {
         if (start == s.size()) { // 最后一个隔板
@@ -204,24 +203,24 @@ public:
 class Solution {
 public:
     int uniquePaths(int m, int n) {
-        // 0行和0列未使用
-        this->f = vector<vector<int> >(m + 1, vector<int>(n + 1, 0));
-        return dfs(m, n);
+        // f[x][y] 表示 从(0,0)到(x,y)的路径条数
+        f = vector<vector<int> >(m, vector<int>(n, 0));
+        f[0][0] = 1;
+        return dfs(m - 1, n - 1);
     }
 private:
     vector<vector<int> > f;  // 缓存
 
     int dfs(int x, int y) {
-        if (x < 1 || y < 1) return 0; // 数据非法，终止条件
+        if (x < 0 || y < 0) return 0; // 数据非法，终止条件
 
-        if (x == 1 && y == 1) return 1; // 回到起点，收敛条件
+        if (x == 0 && y == 0) return f[0][0]; // 回到起点，收敛条件
 
-        return getOrUpdate(x - 1, y) + getOrUpdate(x, y - 1);
-    }
-
-    int getOrUpdate(int x, int y) {
-        if (f[x][y] > 0) return f[x][y];
-        else return f[x][y] = dfs(x, y);
+        if (f[x][y] > 0) {
+            return f[x][y];
+        } else {
+            return f[x][y] = dfs(x - 1, y) +  dfs(x, y - 1);
+        }
     }
 };
 \end{Code}
@@ -248,9 +247,9 @@ public:
         f[0] = 1;
         for (int i = 0; i < m; i++) {
             for (int j = 1; j < n; j++) {
-                // 左边的f[j]，表示更新后的f[j]，与公式中的f[i[[j]对应
+                // 左边的f[j]，表示更新后的f[j]，与公式中的f[i][j]对应
                 // 右边的f[j]，表示老的f[j]，与公式中的f[i-1][j]对应
-                f[j] = f[j - 1] + f[j];
+                f[j] = f[j] + f[j - 1];
             }
         }
         return f[n - 1];
@@ -338,40 +337,41 @@ Note: $m$ and $n$ will be at most 100.
 // 深搜 + 缓存，即备忘录法
 class Solution {
 public:
-    int uniquePathsWithObstacles(vector<vector<int> > &obstacleGrid) {
+    int uniquePathsWithObstacles(const vector<vector<int> >& obstacleGrid) {
         const int m = obstacleGrid.size();
         const int n = obstacleGrid[0].size();
-        // 0行和0列未使用
-        this->f = vector<vector<int> >(m + 1, vector<int>(n + 1, 0));
-        return dfs(obstacleGrid, m, n);
+        if (obstacleGrid[0][0] || obstacleGrid[m - 1][n - 1]) return 0;
+
+        f = vector<vector<int> >(m, vector<int>(n, 0));
+        f[0][0] = obstacleGrid[0][0] ? 0 : 1;
+        return dfs(obstacleGrid, m - 1, n - 1);
     }
 private:
     vector<vector<int> > f;  // 缓存
 
-    int dfs(const vector<vector<int> > &obstacleGrid,
+    // @return 从 (0, 0) 到 (x, y) 的路径总数
+    int dfs(const vector<vector<int> >& obstacleGrid,
             int x, int y) {
-        if (x < 1 || y < 1) return 0; // 数据非法，终止条件
+        if (x < 0 || y < 0) return 0; // 数据非法，终止条件
 
         // (x,y)是障碍
-        if (obstacleGrid[x-1][y-1]) return 0;
+        if (obstacleGrid[x][y]) return 0;
 
-        if (x == 1 and y == 1) return 1; // 回到起点，收敛条件
+        if (x == 0 and y == 0) return f[0][0]; // 回到起点，收敛条件
 
-        return getOrUpdate(obstacleGrid, x - 1, y) +
-                getOrUpdate(obstacleGrid, x, y - 1);
-    }
-
-    int getOrUpdate(const vector<vector<int> > &obstacleGrid,
-            int x, int y) {
-        if (f[x][y] > 0) return f[x][y];
-        else return f[x][y] = dfs(obstacleGrid, x, y);
+        if (f[x][y] > 0) {
+            return f[x][y];
+        } else {
+            return f[x][y] = dfs(obstacleGrid, x - 1, y) + 
+                dfs(obstacleGrid, x, y - 1);
+        }
     }
 };
 \end{Code}
 
 
 \subsection{动规}
-与上一题类似，但要特别注意第一列的障碍。在上一题中，第一列全部是1，但是在这一题中不同，第一列如果某一行有障碍物，那么后面的行应该为0。
+与上一题类似，但要特别注意第一列的障碍。在上一题中，第一列全部是1，但是在这一题中不同，第一列如果某一行有障碍物，那么后面的行全为0。
 
 
 \subsubsection{代码}
@@ -389,9 +389,11 @@ public:
         vector<int> f(n, 0);
         f[0] = obstacleGrid[0][0] ? 0 : 1;
 
-        for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                f[j] = obstacleGrid[i][j] ? 0 : (j == 0 ? 0 : f[j - 1]) + f[j];
+        for (int i = 0; i < m; i++) {
+            f[0] = f[0] == 0 ? 0 : (obstacleGrid[i][0] ? 0 : 1);
+            for (int j = 1; j < n; j++)
+                f[j] = obstacleGrid[i][j] ? 0 : (f[j] + f[j - 1]);
+        }
 
         return f[n - 1];
     }
@@ -440,9 +442,74 @@ There exist two distinct solutions to the 4-queens puzzle:
 
 
 \subsubsection{分析}
+
 经典的深搜题。
 
-\subsubsection{代码}
+设置一个数组 \fn{vector<int> C(n, 0)}, \fn{C[i]} 表示第i行皇后所在的列编号，即在位置 (i, C[i]) 上放了一个皇后，这样用一个一维数组，就能记录整个棋盘。
+
+
+\subsubsection{代码1}
+\begin{Code}
+// LeetCode, N-Queens
+// 深搜+剪枝
+// 时间复杂度O(n!*n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<string> > solveNQueens(int n) {
+        vector<vector<string> > result;
+        vector<int> C(n, -1);  // C[i]表示第i行皇后所在的列编号
+        dfs(C, result, 0);
+        return result;
+    }
+private:
+    void dfs(vector<int> &C, vector<vector<string> > &result, int row) {
+        const int N = C.size();
+        if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
+            vector<string> solution;
+            for (int i = 0; i < N; ++i) {
+                string s(N, '.');
+                for (int j = 0; j < N; ++j) {
+                    if (j == C[i]) s[j] = 'Q';
+                }
+                solution.push_back(s);
+            }
+            result.push_back(solution);
+            return;
+        }
+
+        for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
+            const bool ok = isValid(C, row, j);
+            if (!ok) continue;  // 剪枝，如果非法，继续尝试下一列
+            // 执行扩展动作
+            C[row] = j;
+            dfs(C, result, row + 1);
+            // 撤销动作
+            // C[row] = -1;
+        }
+    }
+    
+    /**
+     * 能否在 (row, col) 位置放一个皇后.
+     *
+     * @param C 棋局
+     * @param row 当前正在处理的行，前面的行都已经放了皇后了
+     * @param col 当前列
+     * @return 能否放一个皇后
+     */
+    bool isValid(const vector<int> &C, int row, int col) {
+        for (int i = 0; i < row; ++i) {
+            // 在同一列
+            if (C[i] == col) return false;
+            // 在同一对角线上
+            if (abs(i - row) == abs(C[i] - col)) return false;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
 \begin{Code}
 // LeetCode, N-Queens
 // 深搜+剪枝
@@ -450,20 +517,20 @@ There exist two distinct solutions to the 4-queens puzzle:
 class Solution {
 public:
     vector<vector<string> > solveNQueens(int n) {
-        this->columns = vector<int>(n, 0);
-        this->main_diag = vector<int>(2 * n, 0);
-        this->anti_diag = vector<int>(2 * n, 0);
+        this->columns = vector<bool>(n, false);
+        this->main_diag = vector<bool>(2 * n - 1, false);
+        this->anti_diag = vector<bool>(2 * n - 1, false);
 
         vector<vector<string> > result;
-        vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
+        vector<int> C(n, -1);  // C[i]表示第i行皇后所在的列编号
         dfs(C, result, 0);
         return result;
     }
 private:
     // 这三个变量用于剪枝
-    vector<int> columns;  // 表示已经放置的皇后占据了哪些列
-    vector<int> main_diag;  // 占据了哪些主对角线
-    vector<int> anti_diag;  // 占据了哪些副对角线
+    vector<bool> columns;  // 表示已经放置的皇后占据了哪些列
+    vector<bool> main_diag;  // 占据了哪些主对角线
+    vector<bool> anti_diag;  // 占据了哪些副对角线
 
     void dfs(vector<int> &C, vector<vector<string> > &result, int row) {
         const int N = C.size();
@@ -481,16 +548,16 @@ private:
         }
 
         for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
-            const bool ok = columns[j] == 0 && main_diag[row + j] == 0 &&
-                    anti_diag[row - j + N] == 0;
-            if (！ok) continue;  // 剪枝：如果合法，继续递归
+            const bool ok = !columns[j] && !main_diag[row - j + N - 1]  &&
+                    !anti_diag[row + j];
+            if (!ok) continue;  // 剪枝，如果非法，继续尝试下一列
             // 执行扩展动作
             C[row] = j;
-            columns[j] = main_diag[row + j] = anti_diag[row - j + N] = 1;
+            columns[j] = main_diag[row - j + N - 1] = anti_diag[row + j] = true;
             dfs(C, result, row + 1);
             // 撤销动作
-            // C[row] = 0;
-            columns[j] = main_diag[row + j] = anti_diag[row - j + N] = 0;
+            // C[row] = -1;
+            columns[j] = main_diag[row - j + N - 1] = anti_diag[row + j] = false;
         }
     }
 };
@@ -517,18 +584,15 @@ Now, instead outputting board configurations, return the total number of distinc
 只需要输出解的个数，不需要输出所有解，代码要比上一题简化很多。设一个全局计数器，每找到一个解就增1。
 
 
-\subsubsection{代码}
+\subsubsection{代码1}
 \begin{Code}
 // LeetCode, N-Queens II
 // 深搜+剪枝
-// 时间复杂度O(n!)，空间复杂度O(n)
+// 时间复杂度O(n!*n)，空间复杂度O(n)
 class Solution {
 public:
     int totalNQueens(int n) {
         this->count = 0;
-        this->columns = vector<int>(n, 0);
-        this->main_diag = vector<int>(2 * n, 0);
-        this->anti_diag = vector<int>(2 * n, 0);
 
         vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
         dfs(C, 0);
@@ -536,10 +600,6 @@ public:
     }
 private:
     int count; // 解的个数
-    // 这三个变量用于剪枝
-    vector<int> columns;  // 表示已经放置的皇后占据了哪些列
-    vector<int> main_diag;  // 占据了哪些主对角线
-    vector<int> anti_diag;  // 占据了哪些副对角线
 
     void dfs(vector<int> &C, int row) {
         const int N = C.size();
@@ -549,19 +609,81 @@ private:
         }
 
         for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
-            const bool ok = columns[j] == 0 &&
-                    main_diag[row + j] == 0 &&
-                    anti_diag[row - j + N] == 0;
+            const bool ok = isValid(C, row, j);
             if (!ok) continue;  // 剪枝：如果合法，继续递归
             // 执行扩展动作
             C[row] = j;
-            columns[j] = main_diag[row + j] =
-                    anti_diag[row - j + N] = 1;
             dfs(C, row + 1);
             // 撤销动作
-            // C[row] = 0;
-            columns[j] = main_diag[row + j] =
-                    anti_diag[row - j + N] = 0;
+            // C[row] = -1;
+        }
+    }
+    /**
+     * 能否在 (row, col) 位置放一个皇后.
+     *
+     * @param C 棋局
+     * @param row 当前正在处理的行，前面的行都已经放了皇后了
+     * @param col 当前列
+     * @return 能否放一个皇后
+     */
+    bool isValid(const vector<int> &C, int row, int col) {
+        for (int i = 0; i < row; ++i) {
+            // 在同一列
+            if (C[i] == col) return false;
+            // 在同一对角线上
+            if (abs(i - row) == abs(C[i] - col)) return false;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{代码2}
+\begin{Code}
+// LeetCode, N-Queens II
+// 深搜+剪枝
+// 时间复杂度O(n!)，空间复杂度O(n)
+class Solution {
+public:
+    int totalNQueens(int n) {
+        this->count = 0;
+        this->columns = vector<bool>(n, false);
+        this->main_diag = vector<bool>(2 * n - 1, false);
+        this->anti_diag = vector<bool>(2 * n - 1, false);
+
+        vector<int> C(n, 0);  // C[i]表示第i行皇后所在的列编号
+        dfs(C, 0);
+        return this->count;
+    }
+private:
+    int count; // 解的个数
+    // 这三个变量用于剪枝
+    vector<bool> columns;  // 表示已经放置的皇后占据了哪些列
+    vector<bool> main_diag;  // 占据了哪些主对角线
+    vector<bool> anti_diag;  // 占据了哪些副对角线
+
+    void dfs(vector<int> &C, int row) {
+        const int N = C.size();
+        if (row == N) { // 终止条件，也是收敛条件，意味着找到了一个可行解
+            ++this->count;
+            return;
+        }
+
+        for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
+            const bool ok = !columns[j] &&
+                    !main_diag[row - j + N] &&
+                    !anti_diag[row + j];
+            if (!ok) continue;  // 剪枝：如果合法，继续递归
+            // 执行扩展动作
+            C[row] = j;
+            columns[j] = main_diag[row - j + N] =
+                    anti_diag[row + j] = true;
+            dfs(C, row + 1);
+            // 撤销动作
+            // C[row] = -1;
+            columns[j] = main_diag[row - j + N] =
+                    anti_diag[row + j] = false;
         }
     }
 };
@@ -597,43 +719,43 @@ return \code{["255.255.11.135", "255.255.111.35"]}. (Order does not matter)
 // 时间复杂度O(n^4)，空间复杂度O(n)
 class Solution {
 public:
-    vector<string> restoreIpAddresses(string s) {
+    vector<string> restoreIpAddresses(const string& s) {
         vector<string> result;
-        string ip; // 存放中间结果
-        dfs(s, 0, 0, ip, result);
+        vector<string> ip; // 存放中间结果
+        dfs(s, ip, result, 0);
         return result;
     }
 
     /**
      * @brief 解析字符串
      * @param[in] s 字符串，输入数据
-     * @param[in] startIndex 从s的哪里开始
-     * @param[in] step 当前步骤编号，从0开始编号，取值为0,1,2,3,4表示结束了
-     * @param[out] intermediate 当前解析出来的中间结果
+     * @param[out] ip 存放中间结果
      * @param[out] result 存放所有可能的IP地址
+     * @param[in] start 当前正在处理的 index
      * @return 无
      */
-    void dfs(string s, size_t start, size_t step, string ip,
-            vector<string> &result) {
-        if (start == s.size() && step == 4) {  // 找到一个合法解
-            ip.resize(ip.size() - 1);
-            result.push_back(ip);
+    void dfs(string s, vector<string>& ip, vector<string> &result,
+            size_t start) {
+        if (ip.size() == 4 && start == s.size()) {  // 找到一个合法解
+            result.push_back(ip[0] + '.' + ip[1] + '.' + ip[2] + '.' + ip[3]);
             return;
         }
 
-        if (s.size() - start > (4 - step) * 3)
+        if (s.size() - start > (4 - ip.size()) * 3)
             return;  // 剪枝
-        if (s.size() - start < (4 - step))
+        if (s.size() - start < (4 - ip.size()))
             return;  // 剪枝
 
         int num = 0;
         for (size_t i = start; i < start + 3; i++) {
             num = num * 10 + (s[i] - '0');
 
-            if (num <= 255) {  // 当前结点合法，则继续往下递归
-                ip += s[i];
-                dfs(s, i + 1, step + 1, ip + '.', result);
-            }
+            if (num < 0 || num > 255) continue;  // 剪枝
+            
+            ip.push_back(s.substr(start, i - start + 1));
+            dfs(s, ip, result, i + 1);
+            ip.pop_back();
+            
             if (num == 0) break;  // 不允许前缀0，但允许单个0
         }
     }
@@ -684,24 +806,24 @@ public:
     vector<vector<int> > combinationSum(vector<int> &nums, int target) {
         sort(nums.begin(), nums.end());
         vector<vector<int> > result; // 最终结果
-        vector<int> intermediate; // 中间结果
-        dfs(nums, target, 0, intermediate, result);
+        vector<int> path; // 中间结果
+        dfs(nums, path, result, target, 0);
         return result;
     }
 
 private:
-    void dfs(vector<int>& nums, int gap, int start, vector<int>& intermediate,
-            vector<vector<int> > &result) {
+    void dfs(vector<int>& nums, vector<int>& path, vector<vector<int> > &result,
+            int gap, int start) {
         if (gap == 0) {  // 找到一个合法解
-            result.push_back(intermediate);
+            result.push_back(path);
             return;
         }
         for (size_t i = start; i < nums.size(); i++) { // 扩展状态
             if (gap < nums[i]) return; // 剪枝
 
-            intermediate.push_back(nums[i]); // 执行扩展动作
-            dfs(nums, gap - nums[i], i, intermediate, result);
-            intermediate.pop_back();  // 撤销动作
+            path.push_back(nums[i]); // 执行扩展动作
+            dfs(nums, path, result, gap - nums[i], i);
+            path.pop_back();  // 撤销动作
         }
     }
 };
@@ -719,9 +841,9 @@ private:
 
 
 \subsubsection{描述}
-Given a set of candidate numbers ($C$) and a target number ($T$), find all unique combinations in $C$ where the candidate numbers sums to $T$.
+Given a collection of candidate numbers ($C$) and a target number ($T$), find all unique combinations in $C$ where the candidate numbers sums to $T$.
 
-The same repeated number may be chosen from $C$ \emph{once} number of times.
+Each number in $C$ may only be used \emph{once} in the combination.
 
 Note:
 \begindot
@@ -752,24 +874,24 @@ class Solution {
 public:
     vector<vector<int> > combinationSum2(vector<int> &nums, int target) {
         sort(nums.begin(), nums.end()); // 跟第 50 行配合，
-                                             // 确保每个元素最多只用一次
+                                        // 确保每个元素最多只用一次
         vector<vector<int> > result;
-        vector<int> intermediate;
-        dfs(nums, target, 0, intermediate, result);
+        vector<int> path;
+        dfs(nums, path, result, target, 0);
         return result;
     }
 private:
     // 使用nums[start, nums.size())之间的元素，能找到的所有可行解
-    static void dfs(vector<int> &nums, int gap, int start,
-            vector<int> &intermediate, vector<vector<int> > &result) {
+    static void dfs(const vector<int> &nums, vector<int> &path, 
+            vector<vector<int> > &result, int gap, int start) {
         if (gap == 0) {  //  找到一个合法解
-            result.push_back(intermediate);
+            result.push_back(path);
             return;
         }
 
         int previous = -1;
         for (size_t i = start; i < nums.size(); i++) {
-            // 如果上一轮循环没有选nums[i]，则本次循环就不能再选nums[i]，
+            // 如果上一轮循环已经使用了nums[i]，则本次循环就不能再选nums[i]，
             // 确保nums[i]最多只用一次
             if (previous == nums[i]) continue;
 
@@ -777,9 +899,9 @@ private:
 
             previous = nums[i];
 
-            intermediate.push_back(nums[i]);
-            dfs(nums, gap - nums[i], i + 1, intermediate, result);
-            intermediate.pop_back();  // 恢复环境
+            path.push_back(nums[i]);
+            dfs(nums, path, result, gap - nums[i], i + 1);
+            path.pop_back();  // 恢复环境
         }
     }
 };
@@ -818,17 +940,27 @@ class Solution {
 public:
     vector<string> generateParenthesis(int n) {
         vector<string> result;
-        if (n > 0) generate(n, "", 0, 0, result);
+        string path;
+        if (n > 0) generate(n, path, result, 0, 0);
         return result;
     }
     // l 表示 ( 出现的次数, r 表示 ) 出现的次数
-    void generate(int n, string s, int l, int r, vector<string> &result) {
+    void generate(int n, string& path, vector<string> &result, int l, int r) {
         if (l == n) {
+            string s(path);
             result.push_back(s.append(n - r, ')'));
             return;
         }
-        generate(n, s + '(', l + 1, r, result);
-        if (l > r) generate(n, s + ")", l, r + 1, result);
+        
+        path.push_back('(');
+        generate(n, path, result, l + 1, r);
+        path.pop_back();
+
+        if (l > r) {
+            path.push_back(')');
+            generate(n, path, result, l, r + 1);
+            path.pop_back();
+        }
     }
 };
 \end{Code}
@@ -971,7 +1103,7 @@ word = \fn{"ABCB"}, -> returns \fn{false}.
 // 时间复杂度O(n^2*m^2)，空间复杂度O(n^2)
 class Solution {
 public:
-    bool exist(vector<vector<char> > &board, string word) {
+    bool exist(const vector<vector<char> > &board, const string& word) {
         const int m = board.size();
         const int n = board[0].size();
         vector<vector<bool> > visited(m, vector<bool>(n, false));
@@ -1039,12 +1171,6 @@ private:
 
 \item 如何扩展状态？这一步跟上一步相关。状态里记录的数据不同，扩展方法就不同。对于固定不变的数据结构（一般题目直接给出，作为输入数据），如二叉树，图等，扩展方法很简单，直接往下一层走，对于隐式图，要先在第1步里想清楚状态所带的数据，想清楚了这点，那如何扩展就很简单了。
 
-\item 关于判重
-    \begin{enumerate}
-    \item 是否需要判重？如果状态转换图是一棵树，则不需要判重，因为在遍历过程中不可能重复；如果状态转换图是一个DAG，则需要判重。这一点跟BFS不一样，BFS的状态转换图总是DAG，必须要判重。
-    \item 怎样判重？跟广搜相同，见第 \S \ref{sec:bfs-template} 节。同时，DAG说明存在重叠子问题，此时可以用缓存加速，见第8步。
-    \end{enumerate}
-
 \item 终止条件是什么？终止条件是指到了不能扩展的末端节点。对于树，是叶子节点，对于图或隐式图，是出度为0的节点。
 
 \item {收敛条件是什么？收敛条件是指找到了一个合法解的时刻。如果是正向深搜（父状态处理完了才进行递归，即父状态不依赖子状态，递归语句一定是在最后，尾递归），则是指是否达到目标状态；如果是逆向深搜（处理父状态时需要先知道子状态的结果，此时递归语句不在最后），则是指是否到达初始状态。
@@ -1052,6 +1178,12 @@ private:
 由于很多时候终止条件和收敛条件是是合二为一的，因此很多人不区分这两种条件。仔细区分这两种条件，还是很有必要的。
 
 为了判断是否到了收敛条件，要在函数接口里用一个参数记录当前的位置（或距离目标还有多远）。如果是求一个解，直接返回这个解；如果是求所有解，要在这里收集解，即把第一步中表示路径的数组\fn{path[]}复制到解集合里。}
+
+\item 关于判重
+    \begin{enumerate}
+    \item 是否需要判重？如果状态转换图是一棵树，则不需要判重，因为在遍历过程中不可能重复；如果状态转换图是一个DAG，则需要判重。这一点跟BFS不一样，BFS的状态转换图总是DAG，必须要判重。
+    \item 怎样判重？跟广搜相同，见第 \S \ref{sec:bfs-template} 节。同时，DAG说明存在重叠子问题，此时可以用缓存加速，见第8步。
+    \end{enumerate}
 
 \item 如何加速？
     \begin{enumerate}
