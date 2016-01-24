@@ -36,9 +36,98 @@ Note:
 
 
 \subsubsection{分析}
+求最短路径，用广搜。
 
 
-\subsubsection{代码}
+\subsubsection{单队列}
+\begin{Code}
+//LeetCode, Word Ladder
+// 时间复杂度O(n)，空间复杂度O(n)
+struct state_t {
+    string word;
+    int step;
+
+    state_t() { word = ""; step = 0; }
+    state_t(const string& word, int step) {
+        this->word = word;
+        this->step = step;
+    }
+
+    bool operator==(const state_t &other) const {
+        return this->word == other.word;
+    }
+};
+
+namespace std {
+    template<> struct hash<state_t> {
+    public:
+        size_t operator()(const state_t& s) const {
+            return str_hash(s.word);
+        }
+    private:
+        std::hash<std::string> str_hash;
+    };
+}
+
+
+class Solution {
+public:
+    int ladderLength(const string& start, const string &end,
+            const unordered_set<string> &dict) {
+        queue<state_t> q;
+        unordered_set<state_t> visited;  // 判重
+
+        auto state_is_valid = [&](const state_t& s) {
+            return dict.find(s.word) != dict.end() || s.word == end;
+        };
+        auto state_is_target = [&](const state_t &s) {return s.word == end; };
+        auto state_extend = [&](const state_t &s) {
+            unordered_set<state_t> result;
+
+            for (size_t i = 0; i < s.word.size(); ++i) {
+                state_t new_state(s.word, s.step + 1);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c == new_state.word[i]) continue;
+
+                    swap(c, new_state.word[i]);
+
+                    if (state_is_valid(new_state) &&
+                        visited.find(new_state) == visited.end()) {
+                        result.insert(new_state);
+                    }
+                    swap(c, new_state.word[i]); // 恢复该单词
+                }
+            }
+
+            return result;
+        };
+
+        state_t start_state(start, 0);
+        q.push(start_state);
+        visited.insert(start_state);
+        while (!q.empty()) {
+            // 千万不能用 const auto&，pop() 会删除元素，
+            // 引用就变成了悬空引用
+            const auto state = q.front();
+            q.pop();
+
+            if (state_is_target(state)) {
+                return state.step + 1;
+            }
+
+            const auto& new_states = state_extend(state);
+            for (const auto& new_state : new_states) {
+                q.push(new_state);
+                visited.insert(new_state);
+            }
+        }
+        return 0;
+    }
+};
+\end{Code}
+
+
+\subsubsection{双队列}
 \begin{Code}
 //LeetCode, Word Ladder
 // 时间复杂度O(n)，空间复杂度O(n)
@@ -50,11 +139,13 @@ public:
         unordered_set<string> visited;  // 判重
 
         int level = 0;  // 层次
-        bool found = false;
 
+        auto state_is_valid = [&](const string& s) {
+            return dict.find(s) != dict.end() || s == end;
+        };
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
-            vector<string> result;
+            unordered_set<string> result;
 
             for (size_t i = 0; i < s.size(); ++i) {
                 string new_word(s);
@@ -63,10 +154,9 @@ public:
 
                     swap(c, new_word[i]);
 
-                    if ((dict.count(new_word) > 0 || new_word == end) &&
-                            !visited.count(new_word)) {
-                        result.push_back(new_word);
-                        visited.insert(new_word);
+                    if (state_is_valid(new_word) &&
+                        visited.find(new_word) == visited.end()) {
+                        result.insert(new_word);
                     }
                     swap(c, new_word[i]); // 恢复该单词
                 }
@@ -76,25 +166,28 @@ public:
         };
 
         current.push(start);
-        while (!current.empty() && !found) {
+        visited.insert(start);
+        while (!current.empty()) {
             ++level;
-            while (!current.empty() && !found) {
-                const string str = current.front();
+            while (!current.empty()) {
+                // 千万不能用 const auto&，pop() 会删除元素，
+                // 引用就变成了悬空引用
+                const auto state = current.front();
                 current.pop();
 
-                const auto& new_states = state_extend(str);
-                for (const auto& state : new_states) {
-                    next.push(state);
-                    if (state_is_target(state)) {
-                        found = true; //找到了
-                        break;
-                    }
+                if (state_is_target(new_state)) {
+                    return level + 1;
+                }
+
+                const auto& new_states = state_extend(state);
+                for (const auto& new_state : new_states) {
+                    next.push(new_state);
+                    visited.insert(new_state);
                 }
             }
             swap(next, current);
         }
-        if (found) return level + 1;
-        else return 0;
+        return 0;
     }
 };
 \end{Code}
@@ -145,20 +238,26 @@ Note:
 这题跟普通的广搜有很大的不同，就是要输出所有路径，因此在记录前驱和判重地方与普通广搜略有不同。
 
 
-\subsubsection{代码}
+\subsubsection{单队列}
+
+单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。
+
+
+\subsubsection{双队列}
 
 \begin{Code}
 //LeetCode, Word Ladder II
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    vector<vector<string> > findLadders(string start, string end,
-            const unordered_set<string> &dict) {
-        unordered_set<string> current, next;  // 当前层，下一层，用集合是为了去重
+    vector<vector<string> > findLadders(const string& start,
+            const string& end, const unordered_set<string> &dict) {
+        // 当前层，下一层，用unordered_set是为了去重，例如两个父节点指向
+        // 同一个子节点，如果用vector, 子节点就会在next里出现两次，其实此
+        // 时 father 已经记录了两个父节点，next里重复出现两次是没必要的
+        unordered_set<string> current, next;
         unordered_set<string> visited; // 判重
-        unordered_map<string, vector<string> > father; // 树
-
-        bool found = false;
+        unordered_map<string, vector<string> > father; // DAG
 
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
@@ -171,8 +270,8 @@ public:
 
                     swap(c, new_word[i]);
 
-                    if ((dict.count(new_word) > 0 || new_word == end) &&
-                             !visited.count(new_word)) {
+                    if ((dict.find(new_word) != dict.end() || new_word == end) &&
+                             visited.find(new_word) == visited.end()) {
                         result.insert(new_word);
                     }
                     swap(c, new_word[i]); // 恢复该单词
@@ -182,29 +281,31 @@ public:
             return result;
         };
 
+        vector<vector<string> > result;
         current.insert(start);
-        while (!current.empty() && !found) {
-            // 先将本层全部置为已访问，防止同层之间互相指向
-            for (const auto& word : current)
-                visited.insert(word);
-            for (const auto& word : current) {
-                const auto new_states = state_extend(word);
-                for (const auto &state : new_states) {
-                    if (state_is_target(state)) found = true;
-                    next.insert(state);
-                    father[state].push_back(word);
-                    // visited.insert(state); // 移动到最上面了
+        while (!current.empty()) {
+            // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
+            // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
+            // 节点时，指向了本层后面尚未处理的节点，这条路径必然不是最短的
+            for (const auto& state : current)
+                visited.insert(state);
+            for (const auto& state : current) {
+                if (state_is_target(state)) {
+                    vector<string> path;
+                    gen_path(father, path, start, state, result);
+                }
+
+                const auto new_states = state_extend(state);
+                for (const auto& new_state : new_states) {
+                    next.insert(new_state);
+                    father[new_state].push_back(state);
                 }
             }
 
             current.clear();
             swap(current, next);
         }
-        vector<vector<string> > result;
-        if (found) {
-            vector<string> path;
-            gen_path(father, path, start, end, result);
-        }
+
         return result;
     }
 private:
@@ -296,7 +397,7 @@ private:
         const int m = board.size();
         const int n = board[0].size();
 
-        auto is_valid = [&](const state_t &s) {
+        auto state_is_valid = [&](const state_t &s) {
             const int x = s.first;
             const int y = s.second;
             if (x < 0 || x >= m || y < 0 || y >= n || board[x][y] != 'O')
@@ -312,7 +413,7 @@ private:
             const state_t new_states[4] = {{x-1,y}, {x+1,y},
                     {x,y-1}, {x,y+1}};
             for (int k = 0; k < 4;  ++k) {
-                if (is_valid(new_states[k])) {
+                if (state_is_valid(new_states[k])) {
                     // 既有标记功能又有去重功能
                     board[new_states[k].first][new_states[k].second] = '+';
                     result.push_back(new_states[k]);
@@ -323,7 +424,7 @@ private:
         };
 
         state_t start = { i, j };
-        if (is_valid(start)) {
+        if (state_is_valid(start)) {
             board[i][j] = '+';
             q.push(start);
         }
@@ -353,7 +454,7 @@ private:
 
 \textbf{输入数据}：没什么特征，不像深搜，需要有“递归”的性质。如果是树或者图，概率更大。
 
-\textbf{状态转换图}：树或者图。
+\textbf{状态转换图}：树或者DAG图。
 
 \textbf{求解目标}：求最短。
 
@@ -374,10 +475,16 @@ private:
 
 \item 如何扩展状态？这一步跟第2步相关。状态里记录的数据不同，扩展方法就不同。对于固定不变的数据结构（一般题目直接给出，作为输入数据），如二叉树，图等，扩展方法很简单，直接往下一层走，对于隐式图，要先在第1步里想清楚状态所带的数据，想清楚了这点，那如何扩展就很简单了。
 
-\item 关于判重，状态是否存在完美哈希方案？即将状态一一映射到整数，互相之间不会冲突。
+\item 如何判断重复？如果状态转换图是一颗树，则永远不会出现回路，不需要判重；如果状态转换图是一个图（这时候是一个图上的BFS），则需要判重。
     \begin{enumerate}
-    \item 如果不存在，则需要使用通用的哈希表（自己实现或用标准库，例如\fn{unordered_set}）来判重；自己实现哈希表的话，如果能够预估状态个数的上限，则可以开两个数组，head和next，表示哈希表，参考第 \S \ref{subsec:eightDigits}节方案2。
-    \item 如果存在，则可以开一个大布尔数组，作为哈希表来判重，且此时可以精确计算出状态总数，而不仅仅是预估上限。
+    \item 如果是求最短路径长度或一条路径，则只需要让“点”（即状态）不重复出现，即可保证不出现回路
+    \item 如果是求所有路径，注意此时，状态转换图是DAG，即允许两个父节点指向同一个子节点。具体实现时，每个节点要\textbf{“延迟”}加入到已访问集合\fn{visited}，要等一层全部访问完后，再加入到\fn{visited}集合。
+    \item 具体实现
+        \begin{enumerate}
+        \item 状态是否存在完美哈希方案？即将状态一一映射到整数，互相之间不会冲突。
+        \item 如果不存在，则需要使用通用的哈希表（自己实现或用标准库，例如\fn{unordered_set}）来判重；自己实现哈希表的话，如果能够预估状态个数的上限，则可以开两个数组，head和next，表示哈希表，参考第 \S \ref{subsec:eightDigits}节方案2。
+        \item 如果存在，则可以开一个大布尔数组，来判重，且此时可以精确计算出状态总数，而不仅仅是预估上限。
+        \end{enumerate}
     \end{enumerate}
 
 \item 目标状态是否已知？如果题目已经给出了目标状态，可以带来很大便利，这时候可以从起始状态出发，正向广搜；也可以从目标状态出发，逆向广搜；也可以同时出发，双向广搜。
@@ -389,8 +496,8 @@ private:
 
 对于队列，可以用\fn{queue}，也可以把\fn{vector}当做队列使用。当求长度时，有两种做法：
 \begin{enumerate}
-\item 只用一个队列，但在状态结构体\fn{state_t}里增加一个整数字段\fn{step}，表示走到当前状态用了多少步，当碰到目标状态，直接输出\fn{step}即可。这个方案，可以很方便的变成A*算法，把队列换成优先队列即可。
-\item 用两个队列，\fn{current, next}，分别表示当前层次和下一层，另设一个全局整数\fn{level}，表示层数（也即路径长度），当碰到目标状态，输出\fn{level}即可。这个方案，状态可以少一个字段，节省内存。
+\item 只用一个队列，但在状态结构体\fn{state_t}里增加一个整数字段\fn{step}，表示走到当前状态用了多少步，当碰到目标状态，直接输出\fn{step}即可。这个方案，可以很容易的变成A*算法，把\fn{queue}替换为\fn{priority_queue}即可。
+\item 用两个队列，\fn{current, next}，分别表示当前层次和下一层，另设一个全局整数\fn{level}，表示层数（也即路径长度），当碰到目标状态，输出\fn{level}即可。这个方案，状态里可以不存路径长度，只需全局设置一个整数\fn{level}，比较节省内存；
 \end{enumerate}
 
 对于hashset，如果有完美哈希方案，用布尔数组(\fn{bool visited[STATE_MAX]}或\fn{vector<bool> visited(STATE_MAX, false)})来表示；如果没有，可以用STL里的\fn{set}或\fn{unordered_set}。
@@ -398,15 +505,16 @@ private:
 对于树，如果用STL，可以用\fn{unordered_map<state_t, state_t > father}表示一颗树，代码非常简洁。如果能够预估状态总数的上限（设为STATE_MAX），可以用数组(\fn{state_t nodes[STATE_MAX]})，即树的双亲表示法来表示树，效率更高，当然，需要写更多代码。
 
 
-\subsubsection{双队列的写法}
-\begin{Codex}[label=bfs_template1.cpp]
+\subsubsection{如何表示状态}
+
+\begin{Codex}[label=bfs_common.h]
 /** 状态 */
 struct state_t {
     int data1;  /** 状态的数据，可以有多个字段. */
     int data2;  /** 状态的数据，可以有多个字段. */
     // dataN;   /** 其他字段 */
     int action; /** 由父状态移动到本状态的动作，求动作序列时需要. */
-    int count;  /** 所花费的步骤数（也即路径长度-1），求路径长度时需要；
+    int step;  /** 所花费的步骤数（也即路径长度-1），求路径长度时需要；
                     不过，采用双队列时不需要本字段，只需全局设一个整数 */
     bool operator==(const state_t &other) const {
         return true;  // 根据具体问题实现
@@ -435,14 +543,12 @@ private:
     int m; // 存放外面传入的数据
 };
 
-
 /**
- * @brief 反向生成路径.
+ * @brief 反向生成路径，求一条路径.
  * @param[in] father 树
  * @param[in] target 目标节点
  * @return 从起点到target的路径
  */
-template<typename state_t>
 vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
         const state_t &target) {
     vector<state_t> path;
@@ -458,132 +564,241 @@ vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
 }
 
 /**
- * @brief 广搜.
- * @param[in] state_t 状态，如整数，字符串，一维数组等
+ * 反向生成路径，求所有路径.
+ * @param[in] father 存放了所有路径的树
+ * @param[in] start 起点
+ * @param[in] state 终点
+ * @return 从起点到终点的所有路径
+ */
+void gen_path(unordered_map<state_t, vector<state_t> > &father,
+        vector<state_t> &path, const string &start, const state_t& state,
+        vector<vector<state_t> > &result) {
+    path.push_back(state);
+    if (state == start) {
+        result.push_back(path);
+        reverse(result.back().begin(), result.back().end());
+    } else {
+        for (const auto& f : father[state]) {
+            gen_path(father, path, start, f, result);
+        }
+    }
+    path.pop_back();
+}
+\end{Codex}
+
+
+\subsubsection{求最短路径长度或一条路径}
+
+\textbf{单队列的写法}
+
+\begin{Codex}[label=bfs_template.cpp]
+#include "bfs_common.h"
+
+/**
+ * @brief 广搜，只用一个队列.
  * @param[in] start 起点
  * @param[in] grid 输入数据
  * @return 从起点到目标状态的一条最短路径
  */
-template<typename state_t>
+vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
+    queue<state_t> q; // 队列
+    unordered_set<state_t> visited; // 判重
+    unordered_map<state_t, state_t> father; // 树，求路径本身时才需要
+
+    // 判断状态是否合法
+    auto state_is_valid = [&](const state_t &s) { /*...*/ };
+
+    // 判断当前状态是否为所求目标
+    auto state_is_target = [&](const state_t &s) { /*...*/ };
+
+    // 扩展当前状态
+    auto state_extend = [&](const state_t &s) {
+        unordered_set<state_t> result;
+        for (/*...*/) {
+            const state_t new_state = /*...*/;
+            if (state_is_valid(new_state) && 
+                    visited.find(new_state) != visited.end()) {
+                result.insert(new_state);
+            }
+        }
+        return result;
+    };
+
+    assert (start.step == 0);
+    q.push(start);
+    while (!q.empty()) {
+        // 千万不能用 const auto&，pop() 会删除元素，
+        // 引用就变成了悬空引用
+        const state_t state = q.front();
+        q.pop();
+        visited.insert(state);
+
+        // 访问节点
+        if (state_is_target(state)) {
+            return return gen_path(father, target); // 求一条路径
+            // return state.step + 1; // 求路径长度
+        }
+
+        // 扩展节点
+        vector<state_t> new_states = state_extend(state);
+        for (const auto& new_state : new_states) {
+            q.push(new_state);
+            father[new_state] = state;  // 求一条路径
+            // visited.insert(state); // 优化：可以提前加入 visited 集合，
+            // 从而缩小状态扩展。这时 q 的含义略有变化，里面存放的是处理了一半
+            // 的节点：已经加入了visited，但还没有扩展。别忘记 while循环开始
+            // 前，要加一行代码, visited.insert(start)
+        }
+    }
+
+    return vector<state_t>();
+    //return 0;
+}
+\end{Codex}
+
+
+\textbf{双队列的写法}
+\begin{Codex}[label=bfs_template1.cpp]
+#include "bfs_common.h"
+
+/**
+ * @brief 广搜，使用两个队列.
+ * @param[in] start 起点
+ * @param[in] grid 输入数据
+ * @return 从起点到目标状态的一条最短路径
+ */
 vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     queue<state_t> next, current; // 当前层，下一层
     unordered_set<state_t> visited; // 判重
-    unordered_map<state_t, state_t> father; // 树
+    unordered_map<state_t, state_t> father; // 树，求路径本身时才需要
 
     int level = 0;  // 层次
-    bool found = false; // 是否找到目标
-    state_t target; // 符合条件的目标状态
+
+    // 判断状态是否合法
+    auto state_is_valid = [&](const state_t &s) { /*...*/ };
 
     // 判断当前状态是否为所求目标
-    auto state_is_target = [&](const state_t &s) {return true; };
+    auto state_is_target = [&](const state_t &s) { /*...*/ };
+
     // 扩展当前状态
     auto state_extend = [&](const state_t &s) {
-        vector<state_t> result;
-        // ...
+        unordered_set<state_t> result;
+        for (/*...*/) {
+            const state_t new_state = /*...*/;
+            if (state_is_valid(new_state) && 
+                    visited.find(new_state) != visited.end()) {
+                result.insert(new_state);
+            }
+        }
         return result;
     };
 
     current.push(start);
-    visited.insert(start);
-    while (!current.empty() && !found) {
+    while (!current.empty()) {
         ++level;
-        while (!current.empty() && !found) {
-            const state_t state = current.front();
+        while (!current.empty()) {
+            // 千万不能用 const auto&，pop() 会删除元素，
+            // 引用就变成了悬空引用
+            const auto state = current.front();
             current.pop();
-            vector<state_t> new_states = state_extend(state);
-            for (auto iter = new_states.cbegin();
-                    iter != new_states.cend() && ! found; ++iter) {
-                const state_t new_state(*iter);
+            visited.insert(state);
 
-                if (state_is_target(new_state)) {
-                    found = true; //找到了
-                    target = new_state;
-                    father[new_state] = state;
-                    break;
-                }
+            if (state_is_target(state)) {
+                return return gen_path(father, state); // 求一条路径
+                // return state.step + 1; // 求路径长度
+            }
 
+            const auto& new_states = state_extend(state);
+            for (const auto& new_state : new_states) {
                 next.push(new_state);
-                // visited.insert(new_state); 必须放到 state_extend()里
                 father[new_state] = state;
+                // visited.insert(state); // 优化：可以提前加入 visited 集合，
+                // 从而缩小状态扩展。这时 current 的含义略有变化，里面存放的是处
+                // 理了一半的节点：已经加入了visited，但还没有扩展。别忘记 while
+                // 循环开始前，要加一行代码, visited.insert(start)
             }
         }
         swap(next, current); //!!! 交换两个队列
     }
 
-    if (found) {
-        return gen_path(father, target);
-        //return level + 1;
-    } else {
-        return vector<state_t>();
-        //return 0;
-    }
+    return vector<state_t>();
+    // return 0;
 }
 \end{Codex}
 
 
-\subsubsection{只用一个队列的写法}
-双队列的写法，当求路径长度时，不需要在状态里设置一个\fn{count}字段记录路径长度，只需全局设置一个整数\fn{level}，比较节省内存；只用一个队列的写法，当求路径长度时，需要在状态里设置一个\fn{count}字段，不过，这种写法有一个好处 —— 可以很容易的变为A*算法，把\fn{queue}替换为\fn{priority_queue}即可。
+\subsubsection{求所有路径}
 
-\begin{Codex}[label=bfs_template2.cpp]
-// 与模板1相同的部分，不再重复
-// ...
+\textbf{只用一个队列的写法}
+
+单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。
+
+
+\textbf{双队列的写法}
+
+\begin{Codex}[label=bfs_template.cpp]
+#include "bfs_common.h"
 
 /**
- * @brief 广搜.
- * @param[in] state_t 状态，如整数，字符串，一维数组等
+ * @brief 广搜，使用两个队列.
  * @param[in] start 起点
  * @param[in] grid 输入数据
  * @return 从起点到目标状态的一条最短路径
  */
-template<typename state_t>
-vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
-    queue<state_t> q; // 队列
+vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
+    // 当前层，下一层，用unordered_set是为了去重，例如两个父节点指向
+    // 同一个子节点，如果用vector, 子节点就会在next里出现两次，其实此
+    // 时 father 已经记录了两个父节点，next里重复出现两次是没必要的
+    unordered_set<string> current, next;
     unordered_set<state_t> visited; // 判重
-    unordered_map<state_t, state_t> father; // 树
+    unordered_map<state_t, vector<state_t> > father; // DAG
 
-    int level = 0;  // 层次
-    bool found = false; // 是否找到目标
-    state_t target; // 符合条件的目标状态
+
+    // 判断状态是否合法
+    auto state_is_valid = [&](const state_t &s) { /*...*/ };
 
     // 判断当前状态是否为所求目标
-    auto state_is_target = [&](const state_t &s) {return true; };
+    auto state_is_target = [&](const state_t &s) { /*...*/ };
+
     // 扩展当前状态
     auto state_extend = [&](const state_t &s) {
-        vector<state_t> result;
-        // ...
+        unordered_set<state_t> result;
+        for (/*...*/) {
+            const state_t new_state = /*...*/;
+            if (state_is_valid(new_state) && 
+                    visited.find(new_state) != visited.end()) {
+                result.insert(new_state);
+            }
+        }
         return result;
     };
 
-    start.count = 0;
-    q.push(start);
-    visited.insert(start);
-    while (!q.empty() && !found) {
-        const state_t state = q.front();
-        q.pop();
-        vector<state_t> new_states = state_extend(state);
-        for (auto iter = new_states.cbegin();
-                iter != new_states.cend() && ! found; ++iter) {
-            const state_t new_state(*iter);
-
-            if (state_is_target(new_state)) {
-                found = true; //找到了
-                target = new_state;
-                father[new_state] = state;
-                break;
+    vector<vector<string> > result;
+    current.insert(start);
+    while (!current.empty()) {
+        // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
+        // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
+        // 节点时，指向了本层后面尚未处理的节点，这条路径必然不是最短的
+        for (const auto& state : current)
+            visited.insert(state);
+        for (const auto& state : current) {
+            if (state_is_target(state)) {
+                vector<string> path;
+                gen_path(father, path, start, state, result);
             }
+            // visited.insert(state); // 优化，将此行移动到for循环前面
 
-            q.push(new_state);
-            // visited.insert(new_state); 必须放到 state_extend()里
-            father[new_state] = state;
+            const auto new_states = state_extend(state);
+            for (const auto& new_state : new_states) {
+                next.insert(new_state);
+                father[new_state].push_back(state);
+            }
         }
+
+        current.clear();
+        swap(current, next);
     }
 
-    if (found) {
-        return gen_path(father, target);
-        //return level + 1;
-    } else {
-        return vector<state_t>();
-        //return 0;
-    }
+    return result;
 }
 \end{Codex}
