@@ -87,6 +87,7 @@ public:
             for (size_t i = 0; i < s.word.size(); ++i) {
                 state_t new_state(s.word, s.step + 1);
                 for (char c = 'a'; c <= 'z'; c++) {
+                    // 防止同字母替换
                     if (c == new_state.word[i]) continue;
 
                     swap(c, new_state.word[i]);
@@ -150,6 +151,7 @@ public:
             for (size_t i = 0; i < s.size(); ++i) {
                 string new_word(s);
                 for (char c = 'a'; c <= 'z'; c++) {
+                    // 防止同字母替换
                     if (c == new_word[i]) continue;
 
                     swap(c, new_word[i]);
@@ -235,12 +237,11 @@ Note:
 \subsubsection{分析}
 跟 Word Ladder比，这题是求路径本身，不是路径长度，也是BFS，略微麻烦点。
 
-这题跟普通的广搜有很大的不同，就是要输出所有路径，因此在记录前驱和判重地方与普通广搜略有不同。
+求一条路径和求所有路径有很大的不同，求一条路径，每个状态节点只需要记录一个前驱即可；求所有路径时，有的状态节点可能有多个父节点，即要记录多个前驱。
 
+如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的处理，因为我们要找的是最短路径。
 
-\subsubsection{单队列}
-
-单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。
+单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。本题可以用双队列来求解。
 
 
 \subsubsection{双队列}
@@ -259,6 +260,8 @@ public:
         unordered_set<string> visited; // 判重
         unordered_map<string, vector<string> > father; // DAG
 
+        int level = 0;  // 层次
+
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
             unordered_set<string> result;
@@ -266,6 +269,7 @@ public:
             for (size_t i = 0; i < s.size(); ++i) {
                 string new_word(s);
                 for (char c = 'a'; c <= 'z'; c++) {
+                    // 防止同字母替换
                     if (c == new_word[i]) continue;
 
                     swap(c, new_word[i]);
@@ -284,6 +288,11 @@ public:
         vector<vector<string> > result;
         current.insert(start);
         while (!current.empty()) {
+            ++ level;
+            // 如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的
+            // 处理，因为我们要找的是最短路径
+            if (!result.empty() && level > result[0].size()) break;
+
             // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
             // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
             // 节点时，指向了本层后面尚未处理的节点，这条路径必然不是最短的
@@ -314,7 +323,18 @@ private:
             vector<vector<string> > &result) {
         path.push_back(word);
         if (word == start) {
-            result.push_back(path);
+            if (!result.empty()) {
+                if (path.size() < result[0].size()) {
+                    result.clear();
+                    result.push_back(path);
+                } else if(path.size() == result[0].size()) {
+                    result.push_back(path);
+                } else {
+                    // throw exception
+                }
+            } else {
+                result.push_back(path);
+            }
             reverse(result.back().begin(), result.back().end());
         } else {
             for (const auto& f : father[word]) {
@@ -322,6 +342,137 @@ private:
             }
         }
         path.pop_back();
+    }
+};
+\end{Code}
+
+
+\subsubsection{图的广搜}
+
+本题还可以看做是图上的广搜。给定了字典 \fn{dict}，可以基于它画出一个无向图，表示单词之间可以互相转换。本题的本质就是已知起点和终点，在图上找出所有最短路径。
+
+\begin{Code}
+//LeetCode, Word Ladder II
+// 时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+    vector<vector<string> > findLadders(const string& start,
+            const string &end, const unordered_set<string> &dict) {
+        const auto& g = build_graph(dict);
+        vector<path_node_t*> pool;
+        queue<path_node_t*> q; // 未处理的节点
+        // value 是所在层次
+        unordered_map<string, int> visited;
+
+        q.push(new_path_node(nullptr, start, 1, pool));
+        visited[start] = 1;
+
+        vector<vector<string>> result;
+        while (!q.empty()) {
+            path_node_t* node = q.front();
+            q.pop();
+
+            // 如果当前路径长度已经超过当前最短路径长度，
+            // 可以中止对该路径的处理，因为我们要找的是最短路径
+            if (!result.empty() && node->length > result[0].size()) break;
+
+            if (node->word == end) {
+                result.push_back(gen_path(node));
+                continue;
+            }
+            // 挪到了下面，只有尽早加入visited, 才能防止，同一层，
+            // 前面一个子节点扩展时，指向同层后面的节点
+            // visited[node->word] = node->length;
+
+            // 扩展节点
+            auto iter = g.find(node->word);
+            if (iter == g.end()) continue;
+
+            for (const auto& neighbor : iter->second) {
+                auto visited_iter = visited.find(neighbor);
+
+                if (visited_iter != visited.end()) {
+                    if (visited_iter->second < node->length + 1) {
+                        continue;
+                    } else if (visited_iter->second > node->length + 1) {
+                        // not possible, throw exception
+                        // throw std::logic_error("not possible");
+                    } else {
+                        // do nothing
+                    }
+                } else {
+                    visited[neighbor] = node->length + 1;
+                }
+
+                q.push(new_path_node(node, neighbor, node->length + 1, pool));
+            }
+        }
+
+        // release path nodes
+        for (auto node : pool) {
+            delete node;
+        }
+        return result;
+    }
+
+private:
+    struct path_node_t {
+        path_node_t* father;
+        string word;
+        int length; // 路径长度
+
+        path_node_t(path_node_t* father_, const string& word_, int length_) :
+            father(father_), word(word_), length(length_) {}
+    };
+
+    path_node_t* new_path_node(path_node_t* parent, const string& value,
+            int length, vector<path_node_t*>& pool) {
+        path_node_t* node = new path_node_t(parent, value, length);
+        pool.push_back(node);
+
+        return node;
+    }
+    vector<string> gen_path(const path_node_t* node) {
+        vector<string> path;
+
+        while(node != nullptr) {
+            path.push_back(node->word);
+            node = node->father;
+        }
+
+        reverse(path.begin(), path.end());
+        return path;
+    }
+
+    unordered_map<string, unordered_set<string> > build_graph(
+            const unordered_set<string>& dict) {
+        unordered_map<string, unordered_set<string> > adjacency_list;
+
+        for (const auto& word : dict) {
+            for (size_t i = 0; i < word.size(); ++i) {
+                string new_word(word);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    // 防止同字母替换
+                    if (c == new_word[i]) continue;
+
+                    swap(c, new_word[i]);
+
+                    if ((dict.find(new_word) != dict.end())) {
+                        auto iter = adjacency_list.find(word);
+                        if (iter != adjacency_list.end()) {
+                            iter->second.insert(new_word);
+                        }
+                        else {
+                            adjacency_list.insert(pair<string,
+                                unordered_set<string>>(word, unordered_set<string>()));
+                            adjacency_list[word].insert(new_word);
+                        }
+                    }
+                    swap(c, new_word[i]); // 恢复该单词
+                }
+            }
+        }
+        return adjacency_list;
     }
 };
 \end{Code}
@@ -575,7 +726,18 @@ void gen_path(unordered_map<state_t, vector<state_t> > &father,
         vector<vector<state_t> > &result) {
     path.push_back(state);
     if (state == start) {
-        result.push_back(path);
+        if (!result.empty()) {
+            if (path.size() < result[0].size()) {
+                result.clear();
+                result.push_back(path);
+            } else if(path.size() == result[0].size()) {
+                result.push_back(path);
+            } else {
+                // throw exception
+            }
+        } else {
+            result.push_back(path);
+        }
         reverse(result.back().begin(), result.back().end());
     } else {
         for (const auto& f : father[state]) {
@@ -753,6 +915,7 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     unordered_set<state_t> visited; // 判重
     unordered_map<state_t, vector<state_t> > father; // DAG
 
+    int level = 0;  // 层次
 
     // 判断状态是否合法
     auto state_is_valid = [&](const state_t &s) { /*...*/ };
@@ -776,6 +939,11 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     vector<vector<string> > result;
     current.insert(start);
     while (!current.empty()) {
+        ++ level;
+        // 如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的
+        // 处理，因为我们要找的是最短路径
+        if (!result.empty() && level > result[0].size()) break;
+
         // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
         // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
         // 节点时，指向了本层后面尚未处理的节点，这条路径必然不是最短的
@@ -802,3 +970,4 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     return result;
 }
 \end{Codex}
+
