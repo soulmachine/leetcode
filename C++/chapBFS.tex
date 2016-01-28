@@ -338,6 +338,9 @@ public:
                 gen_path(father, start_state, state, path, result);
                 continue;
             }
+            // 必须挪到下面，比如同一层A和B两个节点均指向了目标节点，
+            // 那么目标节点就会在q中出现两次，输出路径就会翻倍
+            // visited.insert(state);
 
             // 扩展节点
             const auto& new_states = state_extend(state);
@@ -1099,6 +1102,9 @@ vector<vector<state_t> > bfs(const state_t &start, const type& data) {
             gen_path(father, start_state, state, path, result);
             continue;
         }
+        // 必须挪到下面，比如同一层A和B两个节点均指向了目标节点，
+        // 那么目标节点就会在q中出现两次，输出路径就会翻倍
+        // visited.insert(state);
 
         // 扩展节点
         const auto& new_states = state_extend(state);
