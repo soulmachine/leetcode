@@ -45,12 +45,12 @@ Note:
 // 时间复杂度O(n)，空间复杂度O(n)
 struct state_t {
     string word;
-    int step;
+    int level;
 
-    state_t() { word = ""; step = 0; }
-    state_t(const string& word, int step) {
+    state_t() { word = ""; level = 0; }
+    state_t(const string& word, int level) {
         this->word = word;
-        this->step = step;
+        this->level = level;
     }
 
     bool operator==(const state_t &other) const {
@@ -85,7 +85,7 @@ public:
             unordered_set<state_t> result;
 
             for (size_t i = 0; i < s.word.size(); ++i) {
-                state_t new_state(s.word, s.step + 1);
+                state_t new_state(s.word, s.level + 1);
                 for (char c = 'a'; c <= 'z'; c++) {
                     // 防止同字母替换
                     if (c == new_state.word[i]) continue;
@@ -113,7 +113,7 @@ public:
             q.pop();
 
             if (state_is_target(state)) {
-                return state.step + 1;
+                return state.level + 1;
             }
 
             const auto& new_states = state_extend(state);
@@ -139,7 +139,7 @@ public:
         queue<string> current, next;    // 当前层，下一层
         unordered_set<string> visited;  // 判重
 
-        int level = 0;  // 层次
+        int level = -1;  // 层次
 
         auto state_is_valid = [&](const string& s) {
             return dict.find(s) != dict.end() || s == end;
@@ -177,7 +177,7 @@ public:
                 const auto state = current.front();
                 current.pop();
 
-                if (state_is_target(new_state)) {
+                if (state_is_target(state)) {
                     return level + 1;
                 }
 
@@ -241,7 +241,148 @@ Note:
 
 如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的处理，因为我们要找的是最短路径。
 
-单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。本题可以用双队列来求解。
+
+\subsubsection{单队列}
+
+\begin{Code}
+//LeetCode, Word Ladder II
+// 时间复杂度O(n)，空间复杂度O(n)
+struct state_t {
+    string word;
+    int level;
+
+    state_t() { word = ""; level = 0; }
+    state_t(const string& word, int level) {
+        this->word = word;
+        this->level = level;
+    }
+
+    bool operator==(const state_t &other) const {
+        return this->word == other.word;
+    }
+};
+
+namespace std {
+    template<> struct hash<state_t> {
+    public:
+        size_t operator()(const state_t& s) const {
+            return str_hash(s.word);
+        }
+    private:
+        std::hash<std::string> str_hash;
+    };
+}
+
+
+class Solution {
+public:
+    vector<vector<string> > findLadders(const string& start,
+        const string& end, const unordered_set<string> &dict) {
+        queue<state_t> q;
+        unordered_set<state_t> visited; // 判重
+        unordered_map<state_t, vector<state_t> > father; // DAG
+
+        auto state_is_valid = [&](const state_t& s) {
+            return dict.find(s.word) != dict.end() || s.word == end;
+        };
+        auto state_is_target = [&](const state_t &s) {return s.word == end; };
+        auto state_extend = [&](const state_t &s) {
+            unordered_set<state_t> result;
+
+            for (size_t i = 0; i < s.word.size(); ++i) {
+                state_t new_state(s.word, s.level + 1);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    // 防止同字母替换
+                    if (c == new_state.word[i]) continue;
+
+                    swap(c, new_state.word[i]);
+
+                    if (state_is_valid(new_state)) {
+                        auto visited_iter = visited.find(new_state);
+
+                        if (visited_iter != visited.end()) {
+                            if (visited_iter->level < new_state.level) {
+                                // do nothing
+                            } else if (visited_iter->level == new_state.level) {
+                                result.insert(new_state);
+                            } else { // not possible
+                                throw std::logic_error("not possible to get here");
+                            }
+                        } else {
+                            result.insert(new_state);
+                        }
+                    }
+                    swap(c, new_state.word[i]); // 恢复该单词
+                }
+            }
+
+            return result;
+        };
+
+        vector<vector<string>> result;
+        state_t start_state(start, 0);
+        q.push(start_state);
+        visited.insert(start_state);
+        while (!q.empty()) {
+            // 千万不能用 const auto&，pop() 会删除元素，
+            // 引用就变成了悬空引用
+            const auto state = q.front();
+            q.pop();
+
+            // 如果当前路径长度已经超过当前最短路径长度，
+            // 可以中止对该路径的处理，因为我们要找的是最短路径
+            if (!result.empty() && state.level + 1 > result[0].size()) break;
+
+            if (state_is_target(state)) {
+                vector<string> path;
+                gen_path(father, start_state, state, path, result);
+                continue;
+            }
+
+            // 扩展节点
+            const auto& new_states = state_extend(state);
+            for (const auto& new_state : new_states) {
+                if (visited.find(new_state) == visited.end()) {
+                    q.push(new_state);
+                }
+                visited.insert(new_state);
+                father[new_state].push_back(state);
+            }
+        }
+
+        return result;
+    }
+private:
+    void gen_path(unordered_map<state_t, vector<state_t> > &father,
+        const state_t &start, const state_t &state, vector<string> &path,
+        vector<vector<string> > &result) {
+        path.push_back(state.word);
+        if (state == start) {
+            if (!result.empty()) {
+                if (path.size() < result[0].size()) {
+                    result.clear();
+                    result.push_back(path);
+                    reverse(result.back().begin(), result.back().end());
+                } else if (path.size() == result[0].size()) {
+                    result.push_back(path);
+                    reverse(result.back().begin(), result.back().end());
+                } else { // not possible
+                    throw std::logic_error("not possible to get here ");
+                }
+            } else {
+                result.push_back(path);
+                reverse(result.back().begin(), result.back().end());
+            }
+
+        } else {
+            for (const auto& f : father[state]) {
+                gen_path(father, start, f, path, result);
+            }
+        }
+        path.pop_back();
+    }
+};
+\end{Code}
 
 
 \subsubsection{双队列}
@@ -260,8 +401,11 @@ public:
         unordered_set<string> visited; // 判重
         unordered_map<string, vector<string> > father; // DAG
 
-        int level = 0;  // 层次
+        int level = -1;  // 层次
 
+        auto state_is_valid = [&](const string& s) {
+            return dict.find(s) != dict.end() || s == end;
+        };
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
             unordered_set<string> result;
@@ -274,8 +418,8 @@ public:
 
                     swap(c, new_word[i]);
 
-                    if ((dict.find(new_word) != dict.end() || new_word == end) &&
-                             visited.find(new_word) == visited.end()) {
+                    if (state_is_valid(new_word) &&
+                            visited.find(new_word) == visited.end()) {
                         result.insert(new_word);
                     }
                     swap(c, new_word[i]); // 恢复该单词
@@ -291,7 +435,7 @@ public:
             ++ level;
             // 如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的
             // 处理，因为我们要找的是最短路径
-            if (!result.empty() && level > result[0].size()) break;
+            if (!result.empty() && level+1 > result[0].size()) break;
 
             // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
             // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
@@ -302,6 +446,7 @@ public:
                 if (state_is_target(state)) {
                     vector<string> path;
                     gen_path(father, path, start, state, result);
+                    continue;
                 }
 
                 const auto new_states = state_extend(state);
@@ -330,7 +475,8 @@ private:
                 } else if(path.size() == result[0].size()) {
                     result.push_back(path);
                 } else {
-                    // throw exception
+                    // not possible
+                    throw std::logic_error("not possible to get here");
                 }
             } else {
                 result.push_back(path);
@@ -359,80 +505,83 @@ public:
     vector<vector<string> > findLadders(const string& start,
             const string &end, const unordered_set<string> &dict) {
         const auto& g = build_graph(dict);
-        vector<path_node_t*> pool;
-        queue<path_node_t*> q; // 未处理的节点
+        vector<state_t*> pool;
+        queue<state_t*> q; // 未处理的节点
         // value 是所在层次
         unordered_map<string, int> visited;
 
-        q.push(new_path_node(nullptr, start, 1, pool));
-        visited[start] = 1;
+        auto state_is_target = [&](const state_t *s) {return s->word == end; };
 
         vector<vector<string>> result;
+        q.push(create_state(nullptr, start, 0, pool));
         while (!q.empty()) {
-            path_node_t* node = q.front();
+            state_t* state = q.front();
             q.pop();
 
             // 如果当前路径长度已经超过当前最短路径长度，
             // 可以中止对该路径的处理，因为我们要找的是最短路径
-            if (!result.empty() && node->length > result[0].size()) break;
+            if (!result.empty() && state->level+1 > result[0].size()) break;
 
-            if (node->word == end) {
-                result.push_back(gen_path(node));
+            if (state_is_target(state)) {
+                const auto& path = gen_path(state);
+                if (result.empty()) {
+                    result.push_back(path);
+                } else {
+                    if (path.size() < result[0].size()) {
+                        result.clear();
+                        result.push_back(path);
+                    } else if (path.size() == result[0].size()) {
+                        result.push_back(path);
+                    } else {
+                        // not possible
+                        throw std::logic_error("not possible to get here");
+                    }
+                }
                 continue;
             }
-            // 挪到了下面，只有尽早加入visited, 才能防止，同一层，
-            // 前面一个子节点扩展时，指向同层后面的节点
-            // visited[node->word] = node->length;
+            visited[state->word] = state->level;
 
             // 扩展节点
-            auto iter = g.find(node->word);
+            auto iter = g.find(state->word);
             if (iter == g.end()) continue;
 
             for (const auto& neighbor : iter->second) {
                 auto visited_iter = visited.find(neighbor);
 
-                if (visited_iter != visited.end()) {
-                    if (visited_iter->second < node->length + 1) {
-                        continue;
-                    } else if (visited_iter->second > node->length + 1) {
-                        // not possible, throw exception
-                        // throw std::logic_error("not possible");
-                    } else {
-                        // do nothing
-                    }
-                } else {
-                    visited[neighbor] = node->length + 1;
+                if (visited_iter != visited.end() && 
+                    visited_iter->second < state->level + 1) {
+                    continue;
                 }
 
-                q.push(new_path_node(node, neighbor, node->length + 1, pool));
+                q.push(create_state(state, neighbor, state->level + 1, pool));
             }
         }
 
-        // release path nodes
-        for (auto node : pool) {
-            delete node;
+        // release all states
+        for (auto state : pool) {
+            delete state;
         }
         return result;
     }
 
 private:
-    struct path_node_t {
-        path_node_t* father;
+    struct state_t {
+        state_t* father;
         string word;
-        int length; // 路径长度
+        int level; // 所在层次，从0开始编号
 
-        path_node_t(path_node_t* father_, const string& word_, int length_) :
-            father(father_), word(word_), length(length_) {}
+        state_t(state_t* father_, const string& word_, int level_) :
+            father(father_), word(word_), level(level_) {}
     };
 
-    path_node_t* new_path_node(path_node_t* parent, const string& value,
-            int length, vector<path_node_t*>& pool) {
-        path_node_t* node = new path_node_t(parent, value, length);
+    state_t* create_state(state_t* parent, const string& value,
+            int length, vector<state_t*>& pool) {
+        state_t* node = new state_t(parent, value, length);
         pool.push_back(node);
 
         return node;
     }
-    vector<string> gen_path(const path_node_t* node) {
+    vector<string> gen_path(const state_t* node) {
         vector<string> path;
 
         while(node != nullptr) {
@@ -461,8 +610,7 @@ private:
                         auto iter = adjacency_list.find(word);
                         if (iter != adjacency_list.end()) {
                             iter->second.insert(new_word);
-                        }
-                        else {
+                        } else {
                             adjacency_list.insert(pair<string,
                                 unordered_set<string>>(word, unordered_set<string>()));
                             adjacency_list[word].insert(new_word);
@@ -647,7 +795,7 @@ private:
 
 对于队列，可以用\fn{queue}，也可以把\fn{vector}当做队列使用。当求长度时，有两种做法：
 \begin{enumerate}
-\item 只用一个队列，但在状态结构体\fn{state_t}里增加一个整数字段\fn{step}，表示走到当前状态用了多少步，当碰到目标状态，直接输出\fn{step}即可。这个方案，可以很容易的变成A*算法，把\fn{queue}替换为\fn{priority_queue}即可。
+\item 只用一个队列，但在状态结构体\fn{state_t}里增加一个整数字段\fn{level}，表示当前所在的层次，当碰到目标状态，直接输出\fn{level}即可。这个方案，可以很容易的变成A*算法，把\fn{queue}替换为\fn{priority_queue}即可。
 \item 用两个队列，\fn{current, next}，分别表示当前层次和下一层，另设一个全局整数\fn{level}，表示层数（也即路径长度），当碰到目标状态，输出\fn{level}即可。这个方案，状态里可以不存路径长度，只需全局设置一个整数\fn{level}，比较节省内存；
 \end{enumerate}
 
@@ -665,7 +813,7 @@ struct state_t {
     int data2;  /** 状态的数据，可以有多个字段. */
     // dataN;   /** 其他字段 */
     int action; /** 由父状态移动到本状态的动作，求动作序列时需要. */
-    int step;  /** 所花费的步骤数（也即路径长度-1），求路径长度时需要；
+    int level;  /** 所在的层次（从0开始），也即路径长度-1，求路径长度时需要；
                     不过，采用双队列时不需要本字段，只需全局设一个整数 */
     bool operator==(const state_t &other) const {
         return true;  // 根据具体问题实现
@@ -722,7 +870,7 @@ vector<state_t> gen_path(const unordered_map<state_t, state_t> &father,
  * @return 从起点到终点的所有路径
  */
 void gen_path(unordered_map<state_t, vector<state_t> > &father,
-        vector<state_t> &path, const string &start, const state_t& state,
+        const string &start, const state_t& state, vector<state_t> &path,
         vector<vector<state_t> > &result) {
     path.push_back(state);
     if (state == start) {
@@ -733,7 +881,8 @@ void gen_path(unordered_map<state_t, vector<state_t> > &father,
             } else if(path.size() == result[0].size()) {
                 result.push_back(path);
             } else {
-                // throw exception
+                // not possible
+                throw std::logic_error("not possible to get here");
             }
         } else {
             result.push_back(path);
@@ -741,7 +890,7 @@ void gen_path(unordered_map<state_t, vector<state_t> > &father,
         reverse(result.back().begin(), result.back().end());
     } else {
         for (const auto& f : father[state]) {
-            gen_path(father, path, start, f, result);
+            gen_path(father, start, f, path, result);
         }
     }
     path.pop_back();
@@ -759,7 +908,7 @@ void gen_path(unordered_map<state_t, vector<state_t> > &father,
 /**
  * @brief 广搜，只用一个队列.
  * @param[in] start 起点
- * @param[in] grid 输入数据
+ * @param[in] data 输入数据
  * @return 从起点到目标状态的一条最短路径
  */
 vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
@@ -786,7 +935,7 @@ vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
         return result;
     };
 
-    assert (start.step == 0);
+    assert (start.level == 0);
     q.push(start);
     while (!q.empty()) {
         // 千万不能用 const auto&，pop() 会删除元素，
@@ -798,7 +947,7 @@ vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
         // 访问节点
         if (state_is_target(state)) {
             return return gen_path(father, target); // 求一条路径
-            // return state.step + 1; // 求路径长度
+            // return state.level + 1; // 求路径长度
         }
 
         // 扩展节点
@@ -826,15 +975,15 @@ vector<state_t> bfs(state_t &start, const vector<vector<int>> &grid) {
 /**
  * @brief 广搜，使用两个队列.
  * @param[in] start 起点
- * @param[in] grid 输入数据
+ * @param[in] data 输入数据
  * @return 从起点到目标状态的一条最短路径
  */
-vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
+vector<state_t> bfs(const state_t &start, const type& data) {
     queue<state_t> next, current; // 当前层，下一层
     unordered_set<state_t> visited; // 判重
     unordered_map<state_t, state_t> father; // 树，求路径本身时才需要
 
-    int level = 0;  // 层次
+    int level = -1;  // 层次
 
     // 判断状态是否合法
     auto state_is_valid = [&](const state_t &s) { /*...*/ };
@@ -867,7 +1016,7 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
 
             if (state_is_target(state)) {
                 return return gen_path(father, state); // 求一条路径
-                // return state.step + 1; // 求路径长度
+                // return state.level + 1; // 求路径长度
             }
 
             const auto& new_states = state_extend(state);
@@ -891,9 +1040,80 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
 
 \subsubsection{求所有路径}
 
-\textbf{只用一个队列的写法}
+\textbf{单队列}
 
-单队列无法求解所有路径。因为 需要一个 \fn{queue} 和 \fn{unordered_set} 的综合体，这是不可能的。
+\begin{Codex}[label=bfs_template.cpp]
+/**
+ * @brief 广搜，使用一个队列.
+ * @param[in] start 起点
+ * @param[in] data 输入数据
+ * @return 从起点到目标状态的所有最短路径
+ */
+vector<vector<state_t> > bfs(const state_t &start, const type& data) {
+    queue<state_t> q;
+    unordered_set<state_t> visited; // 判重
+    unordered_map<state_t, vector<state_t> > father; // DAG
+
+    auto state_is_valid = [&](const state_t& s) { /*...*/ };
+    auto state_is_target = [&](const state_t &s) { /*...*/ };
+    auto state_extend = [&](const state_t &s) {
+        unordered_set<state_t> result;
+        for (/*...*/) {
+            const state_t new_state = /*...*/;
+            if (state_is_valid(new_state)) {
+                auto visited_iter = visited.find(new_state);
+
+                if (visited_iter != visited.end()) {
+                    if (visited_iter->level < new_state.level) {
+                        // do nothing
+                    } else if (visited_iter->level == new_state.level) {
+                        result.insert(new_state);
+                    } else { // not possible
+                        throw std::logic_error("not possible to get here");
+                    }
+                } else {
+                    result.insert(new_state);
+                }
+            }
+        }
+
+        return result;
+    };
+
+    vector<vector<string>> result;
+    state_t start_state(start, 0);
+    q.push(start_state);
+    visited.insert(start_state);
+    while (!q.empty()) {
+        // 千万不能用 const auto&，pop() 会删除元素，
+        // 引用就变成了悬空引用
+        const auto state = q.front();
+        q.pop();
+
+        // 如果当前路径长度已经超过当前最短路径长度，
+        // 可以中止对该路径的处理，因为我们要找的是最短路径
+        if (!result.empty() && state.level + 1 > result[0].size()) break;
+
+        if (state_is_target(state)) {
+            vector<string> path;
+            gen_path(father, start_state, state, path, result);
+            continue;
+        }
+
+        // 扩展节点
+        const auto& new_states = state_extend(state);
+        for (const auto& new_state : new_states) {
+            if (visited.find(new_state) == visited.end()) {
+                q.push(new_state);
+            }
+            visited.insert(new_state);
+            father[new_state].push_back(state);
+        }
+    }
+
+    return result;
+}
+\end{Codex}
 
 
 \textbf{双队列的写法}
@@ -904,10 +1124,10 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
 /**
  * @brief 广搜，使用两个队列.
  * @param[in] start 起点
- * @param[in] grid 输入数据
- * @return 从起点到目标状态的一条最短路径
+ * @param[in] data 输入数据
+ * @return 从起点到目标状态的所有最短路径
  */
-vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
+vector<vector<state_t> > bfs(const state_t &start, const type& data) {
     // 当前层，下一层，用unordered_set是为了去重，例如两个父节点指向
     // 同一个子节点，如果用vector, 子节点就会在next里出现两次，其实此
     // 时 father 已经记录了两个父节点，next里重复出现两次是没必要的
@@ -915,7 +1135,7 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
     unordered_set<state_t> visited; // 判重
     unordered_map<state_t, vector<state_t> > father; // DAG
 
-    int level = 0;  // 层次
+    int level = -1;  // 层次
 
     // 判断状态是否合法
     auto state_is_valid = [&](const state_t &s) { /*...*/ };
@@ -936,13 +1156,13 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
         return result;
     };
 
-    vector<vector<string> > result;
+    vector<vector<state_t> > result;
     current.insert(start);
     while (!current.empty()) {
         ++ level;
         // 如果当前路径长度已经超过当前最短路径长度，可以中止对该路径的
         // 处理，因为我们要找的是最短路径
-        if (!result.empty() && level > result[0].size()) break;
+        if (!result.empty() && level+1 > result[0].size()) break;
 
         // 1. 延迟加入visited, 这样才能允许两个父节点指向同一个子节点
         // 2. 一股脑current 全部加入visited, 是防止本层前一个节点扩展
@@ -953,8 +1173,8 @@ vector<state_t> bfs(const state_t &start, const vector<vector<int>> &grid) {
             if (state_is_target(state)) {
                 vector<string> path;
                 gen_path(father, path, start, state, result);
+                continue;
             }
-            // visited.insert(state); // 优化，将此行移动到for循环前面
 
             const auto new_states = state_extend(state);
             for (const auto& new_state : new_states) {
