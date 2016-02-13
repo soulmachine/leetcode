@@ -101,31 +101,36 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 // TODO: 会超时
 class Solution {
 public:
-    ListNode *mergeKLists(vector<ListNode *> &lists) {
-        if (lists.size() == 0) return nullptr;
 
-        ListNode *p = lists[0];
-        for (int i = 1; i < lists.size(); i++) {
-            p = mergeTwoLists(p, lists[i]);
-        }
-        return p;
-    }
-
-    // Merge Two Sorted Lists
-    ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
-        ListNode head(-1);
-        for (ListNode* p = &head; l1 != nullptr || l2 != nullptr; p = p->next) {
-            int val1 = l1 == nullptr ? INT_MAX : l1->val;
-            int val2 = l2 == nullptr ? INT_MAX : l2->val;
-            if (val1 <= val2) {
-                p->next = l1;
-                l1 = l1->next;
-            } else {
-                p->next = l2;
-                l2 = l2->next;
+    ListNode * mergeTwo(ListNode * l1, ListNode * l2){
+        if(!l1) return l2;
+        if(!l2) return l1;
+        ListNode dummy(-1);
+        ListNode * p = &dummy;
+        for(; l1 && l2; p = p->next){
+            if(l1->val > l2->val){
+                p->next = l2; l2 = l2->next;
+            }
+            else{
+                p->next = l1; l1 = l1->next;
             }
         }
-        return head.next;
+        p->next = l1 ? l1 : l2;
+        return dummy.next;
+    }
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.size() == 0) return nullptr;
+
+        // multi pass
+        deque<ListNode *> dq(lists.begin(), lists.end());
+        while(dq.size() > 1){
+            ListNode * first = dq.front(); dq.pop_front();
+            ListNode * second = dq.front(); dq.pop_front();
+            dq.push_back(mergeTwo(first,second));
+        }
+
+        return dq.front();
     }
 };
 \end{Code}
@@ -276,7 +281,7 @@ class Solution {
 public:
     int firstMissingPositive(vector<int>& nums) {
         bucket_sort(nums);
-        
+
         for (int i = 0; i < nums.size(); ++i)
             if (nums[i] != (i + 1))
                 return i + 1;
@@ -385,7 +390,7 @@ public:
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
-        partition(partition(nums.begin(), nums.end(), bind1st(equal_to<int>(), 0)), 
+        partition(partition(nums.begin(), nums.end(), bind1st(equal_to<int>(), 0)),
                 nums.end(), bind1st(equal_to<int>(), 1));
     }
 };
