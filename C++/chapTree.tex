@@ -1442,12 +1442,13 @@ Assume a BST is defined as follows:
 
 
 \subsubsection{分析}
-
+检查中序遍历得到的数列是否是递增数列。注意comparator的使用。
 
 \subsubsection{代码}
 
 \begin{Code}
 // LeetCode, Validate Binary Search Tree
+// @author Michael Liu (http://lxieyang.github.io)
 // 时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
