@@ -1442,26 +1442,37 @@ Assume a BST is defined as follows:
 
 
 \subsubsection{分析}
-
+检查中序遍历得到的数列是否是递增数列。注意comparator的使用。
 
 \subsubsection{代码}
 
 \begin{Code}
 // LeetCode, Validate Binary Search Tree
+// @author Michael Liu (http://lxieyang.github.io)
 // 时间复杂度O(n)，空间复杂度O(\logn)
 class Solution {
 public:
-    bool isValidBST(TreeNode* root) {
-        return isValidBST(root, INT_MIN, INT_MAX);
+	bool isValidBST(TreeNode * root) {
+		inorder(root);
+		return is_sorted(values.begin(), values.end(), cmp());
+	}
+	
+	void inorder(TreeNode * root) {
+    	if(!root)
+    		return;
+    	inorder(root->left);
+    	values.push_back(root->val);
+    	inorder(root->right);
     }
-
-    bool isValidBST(TreeNode* root, int lower, int upper) {
-        if (root == nullptr) return true;
-
-        return root->val > lower && root->val < upper
-                && isValidBST(root->left, lower, root->val)
-                && isValidBST(root->right, root->val, upper);
-    }
+    
+private:
+	struct cmp {
+		bool operator()(const int & first, const int & second) {
+			return first <= second;
+		}
+	};
+	
+	vector<int> values;
 };
 \end{Code}
 
