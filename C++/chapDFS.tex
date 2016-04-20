@@ -1248,8 +1248,8 @@ void dfs(type &input, type &path, type &result, int cur or gap) {
 
 递归有两种加速策略，一种是\textbf{剪枝(prunning)}，对中间结果进行判断，提前返回；一种是\textbf{缓存}，缓存中间结果，防止重复计算，用空间换时间。
 
-其实，递归+缓存，就是 memorization。所谓\textbf{memorization}（翻译为备忘录法，见第 \S \ref{sec:dp-vs-memorization}节），就是"top-down with cache"（自顶向下+缓存），它是Donald Michie 在1968年创造的术语，表示一种优化技术，在top-down 形式的程序中，使用缓存来避免重复计算，从而达到加速的目的。
+其实，递归+缓存，就是 memoization。所谓\textbf{memoization}（翻译为备忘录法，见第 \S \ref{sec:dp-vs-memoization}节），就是"top-down with cache"（自顶向下+缓存），它是Donald Michie 在1968年创造的术语，表示一种优化技术，在top-down 形式的程序中，使用缓存来避免重复计算，从而达到加速的目的。
 
-\textbf{memorization 不一定用递归}，就像深搜不一定用递归一样，可以在迭代(iterative)中使用 memorization 。\textbf{递归也不一定用 memorization}，可以用memorization来加速，但不是必须的。只有当递归使用了缓存，它才是 memorization 。
+\textbf{memoization 不一定用递归}，就像深搜不一定用递归一样，可以在迭代(iterative)中使用 memoization 。\textbf{递归也不一定用 memoization}，可以用memoization来加速，但不是必须的。只有当递归使用了缓存，它才是 memoization 。
 
 既然递归一定是深搜，为什么很多书籍都同时使用这两个术语呢？在递归味道更浓的地方，一般用递归这个术语，在深搜更浓的场景下，用深搜这个术语，读者心里要弄清楚他俩大部分时候是一回事。在单链表、二叉树等递归数据结构上，递归的味道更浓，这时用递归这个术语；在图、隐式图等数据结构上，深搜的味道更浓，这时用深搜这个术语。
