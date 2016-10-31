@@ -1,5 +1,8 @@
 #LeetCode题解
 -----------------
+## 在线阅读
+<https://www.gitbook.com/book/soulmachine/algorithm-essentials/>
+
 ##PDF下载
 <a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/leetcode-cpp.pdf">LeetCode题解(C++版).pdf</a>
 
