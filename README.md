@@ -74,13 +74,13 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 
 欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
 
-##北美求职QQ群
+## QQ群
 
 237669375
 
-## 【友情推荐】九章算法
+## 小密圈
 
-1. 算法辅导在线视频直播课程：<http://www.jiuzhang.com?source=soulmachine>
+![](参考资料/silicon-job.png)
 
 
 ## AlgoHub
