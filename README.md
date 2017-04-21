@@ -80,7 +80,7 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 
 ## 小密圈
 
-![](参考资料/silicon-job.png | width=100)
+![](参考资料/silicon-job.jpeg)
 
 
 ## AlgoHub
