@@ -1,3 +1,7 @@
 #Java版
 -----------------
-书的内容与C++版一摸一样，不过代码是用Java写的。本书的代码要求 Java 6 以上。
+
+## 编译
+
+    docker pull soulmachine/texlive
+    docker run -it --rm -v $(pwd):/data -w /data soulmachine/texlive-full xelatex -synctex=1 -interaction=nonstopmode leetcode-java.tex
