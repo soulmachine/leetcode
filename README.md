@@ -15,7 +15,7 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 
 ##在Windows下编译
 1. 安装Tex Live 2015 <http://www.tug.org/texlive/>。把bin目录例如`D:\texlive\2015\bin\win32`加入PATH环境变量。
-1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <http://pan.baidu.com/s/1jIgyuRc> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
+1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
 1. 安装TeXstudio <http://texstudio.sourceforge.net/>
 1. (可选)启动Tex Live Manager，更新所有已安装的软件包。
 1. 配置TeXstudio。
@@ -48,7 +48,7 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 		export MANPATH=$MANPATH:/usr/local/texlive/2015/texmf-dist/doc/man
 		export INFPATH=$INFPATH:/usr/local/texlive/2015/texmf-dist/doc/info
 
-1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <http://pan.baidu.com/s/1jIgyuRc> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
+1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
 1. 安装TeXstudio <http://texstudio.sourceforge.net/>
 1. 配置TeXstudio。
 
