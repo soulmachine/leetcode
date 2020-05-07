@@ -16,7 +16,7 @@ Do not allocate extra space for another array, you must do this in place with co
 
 For example, Given input array \code{A = [1,1,2]},
 
-Your function should return length = 2, and A is now \code{[1,2]}.
+Your function should return length = 2, and A is now \code{\[1,2\]}.
 
 
 \subsubsection{分析}
@@ -97,7 +97,7 @@ What if duplicates are allowed at most twice?
 For example,
 Given sorted array \code{A = [1,1,1,2,2,3]},
 
-Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
+Your function should return length = 5, and A is now \code{\[1,1,2,2,3\]}
 
 
 \subsubsection{分析}
@@ -224,7 +224,7 @@ Write a function to determine if a given target is in the array.
 
 
 \subsubsection{分析}
-允許重複元素，則上一題中如果\fn{A[m]>=A[l]},那麼\fn{[l,m]}為遞增序列的假設就不能成立了，比如\code{[1,3,1,1,1]}。
+允許重複元素，則上一題中如果\fn{A[m]>=A[l]},那麼\fn{[l,m]}為遞增序列的假設就不能成立了，比如\code{\[1,3,1,1,1\]}。
 
 如果\fn{A[m]>=A[l]}不能確定遞增，那就把它拆分成兩個條件：
 \begindot
@@ -361,8 +361,8 @@ private:
 Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
 
 For example,
-Given \code{[100, 4, 200, 1, 3, 2]},
-The longest consecutive elements sequence is \code{[1, 2, 3, 4]}. Return its length: 4.
+Given \code{\[100, 4, 200, 1, 3, 2\]},
+The longest consecutive elements sequence is \code{\[1, 2, 3, 4\]}. Return its length: 4.
 
 Your algorithm should run in $O(n)$ complexity.
 
@@ -1182,7 +1182,7 @@ public:
 Given $n$ non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
 For example, 
-Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
+Given \code{\[0,1,0,2,1,0,1,3,2,1,2,1\]}, return 6.
 
 \begin{center}
 \includegraphics{trapping-rain-water.png}\\
