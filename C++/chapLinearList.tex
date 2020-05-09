@@ -2122,7 +2122,7 @@ Given a linked list and a value $x$, partition it such that all nodes less than 
 You should preserve the original relative order of the nodes in each of the two partitions.
 
 For example,
-Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->4->3->5}.
+Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->3->4->5}.
 
 
 \subsubsection{分析}
@@ -2328,6 +2328,44 @@ public:
 \end{Code}
 
 
+\subsubsection{迭代版}
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted List II
+// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (head == nullptr) return head;
+
+        ListNode dummy(INT_MIN); dummy.next = head;
+        ListNode *prev = &dummy;
+        ListNode *cur = head;
+        ListNode *next = cur != nullptr ? cur->next : nullptr;
+
+        while (next != nullptr) {
+            bool duplicated = false;
+            while (next && cur->val == next->val) {
+                duplicated = true;
+                prev->next = next;
+                delete cur;
+                cur = next;
+                next = cur != nullptr ? cur->next : nullptr;
+            }
+            if (duplicated) {
+                prev->next = next;
+                delete cur;
+            }
+            else
+                prev = cur;
+            cur = next;
+            next = cur != nullptr ? cur->next : nullptr;
+        }
+        return dummy.next;
+    }
+};
+
+
+\end{Code}
 \subsubsection{相关题目}
 
 \begindot
