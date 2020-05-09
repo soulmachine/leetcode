@@ -2590,10 +2590,10 @@ public:
         // next_group is the head of next group
         // new_next_group is the new head of next group after reversion
         ListNode *new_next_group = reverseKGroup(next_group, k);
-        ListNode *prev = NULL, *cur = head;
+        ListNode *prev = new_next_group, *cur = head;
         while (cur != next_group) {
             ListNode *next = cur->next;
-            cur->next = prev ? prev : new_next_group;
+            cur->next = prev;
             prev = cur;
             cur = next;
         }
