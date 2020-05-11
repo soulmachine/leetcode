@@ -1,28 +1,28 @@
-\chapter{编程技巧}
+\chapter{編程技巧}
 
-在判断两个浮点数a和b是否相等时，不要用\fn{a==b}，应该判断二者之差的绝对值\fn{fabs(a-b)}是否小于某个阈值，例如\fn{1e-9}。
+在判斷兩個浮點數a和b是否相等時，不要用\fn{a==b}，應該判斷二者之差的絕對值\fn{fabs(a-b)}是否小於某個閾值，例如\fn{1e-9}。
 
-判断一个整数是否是为奇数，用\fn{x \% 2 != 0}，不要用\fn{x \% 2 == 1}，因为x可能是负数。
+判斷一個整數是否是為奇數，用\fn{x \% 2 != 0}，不要用\fn{x \% 2 == 1}，因為x可能是負數。
 
-用\fn{char}的值作为数组下标（例如，统计字符串中每个字符出现的次数），要考虑到\fn{char}可能是负数。有的人考虑到了，先强制转型为\fn{unsigned int}再用作下标，这仍然是错的。正确的做法是，先强制转型为\fn{unsigned char}，再用作下标。这涉及C++整型提升的规则，就不详述了。
+用\fn{char}的值作為數組下標（例如，統計字符串中每個字符出現的次數），要考慮到\fn{char}可能是負數。有的人考慮到了，先強制轉型為\fn{unsigned int}再用作下標，這仍然是錯的。正確的做法是，先強制轉型為\fn{unsigned char}，再用作下標。這涉及C++整型提升的規則，就不詳述了。
 
-以下是关于STL使用技巧的，很多条款来自《Effective STL》这本书。
+以下是關於STL使用技巧的，很多條款來自《Effective STL》這本書。
 
-\subsubsection{vector和string优先于动态分配的数组}
+\subsubsection{vector和string優先於動態分配的數組}
 
-首先，在性能上，由于\fn{vector}能够保证连续内存，因此一旦分配了后，它的性能跟原始数组相当；
+首先，在性能上，由於\fn{vector}能夠保證連續內存，因此一旦分配了後，它的性能跟原始數組相當；
 
-其次，如果用new，意味着你要确保后面进行了delete，一旦忘记了，就会出现BUG，且这样需要都写一行delete，代码不够短；
+其次，如果用new，意味着你要確保後面進行了delete，一旦忘記了，就會出現BUG，且這樣需要都寫一行delete，代碼不夠短；
 
-再次，声明多维数组的话，只能一个一个new，例如：
+再次，聲明多維數組的話，只能一個一個new，例如：
 \begin{Code}
 int** ary = new int*[row_num];
 for(int i = 0; i < row_num; ++i)
     ary[i] = new int[col_num];
 \end{Code}
-用vector的话一行代码搞定，
+用vector的話一行代碼搞定，
 \begin{Code}
 vector<vector<int> > ary(row_num, vector<int>(col_num, 0));
 \end{Code}
 
-\subsubsection{使用reserve来避免不必要的重新分配}
+\subsubsection{使用reserve來避免不必要的重新分配}

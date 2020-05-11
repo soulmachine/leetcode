@@ -1,8 +1,8 @@
-\chapter{树}
+\chapter{樹}
 
-LeetCode 上二叉树的节点定义如下：
+LeetCode 上二叉樹的節點定義如下：
 \begin{Code}
-// 树的节点
+// 樹的節點
 struct TreeNode {
     int val;
     TreeNode *left;
@@ -12,15 +12,15 @@ struct TreeNode {
 \end{Code}
 
 
-\section{二叉树的遍历} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{二叉樹的遍歷} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-树的遍历有两类：深度优先遍历和宽度优先遍历。深度优先遍历又可分为两种：先根（次序）遍历和后根（次序）遍历。
+樹的遍歷有兩類：深度優先遍歷和寬度優先遍歷。深度優先遍歷又可分為兩種：先根（次序）遍歷和後根（次序）遍歷。
 
-树的先根遍历是：先访问树的根结点，然后依次先根遍历根的各棵子树。树的先跟遍历的结果与对应二叉树（孩子兄弟表示法）的先序遍历的结果相同。
+樹的先根遍歷是：先訪問樹的根結點，然後依次先根遍歷根的各棵子樹。樹的先跟遍歷的結果與對應二叉樹（孩子兄弟表示法）的先序遍歷的結果相同。
 
-树的后根遍历是：先依次后根遍历树根的各棵子树，然后访问根结点。树的后跟遍历的结果与对应二叉树的中序遍历的结果相同。
+樹的後根遍歷是：先依次後根遍歷樹根的各棵子樹，然後訪問根結點。樹的後跟遍歷的結果與對應二叉樹的中序遍歷的結果相同。
 
-二叉树的先根遍历有：\textbf{先序遍历}(root->left->right)，root->right->left；后根遍历有：\textbf{后序遍历}(left->right->root)，right->left->root；二叉树还有个一般的树没有的遍历次序，\textbf{中序遍历}(left->root->right)。
+二叉樹的先根遍歷有：\textbf{先序遍歷}(root->left->right)，root->right->left；後根遍歷有：\textbf{後序遍歷}(left->right->root)，right->left->root；二叉樹還有個一般的樹沒有的遍歷次序，\textbf{中序遍歷}(left->root->right)。
 
 
 \subsection{Binary Tree Preorder Traversal}
@@ -45,13 +45,13 @@ Note: Recursive solution is trivial, could you do it iteratively?
 
 
 \subsubsection{分析}
-用栈或者Morris遍历。
+用棧或者Morris遍歷。
 
 
-\subsubsection{栈}
+\subsubsection{棧}
 \begin{Code}
 // LeetCode, Binary Tree Preorder Traversal
-// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+// 使用棧，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<int> preorderTraversal(TreeNode *root) {
@@ -73,10 +73,10 @@ public:
 \end{Code}
 
 
-\subsubsection{Morris先序遍历}
+\subsubsection{Morris先序遍歷}
 \begin{Code}
 // LeetCode, Binary Tree Preorder Traversal
-// Morris先序遍历，时间复杂度O(n)，空间复杂度O(1)
+// Morris先序遍歷，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> preorderTraversal(TreeNode *root) {
@@ -86,22 +86,22 @@ public:
         while (cur != nullptr) {
             if (cur->left == nullptr) {
                 result.push_back(cur->val);
-                prev = cur; /* cur刚刚被访问过 */
+                prev = cur; /* cur剛剛被訪問過 */
                 cur = cur->right;
             } else {
-                /* 查找前驱 */
+                /* 查找前驅 */
                 TreeNode *node = cur->left;
                 while (node->right != nullptr && node->right != cur)
                     node = node->right;
 
-                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
-                    result.push_back(cur->val); /* 仅这一行的位置与中序不同 */
+                if (node->right == nullptr) { /* 還沒線索化，則建立線索 */
+                    result.push_back(cur->val); /* 僅這一行的位置與中序不同 */
                     node->right = cur;
-                    prev = cur; /* cur刚刚被访问过 */
+                    prev = cur; /* cur剛剛被訪問過 */
                     cur = cur->left;
-                } else {    /* 已经线索化，则删除线索  */
+                } else {    /* 已經線索化，則刪除線索  */
                     node->right = nullptr;
-                    /* prev = cur; 不能有这句，cur已经被访问 */
+                    /* prev = cur; 不能有這句，cur已經被訪問 */
                     cur = cur->right;
                 }
             }
@@ -112,11 +112,11 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
-\item Binary Tree Postorder Traversal，见 \S \ref{sec:binary-tree-postorder-traversal}
-\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\item Binary Tree Inorder Traversal，見 \S \ref{sec:binary-tree-inorder-traversal}
+\item Binary Tree Postorder Traversal，見 \S \ref{sec:binary-tree-postorder-traversal}
+\item Recover Binary Search Tree，見 \S \ref{sec:recover-binary-search-tree}
 \myenddot
 
 
@@ -142,13 +142,13 @@ Note: Recursive solution is trivial, could you do it iteratively?
 
 
 \subsubsection{分析}
-用栈或者Morris遍历。
+用棧或者Morris遍歷。
 
 
-\subsubsection{栈}
+\subsubsection{棧}
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
-// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+// 使用棧，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
@@ -173,10 +173,10 @@ public:
 \end{Code}
 
 
-\subsubsection{Morris中序遍历}
+\subsubsection{Morris中序遍歷}
 \begin{Code}
 // LeetCode, Binary Tree Inorder Traversal
-// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
+// Morris中序遍歷，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> inorderTraversal(TreeNode *root) {
@@ -189,16 +189,16 @@ public:
                 prev = cur;
                 cur = cur->right;
             } else {
-                /* 查找前驱 */
+                /* 查找前驅 */
                 TreeNode *node = cur->left;
                 while (node->right != nullptr && node->right != cur)
                     node = node->right;
 
-                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
+                if (node->right == nullptr) { /* 還沒線索化，則建立線索 */
                     node->right = cur;
-                    /* prev = cur; 不能有这句，cur还没有被访问 */
+                    /* prev = cur; 不能有這句，cur還沒有被訪問 */
                     cur = cur->left;
-                } else {    /* 已经线索化，则访问节点，并删除线索  */
+                } else {    /* 已經線索化，則訪問節點，並刪除線索  */
                     result.push_back(cur->val);
                     node->right = nullptr;
                     prev = cur;
@@ -212,11 +212,11 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Preorder Traversal，见 \S \ref{sec:binary-tree-preorder-traversal}
-\item Binary Tree Postorder Traversal，见 \S \ref{sec:binary-tree-postorder-traversal}
-\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\item Binary Tree Preorder Traversal，見 \S \ref{sec:binary-tree-preorder-traversal}
+\item Binary Tree Postorder Traversal，見 \S \ref{sec:binary-tree-postorder-traversal}
+\item Recover Binary Search Tree，見 \S \ref{sec:recover-binary-search-tree}
 \myenddot
 
 
@@ -242,19 +242,19 @@ Note: Recursive solution is trivial, could you do it iteratively?
 
 
 \subsubsection{分析}
-用栈或者Morris遍历。
+用棧或者Morris遍歷。
 
 
-\subsubsection{栈}
+\subsubsection{棧}
 \begin{Code}
 // LeetCode, Binary Tree Postorder Traversal
-// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+// 使用棧，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<int> postorderTraversal(TreeNode *root) {
         vector<int> result;
         stack<const TreeNode *> s;
-        /* p，正在访问的结点，q，刚刚访问过的结点*/
+        /* p，正在訪問的結點，q，剛剛訪問過的結點*/
         const TreeNode *p = root, *q = nullptr;
 
         do {
@@ -266,14 +266,14 @@ public:
             while (!s.empty()) {
                 p = s.top();
                 s.pop();
-                /* 右孩子不存在或已被访问，访问之*/
+                /* 右孩子不存在或已被訪問，訪問之*/
                 if (p->right == q) {
                     result.push_back(p->val);
-                    q = p; /* 保存刚访问过的结点*/
+                    q = p; /* 保存剛訪問過的結點*/
                 } else {
-                    /* 当前结点不能访问，需第二次进栈*/
+                    /* 當前結點不能訪問，需第二次進棧*/
                     s.push(p);
-                    /* 先处理右子树*/
+                    /* 先處理右子樹*/
                     p = p->right;
                     break;
                 }
@@ -286,10 +286,10 @@ public:
 \end{Code}
 
 
-\subsubsection{Morris后序遍历}
+\subsubsection{Morris後序遍歷}
 \begin{Code}
 // LeetCode, Binary Tree Postorder Traversal
-// Morris后序遍历，时间复杂度O(n)，空间复杂度O(1)
+// Morris後序遍歷，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> postorderTraversal(TreeNode *root) {
@@ -305,21 +305,21 @@ public:
         cur = &dummy;
         while (cur != nullptr) {
             if (cur->left == nullptr) {
-                prev = cur; /* 必须要有 */
+                prev = cur; /* 必須要有 */
                 cur = cur->right;
             } else {
                 TreeNode *node = cur->left;
                 while (node->right != nullptr && node->right != cur)
                     node = node->right;
 
-                if (node->right == nullptr) { /* 还没线索化，则建立线索 */
+                if (node->right == nullptr) { /* 還沒線索化，則建立線索 */
                     node->right = cur;
-                    prev = cur; /* 必须要有 */
+                    prev = cur; /* 必須要有 */
                     cur = cur->left;
-                } else { /* 已经线索化，则访问节点，并删除线索  */
+                } else { /* 已經線索化，則訪問節點，並刪除線索  */
                     visit_reverse(cur->left, prev, visit);
                     prev->right = nullptr;
-                    prev = cur; /* 必须要有 */
+                    prev = cur; /* 必須要有 */
                     cur = cur->right;
                 }
             }
@@ -327,7 +327,7 @@ public:
         return result;
     }
 private:
-    // 逆转路径
+    // 逆轉路徑
     static void reverse(TreeNode *from, TreeNode *to) {
         TreeNode *x = from, *y = from->right, *z;
         if (from == to) return;
@@ -340,7 +340,7 @@ private:
         }
     }
 
-    // 访问逆转后的路径上的所有结点
+    // 訪問逆轉後的路徑上的所有結點
     static void visit_reverse(TreeNode* from, TreeNode *to, 
                      std::function< void(const TreeNode*) >& visit) {
         TreeNode *p = to;
@@ -359,11 +359,11 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Preorder Traversal，见 \S \ref{sec:binary-tree-preorder-traversal}
-\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
-\item Recover Binary Search Tree，见 \S \ref{sec:recover-binary-search-tree}
+\item Binary Tree Preorder Traversal，見 \S \ref{sec:binary-tree-preorder-traversal}
+\item Binary Tree Inorder Traversal，見 \S \ref{sec:binary-tree-inorder-traversal}
+\item Recover Binary Search Tree，見 \S \ref{sec:recover-binary-search-tree}
 \myenddot
 
 
@@ -394,13 +394,13 @@ return its level order traversal as:
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal
-// 递归版，时间复杂度O(n)，空间复杂度O(n)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > levelOrder(TreeNode *root) {
@@ -426,7 +426,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > levelOrder(TreeNode *root) {
@@ -457,10 +457,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Level Order Traversal II，见 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
-\item Binary Tree Zigzag Level Order Traversal，见 \S \ref{sec:binary-tree-zigzag-level-order-traversal}
+\item Binary Tree Level Order Traversal II，見 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
+\item Binary Tree Zigzag Level Order Traversal，見 \S \ref{sec:binary-tree-zigzag-level-order-traversal}
 \myenddot
 
 
@@ -491,19 +491,19 @@ return its bottom-up level order traversal as:
 
 
 \subsubsection{分析}
-在上一题（见\S \ref{sec:binary-tree-tevel-order-traversal}）的基础上，\fn{reverse()}一下即可。
+在上一題（見\S \ref{sec:binary-tree-tevel-order-traversal}）的基礎上，\fn{reverse()}一下即可。
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal II
-// 递归版，时间复杂度O(n)，空间复杂度O(n)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > levelOrderBottom(TreeNode *root) {
         vector<vector<int>> result;
         traverse(root, 1, result);
-        std::reverse(result.begin(), result.end()); // 比上一题多此一行
+        std::reverse(result.begin(), result.end()); // 比上一題多此一行
         return result;
     }
 
@@ -524,7 +524,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Binary Tree Level Order Traversal II
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > levelOrderBottom(TreeNode *root) {
@@ -547,17 +547,17 @@ public:
             level.clear();
             swap(next, current);
         }
-        reverse(result.begin(), result.end()); // 比上一题多此一行
+        reverse(result.begin(), result.end()); // 比上一題多此一行
         return result;
     }
 };
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Level Order Traversal，见 \S \ref{sec:binary-tree-tevel-order-traversal}
-\item Binary Tree Zigzag Level Order Traversal，见 \S \ref{sec:binary-tree-zigzag-level-order-traversal}
+\item Binary Tree Level Order Traversal，見 \S \ref{sec:binary-tree-tevel-order-traversal}
+\item Binary Tree Zigzag Level Order Traversal，見 \S \ref{sec:binary-tree-zigzag-level-order-traversal}
 \myenddot
 
 
@@ -588,13 +588,13 @@ return its zigzag level order traversal as:
 
 
 \subsubsection{分析}
-广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
+廣度優先遍歷，用一個bool記錄是從左到右還是從右到左，每一層結束就翻轉一下。
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Binary Tree Zigzag Level Order Traversal
-// 递归版，时间复杂度O(n)，空间复杂度O(n)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
@@ -624,8 +624,8 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Binary Tree Zigzag Level Order Traversal
-// 广度优先遍历，用一个bool记录是从左到右还是从右到左，每一层结束就翻转一下。
-// 迭代版，时间复杂度O(n)，空间复杂度O(n)
+// 廣度優先遍歷，用一個bool記錄是從左到右還是從右到左，每一層結束就翻轉一下。
+// 迭代版，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
@@ -659,10 +659,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Level Order Traversal，见 \S \ref{sec:binary-tree-tevel-order-traversal}
-\item Binary Tree Level Order Traversal II，见 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
+\item Binary Tree Level Order Traversal，見 \S \ref{sec:binary-tree-tevel-order-traversal}
+\item Binary Tree Level Order Traversal II，見 \S \ref{sec:binary-tree-tevel-order-traversal-ii}
 \myenddot
 
 
@@ -679,16 +679,16 @@ Note: A solution using $O(n)$ space is pretty straight forward. Could you devise
 
 
 \subsubsection{分析}
-$O(n)$空间的解法是，开一个指针数组，中序遍历，将节点指针依次存放到数组里，然后寻找两处逆向的位置，先从前往后找第一个逆序的位置，然后从后往前找第二个逆序的位置，交换这两个指针的值。
+$O(n)$空間的解法是，開一個指針數組，中序遍歷，將節點指針依次存放到數組裏，然後尋找兩處逆向的位置，先從前往後找第一個逆序的位置，然後從後往前找第二個逆序的位置，交換這兩個指針的值。
 
-中序遍历一般需要用到栈，空间也是$O(n)$的，如何才能不使用栈？Morris中序遍历。
+中序遍歷一般需要用到棧，空間也是$O(n)$的，如何才能不使用棧？Morris中序遍歷。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Recover Binary Search Tree
-// Morris中序遍历，时间复杂度O(n)，空间复杂度O(1)
+// Morris中序遍歷，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void recoverTree(TreeNode* root) {
@@ -709,7 +709,7 @@ public:
 
                 if (node->right == nullptr) {
                     node->right = cur;
-                    //prev = cur; 不能有这句！因为cur还没有被访问
+                    //prev = cur; 不能有這句！因為cur還沒有被訪問
                     cur = cur->left;
                 } else {
                     detect(broken, prev, cur);
@@ -728,8 +728,8 @@ public:
         if (prev != nullptr && prev->val > current->val) {
             if (broken.first == nullptr) {
                 broken.first = prev;
-            } //不能用else，例如 {0,1}，会导致最后 swap时second为nullptr，
-              //会 Runtime Error
+            } //不能用else，例如 {0,1}，會導致最後 swap時second為nullptr，
+              //會 Runtime Error
             broken.second = current;
         }
     }
@@ -737,9 +737,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Inorder Traversal，见 \S \ref{sec:binary-tree-inorder-traversal}
+\item Binary Tree Inorder Traversal，見 \S \ref{sec:binary-tree-inorder-traversal}
 \myenddot
 
 
@@ -754,20 +754,20 @@ Two binary trees are considered equal if they are structurally identical and the
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
-递归版
+\subsubsection{遞歸版}
+遞歸版
 \begin{Code}
 // LeetCode, Same Tree
-// 递归版，时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
-        if (!p && !q) return true;   // 终止条件
+        if (!p && !q) return true;   // 終止條件
         if (!p || !q) return false;  // 剪枝
-        return p->val == q->val      // 三方合并
+        return p->val == q->val      // 三方合併
                 && isSameTree(p->left, q->left)
                 && isSameTree(p->right, q->right);
     }
@@ -778,7 +778,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Same Tree
-// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool isSameTree(TreeNode *p, TreeNode *q) {
@@ -806,9 +806,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Symmetric Tree，见 \S \ref{sec:symmetric-tree}
+\item Symmetric Tree，見 \S \ref{sec:symmetric-tree}
 \myenddot
 
 
@@ -823,13 +823,13 @@ Two binary trees are considered equal if they are structurally identical and the
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Symmetric Tree
-// 递归版，时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool isSymmetric(TreeNode *root) {
@@ -837,9 +837,9 @@ public:
         return isSymmetric(root->left, root->right);
     }
     bool isSymmetric(TreeNode *p, TreeNode *q) {
-        if (p == nullptr && q == nullptr) return true;   // 终止条件
-        if (p == nullptr || q == nullptr) return false;  // 终止条件
-        return p->val == q->val      // 三方合并
+        if (p == nullptr && q == nullptr) return true;   // 終止條件
+        if (p == nullptr || q == nullptr) return false;  // 終止條件
+        return p->val == q->val      // 三方合併
                 && isSymmetric(p->left, q->right)
                 && isSymmetric(p->right, q->left);
     }
@@ -850,7 +850,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Symmetric Tree
-// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool isSymmetric (TreeNode* root) {
@@ -881,9 +881,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Same Tree，见 \S \ref{sec:same-tree}
+\item Same Tree，見 \S \ref{sec:same-tree}
 \myenddot
 
 
@@ -898,13 +898,13 @@ For this problem, a height-balanced binary tree is defined as a binary tree in w
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Balanced Binary Tree
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool isBalanced (TreeNode* root) {
@@ -916,22 +916,22 @@ public:
      * otherwise, returns `-1`.
      */
     int balancedHeight (TreeNode* root) {
-        if (root == nullptr) return 0;  // 终止条件
+        if (root == nullptr) return 0;  // 終止條件
 
         int left = balancedHeight (root->left);
         int right = balancedHeight (root->right);
 
         if (left < 0 || right < 0 || abs(left - right) > 1) return -1;  // 剪枝
 
-        return max(left, right) + 1; // 三方合并
+        return max(left, right) + 1; // 三方合併
     }
 };
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -967,26 +967,26 @@ The flattened tree should look like:
 \end{Code}
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版1}
+\subsubsection{遞歸版1}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 递归版1，时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸版1，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     void flatten(TreeNode *root) {
-        if (root == nullptr) return;  // 终止条件
+        if (root == nullptr) return;  // 終止條件
 
         flatten(root->left);
         flatten(root->right);
 
         if (nullptr == root->left) return;
 
-        // 三方合并，将左子树所形成的链表插入到root和root->right之间
+        // 三方合併，將左子樹所形成的鏈表插入到root和root->right之間
         TreeNode *p = root->left;
-        while(p->right) p = p->right; //寻找左链表最后一个节点
+        while(p->right) p = p->right; //尋找左鏈表最後一個節點
         p->right = root->right;
         root->right = root->left;
         root->left = nullptr;
@@ -995,19 +995,19 @@ public:
 \end{Code}
 
 
-\subsubsection{递归版2}
+\subsubsection{遞歸版2}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 递归版2
-// @author 王顺达(http://weibo.com/u/1234984145)
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸版2
+// @author 王順達(http://weibo.com/u/1234984145)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     void flatten(TreeNode *root) {
         flatten(root, NULL);
     }
 private:
-    // 把root所代表树变成链表后，tail跟在该链表后面
+    // 把root所代表樹變成鏈表後，tail跟在該鏈表後面
     TreeNode *flatten(TreeNode *root, TreeNode *tail) {
         if (NULL == root) return tail;
 
@@ -1022,7 +1022,7 @@ private:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Flatten Binary Tree to Linked List
-// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     void flatten(TreeNode* root) {
@@ -1049,9 +1049,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1087,15 +1087,15 @@ After calling your function, the tree should look like:
 
 
 \subsubsection{分析}
-要处理一个节点，可能需要最右边的兄弟节点，首先想到用广搜。但广搜不是常数空间的，本题要求常数空间。
+要處理一個節點，可能需要最右邊的兄弟節點，首先想到用廣搜。但廣搜不是常數空間的，本題要求常數空間。
 
-注意，这题的代码原封不动，也可以解决 Populating Next Right Pointers in Each Node I.
+注意，這題的代碼原封不動，也可以解決 Populating Next Right Pointers in Each Node I.
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
@@ -1122,7 +1122,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
@@ -1148,13 +1148,13 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Populating Next Right Pointers in Each Node，见 \S \ref{sec:populating-next-right-pointers-in-each-node}
+\item Populating Next Right Pointers in Each Node，見 \S \ref{sec:populating-next-right-pointers-in-each-node}
 \myenddot
 
 
-\section{二叉树的构建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{二叉樹的構建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Construct Binary Tree from Preorder and Inorder Traversal}
@@ -1169,13 +1169,13 @@ You may assume that duplicates do not exist in the tree.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Preorder and Inorder Traversal
-// 递归，时间复杂度O(n)，空间复杂度O(\logn)
+// 遞歸，時間複雜度O(n)，空間複雜度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
@@ -1205,9 +1205,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Construct Binary Tree from Inorder and Postorder Traversal，见 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+\item Construct Binary Tree from Inorder and Postorder Traversal，見 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
 \myenddot
 
 
@@ -1223,13 +1223,13 @@ You may assume that duplicates do not exist in the tree.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Construct Binary Tree from Inorder and Postorder Traversal
-// 递归，时间复杂度O(n)，空间复杂度O(\logn)
+// 遞歸，時間複雜度O(n)，空間複雜度O(\logn)
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
@@ -1260,13 +1260,13 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Construct Binary Tree from Preorder and Inorder Traversal，见 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
+\item Construct Binary Tree from Preorder and Inorder Traversal，見 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
 \myenddot
 
 
-\section{二叉查找树} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{二叉查找樹} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Unique Binary Search Trees}
@@ -1287,7 +1287,7 @@ Given $n = 3$, there are a total of 5 unique BST's.
 \end{Code}
 
 \subsubsection{分析}
-如果把上例的顺序改一下，就可以看出规律了。
+如果把上例的順序改一下，就可以看出規律了。
 \begin{Code}
  1       1           2          3       3
   \       \         / \        /       / 
@@ -1296,18 +1296,18 @@ Given $n = 3$, there are a total of 5 unique BST's.
 2            3              1           2
 \end{Code}
 
-比如，以1为根的树的个数，等于左子树的个数乘以右子树的个数，左子树是0个元素的树，右子树是2个元素的树。以2为根的树的个数，等于左子树的个数乘以右子树的个数，左子树是1个元素的树，右子树也是1个元素的树。依此类推。
+比如，以1為根的樹的個數，等於左子樹的個數乘以右子樹的個數，左子樹是0個元素的樹，右子樹是2個元素的樹。以2為根的樹的個數，等於左子樹的個數乘以右子樹的個數，左子樹是1個元素的樹，右子樹也是1個元素的樹。依此類推。
 
-当数组为 $1,2,3,...,n$时，基于以下原则的构建的BST树具有唯一性：
-\textbf{以i为根节点的树，其左子树由[1, i-1]构成， 其右子树由[i+1, n]构成。}
+當數組為 $1,2,3,...,n$時，基於以下原則的構建的BST樹具有唯一性：
+\textbf{以i為根節點的樹，其左子樹由[1, i-1]構成， 其右子樹由[i+1, n]構成。}
 
-定义$f(i)$为以$[1,i]$能产生的Unique Binary Search Tree的数目，则
+定義$f(i)$為以$[1,i]$能產生的Unique Binary Search Tree的數目，則
 
-如果数组为空，毫无疑问，只有一种BST，即空树，$f(0)=1$。
+如果數組為空，毫無疑問，只有一種BST，即空樹，$f(0)=1$。
 
-如果数组仅有一个元素{1}，只有一种BST，单个节点，$f(1)=1$。
+如果數組僅有一個元素{1}，只有一種BST，單個節點，$f(1)=1$。
 
-如果数组有两个元素{1,2}， 那么有如下两种可能
+如果數組有兩個元素{1,2}， 那麼有如下兩種可能
 \begin{Code}
 1             2
   \          /
@@ -1315,29 +1315,29 @@ Given $n = 3$, there are a total of 5 unique BST's.
 \end{Code}
 
 \begin{eqnarray}
-f(2) &=& f(0) * f(1)   \text{ ，1为根的情况} \nonumber \\
-     &+& f(1) * f(0)   \text{ ，2为根的情况} \nonumber
+f(2) &=& f(0) * f(1)   \text{ ，1為根的情況} \nonumber \\
+     &+& f(1) * f(0)   \text{ ，2為根的情況} \nonumber
 \end{eqnarray}
 
-再看一看3个元素的数组，可以发现BST的取值方式如下：
+再看一看3個元素的數組，可以發現BST的取值方式如下：
 \begin{eqnarray}
-f(3) &=& f(0) * f(2)   \text{ ，1为根的情况} \nonumber \\
-     &+& f(1) * f(1)   \text{ ，2为根的情况} \nonumber \\
-     &+& f(2) * f(0)   \text{ ，3为根的情况} \nonumber
+f(3) &=& f(0) * f(2)   \text{ ，1為根的情況} \nonumber \\
+     &+& f(1) * f(1)   \text{ ，2為根的情況} \nonumber \\
+     &+& f(2) * f(0)   \text{ ，3為根的情況} \nonumber
 \end{eqnarray}
 
-所以，由此观察，可以得出$f$的递推公式为
+所以，由此觀察，可以得出$f$的遞推公式為
 $$
 f(i) = \sum_{k=1}^{i} f(k-1) \times f(i-k)
 $$
-至此，问题划归为一维动态规划。
+至此，問題劃歸為一維動態規劃。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Unique Binary Search Trees
-// 时间复杂度O(n^2)，空间复杂度O(n)
+// 時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
     int numTrees(int n) {
@@ -1356,9 +1356,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Unique Binary Search Trees II，见 \S \ref{sec:unique-binary-search-trees-ii}
+\item Unique Binary Search Trees II，見 \S \ref{sec:unique-binary-search-trees-ii}
 \myenddot
 
 
@@ -1381,14 +1381,14 @@ Given $n = 3$, your program should return all 5 unique BST's shown below.
 
 
 \subsubsection{分析}
-见前面一题。
+見前面一題。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Unique Binary Search Trees II
-// 时间复杂度TODO，空间复杂度TODO
+// 時間複雜度TODO，空間複雜度TODO
 class Solution {
 public:
     vector<TreeNode *> generateTrees(int n) {
@@ -1420,9 +1420,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Unique Binary Search Trees，见 \S \ref{sec:unique-binary-search-trees}
+\item Unique Binary Search Trees，見 \S \ref{sec:unique-binary-search-trees}
 \myenddot
 
 
@@ -1444,11 +1444,11 @@ Assume a BST is defined as follows:
 \subsubsection{分析}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // Validate Binary Search Tree
-// 时间复杂度O(n)，空间复杂度O(\logn)
+// 時間複雜度O(n)，空間複雜度O(\logn)
 class Solution {
 public:
     bool isValidBST(TreeNode* root) {
@@ -1466,9 +1466,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Validate Binary Search Tree，见 \S \ref{sec:validate-binary-search-tree}
+\item Validate Binary Search Tree，見 \S \ref{sec:validate-binary-search-tree}
 \myenddot
 
 
@@ -1484,11 +1484,11 @@ Given an array where elements are sorted in ascending order, convert it to a hei
 二分法。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Convert Sorted Array to Binary Search Tree
-// 分治法，时间复杂度O(n)，空间复杂度O(logn)
+// 分治法，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     TreeNode* sortedArrayToBST (vector<int>& num) {
@@ -1500,9 +1500,9 @@ public:
             RandomAccessIterator last) {
         const auto length = distance(first, last);
 
-        if (length <= 0) return nullptr;  // 终止条件
+        if (length <= 0) return nullptr;  // 終止條件
 
-        // 三方合并
+        // 三方合併
         auto mid = first + length / 2;
         TreeNode* root = new TreeNode (*mid);
         root->left = sortedArrayToBST(first, mid);
@@ -1514,9 +1514,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Convert Sorted List to Binary Search Tree，见 \S \ref{sec:convert-sorted-list-to-binary-search-tree}
+\item Convert Sorted List to Binary Search Tree，見 \S \ref{sec:convert-sorted-list-to-binary-search-tree}
 \myenddot
 
 
@@ -1529,17 +1529,17 @@ Given a singly linked list where elements are sorted in ascending order, convert
 
 
 \subsubsection{分析}
-这题与上一题类似，但是单链表不能随机访问，而自顶向下的二分法必须需要RandomAccessIterator，因此前面的方法不适用本题。
+這題與上一題類似，但是單鏈表不能隨機訪問，而自頂向下的二分法必須需要RandomAccessIterator，因此前面的方法不適用本題。
 
-存在一种自底向上(bottom-up)的方法，见\myurl{http://leetcode.com/2010/11/convert-sorted-list-to-balanced-binary.html}
+存在一種自底向上(bottom-up)的方法，見\myurl{http://leetcode.com/2010/11/convert-sorted-list-to-balanced-binary.html}
 
 
-\subsubsection{分治法，自顶向下}
-分治法，类似于 Convert Sorted Array to Binary Search Tree，自顶向下，复杂度$O(n\log n)$。
+\subsubsection{分治法，自頂向下}
+分治法，類似於 Convert Sorted Array to Binary Search Tree，自頂向下，複雜度$O(n\log n)$。
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
-// 分治法，类似于 Convert Sorted Array to Binary Search Tree，
-// 自顶向下，时间复杂度O(n^2)，空间复杂度O(logn)
+// 分治法，類似於 Convert Sorted Array to Binary Search Tree，
+// 自頂向下，時間複雜度O(n^2)，空間複雜度O(logn)
 class Solution {
 public:
     TreeNode* sortedListToBST (ListNode* head) {
@@ -1582,7 +1582,7 @@ public:
 \subsubsection{自底向上}
 \begin{Code}
 // LeetCode, Convert Sorted List to Binary Search Tree
-// bottom-up，时间复杂度O(n)，空间复杂度O(logn)
+// bottom-up，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     TreeNode *sortedListToBST(ListNode *head) {
@@ -1610,18 +1610,18 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Convert Sorted Array to Binary Search Tree，见 \S \ref{sec:convert-sorted-array-to-binary-search-tree}
+\item Convert Sorted Array to Binary Search Tree，見 \S \ref{sec:convert-sorted-array-to-binary-search-tree}
 \myenddot
 
 
-\section{二叉树的递归} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-二叉树是一个递归的数据结构，因此是一个用来考察递归思维能力的绝佳数据结构。
+\section{二叉樹的遞歸} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+二叉樹是一個遞歸的數據結構，因此是一個用來考察遞歸思維能力的絕佳數據結構。
 
-递归一定是深搜（见 \S \ref{sec:dfs-vs-recursion}节 “深搜与递归的区别”），由于在二叉树上，递归的味道更浓些，因此本节用“二叉树的递归”作为标题，而不是“二叉树的深搜”，尽管本节所有的算法都属于深搜。
+遞歸一定是深搜（見 \S \ref{sec:dfs-vs-recursion}節 “深搜與遞歸的區別”），由於在二叉樹上，遞歸的味道更濃些，因此本節用“二叉樹的遞歸”作為標題，而不是“二叉樹的深搜”，儘管本節所有的算法都屬於深搜。
 
-二叉树的先序、中序、后序遍历都可以看做是DFS，此外还有其他顺序的深度优先遍历，共有$3!=6$种。其他3种顺序是 \fn{root->r->l，r->root->l, r->l->root}。
+二叉樹的先序、中序、後序遍歷都可以看做是DFS，此外還有其他順序的深度優先遍歷，共有$3!=6$種。其他3種順序是 \fn{root->r->l，r->root->l, r->l->root}。
 
 
 \subsection{Minimum Depth of Binary Tree}
@@ -1635,13 +1635,13 @@ The minimum depth is the number of nodes along the shortest path from the root n
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
-// 递归版，时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int minDepth(const TreeNode *root) {
@@ -1661,7 +1661,7 @@ private:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Minimum Depth of Binary Tree
-// 迭代版，时间复杂度O(n)，空间复杂度O(logn)
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int minDepth(TreeNode* root) {
@@ -1693,9 +1693,9 @@ public:
 };
 \end{Code}
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Maximum Depth of Binary Tree，见 \S \ref{sec:maximum-depth-of-binary-tree}
+\item Maximum Depth of Binary Tree，見 \S \ref{sec:maximum-depth-of-binary-tree}
 \myenddot
 
 
@@ -1710,13 +1710,13 @@ The maximum depth is the number of nodes along the longest path from the root no
 
 
 \subsubsection{分析}
-无
+無
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Maximum Depth of Binary Tree
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int maxDepth(TreeNode *root) {
@@ -1728,9 +1728,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Minimum Depth of Binary Tree，见 \S \ref{sec:minimum-depth-of-binary-tree}
+\item Minimum Depth of Binary Tree，見 \S \ref{sec:minimum-depth-of-binary-tree}
 \myenddot
 
 
@@ -1756,17 +1756,17 @@ return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 
 
 
 \subsubsection{分析}
-题目只要求返回\fn{true}或者\fn{false}，因此不需要记录路径。
+題目只要求返回\fn{true}或者\fn{false}，因此不需要記錄路徑。
 
-由于只需要求出一个结果，因此，当左、右任意一棵子树求到了满意结果，都可以及时return。
+由於只需要求出一個結果，因此，當左、右任意一棵子樹求到了滿意結果，都可以及時return。
 
-由于题目没有说节点的数据一定是正整数，必须要走到叶子节点才能判断，因此中途没法剪枝，只能进行朴素深搜。
+由於題目沒有説節點的數據一定是正整數，必須要走到葉子節點才能判斷，因此中途沒法剪枝，只能進行樸素深搜。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Path Sum
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     bool hasPathSum(TreeNode *root, int sum) {
@@ -1782,9 +1782,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Path Sum II，见 \S \ref{sec:path-sum-ii}
+\item Path Sum II，見 \S \ref{sec:path-sum-ii}
 \myenddot
 
 
@@ -1816,18 +1816,18 @@ return
 
 
 \subsubsection{分析}
-跟上一题相比，本题是求路径本身。且要求出所有结果，左子树求到了满意结果，不能return，要接着求右子树。
+跟上一題相比，本題是求路徑本身。且要求出所有結果，左子樹求到了滿意結果，不能return，要接着求右子樹。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Path Sum II
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     vector<vector<int> > pathSum(TreeNode *root, int sum) {
         vector<vector<int> > result;
-        vector<int> cur; // 中间结果
+        vector<int> cur; // 中間結果
         pathSum(root, sum, cur, result);
         return result;
     }
@@ -1851,9 +1851,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Path Sum，见 \S \ref{sec:path-sum}
+\item Path Sum，見 \S \ref{sec:path-sum}
 \myenddot
 
 
@@ -1876,17 +1876,17 @@ Return $6$.
 
 
 \subsubsection{分析}
-这题很难，路径可以从任意节点开始，到任意节点结束。
+這題很難，路徑可以從任意節點開始，到任意節點結束。
 
-可以利用“最大连续子序列和”问题的思路，见第\S \ref{sec:maximum-subarray}节。如果说Array只有一个方向的话，那么Binary Tree其实只是左、右两个方向而已，我们需要比较两个方向上的值。
+可以利用“最大連續子序列和”問題的思路，見第\S \ref{sec:maximum-subarray}節。如果説Array只有一個方向的話，那麼Binary Tree其實只是左、右兩個方向而已，我們需要比較兩個方向上的值。
 
-不过，Array可以从头到尾遍历，那么Binary Tree怎么办呢，我们可以采用Binary Tree最常用的dfs来进行遍历。先算出左右子树的结果L和R，如果L大于0，那么对后续结果是有利的，我们加上L，如果R大于0，对后续结果也是有利的，继续加上R。
+不過，Array可以從頭到尾遍歷，那麼Binary Tree怎麼辦呢，我們可以採用Binary Tree最常用的dfs來進行遍歷。先算出左右子樹的結果L和R，如果L大於0，那麼對後續結果是有利的，我們加上L，如果R大於0，對後續結果也是有利的，繼續加上R。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Binary Tree Maximum Path Sum
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int maxPathSum(TreeNode *root) {
@@ -1909,12 +1909,12 @@ private:
 };
 \end{Code}
 
-注意，最后return的时候，只返回一个方向上的值，为什么？这是因为在递归中，只能向父节点返回，不可能存在L->root->R的路径，只可能是L->root或R->root。
+注意，最後return的時候，只返回一個方向上的值，為什麼？這是因為在遞歸中，只能向父節點返回，不可能存在L->root->R的路徑，只可能是L->root或R->root。
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Maximum Subarray，见 \S \ref{sec:maximum-subarray}
+\item Maximum Subarray，見 \S \ref{sec:maximum-subarray}
 \myenddot
 
 
@@ -1963,13 +1963,13 @@ After calling your function, the tree should look like:
 
 
 \subsubsection{分析}
-无
+無
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Populating Next Right Pointers in Each Node
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     void connect(TreeLinkNode *root) {
@@ -1992,9 +1992,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Populating Next Right Pointers in Each Node II，见 \S \ref{sec:populating-next-right-pointers-in-each-node-ii}
+\item Populating Next Right Pointers in Each Node II，見 \S \ref{sec:populating-next-right-pointers-in-each-node-ii}
 \myenddot
 
 
@@ -2023,13 +2023,13 @@ Return the sum = \fn{12 + 13 = 25}.
 
 
 \subsubsection{分析}
-无
+無
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // LeetCode, Decode Ways
-// 时间复杂度O(n)，空间复杂度O(logn)
+// 時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int sumNumbers(TreeNode *root) {
@@ -2048,7 +2048,7 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot

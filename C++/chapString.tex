@@ -19,13 +19,13 @@ For the purpose of this problem, we define empty string as valid palindrome.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // Leet Code, Valid Palindrome
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool isPalindrome(string s) {
@@ -43,9 +43,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Palindrome Number, 见 \S \ref{sec:palindrome-number}
+\item Palindrome Number, 見 \S \ref{sec:palindrome-number}
 \myenddot
 
 
@@ -60,13 +60,13 @@ Returns a pointer to the first occurrence of needle in haystack, or null if need
 
 
 \subsubsection{分析}
-暴力算法的复杂度是 $O(m*n)$，代码如下。更高效的的算法有KMP算法、Boyer-Mooer算法和Rabin-Karp算法。面试中暴力算法足够了，一定要写得没有BUG。
+暴力算法的複雜度是 $O(m*n)$，代碼如下。更高效的的算法有KMP算法、Boyer-Mooer算法和Rabin-Karp算法。面試中暴力算法足夠了，一定要寫得沒有BUG。
 
 
 \subsubsection{暴力匹配}
 \begin{Code}
 // LeetCode, Implement strStr()
-// 暴力解法，时间复杂度O(N*M)，空间复杂度O(1)
+// 暴力解法，時間複雜度O(N*M)，空間複雜度O(1)
 class Solution {
 public:
     int strStr(const string& haystack, const string& needle) {
@@ -91,7 +91,7 @@ public:
 \subsubsection{KMP}
 \begin{Code}
 // LeetCode, Implement strStr()
-// KMP，时间复杂度O(N+M)，空间复杂度O(M)
+// KMP，時間複雜度O(N+M)，空間複雜度O(M)
 class Solution {
 public:
     int strStr(const string& haystack, const string& needle) {
@@ -99,11 +99,11 @@ public:
     }
 private:
     /*
-     * @brief 计算部分匹配表，即next数组.
+     * @brief 計算部分匹配表，即next數組.
      *
      * @param[in] pattern 模式串
-     * @param[out] next next数组
-     * @return 无
+     * @param[out] next next數組
+     * @return 無
      */
     static void compute_prefix(const char *pattern, int next[]) {
         int i;
@@ -124,7 +124,7 @@ private:
      *
      * @param[in] text 文本
      * @param[in] pattern 模式串
-     * @return 成功则返回第一次匹配的位置，失败则返回-1
+     * @return 成功則返回第一次匹配的位置，失敗則返回-1
      */
     static int kmp(const char *text, const char *pattern) {
         int i;
@@ -154,9 +154,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item String to Integer (atoi) ，见 \S \ref{sec:string-to-integer}
+\item String to Integer (atoi) ，見 \S \ref{sec:string-to-integer}
 \myenddot
 
 
@@ -182,17 +182,17 @@ If the first sequence of non-whitespace characters in str is not a valid integra
 If no valid conversion could be performed, a zero value is returned. If the correct value is out of the range of representable values, \code{INT_MAX (2147483647)} or \code{INT_MIN (-2147483648)} is returned.
 
 \subsubsection{分析}
-细节题。注意几个测试用例：
+細節題。注意幾個測試用例：
 \begin{enumerate}
-\item 不规则输入，但是有效，"-3924x8fc"， "  +  413",
-\item 无效格式，" ++c", " ++1"
-\item 溢出数据，"2147483648"
+\item 不規則輸入，但是有效，"-3924x8fc"， "  +  413",
+\item 無效格式，" ++c", " ++1"
+\item 溢出數據，"2147483648"
 \end{enumerate}
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, String to Integer (atoi)
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int myAtoi(const string &str) {
@@ -226,9 +226,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Implement strStr() ，见 \S \ref{sec:strstr}
+\item Implement strStr() ，見 \S \ref{sec:strstr}
 \myenddot
 
 
@@ -248,13 +248,13 @@ Return {\small \fontspec{Latin Modern Mono} "100"}.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Add Binary
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     string addBinary(string a, string b) {
@@ -279,9 +279,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Add Two Numbers, 见 \S \ref{sec:add-two-numbers}
+\item Add Two Numbers, 見 \S \ref{sec:add-two-numbers}
 \myenddot
 
 
@@ -294,18 +294,18 @@ Given a string $S$, find the longest palindromic substring in $S$. You may assum
 
 
 \subsubsection{分析}
-最长回文子串，非常经典的题。
+最長迴文子串，非常經典的題。
 
-思路一：暴力枚举，以每个元素为中间元素，同时从左右出发，复杂度$O(n^2)$。
+思路一：暴力枚舉，以每個元素為中間元素，同時從左右出發，複雜度$O(n^2)$。
 
-思路二：记忆化搜索，复杂度$O(n^2)$。设\fn{f[i][j]} 表示[i,j]之间的最长回文子串，递推方程如下：
+思路二：記憶化搜索，複雜度$O(n^2)$。設\fn{f[i][j]} 表示[i,j]之間的最長迴文子串，遞推方程如下：
 \begin{Code}
 f[i][j] = if (i == j) S[i]
           if (S[i] == S[j] && f[i+1][j-1] == S[i+1][j-1]) S[i][j]
           else max(f[i+1][j-1], f[i][j-1], f[i+1][j])
 \end{Code}
 
-思路三：动规，复杂度$O(n^2)$。设状态为\fn{f(i,j)}，表示区间[i,j]是否为回文串，则状态转移方程为
+思路三：動規，複雜度$O(n^2)$。設狀態為\fn{f(i,j)}，表示區間[i,j]是否為迴文串，則狀態轉移方程為
 $$
 f(i,j)=\begin{cases}
 true & ,i=j\\
@@ -314,14 +314,14 @@ S[i]=S[j] \text{ and } f(i+1, j-1) & , j > i + 1
 \end{cases}
 $$
 
-思路四：Manacher’s Algorithm, 复杂度$O(n)$。详细解释见 \myurl{http://leetcode.com/2011/11/longest-palindromic-substring-part-ii.html} 。
+思路四：Manacher’s Algorithm, 複雜度$O(n)$。詳細解釋見 \myurl{http://leetcode.com/2011/11/longest-palindromic-substring-part-ii.html} 。
 
 
-\subsubsection{备忘录法}
+\subsubsection{備忘錄法}
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
-// 备忘录法，会超时
-// 时间复杂度O(n^2)，空间复杂度O(n^2)
+// 備忘錄法，會超時
+// 時間複雜度O(n^2)，空間複雜度O(n^2)
 typedef string::const_iterator Iterator;
 
 namespace std {
@@ -372,19 +372,19 @@ private:
 \end{Code}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
-// 动规，时间复杂度O(n^2)，空间复杂度O(n^2)
+// 動規，時間複雜度O(n^2)，空間複雜度O(n^2)
 class Solution {
 public:
     string longestPalindrome(const string& s) {
         const int n = s.size();
         bool f[n][n];
         fill_n(&f[0][0], n * n, false);
-        // 用 vector 会超时
+        // 用 vector 會超時
         //vector<vector<bool> > f(n, vector<bool>(n, false));
-        size_t max_len = 1, start = 0;  // 最长回文子串的长度，起点
+        size_t max_len = 1, start = 0;  // 最長迴文子串的長度，起點
 
         for (size_t i = 0; i < s.size(); i++) {
             f[i][i] = true;
@@ -406,7 +406,7 @@ public:
 \begin{Code}
 // LeetCode, Longest Palindromic Substring
 // Manacher’s Algorithm
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     // Transform S into T.
@@ -426,8 +426,8 @@ public:
     string longestPalindrome(string s) {
         string T = preProcess(s);
         const int n = T.length();
-        // 以T[i]为中心，向左/右扩张的长度，不包含T[i]自己，
-        // 因此 P[i]是源字符串中回文串的长度
+        // 以T[i]為中心，向左/右擴張的長度，不包含T[i]自己，
+        // 因此 P[i]是源字符串中迴文串的長度
         int P[n];
         int C = 0, R = 0;
 
@@ -464,9 +464,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -500,13 +500,13 @@ isMatch("aab", "c*a*b") → true
 
 
 \subsubsection{分析}
-这是一道很有挑战的题。
+這是一道很有挑戰的題。
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Regular Expression Matching
-// 递归版，时间复杂度O(n)，空间复杂度O(1)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool isMatch(const string& s, const string& p) {
@@ -541,9 +541,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Wildcard Matching, 见 \S \ref{sec:wildcard-matching}
+\item Wildcard Matching, 見 \S \ref{sec:wildcard-matching}
 \myenddot
 
 
@@ -577,16 +577,16 @@ isMatch("aab", "c*a*b") → false
 
 
 \subsubsection{分析}
-跟上一题很类似。
+跟上一題很類似。
 
-主要是\fn{'*'}的匹配问题。\fn{p}每遇到一个\fn{'*'}，就保留住当前\fn{'*'}的坐标和\fn{s}的坐标，然后\fn{s}从前往后扫描，如果不成功，则\fn{s++}，重新扫描。
+主要是\fn{'*'}的匹配問題。\fn{p}每遇到一個\fn{'*'}，就保留住當前\fn{'*'}的座標和\fn{s}的座標，然後\fn{s}從前往後掃描，如果不成功，則\fn{s++}，重新掃描。
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Wildcard Matching
-// 递归版，会超时，用于帮助理解题意
-// 时间复杂度O(n!*m!)，空间复杂度O(n)
+// 遞歸版，會超時，用於幫助理解題意
+// 時間複雜度O(n!*m!)，空間複雜度O(n)
 class Solution {
 public:
     bool isMatch(const string& s, const string& p) {
@@ -612,7 +612,7 @@ private:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Wildcard Matching
-// 迭代版，时间复杂度O(n*m)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n*m)，空間複雜度O(1)
 class Solution {
 public:
     bool isMatch(const string& s, const string& p) {
@@ -636,7 +636,7 @@ private:
                 break;
             default:
                 if (*str != *ptr) {
-                    // 如果前面没有'*'，则匹配不成功
+                    // 如果前面沒有'*'，則匹配不成功
                     if (!star) return false;
                     s++;
                     str = s - 1;
@@ -651,9 +651,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Regular Expression Matching, 见 \S \ref{sec:regular-expression-matching}
+\item Regular Expression Matching, 見 \S \ref{sec:regular-expression-matching}
 \myenddot
 
 
@@ -666,21 +666,21 @@ Write a function to find the longest common prefix string amongst an array of st
 
 
 \subsubsection{分析}
-从位置0开始，对每一个位置比较所有字符串，直到遇到一个不匹配。
+從位置0開始，對每一個位置比較所有字符串，直到遇到一個不匹配。
 
 
-\subsubsection{纵向扫描}
+\subsubsection{縱向掃描}
 \begin{Code}
 // LeetCode, Longest Common Prefix
-// 纵向扫描，从位置0开始，对每一个位置比较所有字符串，直到遇到一个不匹配
-// 时间复杂度O(n1+n2+...)
+// 縱向掃描，從位置0開始，對每一個位置比較所有字符串，直到遇到一個不匹配
+// 時間複雜度O(n1+n2+...)
 // @author 周倩 (http://weibo.com/zhouditty)
 class Solution {
 public:
     string longestCommonPrefix(vector<string> &strs) {
         if (strs.empty()) return "";
 
-        for (int idx = 0; idx < strs[0].size(); ++idx) { // 纵向扫描
+        for (int idx = 0; idx < strs[0].size(); ++idx) { // 縱向掃描
             for (int i = 1; i < strs.size(); ++i) {
                 if (strs[i][idx] != strs[0][idx]) return strs[0].substr(0,idx);
             }
@@ -691,12 +691,12 @@ public:
 \end{Code}
 
 
-\subsubsection{横向扫描}
+\subsubsection{橫向掃描}
 \begin{Code}
 // LeetCode, Longest Common Prefix
-// 横向扫描，每个字符串与第0个字符串，从左到右比较，直到遇到一个不匹配，
-// 然后继续下一个字符串
-// 时间复杂度O(n1+n2+...)
+// 橫向掃描，每個字符串與第0個字符串，從左到右比較，直到遇到一個不匹配，
+// 然後繼續下一個字符串
+// 時間複雜度O(n1+n2+...)
 class Solution {
 public:
     string longestCommonPrefix(vector<string> &strs) {
@@ -705,7 +705,7 @@ public:
         int right_most = strs[0].size() - 1;
         for (size_t i = 1; i < strs.size(); i++)
             for (int j = 0; j <= right_most; j++)
-                if (strs[i][j] != strs[0][j])  // 不会越界，请参考string::[]的文档
+                if (strs[i][j] != strs[0][j])  // 不會越界，請參考string::[]的文檔
                     right_most = j - 1;
 
         return strs[0].substr(0, right_most + 1);
@@ -714,9 +714,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -740,16 +740,16 @@ Note: It is intended for the problem statement to be ambiguous. You should gathe
 
 
 \subsubsection{分析}
-细节实现题。
+細節實現題。
 
-本题的功能与标准库中的\fn{strtod()}功能类似。
+本題的功能與標準庫中的\fn{strtod()}功能類似。
 
 
-\subsubsection{有限自动机}
+\subsubsection{有限自動機}
 \begin{Code}
 // LeetCode, Valid Number
-// @author 龚陆安 (http://weibo.com/luangong)
-// finite automata，时间复杂度O(n)，空间复杂度O(n)
+// @author 龔陸安 (http://weibo.com/luangong)
+// finite automata，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     bool isNumber(const string& s) {
@@ -806,8 +806,8 @@ public:
 \subsubsection{使用strtod()}
 \begin{Code}
 // LeetCode, Valid Number
-// @author 连城 (http://weibo.com/lianchengzju)
-// 偷懒，直接用 strtod()，时间复杂度O(n)
+// @author 連城 (http://weibo.com/lianchengzju)
+// 偷懶，直接用 strtod()，時間複雜度O(n)
 class Solution {
 public:
     bool isNumber (const string& s) {
@@ -829,9 +829,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -846,13 +846,13 @@ Input is guaranteed to be within the range from 1 to 3999.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Integer to Roman
-// 时间复杂度O(num)，空间复杂度O(1)
+// 時間複雜度O(num)，空間複雜度O(1)
 class Solution {
 public:
     string intToRoman(int num) {
@@ -873,9 +873,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Roman to Integer, 见 \S \ref{sec:roman-to-integer}
+\item Roman to Integer, 見 \S \ref{sec:roman-to-integer}
 \myenddot
 
 
@@ -890,15 +890,15 @@ Input is guaranteed to be within the range from 1 to 3999.
 
 
 \subsubsection{分析}
-从前往后扫描，用一个临时变量记录分段数字。
+從前往後掃描，用一個臨時變量記錄分段數字。
 
-如果当前比前一个大，说明这一段的值应该是当前这个值减去上一个值。比如\fn{IV = 5 – 1}；否则，将当前值加入到结果中，然后开始下一段记录。比如\fn{VI = 5 + 1, II=1+1}
+如果當前比前一個大，説明這一段的值應該是當前這個值減去上一個值。比如\fn{IV = 5 – 1}；否則，將當前值加入到結果中，然後開始下一段記錄。比如\fn{VI = 5 + 1, II=1+1}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Roman to Integer
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     inline int map(const char c) {
@@ -929,9 +929,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Integer to Roman, 见 \S \ref{sec:integer-to-roman}
+\item Integer to Roman, 見 \S \ref{sec:integer-to-roman}
 \myenddot
 
 
@@ -957,14 +957,14 @@ Note: The sequence of integers will be represented as a string.
 
 
 \subsubsection{分析}
-模拟。
+模擬。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Count and Say
-// @author 连城 (http://weibo.com/lianchengzju)
-// 时间复杂度O(n^2)，空间复杂度O(n)
+// @author 連城 (http://weibo.com/lianchengzju)
+// 時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
     string countAndSay(int n) {
@@ -991,9 +991,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1008,15 +1008,15 @@ Note: All inputs will be in lower-case.
 
 
 \subsubsection{分析}
-Anagram（回文构词法）是指打乱字母顺序从而得到新的单词，比如 \fn{"dormitory"} 打乱字母顺序会变成 \fn{"dirty room"} ，\fn{"tea"} 会变成\fn{"eat"}。
+Anagram（迴文構詞法）是指打亂字母順序從而得到新的單詞，比如 \fn{"dormitory"} 打亂字母順序會變成 \fn{"dirty room"} ，\fn{"tea"} 會變成\fn{"eat"}。
 
-回文构词法有一个特点：单词里的字母的种类和数目没有改变，只是改变了字母的排列顺序。因此，将几个单词按照字母顺序排序后，若它们相等，则它们属于同一组 anagrams 。
+迴文構詞法有一個特點：單詞裏的字母的種類和數目沒有改變，只是改變了字母的排列順序。因此，將幾個單詞按照字母順序排序後，若它們相等，則它們屬於同一組 anagrams 。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Anagrams
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<string> anagrams(vector<string> &strs) {
@@ -1038,9 +1038,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1066,17 +1066,17 @@ In this case, you should ignore redundant slashes and return \fn{"/home/foo"}.
 
 
 \subsubsection{分析}
-很有实际价值的题目。
+很有實際價值的題目。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Simplify Path
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     string simplifyPath(const string& path) {
-        vector<string> dirs; // 当做栈
+        vector<string> dirs; // 當做棧
 
         for (auto i = path.begin(); i != path.end();) {
             ++i;
@@ -1084,7 +1084,7 @@ public:
             auto j = find(i, path.end(), '/');
             auto dir = string(i, j);
 
-            if (!dir.empty() && dir != ".") {// 当有连续 '///'时，dir 为空
+            if (!dir.empty() && dir != ".") {// 當有連續 '///'時，dir 為空
                 if (dir == "..") {
                     if (!dirs.empty())
                         dirs.pop_back();
@@ -1109,9 +1109,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1132,14 +1132,14 @@ return 5.
 
 
 \subsubsection{分析}
-细节实现题。
+細節實現題。
 
 
 \subsubsection{用 STL}
 \begin{Code}
 // LeetCode, Length of Last Word
-// 偷懒，用 STL
-// 时间复杂度O(n)，空间复杂度O(1)
+// 偷懶，用 STL
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int lengthOfLastWord(const string& s) {
@@ -1151,11 +1151,11 @@ public:
 \end{Code}
 
 
-\subsubsection{顺序扫描}
+\subsubsection{順序掃描}
 \begin{Code}
 // LeetCode, Length of Last Word
-// 顺序扫描，记录每个 word 的长度
-// 时间复杂度O(n)，空间复杂度O(1)
+// 順序掃描，記錄每個 word 的長度
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int lengthOfLastWord(const string& s) {
@@ -1176,7 +1176,7 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot

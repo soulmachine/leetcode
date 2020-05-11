@@ -12,13 +12,13 @@ You may assume that A has enough space to hold additional elements from B. The n
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Merge Sorted Array
-// 时间复杂度O(m+n)，空间复杂度O(1)
+// 時間複雜度O(m+n)，空間複雜度O(1)
 class Solution {
 public:
     void merge(vector<int>& A, int m, vector<int>& B, int n) {
@@ -34,10 +34,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Merge Two Sorted Lists，见 \S \ref{sec:merge-two-sorted-lists}
-\item Merge k Sorted Lists，见 \S \ref{sec:merge-k-sorted-lists}
+\item Merge Two Sorted Lists，見 \S \ref{sec:merge-two-sorted-lists}
+\item Merge k Sorted Lists，見 \S \ref{sec:merge-k-sorted-lists}
 \myenddot
 
 
@@ -50,13 +50,13 @@ Merge two sorted linked lists and return it as a new list. The new list should b
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Merge Two Sorted Lists
-// 时间复杂度O(min(m,n))，空间复杂度O(1)
+// 時間複雜度O(min(m,n))，空間複雜度O(1)
 class Solution {
 public:
     ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
@@ -75,10 +75,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
 \item Merge Sorted Array \S \ref{sec:merge-sorted-array}
-\item Merge k Sorted Lists，见 \S \ref{sec:merge-k-sorted-lists}
+\item Merge k Sorted Lists，見 \S \ref{sec:merge-k-sorted-lists}
 \myenddot
 
 
@@ -91,13 +91,13 @@ Merge k sorted linked lists and return it as one sorted list. Analyze and descri
 
 
 \subsubsection{分析}
-可以复用Merge Two Sorted Lists（见 \S \ref{sec:merge-two-sorted-lists}）的函数
+可以複用Merge Two Sorted Lists（見 \S \ref{sec:merge-two-sorted-lists}）的函數
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Merge k Sorted Lists
-// 时间复杂度O(n1+n2+...)，空间复杂度O(1)
+// 時間複雜度O(n1+n2+...)，空間複雜度O(1)
 class Solution {
 public:
 
@@ -135,10 +135,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
 \item Merge Sorted Array \S \ref{sec:merge-sorted-array}
-\item Merge Two Sorted Lists，见 \S \ref{sec:merge-two-sorted-lists}
+\item Merge Two Sorted Lists，見 \S \ref{sec:merge-two-sorted-lists}
 \myenddot
 
 
@@ -151,13 +151,13 @@ Sort a linked list using insertion sort.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Insertion Sort List
-// 时间复杂度O(n^2)，空间复杂度O(1)
+// 時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *insertionSortList(ListNode *head) {
@@ -185,9 +185,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Sort List, 见 \S \ref{sec:Sort-List}
+\item Sort List, 見 \S \ref{sec:Sort-List}
 \myenddot
 
 
@@ -200,31 +200,31 @@ Sort a linked list in $O(n log n)$ time using constant space complexity.
 
 
 \subsubsection{分析}
-常数空间且$O(nlogn)$，单链表适合用归并排序，双向链表适合用快速排序。本题可以复用 "Merge Two Sorted Lists" 的代码。
+常數空間且$O(nlogn)$，單鏈表適合用歸併排序，雙向鏈表適合用快速排序。本題可以複用 "Merge Two Sorted Lists" 的代碼。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Sort List
-// 归并排序，时间复杂度O(nlogn)，空间复杂度O(1)
+// 歸併排序，時間複雜度O(nlogn)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *sortList(ListNode *head) {
         if (head == NULL || head->next == NULL)return head;
 
-        // 快慢指针找到中间节点
+        // 快慢指針找到中間節點
         ListNode *fast = head, *slow = head;
         while (fast->next != NULL && fast->next->next != NULL) {
             fast = fast->next->next;
             slow = slow->next;
         }
-        // 断开
+        // 斷開
         fast = slow;
         slow = slow->next;
         fast->next = NULL;
 
         ListNode *l1 = sortList(head);  // 前半段排序
-        ListNode *l2 = sortList(slow);  // 后半段排序
+        ListNode *l2 = sortList(slow);  // 後半段排序
         return mergeTwoLists(l1, l2);
     }
 
@@ -248,9 +248,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Insertion Sort List，见 \S \ref{sec:Insertion-Sort-List}
+\item Insertion Sort List，見 \S \ref{sec:Insertion-Sort-List}
 \myenddot
 
 
@@ -269,13 +269,13 @@ Your algorithm should run in $O(n)$ time and uses constant space.
 
 
 \subsubsection{分析}
-本质上是桶排序(bucket sort)，每当\fn{A[i]!= i+1}的时候，将A[i]与A[A[i]-1]交换，直到无法交换为止，终止条件是 \fn{A[i]== A[A[i]-1]}。
+本質上是桶排序(bucket sort)，每當\fn{A[i]!= i+1}的時候，將A[i]與A[A[i]-1]交換，直到無法交換為止，終止條件是 \fn{A[i]== A[A[i]-1]}。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, First Missing Positive
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int firstMissingPositive(vector<int>& nums) {
@@ -301,9 +301,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Sort Colors, 见 \S \ref{sec:sort-colors}
+\item Sort Colors, 見 \S \ref{sec:sort-colors}
 \myenddot
 
 
@@ -329,22 +329,22 @@ Could you come up with an one-pass algorithm using only constant space?
 
 
 \subsubsection{分析}
-由于0, 1, 2 非常紧凑，首先想到计数排序(counting sort)，但需要扫描两遍，不符合题目要求。
+由於0, 1, 2 非常緊湊，首先想到計數排序(counting sort)，但需要掃描兩遍，不符合題目要求。
 
-由于只有三种颜色，可以设置两个index，一个是red的index，一个是blue的index，两边往中间走。时间复杂度$O(n)$，空间复杂度$O(1)$。
+由於只有三種顏色，可以設置兩個index，一個是red的index，一個是blue的index，兩邊往中間走。時間複雜度$O(n)$，空間複雜度$O(1)$。
 
-第3种思路，利用快速排序里 partition 的思想，第一次将数组按0分割，第二次按1分割，排序完毕，可以推广到$n$种颜色，每种颜色有重复元素的情况。
+第3種思路，利用快速排序裏 partition 的思想，第一次將數組按0分割，第二次按1分割，排序完畢，可以推廣到$n$種顏色，每種顏色有重複元素的情況。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Sort Colors
 // Counting Sort
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void sortColors(vector<int>& A) {
-        int counts[3] = { 0 }; // 记录每个颜色出现的次数
+        int counts[3] = { 0 }; // 記錄每個顏色出現的次數
 
         for (int i = 0; i < A.size(); i++)
             counts[A[i]]++;
@@ -358,14 +358,14 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Sort Colors
-// 双指针，时间复杂度O(n)，空间复杂度O(1)
+// 雙指針，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void sortColors(vector<int>& A) {
-        // 一个是red的index，一个是blue的index，两边往中间走
+        // 一個是red的index，一個是blue的index，兩邊往中間走
         int red = 0, blue = A.size() - 1;
 
         for (int i = 0; i < blue + 1;) {
@@ -381,11 +381,11 @@ public:
 \end{Code}
 
 
-\subsubsection{代码3}
+\subsubsection{代碼3}
 \begin{Code}
 // LeetCode, Sort Colors
 // use partition()
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
@@ -396,11 +396,11 @@ public:
 \end{Code}
 
 
-\subsubsection{代码4}
+\subsubsection{代碼4}
 \begin{Code}
 // LeetCode, Sort Colors
-// 重新实现 partition()
-// 时间复杂度O(n)，空间复杂度O(1)
+// 重新實現 partition()
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
@@ -423,7 +423,7 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item First Missing Positive, 见 \S \ref{sec:first-missing-positive}
+\item First Missing Positive, 見 \S \ref{sec:first-missing-positive}
 \myenddot

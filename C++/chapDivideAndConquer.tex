@@ -13,11 +13,11 @@ Implement pow(x, n).
 二分法，$x^n = x^{n/2} \times x^{n/2} \times x^{n\%2}$
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Pow(x, n)
 // 二分法，$x^n = x^{n/2} * x^{n/2} * x^{n\%2}$
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     double myPow(double x, int n) {
@@ -35,10 +35,10 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Sqrt(x)，见 \S \ref{sec:sqrt}
+\item Sqrt(x)，見 \S \ref{sec:sqrt}
 \myenddot
 
 
@@ -55,22 +55,22 @@ Compute and return the square root of \fn{x}.
 二分查找
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Sqrt(x)
 // 二分查找
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     int mySqrt(int x) {
         int left = 1, right = x / 2;
-        int last_mid;  // 记录最近一次mid
+        int last_mid;  // 記錄最近一次mid
 
         if (x < 2) return x;
 
         while(left <= right) {
             const int mid = left + (right - left) / 2;
-            if(x / mid > mid) { // 不要用 x > mid * mid，会溢出
+            if(x / mid > mid) { // 不要用 x > mid * mid，會溢出
                 left = mid + 1;
                 last_mid = mid;
             } else if(x / mid < mid) {
@@ -85,7 +85,7 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Pow(x)，见 \S \ref{sec:pow}
+\item Pow(x)，見 \S \ref{sec:pow}
 \myenddot

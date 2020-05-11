@@ -1,8 +1,8 @@
-\chapter{图}
+\chapter{圖}
 
-无向图的节点定义如下：
+無向圖的節點定義如下：
 \begin{Code}
-// 无向图的节点
+// 無向圖的節點
 struct UndirectedGraphNode {
     int label;
     vector<UndirectedGraphNode *> neighbors;
@@ -44,13 +44,13 @@ Visually, the graph looks like the following:
 
 
 \subsubsection{分析}
-广度优先遍历或深度优先遍历都可以。
+廣度優先遍歷或深度優先遍歷都可以。
 
 
 \subsubsection{DFS}
 \begin{Code}
 // LeetCode, Clone Graph
-// DFS，时间复杂度O(n)，空间复杂度O(n)
+// DFS，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {
@@ -82,7 +82,7 @@ private:
 \subsubsection{BFS}
 \begin{Code}
 // LeetCode, Clone Graph
-// BFS，时间复杂度O(n)，空间复杂度O(n)
+// BFS，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     UndirectedGraphNode *cloneGraph(const UndirectedGraphNode *node) {
@@ -117,7 +117,7 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot

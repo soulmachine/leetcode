@@ -1,8 +1,8 @@
-\chapter{线性表}
-这类题目考察线性表的操作，例如，数组，单链表，双向链表等。
+\chapter{線性表}
+這類題目考察線性表的操作，例如，數組，單鏈表，雙向鏈表等。
 
 
-\section{数组} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{數組} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Remove Duplicates from Sorted Array}
@@ -20,13 +20,13 @@ Your function should return length = 2, and A is now \code{[1,2]}.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
@@ -43,10 +43,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
-// 使用STL，时间复杂度O(n)，空间复杂度O(1)
+// 使用STL，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
@@ -56,10 +56,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码3}
+\subsubsection{代碼3}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array
-// 使用STL，时间复杂度O(n)，空间复杂度O(1)
+// 使用STL，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
@@ -79,10 +79,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Remove Duplicates from Sorted Array II，见 \S \ref{sec:remove-duplicates-from-sorted-array-ii}
+\item Remove Duplicates from Sorted Array II，見 \S \ref{sec:remove-duplicates-from-sorted-array-ii}
 \myenddot
 
 
@@ -101,13 +101,13 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 
 
 \subsubsection{分析}
-加一个变量记录一下元素出现的次数即可。这题因为是已经排序的数组，所以一个变量即可解决。如果是没有排序的数组，则需要引入一个hashmap来记录出现次数。
+加一個變量記錄一下元素出現的次數即可。這題因為是已經排序的數組，所以一個變量即可解決。如果是沒有排序的數組，則需要引入一個hashmap來記錄出現次數。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 // @author hex108 (https://github.com/hex108)
 class Solution {
 public:
@@ -126,12 +126,12 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
-下面是一个更简洁的版本。上面的代码略长，不过扩展性好一些，例如将\fn{occur < 2}改为\fn{occur < 3}，就变成了允许重复最多3次。
+\subsubsection{代碼2}
+下面是一個更簡潔的版本。上面的代碼略長，不過擴展性好一些，例如將\fn{occur < 2}改為\fn{occur < 3}，就變成了允許重複最多3次。
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
 // @author 虞航仲 (http://weibo.com/u/1666779725)
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeDuplicates(vector<int>& nums) {
@@ -149,10 +149,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Remove Duplicates from Sorted Array，见 \S \ref{sec:remove-duplicates-from-sorted-array}
+\item Remove Duplicates from Sorted Array，見 \S \ref{sec:remove-duplicates-from-sorted-array}
 \myenddot
 
 
@@ -171,13 +171,13 @@ You may assume no duplicate exists in the array.
 
 
 \subsubsection{分析}
-二分查找，难度主要在于左右边界的确定。
+二分查找，難度主要在於左右邊界的確定。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Search in Rotated Sorted Array
-// 时间复杂度O(log n)，空间复杂度O(1)
+// 時間複雜度O(log n)，空間複雜度O(1)
 class Solution {
 public:
     int search(const vector<int>& nums, int target) {
@@ -204,10 +204,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Search in Rotated Sorted Array II，见 \S \ref{sec:search-in-rotated-sorted-array-ii}
+\item Search in Rotated Sorted Array II，見 \S \ref{sec:search-in-rotated-sorted-array-ii}
 \myenddot
 
 
@@ -224,18 +224,18 @@ Write a function to determine if a given target is in the array.
 
 
 \subsubsection{分析}
-允许重复元素，则上一题中如果\fn{A[m]>=A[l]},那么\fn{[l,m]}为递增序列的假设就不能成立了，比如\code{[1,3,1,1,1]}。
+允許重複元素，則上一題中如果\fn{A[m]>=A[l]},那麼\fn{[l,m]}為遞增序列的假設就不能成立了，比如\code{[1,3,1,1,1]}。
 
-如果\fn{A[m]>=A[l]}不能确定递增，那就把它拆分成两个条件：
+如果\fn{A[m]>=A[l]}不能確定遞增，那就把它拆分成兩個條件：
 \begindot
-\item 若\fn{A[m]>A[l]}，则区间\fn{[l,m]}一定递增
-\item 若\fn{A[m]==A[l]} 确定不了，那就\fn{l++}，往下看一步即可。
+\item 若\fn{A[m]>A[l]}，則區間\fn{[l,m]}一定遞增
+\item 若\fn{A[m]==A[l]} 確定不了，那就\fn{l++}，往下看一步即可。
 \myenddot
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Search in Rotated Sorted Array II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool search(const vector<int>& nums, int target) {
@@ -264,10 +264,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Search in Rotated Sorted Array，见 \S \ref{sec:search-in-rotated-sorted-array}
+\item Search in Rotated Sorted Array，見 \S \ref{sec:search-in-rotated-sorted-array}
 \myenddot
 
 
@@ -280,39 +280,39 @@ There are two sorted arrays A and B of size m and n respectively. Find the media
 
 
 \subsubsection{分析}
-这是一道非常经典的题。这题更通用的形式是，给定两个已经排序好的数组，找到两者所有元素中第$k$大的元素。
+這是一道非常經典的題。這題更通用的形式是，給定兩個已經排序好的數組，找到兩者所有元素中第$k$大的元素。
 
-$O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的元素。
+$O(m+n)$的解法比較直觀，直接merge兩個數組，然後求第$k$大的元素。
 
-不过我们仅仅需要第$k$大的元素，是不需要“排序”这么昂贵的操作的。可以用一个计数器，记录当前已经找到第$m$大的元素了。同时我们使用两个指针\fn{pA}和\fn{pB}，分别指向A和B数组的第一个元素，使用类似于merge sort的原理，如果数组A当前元素小，那么\fn{pA++}，同时\fn{m++}；如果数组B当前元素小，那么\fn{pB++}，同时\fn{m++}。最终当$m$等于$k$的时候，就得到了我们的答案，$O(k)$时间，$O(1)$空间。但是，当$k$很接近$m+n$的时候，这个方法还是$O(m+n)$的。
+不過我們僅僅需要第$k$大的元素，是不需要“排序”這麼昂貴的操作的。可以用一個計數器，記錄當前已經找到第$m$大的元素了。同時我們使用兩個指針\fn{pA}和\fn{pB}，分別指向A和B數組的第一個元素，使用類似於merge sort的原理，如果數組A當前元素小，那麼\fn{pA++}，同時\fn{m++}；如果數組B當前元素小，那麼\fn{pB++}，同時\fn{m++}。最終當$m$等於$k$的時候，就得到了我們的答案，$O(k)$時間，$O(1)$空間。但是，當$k$很接近$m+n$的時候，這個方法還是$O(m+n)$的。
 
-有没有更好的方案呢？我们可以考虑从$k$入手。如果我们每次都能够删除一个一定在第$k$大元素之前的元素，那么我们需要进行$k$次。但是如果每次我们都删除一半呢？由于A和B都是有序的，我们应该充分利用这里面的信息，类似于二分查找，也是充分利用了“有序”。
+有沒有更好的方案呢？我們可以考慮從$k$入手。如果我們每次都能夠刪除一個一定在第$k$大元素之前的元素，那麼我們需要進行$k$次。但是如果每次我們都刪除一半呢？由於A和B都是有序的，我們應該充分利用這裏面的信息，類似於二分查找，也是充分利用了“有序”。
 
-假设A和B的元素个数都大于$k/2$，我们将A的第$k/2$个元素（即\fn{A[k/2-1]}）和B的第$k/2$个元素（即\fn{B[k/2-1]}）进行比较，有以下三种情况（为了简化这里先假设$k$为偶数，所得到的结论对于$k$是奇数也是成立的）：
+假設A和B的元素個數都大於$k/2$，我們將A的第$k/2$個元素（即\fn{A[k/2-1]}）和B的第$k/2$個元素（即\fn{B[k/2-1]}）進行比較，有以下三種情況（為了簡化這裏先假設$k$為偶數，所得到的結論對於$k$是奇數也是成立的）：
 \begindot
 \item \fn{A[k/2-1] == B[k/2-1]}
 \item \fn{A[k/2-1] > B[k/2-1]}
 \item \fn{A[k/2-1] < B[k/2-1]}
 \myenddot
 
-如果\fn{A[k/2-1] < B[k/2-1]}，意味着\fn{A[0]}到\fn{A[k/2-1]}的肯定在$A \cup B$的top k元素的范围内，换句话说，\fn{A[k/2-1]}不可能大于$A \cup B$的第$k$大元素。留给读者证明。
+如果\fn{A[k/2-1] < B[k/2-1]}，意味着\fn{A[0]}到\fn{A[k/2-1]}的肯定在$A \cup B$的top k元素的範圍內，換句話説，\fn{A[k/2-1]}不可能大於$A \cup B$的第$k$大元素。留給讀者證明。
 
-因此，我们可以放心的删除A数组的这$k/2$个元素。同理，当\fn{A[k/2-1] > B[k/2-1]}时，可以删除B数组的$k/2$个元素。
+因此，我們可以放心的刪除A數組的這$k/2$個元素。同理，當\fn{A[k/2-1] > B[k/2-1]}時，可以刪除B數組的$k/2$個元素。
 
-当\fn{A[k/2-1] == B[k/2-1]}时，说明找到了第$k$大的元素，直接返回\fn{A[k/2-1]}或\fn{B[k/2-1]}即可。
+當\fn{A[k/2-1] == B[k/2-1]}時，説明找到了第$k$大的元素，直接返回\fn{A[k/2-1]}或\fn{B[k/2-1]}即可。
 
-因此，我们可以写一个递归函数。那么函数什么时候应该终止呢？
+因此，我們可以寫一個遞歸函數。那麼函數什麼時候應該終止呢？
 \begindot
-\item 当A或B是空时，直接返回\fn{B[k-1]}或\fn{A[k-1]}；
-\item 当\fn{k=1}是，返回\fn{min(A[0], B[0])}；
-\item 当\fn{A[k/2-1] == B[k/2-1]}时，返回\fn{A[k/2-1]}或\fn{B[k/2-1]}
+\item 當A或B是空時，直接返回\fn{B[k-1]}或\fn{A[k-1]}；
+\item 當\fn{k=1}是，返回\fn{min(A[0], B[0])}；
+\item 當\fn{A[k/2-1] == B[k/2-1]}時，返回\fn{A[k/2-1]}或\fn{B[k/2-1]}
 \myenddot
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Median of Two Sorted Arrays
-// 时间复杂度O(log(m+n))，空间复杂度O(log(m+n))
+// 時間複雜度O(log(m+n))，空間複雜度O(log(m+n))
 class Solution {
 public:
     double findMedianSortedArrays(const vector<int>& A, const vector<int>& B) {
@@ -346,10 +346,10 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -368,17 +368,17 @@ Your algorithm should run in $O(n)$ complexity.
 
 
 \subsubsection{分析}
-如果允许$O(n \log n)$的复杂度，那么可以先排序，可是本题要求$O(n)$。
+如果允許$O(n \log n)$的複雜度，那麼可以先排序，可是本題要求$O(n)$。
 
-由于序列里的元素是无序的，又要求$O(n)$，首先要想到用哈希表。
+由於序列裏的元素是無序的，又要求$O(n)$，首先要想到用哈希表。
 
-用一个哈希表 \fn{unordered_map<int, bool> used}记录每个元素是否使用，对每个元素，以该元素为中心，往左右扩张，直到不连续为止，记录下最长的长度。
+用一個哈希表 \fn{unordered_map<int, bool> used}記錄每個元素是否使用，對每個元素，以該元素為中心，往左右擴張，直到不連續為止，記錄下最長的長度。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // Leet Code, Longest Consecutive Sequence
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int longestConsecutive(const vector<int> &nums) {
@@ -414,15 +414,15 @@ public:
 \end{Code}
 
 \subsubsection{分析2}
-第一直觉是个聚类的操作,应该有union,find的操作.连续序列可以用两端和长度来表示.
-本来用两端就可以表示,但考虑到查询的需求,将两端分别暴露出来.用\fn{unordered_map<int, int> map}来
-存储.原始思路来自于\url{http://discuss.leetcode.com/questions/1070/longest-consecutive-sequence}
+第一直覺是個聚類的操作,應該有union,find的操作.連續序列可以用兩端和長度來表示.
+本來用兩端就可以表示,但考慮到查詢的需求,將兩端分別暴露出來.用\fn{unordered_map<int, int> map}來
+存儲.原始思路來自於\url{http://discuss.leetcode.com/questions/1070/longest-consecutive-sequence}
 
-\subsubsection{代码}
+\subsubsection{代碼}
 
 \begin{Code}
 // Leet Code, Longest Consecutive Sequence
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 // Author: @advancedxy
 class Solution {
 public:
@@ -455,9 +455,9 @@ private:
 };
 \end{Code}
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -478,18 +478,18 @@ Output: \code{index1=1, index2=2}
 
 
 \subsubsection{分析}
-方法1：暴力，复杂度$O(n^2)$，会超时
+方法1：暴力，複雜度$O(n^2)$，會超時
 
-方法2：hash。用一个哈希表，存储每个数对应的下标，复杂度$O(n)$.
+方法2：hash。用一個哈希表，存儲每個數對應的下標，複雜度$O(n)$.
 
-方法3：先排序，然后左右夹逼，排序$O(n\log n)$，左右夹逼$O(n)$，最终$O(n\log n)$。但是注意，这题需要返回的是下标，而不是数字本身，因此这个方法行不通。
+方法3：先排序，然後左右夾逼，排序$O(n\log n)$，左右夾逼$O(n)$，最終$O(n\log n)$。但是注意，這題需要返回的是下標，而不是數字本身，因此這個方法行不通。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Two Sum
-// 方法2：hash。用一个哈希表，存储每个数对应的下标
-// 时间复杂度O(n)，空间复杂度O(n)
+// 方法2：hash。用一個哈希表，存儲每個數對應的下標
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     vector<int> twoSum(vector<int> &nums, int target) {
@@ -512,11 +512,11 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 3Sum, 见 \S \ref{sec:3sum}
-\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
-\item 4Sum, 见 \S \ref{sec:4sum}
+\item 3Sum, 見 \S \ref{sec:3sum}
+\item 3Sum Closest, 見 \S \ref{sec:3sum-closest}
+\item 4Sum, 見 \S \ref{sec:4sum}
 \myenddot
 
 
@@ -543,15 +543,15 @@ A solution set is:
 
 
 \subsubsection{分析}
-先排序，然后左右夹逼，复杂度 $O(n^2)$。
+先排序，然後左右夾逼，複雜度 $O(n^2)$。
 
-这个方法可以推广到$k$-sum，先排序，然后做$k-2$次循环，在最内层循环左右夹逼，时间复杂度是 $O(\max\{n \log n, n^{k-1}\})$。
+這個方法可以推廣到$k$-sum，先排序，然後做$k-2$次循環，在最內層循環左右夾逼，時間複雜度是 $O(\max\{n \log n, n^{k-1}\})$。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, 3Sum
-// 先排序，然后左右夹逼，注意跳过重复的数，时间复杂度O(n^2)，空间复杂度O(1)
+// 先排序，然後左右夾逼，注意跳過重複的數，時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
     public:
     vector<vector<int>> threeSum(vector<int>& nums) {
@@ -586,11 +586,11 @@ class Solution {
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Two sum, 见 \S \ref{sec:Two-sum}
-\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
-\item 4Sum, 见 \S \ref{sec:4sum}
+\item Two sum, 見 \S \ref{sec:Two-sum}
+\item 3Sum Closest, 見 \S \ref{sec:3sum-closest}
+\item 4Sum, 見 \S \ref{sec:4sum}
 \myenddot
 
 \subsection{3Sum Closest} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -606,13 +606,13 @@ The sum that is closest to the target is 2. (\code{-1 + 2 + 1 = 2}).
 
 
 \subsubsection{分析}
-先排序，然后左右夹逼，复杂度 $O(n^2)$。
+先排序，然後左右夾逼，複雜度 $O(n^2)$。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, 3Sum Closest
-// 先排序，然后左右夹逼，时间复杂度O(n^2)，空间复杂度O(1)
+// 先排序，然後左右夾逼，時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     int threeSumClosest(vector<int>& nums, int target) {
@@ -645,11 +645,11 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Two sum, 见 \S \ref{sec:Two-sum}
-\item 3Sum, 见 \S \ref{sec:3sum}
-\item 4Sum, 见 \S \ref{sec:4sum}
+\item Two sum, 見 \S \ref{sec:Two-sum}
+\item 3Sum, 見 \S \ref{sec:3sum}
+\item 4Sum, 見 \S \ref{sec:4sum}
 \myenddot
 
 
@@ -677,15 +677,15 @@ A solution set is:
 
 
 \subsubsection{分析}
-先排序，然后左右夹逼，复杂度 $O(n^3)$，会超时。
+先排序，然後左右夾逼，複雜度 $O(n^3)$，會超時。
 
-可以用一个hashmap先缓存两个数的和，最终复杂度$O(n^3)$。这个策略也适用于 3Sum 。
+可以用一個hashmap先緩存兩個數的和，最終複雜度$O(n^3)$。這個策略也適用於 3Sum 。
 
 
-\subsubsection{左右夹逼}
+\subsubsection{左右夾逼}
 \begin{Code}
 // LeetCode, 4Sum
-// 先排序，然后左右夹逼，时间复杂度O(n^3)，空间复杂度O(1)
+// 先排序，然後左右夾逼，時間複雜度O(n^3)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& nums, int target) {
@@ -719,11 +719,11 @@ public:
 \end{Code}
 
 
-\subsubsection{map做缓存}
+\subsubsection{map做緩存}
 \begin{Code}
 // LeetCode, 4Sum
-// 用一个hashmap先缓存两个数的和
-// 时间复杂度，平均O(n^2)，最坏O(n^4)，空间复杂度O(n^2)
+// 用一個hashmap先緩存兩個數的和
+// 時間複雜度，平均O(n^2)，最壞O(n^4)，空間複雜度O(n^2)
 class Solution {
 public:
     vector<vector<int> > fourSum(vector<int> &nums, int target) {
@@ -746,7 +746,7 @@ public:
                 const auto& vec = cache[key];
                 for (size_t k = 0; k < vec.size(); ++k) {
                     if (c <= vec[k].second)
-                        continue; // 有重叠
+                        continue; // 有重疊
 
                     result.push_back( { nums[vec[k].first],
                             nums[vec[k].second], nums[c], nums[d] });
@@ -764,9 +764,9 @@ public:
 \subsubsection{multimap}
 \begin{Code}
 // LeetCode, 4Sum
-// 用一个 hashmap 先缓存两个数的和
-// 时间复杂度O(n^2)，空间复杂度O(n^2)
-// @author 龚陆安(http://weibo.com/luangong)
+// 用一個 hashmap 先緩存兩個數的和
+// 時間複雜度O(n^2)，空間複雜度O(n^2)
+// @author 龔陸安(http://weibo.com/luangong)
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& nums, int target) {
@@ -805,8 +805,8 @@ public:
 \subsubsection{方法4}
 \begin{Code}
 // LeetCode, 4Sum
-// 先排序，然后左右夹逼，时间复杂度O(n^3logn)，空间复杂度O(1)，会超时
-// 跟方法1相比，表面上优化了，实际上更慢了，切记！
+// 先排序，然後左右夾逼，時間複雜度O(n^3logn)，空間複雜度O(1)，會超時
+// 跟方法1相比，表面上優化了，實際上更慢了，切記！
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& nums, int target) {
@@ -840,11 +840,11 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Two sum, 见 \S \ref{sec:Two-sum}
-\item 3Sum, 见 \S \ref{sec:3sum}
-\item 3Sum Closest, 见 \S \ref{sec:3sum-closest}
+\item Two sum, 見 \S \ref{sec:Two-sum}
+\item 3Sum, 見 \S \ref{sec:3sum}
+\item 3Sum Closest, 見 \S \ref{sec:3sum-closest}
 \myenddot
 
 
@@ -859,13 +859,13 @@ The order of elements can be changed. It doesn't matter what you leave beyond th
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Remove Element
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeElement(vector<int>& nums, int target) {
@@ -881,10 +881,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Remove Element
-// 使用remove()，时间复杂度O(n)，空间复杂度O(1)
+// 使用remove()，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int removeElement(vector<int>& nums, int target) {
@@ -894,9 +894,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -920,18 +920,18 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 
 
 \subsubsection{分析}
-算法过程如图~\ref{fig:permutation}所示（来自\myurl{http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html}）。
+算法過程如圖~\ref{fig:permutation}所示（來自\myurl{http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html}）。
 
 \begin{center}
 \includegraphics[width=360pt]{next-permutation.png}\\
-\figcaption{下一个排列算法流程}\label{fig:permutation}
+\figcaption{下一個排列算法流程}\label{fig:permutation}
 \end{center}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Next Permutation
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void nextPermutation(vector<int> &nums) {
@@ -972,12 +972,12 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
-\item Permutations, 见 \S \ref{sec:permutations}
-\item Permutations II, 见 \S \ref{sec:permutations-ii}
-\item Combinations, 见 \S \ref{sec:combinations}
+\item Permutation Sequence, 見 \S \ref{sec:permutation-sequence}
+\item Permutations, 見 \S \ref{sec:permutations}
+\item Permutations II, 見 \S \ref{sec:permutations-ii}
+\item Combinations, 見 \S \ref{sec:combinations}
 \myenddot
 
 
@@ -1005,16 +1005,16 @@ Note: Given $n$ will be between 1 and 9 inclusive.
 
 
 \subsubsection{分析}
-简单的，可以用暴力枚举法，调用 $k-1$ 次 \fn{next_permutation()}。
+簡單的，可以用暴力枚舉法，調用 $k-1$ 次 \fn{next_permutation()}。
 
-暴力枚举法把前 $k$个排列都求出来了，比较浪费，而我们只需要第$k$个排列。
+暴力枚舉法把前 $k$個排列都求出來了，比較浪費，而我們只需要第$k$個排列。
 
-利用康托编码的思路，假设有$n$个不重复的元素，第$k$个排列是$a_1, a_2, a_3, ..., a_n$，那么$a_1$是哪一个位置呢？
+利用康託編碼的思路，假設有$n$個不重複的元素，第$k$個排列是$a_1, a_2, a_3, ..., a_n$，那麼$a_1$是哪一個位置呢？
 
-我们把$a_1$去掉，那么剩下的排列为
-$a_2, a_3, ..., a_n$, 共计$n-1$个元素，$n-1$个元素共有$(n-1)!$个排列，于是就可以知道 $a_1 = k / (n-1)!$。
+我們把$a_1$去掉，那麼剩下的排列為
+$a_2, a_3, ..., a_n$, 共計$n-1$個元素，$n-1$個元素共有$(n-1)!$個排列，於是就可以知道 $a_1 = k / (n-1)!$。
 
-同理，$a_2, a_3, ..., a_n$的值推导如下：
+同理，$a_2, a_3, ..., a_n$的值推導如下：
 
 \begin{eqnarray}
 k_2 &=& k\%(n-1)! \nonumber \\
@@ -1043,16 +1043,16 @@ public:
 
     template<typename BidiIt>
     bool next_permutation(BidiIt first, BidiIt last) {
-        // 代码见上一题 Next Permutation
+        // 代碼見上一題 Next Permutation
     }
 };
 \end{Code}
 
 
-\subsubsection{康托编码}
+\subsubsection{康託編碼}
 \begin{Code}
 // LeetCode, Permutation Sequence
-// 康托编码，时间复杂度O(n)，空间复杂度O(1)
+// 康託編碼，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     string getPermutation(int n, int k) {
@@ -1071,7 +1071,7 @@ private:
         return result;
     }
 
-    // seq 已排好序，是第一个排列
+    // seq 已排好序，是第一個排列
     template<typename Sequence>
     Sequence kth_permutation(const Sequence &seq, int k) {
         const int n = seq.size();
@@ -1079,7 +1079,7 @@ private:
         Sequence result;
 
         int base = factorial(n - 1);
-        --k;  // 康托编码从0开始
+        --k;  // 康託編碼從0開始
 
         for (int i = n - 1; i > 0; k %= base, base /= i, --i) {
             auto a = next(S.begin(), k / base);
@@ -1087,19 +1087,19 @@ private:
             S.erase(a);
         }
 
-        result.push_back(S[0]); // 最后一个
+        result.push_back(S[0]); // 最後一個
         return result;
     }
 };
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Next Permutation, 见 \S \ref{sec:next-permutation}
-\item Permutations, 见 \S \ref{sec:permutations}
-\item Permutations II, 见 \S \ref{sec:permutations-ii}
-\item Combinations, 见 \S \ref{sec:combinations}
+\item Next Permutation, 見 \S \ref{sec:next-permutation}
+\item Permutations, 見 \S \ref{sec:permutations}
+\item Permutations II, 見 \S \ref{sec:permutations-ii}
+\item Combinations, 見 \S \ref{sec:combinations}
 \myenddot
 
 
@@ -1118,13 +1118,13 @@ The Sudoku board could be partially filled, where empty cells are filled with th
 \end{center}
 
 \subsubsection{分析}
-细节实现题。
+細節實現題。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Valid Sudoku
-// 时间复杂度O(n^2)，空间复杂度O(1)
+// 時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     bool isValidSudoku(const vector<vector<char>>& board) {
@@ -1133,18 +1133,18 @@ public:
         for (int i = 0; i < 9; ++i) {
             fill(used, used + 9, false);
 
-            for (int j = 0; j < 9; ++j) // 检查行
+            for (int j = 0; j < 9; ++j) // 檢查行
                 if (!check(board[i][j], used))
                     return false;
 
             fill(used, used + 9, false);
 
-            for (int j = 0; j < 9; ++j) // 检查列
+            for (int j = 0; j < 9; ++j) // 檢查列
                 if (!check(board[j][i], used))
                     return false;
         }
 
-        for (int r = 0; r < 3; ++r) // 检查 9 个子格子
+        for (int r = 0; r < 3; ++r) // 檢查 9 個子格子
             for (int c = 0; c < 3; ++c) {
                 fill(used, used + 9, false);
 
@@ -1168,9 +1168,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Sudoku Solver, 见 \S \ref{sec:sudoku-solver}
+\item Sudoku Solver, 見 \S \ref{sec:sudoku-solver}
 \myenddot
 
 
@@ -1191,25 +1191,25 @@ Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
 
 
 \subsubsection{分析}
-对于每个柱子，找到其左右两边最高的柱子，该柱子能容纳的面积就是\code{min(max_left, max_right) - height}。所以，
+對於每個柱子，找到其左右兩邊最高的柱子，該柱子能容納的面積就是\code{min(max_left, max_right) - height}。所以，
 \begin{enumerate}
-\item 从左往右扫描一遍，对于每个柱子，求取左边最大值；
-\item 从右往左扫描一遍，对于每个柱子，求最大右值；
-\item 再扫描一遍，把每个柱子的面积并累加。
+\item 從左往右掃描一遍，對於每個柱子，求取左邊最大值；
+\item 從右往左掃描一遍，對於每個柱子，求最大右值；
+\item 再掃描一遍，把每個柱子的面積並累加。
 \end{enumerate}
 
 也可以，
 \begin{enumerate}
-\item 扫描一遍，找到最高的柱子，这个柱子将数组分为两半；
-\item 处理左边一半；
-\item 处理右边一半。
+\item 掃描一遍，找到最高的柱子，這個柱子將數組分為兩半；
+\item 處理左邊一半；
+\item 處理右邊一半。
 \end{enumerate}
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路1，时间复杂度O(n)，空间复杂度O(n)
+// 思路1，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int trap(const vector<int>& A) {
@@ -1239,15 +1239,15 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 思路2，时间复杂度O(n)，空间复杂度O(1)
+// 思路2，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int trap(const vector<int>& A) {
         const int n = A.size();
-        int max = 0; // 最高的柱子，将数组分为两半
+        int max = 0; // 最高的柱子，將數組分為兩半
         for (int i = 0; i < n; i++)
             if (A[i] > A[max]) max = i;
 
@@ -1264,13 +1264,13 @@ public:
 \end{Code}
 
 
-\subsubsection{代码3}
-第三种解法，用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或等于当前值的元素全部出栈处理掉。
+\subsubsection{代碼3}
+第三種解法，用一個棧輔助，小於棧頂的元素壓入，大於等於棧頂就把棧裏所有小於或等於當前值的元素全部出棧處理掉。
 \begin{Code}
 // LeetCode, Trapping Rain Water
-// 用一个栈辅助，小于栈顶的元素压入，大于等于栈顶就把栈里所有小于或
-// 等于当前值的元素全部出栈处理掉，计算面积，最后把当前元素入栈
-// 时间复杂度O(n)，空间复杂度O(n)
+// 用一個棧輔助，小於棧頂的元素壓入，大於等於棧頂就把棧裏所有小於或
+// 等於當前值的元素全部出棧處理掉，計算面積，最後把當前元素入棧
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int trap(const vector<int>& A) {
@@ -1281,17 +1281,17 @@ public:
         for (int i = 0; i < n; ++i) {
             int height = 0;
 
-            while (!s.empty()) { // 将栈里比当前元素矮或等高的元素全部处理掉
+            while (!s.empty()) { // 將棧裏比當前元素矮或等高的元素全部處理掉
                 int bar = s.top().first;
                 int pos = s.top().second;
-                // bar, height, A[i] 三者夹成的凹陷
+                // bar, height, A[i] 三者夾成的凹陷
                 water += (min(bar, A[i]) - height) * (i - pos - 1);
                 height = bar;
 
-                if (A[i] < bar) // 碰到了比当前元素高的，跳出循环
+                if (A[i] < bar) // 碰到了比當前元素高的，跳出循環
                     break;
                 else
-                    s.pop(); // 弹出栈顶，因为该元素处理完了，不再需要了
+                    s.pop(); // 彈出棧頂，因為該元素處理完了，不再需要了
             }
 
             s.push(make_pair(A[i], i));
@@ -1303,10 +1303,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Container With Most Water, 见 \S \ref{sec:container-with-most-water}
-\item Largest Rectangle in Histogram, 见 \S \ref{sec:largest-rectangle-in-histogram}
+\item Container With Most Water, 見 \S \ref{sec:container-with-most-water}
+\item Largest Rectangle in Histogram, 見 \S \ref{sec:largest-rectangle-in-histogram}
 \myenddot
 
 
@@ -1324,52 +1324,52 @@ Could you do this in-place?
 
 
 \subsubsection{分析}
-首先想到，纯模拟，从外到内一圈一圈的转，但这个方法太慢。
+首先想到，純模擬，從外到內一圈一圈的轉，但這個方法太慢。
 
-如下图，首先沿着副对角线翻转一次，然后沿着水平中线翻转一次。
+如下圖，首先沿着副對角線翻轉一次，然後沿着水平中線翻轉一次。
 
 \begin{center}
 \includegraphics[width=200pt]{rotate-image.png}\\
 \figcaption{Rotate Image}\label{fig:rotate-image}
 \end{center}
 
-或者，首先沿着水平中线翻转一次，然后沿着主对角线翻转一次。
+或者，首先沿着水平中線翻轉一次，然後沿着主對角線翻轉一次。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Rotate Image
-// 思路 1，时间复杂度O(n^2)，空间复杂度O(1)
+// 思路 1，時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     void rotate(vector<vector<int>>& matrix) {
         const int n = matrix.size();
 
-        for (int i = 0; i < n; ++i)  // 沿着副对角线反转
+        for (int i = 0; i < n; ++i)  // 沿着副對角線反轉
             for (int j = 0; j < n - i; ++j)
                 swap(matrix[i][j], matrix[n - 1 - j][n - 1 - i]);
 
-        for (int i = 0; i < n / 2; ++i) // 沿着水平中线反转
+        for (int i = 0; i < n / 2; ++i) // 沿着水平中線反轉
             for (int j = 0; j < n; ++j)
                 swap(matrix[i][j], matrix[n - 1 - i][j]);
     }
 };
 \end{Code}
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Rotate Image
-// 思路 2，时间复杂度O(n^2)，空间复杂度O(1)
+// 思路 2，時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     void rotate(vector<vector<int>>& matrix) {
         const int n = matrix.size();
 
-        for (int i = 0; i < n / 2; ++i) // 沿着水平中线反转
+        for (int i = 0; i < n / 2; ++i) // 沿着水平中線反轉
             for (int j = 0; j < n; ++j)
                 swap(matrix[i][j], matrix[n - 1 - i][j]);
 
-        for (int i = 0; i < n; ++i)  // 沿着主对角线反转
+        for (int i = 0; i < n; ++i)  // 沿着主對角線反轉
             for (int j = i + 1; j < n; ++j)
                 swap(matrix[i][j], matrix[j][i]);
     }
@@ -1377,9 +1377,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1395,10 +1395,10 @@ Given a number represented as an array of digits, plus one to the number.
 高精度加法。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Plus One
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> plusOne(vector<int> &digits) {
@@ -1408,7 +1408,7 @@ public:
 private:
     // 0 <= digit <= 9
     void add(vector<int> &digits, int digit) {
-        int c = digit;  // carry, 进位
+        int c = digit;  // carry, 進位
 
         for (auto it = digits.rbegin(); it != digits.rend(); ++it) {
             *it += c;
@@ -1422,10 +1422,10 @@ private:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Plus One
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> plusOne(vector<int> &digits) {
@@ -1435,7 +1435,7 @@ public:
 private:
     // 0 <= digit <= 9
     void add(vector<int> &digits, int digit) {
-        int c = digit;  // carry, 进位
+        int c = digit;  // carry, 進位
 
         for_each(digits.rbegin(), digits.rend(), [&c](int &d){
             d += c;
@@ -1449,9 +1449,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1466,24 +1466,24 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 
 
 \subsubsection{分析}
-设$f(n)$表示爬$n$阶楼梯的不同方法数，为了爬到第$n$阶楼梯，有两个选择：
+設$f(n)$表示爬$n$階樓梯的不同方法數，為了爬到第$n$階樓梯，有兩個選擇：
 \begindot
-\item 从第$n-1$阶前进1步；
-\item 从第$n-1$阶前进2步；
+\item 從第$n-1$階前進1步；
+\item 從第$n-1$階前進2步；
 \myenddot
 因此，有$f(n)=f(n-1)+f(n-2)$。
 
-这是一个斐波那契数列。
+這是一個斐波那契數列。
 
-方法1，递归，太慢；方法2，迭代。
+方法1，遞歸，太慢；方法2，迭代。
 
-方法3，数学公式。斐波那契数列的通项公式为 $a_n=\dfrac{1}{\sqrt{5}}\left[\left(\dfrac{1+\sqrt{5}}{2}\right)^n-\left(\dfrac{1-\sqrt{5}}{2}\right)^n\right]$。
+方法3，數學公式。斐波那契數列的通項公式為 $a_n=\dfrac{1}{\sqrt{5}}\left[\left(\dfrac{1+\sqrt{5}}{2}\right)^n-\left(\dfrac{1-\sqrt{5}}{2}\right)^n\right]$。
 
 
 \subsubsection{迭代}
 \begin{Code}
 // LeetCode, Climbing Stairs
-// 迭代，时间复杂度O(n)，空间复杂度O(1)
+// 迭代，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int climbStairs(int n) {
@@ -1500,10 +1500,10 @@ public:
 \end{Code}
 
 
-\subsubsection{数学公式}
+\subsubsection{數學公式}
 \begin{Code}
 // LeetCode, Climbing Stairs
-// 数学公式，时间复杂度O(1)，空间复杂度O(1)
+// 數學公式，時間複雜度O(1)，空間複雜度O(1)
 class Solution {
     public:
     int climbStairs(int n) {
@@ -1514,9 +1514,9 @@ class Solution {
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Decode Ways, 见 \S \ref{sec:decode-ways}
+\item Decode Ways, 見 \S \ref{sec:decode-ways}
 \myenddot
 
 
@@ -1546,23 +1546,23 @@ Note:
 
 
 \subsubsection{分析}
-格雷码(Gray Code)的定义请参考 \myurl{http://en.wikipedia.org/wiki/Gray_code}
+格雷碼(Gray Code)的定義請參考 \myurl{http://en.wikipedia.org/wiki/Gray_code}
 
-\textbf{自然二进制码转换为格雷码：$g_0=b_0, g_i=b_i \oplus b_{i-1}$}
+\textbf{自然二進制碼轉換為格雷碼：$g_0=b_0, g_i=b_i \oplus b_{i-1}$}
 
-保留自然二进制码的最高位作为格雷码的最高位，格雷码次高位为二进制码的高位与次高位异或，其余各位与次高位的求法类似。例如，将自然二进制码1001，转换为格雷码的过程是：保留最高位；然后将第1位的1和第2位的0异或，得到1，作为格雷码的第2位；将第2位的0和第3位的0异或，得到0，作为格雷码的第3位；将第3位的0和第4位的1异或，得到1，作为格雷码的第4位，最终，格雷码为1101。
+保留自然二進制碼的最高位作為格雷碼的最高位，格雷碼次高位為二進制碼的高位與次高位異或，其餘各位與次高位的求法類似。例如，將自然二進制碼1001，轉換為格雷碼的過程是：保留最高位；然後將第1位的1和第2位的0異或，得到1，作為格雷碼的第2位；將第2位的0和第3位的0異或，得到0，作為格雷碼的第3位；將第3位的0和第4位的1異或，得到1，作為格雷碼的第4位，最終，格雷碼為1101。
 
-\textbf{格雷码转换为自然二进制码：$b_0=g_0, b_i=g_i \oplus b_{i-1}$}
+\textbf{格雷碼轉換為自然二進制碼：$b_0=g_0, b_i=g_i \oplus b_{i-1}$}
 
-保留格雷码的最高位作为自然二进制码的最高位，次高位为自然二进制高位与格雷码次高位异或，其余各位与次高位的求法类似。例如，将格雷码1000转换为自然二进制码的过程是：保留最高位1，作为自然二进制码的最高位；然后将自然二进制码的第1位1和格雷码的第2位0异或，得到1，作为自然二进制码的第2位；将自然二进制码的第2位1和格雷码的第3位0异或，得到1，作为自然二进制码的第3位；将自然二进制码的第3位1和格雷码的第4位0异或，得到1，作为自然二进制码的第4位，最终，自然二进制码为1111。
+保留格雷碼的最高位作為自然二進制碼的最高位，次高位為自然二進制高位與格雷碼次高位異或，其餘各位與次高位的求法類似。例如，將格雷碼1000轉換為自然二進制碼的過程是：保留最高位1，作為自然二進制碼的最高位；然後將自然二進制碼的第1位1和格雷碼的第2位0異或，得到1，作為自然二進制碼的第2位；將自然二進制碼的第2位1和格雷碼的第3位0異或，得到1，作為自然二進制碼的第3位；將自然二進制碼的第3位1和格雷碼的第4位0異或，得到1，作為自然二進制碼的第4位，最終，自然二進制碼為1111。
 
-格雷码有\textbf{数学公式}，整数$n$的格雷码是$n \oplus (n/2)$。
+格雷碼有\textbf{數學公式}，整數$n$的格雷碼是$n \oplus (n/2)$。
 
-这题要求生成$n$比特的所有格雷码。
+這題要求生成$n$比特的所有格雷碼。
 
-方法1，最简单的方法，利用数学公式，对从 $0\sim2^n-1$的所有整数，转化为格雷码。
+方法1，最簡單的方法，利用數學公式，對從 $0\sim2^n-1$的所有整數，轉化為格雷碼。
 
-方法2，$n$比特的格雷码，可以递归地从$n-1$比特的格雷码生成。如图\S \ref{fig:gray-code-construction}所示。
+方法2，$n$比特的格雷碼，可以遞歸地從$n-1$比特的格雷碼生成。如圖\S \ref{fig:gray-code-construction}所示。
 
 \begin{center}
 \includegraphics[width=160pt]{gray-code-construction.png}\\
@@ -1570,10 +1570,10 @@ Note:
 \end{center}
 
 
-\subsubsection{数学公式}
+\subsubsection{數學公式}
 \begin{Code}
 // LeetCode, Gray Code
-// 数学公式，时间复杂度O(2^n)，空间复杂度O(1)
+// 數學公式，時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> grayCode(int n) {
@@ -1596,7 +1596,7 @@ private:
 \begin{Code}
 // LeetCode, Gray Code
 // reflect-and-prefix method
-// 时间复杂度O(2^n)，空间复杂度O(1)
+// 時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> grayCode(int n) {
@@ -1605,7 +1605,7 @@ public:
         result.push_back(0);
         for (int i = 0; i < n; i++) {
             const int highest_bit = 1 << i;
-            for (int j = result.size() - 1; j >= 0; j--) // 要反着遍历，才能对称
+            for (int j = result.size() - 1; j >= 0; j--) // 要反着遍歷，才能對稱
                 result.push_back(highest_bit | result[j]);
         }
         return result;
@@ -1614,9 +1614,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1638,22 +1638,22 @@ Could you devise a constant space solution?
 
 
 \subsubsection{分析}
-$O(m+n)$空间的方法很简单，设置两个bool数组，记录每行和每列是否存在0。
+$O(m+n)$空間的方法很簡單，設置兩個bool數組，記錄每行和每列是否存在0。
 
-想要常数空间，可以复用第一行和第一列。
+想要常數空間，可以複用第一行和第一列。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
-// 时间复杂度O(m*n)，空间复杂度O(m+n)
+// 時間複雜度O(m*n)，空間複雜度O(m+n)
 class Solution {
 public:
     void setZeroes(vector<vector<int> > &matrix) {
         const size_t m = matrix.size();
         const size_t n = matrix[0].size();
-        vector<bool> row(m, false); // 标记该行是否存在0
-        vector<bool> col(n, false); // 标记该列是否存在0
+        vector<bool> row(m, false); // 標記該行是否存在0
+        vector<bool> col(n, false); // 標記該列是否存在0
 
         for (size_t i = 0; i < m; ++i) {
             for (size_t j = 0; j < n; ++j) {
@@ -1679,10 +1679,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Set Matrix Zeroes
-// 时间复杂度O(m*n)，空间复杂度O(1)
+// 時間複雜度O(m*n)，空間複雜度O(1)
 class Solution {
 public:
     void setZeroes(vector<vector<int> > &matrix) {
@@ -1724,9 +1724,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1746,15 +1746,15 @@ The solution is guaranteed to be unique.
 
 
 \subsubsection{分析}
-首先想到的是$O(N^2)$的解法，对每个点进行模拟。
+首先想到的是$O(N^2)$的解法，對每個點進行模擬。
 
-$O(N)$的解法是，设置两个变量，\fn{sum}判断当前的指针的有效性；\fn{total}则判断整个数组是否有解，有就返回通过\fn{sum}得到的下标，没有则返回-1。
+$O(N)$的解法是，設置兩個變量，\fn{sum}判斷當前的指針的有效性；\fn{total}則判斷整個數組是否有解，有就返回通過\fn{sum}得到的下標，沒有則返回-1。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Gas Station
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int canCompleteCircuit(vector<int> &gas, vector<int> &cost) {
@@ -1774,9 +1774,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1797,20 +1797,20 @@ What is the minimum candies you must give?
 
 
 \subsubsection{分析}
-无
+無
 
 
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Candy
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int candy(vector<int> &ratings) {
         const int n = ratings.size();
         vector<int> increment(n);
 
-        // 左右各扫描一遍
+        // 左右各掃描一遍
         for (int i = 1, inc = 1; i < n; i++) {
             if (ratings[i] > ratings[i - 1])
                 increment[i] = max(inc++, increment[i]);
@@ -1824,17 +1824,17 @@ public:
             else
                 inc = 1;
         }
-        // 初始值为n，因为每个小朋友至少一颗糖
+        // 初始值為n，因為每個小朋友至少一顆糖
         return accumulate(&increment[0], &increment[0]+n, n);
     }
 };
 \end{Code}
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Candy
-// 备忘录法，时间复杂度O(n)，空间复杂度O(n)
+// 備忘錄法，時間複雜度O(n)，空間複雜度O(n)
 // @author fancymouse (http://weibo.com/u/1928162822)
 class Solution {
 public:
@@ -1859,9 +1859,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1877,13 +1877,13 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 
 
 \subsubsection{分析}
-异或，不仅能处理两次的情况，只要出现偶数次，都可以清零。
+異或，不僅能處理兩次的情況，只要出現偶數次，都可以清零。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Single Number
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
@@ -1897,10 +1897,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Single Number
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
@@ -1910,9 +1910,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item  Single Number II, 见 \S \ref{sec:single-number-ii}
+\item  Single Number II, 見 \S \ref{sec:single-number-ii}
 \myenddot
 
 
@@ -1928,21 +1928,21 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 
 
 \subsubsection{分析}
-本题和上一题 Single Number，考察的是位运算。
+本題和上一題 Single Number，考察的是位運算。
 
-方法1：创建一个长度为\fn{sizeof(int)}的数组\fn{count[sizeof(int)]}，\fn{count[i]}表示在在$i$位出现的1的次数。如果\fn{count[i]}是3的整数倍，则忽略；否则就把该位取出来组成答案。
+方法1：創建一個長度為\fn{sizeof(int)}的數組\fn{count[sizeof(int)]}，\fn{count[i]}表示在在$i$位出現的1的次數。如果\fn{count[i]}是3的整數倍，則忽略；否則就把該位取出來組成答案。
 
-方法2：用\fn{one}记录到当前处理的元素为止，二进制1出现“1次”（mod 3 之后的 1）的有哪些二进制位；用\fn{two}记录到当前计算的变量为止，二进制1出现“2次”（mod 3 之后的 2）的有哪些二进制位。当\fn{one}和\fn{two}中的某一位同时为1时表示该二进制位上1出现了3次，此时需要清零。即\textbf{用二进制模拟三进制运算}。最终\fn{one}记录的是最终结果。
+方法2：用\fn{one}記錄到當前處理的元素為止，二進制1出現“1次”（mod 3 之後的 1）的有哪些二進制位；用\fn{two}記錄到當前計算的變量為止，二進制1出現“2次”（mod 3 之後的 2）的有哪些二進制位。當\fn{one}和\fn{two}中的某一位同時為1時表示該二進制位上1出現了3次，此時需要清零。即\textbf{用二進制模擬三進制運算}。最終\fn{one}記錄的是最終結果。
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Single Number II
-// 方法1，时间复杂度O(n)，空间复杂度O(1)
+// 方法1，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
-        const int W = sizeof(int) * 8; // 一个整数的bit数，即整数字长
-        int count[W];  // count[i]表示在在i位出现的1的次数
+        const int W = sizeof(int) * 8; // 一個整數的bit數，即整數字長
+        int count[W];  // count[i]表示在在i位出現的1的次數
         fill_n(&count[0], W, 0);
         for (int i = 0; i < nums.size(); i++) {
             for (int j = 0; j < W; j++) {
@@ -1960,10 +1960,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Single Number II
-// 方法2，时间复杂度O(n)，空间复杂度O(1)
+// 方法2，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
@@ -1982,17 +1982,17 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item  Single Number, 见 \S \ref{sec:single-number}
+\item  Single Number, 見 \S \ref{sec:single-number}
 \myenddot
 
 
-\section{单链表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{單鏈表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-单链表节点的定义如下：
+單鏈表節點的定義如下：
 \begin{Code}
-// 单链表节点
+// 單鏈表節點
 struct ListNode {
     int val;
     ListNode *next;
@@ -2014,18 +2014,18 @@ Output: {\small \fontspec{Latin Modern Mono} 7 -> 0 -> 8}
 
 
 \subsubsection{分析}
-跟Add Binary（见 \S \ref{sec:add-binary}）很类似
+跟Add Binary（見 \S \ref{sec:add-binary}）很類似
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Add Two Numbers
-// 跟Add Binary 很类似
-// 时间复杂度O(m+n)，空间复杂度O(1)
+// 跟Add Binary 很類似
+// 時間複雜度O(m+n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-        ListNode dummy(-1); // 头节点
+        ListNode dummy(-1); // 頭節點
         int carry = 0;
         ListNode *prev = &dummy;
         for (ListNode *pa = l1, *pb = l2;
@@ -2047,10 +2047,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Add Binary, 见 \S \ref{sec:add-binary}
+\item Add Binary, 見 \S \ref{sec:add-binary}
 \myenddot
 
 
@@ -2072,13 +2072,13 @@ $1 \leq m \leq  n \leq $ length of list.
 
 
 \subsubsection{分析}
-这题非常繁琐，有很多边界检查，15分钟内做到bug free很有难度！
+這題非常繁瑣，有很多邊界檢查，15分鐘內做到bug free很有難度！
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Reverse Linked List II
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *reverseBetween(ListNode *head, int m, int n) {
@@ -2095,7 +2095,7 @@ public:
         for (int i = m; i < n; ++i) {
             prev->next = cur->next;
             cur->next = head2->next;
-            head2->next = cur;  // 头插法
+            head2->next = cur;  // 頭插法
             cur = prev->next;
         }
 
@@ -2105,10 +2105,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2126,18 +2126,18 @@ Given \code{1->4->3->2->5->2} and \code{x = 3}, return \code{1->2->2->3->4->5}.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Partition List
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode* partition(ListNode* head, int x) {
-        ListNode left_dummy(-1); // 头结点
-        ListNode right_dummy(-1); // 头结点
+        ListNode left_dummy(-1); // 頭結點
+        ListNode right_dummy(-1); // 頭結點
 
         auto left_cur = &left_dummy;
         auto right_cur = &right_dummy;
@@ -2161,10 +2161,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2183,13 +2183,13 @@ Given \code{1->1->2->3->3}, return \code{1->2->3}.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List
-// 递归版，时间复杂度O(n)，空间复杂度O(1)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
@@ -2204,7 +2204,7 @@ private:
     static void recur(ListNode *prev, ListNode *cur) {
         if (cur == nullptr) return;
 
-        if (prev->val == cur->val) { // 删除head
+        if (prev->val == cur->val) { // 刪除head
             prev->next = cur->next;
             delete cur;
             recur(prev, prev->next);
@@ -2219,7 +2219,7 @@ private:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
@@ -2239,10 +2239,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Remove Duplicates from Sorted List II，见 \S \ref{sec:remove-duplicates-from-sorted-list-ii}
+\item Remove Duplicates from Sorted List II，見 \S \ref{sec:remove-duplicates-from-sorted-list-ii}
 \myenddot
 
 
@@ -2261,13 +2261,13 @@ Given \code{1->1->1->2->3}, return \code{2->3}.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
-// 递归版，时间复杂度O(n)，空间复杂度O(1)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
@@ -2294,13 +2294,13 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
         if (head == nullptr) return head;
 
-        ListNode dummy(INT_MIN); // 头结点
+        ListNode dummy(INT_MIN); // 頭結點
         dummy.next = head;
         ListNode *prev = &dummy, *cur = head;
         while (cur != nullptr) {
@@ -2311,7 +2311,7 @@ public:
                 cur = cur->next;
                 delete temp;
             }
-            if (duplicated) { // 删除重复的最后一个元素
+            if (duplicated) { // 刪除重複的最後一個元素
                 ListNode *temp = cur;
                 cur = cur->next;
                 delete temp;
@@ -2331,7 +2331,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted List II
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
@@ -2366,10 +2366,10 @@ public:
 
 
 \end{Code}
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Remove Duplicates from Sorted List，见 \S \ref{sec:remove-duplicates-from-sorted-list}
+\item Remove Duplicates from Sorted List，見 \S \ref{sec:remove-duplicates-from-sorted-list}
 \myenddot
 
 
@@ -2385,13 +2385,13 @@ Given \code{1->2->3->4->5->nullptr} and \code{k = 2}, return \code{4->5->1->2->3
 
 
 \subsubsection{分析}
-先遍历一遍，得出链表长度$len$，注意$k$可能大于$len$，因此令$k \%= len$。将尾节点next指针指向首节点，形成一个环，接着往后跑$len-k$步，从这里断开，就是要求的结果了。
+先遍歷一遍，得出鏈表長度$len$，注意$k$可能大於$len$，因此令$k \%= len$。將尾節點next指針指向首節點，形成一個環，接着往後跑$len-k$步，從這裏斷開，就是要求的結果了。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Remove Rotate List
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *rotateRight(ListNode *head, int k) {
@@ -2399,28 +2399,28 @@ public:
 
         int len = 1;
         ListNode* p = head;
-        while (p->next) { // 求长度
+        while (p->next) { // 求長度
             len++;
             p = p->next;
         }
         k = len - k % len;
 
-        p->next = head; // 首尾相连
+        p->next = head; // 首尾相連
         for(int step = 0; step < k; step++) {
-            p = p->next;  //接着往后跑
+            p = p->next;  //接着往後跑
         }
-        head = p->next; // 新的首节点
-        p->next = nullptr; // 断开环
+        head = p->next; // 新的首節點
+        p->next = nullptr; // 斷開環
         return head;
     }
 };
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2443,13 +2443,13 @@ Note:
 
 
 \subsubsection{分析}
-设两个指针$p,q$，让$q$先走$n$步，然后$p$和$q$一起走，直到$q$走到尾节点，删除\fn{p->next}即可。
+設兩個指針$p,q$，讓$q$先走$n$步，然後$p$和$q$一起走，直到$q$走到尾節點，刪除\fn{p->next}即可。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Remove Nth Node From End of List
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *removeNthFromEnd(ListNode *head, int n) {
@@ -2472,10 +2472,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2493,13 +2493,13 @@ Your algorithm should use only constant space. You may \emph{not} modify the val
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Swap Nodes in Pairs
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *swapPairs(ListNode *head) {
@@ -2519,10 +2519,10 @@ public:
 };
 \end{Code}
 
-下面这种写法更简洁，但题目规定了不准这样做。
+下面這種寫法更簡潔，但題目規定了不準這樣做。
 \begin{Code}
 // LeetCode, Swap Nodes in Pairs
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode* swapPairs(ListNode* head) {
@@ -2538,10 +2538,10 @@ public:
 };
 \end{Code}
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item Reverse Nodes in k-Group, 见 \S \ref{sec:reverse-nodes-in-k-group}
+\item Reverse Nodes in k-Group, 見 \S \ref{sec:reverse-nodes-in-k-group}
 \myenddot
 
 
@@ -2567,13 +2567,13 @@ For $k = 3$, you should return: \code{3->2->1->4->5}
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Reverse Nodes in k-Group
-// 递归版，时间复杂度O(n)，空间复杂度O(1)
+// 遞歸版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *reverseKGroup(ListNode *head, int k) {
@@ -2606,7 +2606,7 @@ public:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Reverse Nodes in k-Group
-// 迭代版，时间复杂度O(n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *reverseKGroup(ListNode *head, int k) {
@@ -2617,7 +2617,7 @@ public:
         for(ListNode *prev = &dummy, *end = head; end; end = prev->next) {
             for (int i = 1; i < k && end; i++)
                 end = end->next;
-            if (end  == nullptr) break;  // 不足 k 个
+            if (end  == nullptr) break;  // 不足 k 個
 
             prev = reverse(prev, prev->next, end);
         }
@@ -2625,8 +2625,8 @@ public:
         return dummy.next;
     }
 
-    // prev 是 first 前一个元素, [begin, end] 闭区间，保证三者都不为 null
-    // 返回反转后的倒数第1个元素
+    // prev 是 first 前一個元素, [begin, end] 閉區間，保證三者都不為 null
+    // 返回反轉後的倒數第1個元素
     ListNode* reverse(ListNode *prev, ListNode *begin, ListNode *end) {
         ListNode *end_next = end->next;
         for (ListNode *p = begin, *cur = p->next, *next = cur->next;
@@ -2642,9 +2642,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Swap Nodes in Pairs, 见 \S \ref{sec:swap-nodes-in-pairs}
+\item Swap Nodes in Pairs, 見 \S \ref{sec:swap-nodes-in-pairs}
 \myenddot
 
 
@@ -2659,13 +2659,13 @@ Return a deep copy of the list.
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Copy List with Random Pointer
-// 两遍扫描，时间复杂度O(n)，空间复杂度O(1)
+// 兩遍掃描，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     RandomListNode *copyRandomList(RandomListNode *head) {
@@ -2682,7 +2682,7 @@ public:
             cur = cur->next->next;
         }
 
-        // 分拆两个单链表
+        // 分拆兩個單鏈表
         RandomListNode dummy(-1);
         for (RandomListNode* cur = head, *new_cur = &dummy;
                 cur != nullptr; ) {
@@ -2697,9 +2697,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2715,19 +2715,19 @@ Can you solve it without using extra space?
 
 
 \subsubsection{分析}
-最容易想到的方法是，用一个哈希表\fn{unordered_map<int, bool> visited}，记录每个元素是否被访问过，一旦出现某个元素被重复访问，说明存在环。空间复杂度$O(n)$，时间复杂度$O(N)$。
+最容易想到的方法是，用一個哈希表\fn{unordered_map<int, bool> visited}，記錄每個元素是否被訪問過，一旦出現某個元素被重複訪問，説明存在環。空間複雜度$O(n)$，時間複雜度$O(N)$。
 
-最好的方法是时间复杂度$O(n)$，空间复杂度$O(1)$的。设置两个指针，一个快一个慢，快的指针每次走两步，慢的指针每次走一步，如果快指针和慢指针相遇，则说明有环。参考\myurl{ http://leetcode.com/2010/09/detecting-loop-in-singly-linked-list.html}
+最好的方法是時間複雜度$O(n)$，空間複雜度$O(1)$的。設置兩個指針，一個快一個慢，快的指針每次走兩步，慢的指針每次走一步，如果快指針和慢指針相遇，則説明有環。參考\myurl{ http://leetcode.com/2010/09/detecting-loop-in-singly-linked-list.html}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Linked List Cycle
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
-        // 设置两个指针，一个快一个慢
+        // 設置兩個指針，一個快一個慢
         ListNode *slow = head, *fast = head;
         while (fast && fast->next) {
             slow = slow->next;
@@ -2740,9 +2740,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Linked List Cycle II, 见 \S \ref{sec:Linked-List-Cycle-II}
+\item Linked List Cycle II, 見 \S \ref{sec:Linked-List-Cycle-II}
 \myenddot
 
 
@@ -2758,25 +2758,25 @@ Can you solve it without using extra space?
 
 
 \subsubsection{分析}
-当fast与slow相遇时，slow肯定没有遍历完链表，而fast已经在环内循环了$n$圈($1 \leq n$)。假设slow走了$s$步，则fast走了$2s$步（fast步数还等于$s$加上在环上多转的$n$圈），设环长为$r$，则：
+當fast與slow相遇時，slow肯定沒有遍歷完鏈表，而fast已經在環內循環了$n$圈($1 \leq n$)。假設slow走了$s$步，則fast走了$2s$步（fast步數還等於$s$加上在環上多轉的$n$圈），設環長為$r$，則：
 \begin{eqnarray}
 2s &=& s + nr \nonumber \\
 s &=& nr \nonumber
 \end{eqnarray}
 
-设整个链表长$L$，环入口点与相遇点距离为$a$，起点到环入口点的距离为$x$，则
+設整個鏈表長$L$，環入口點與相遇點距離為$a$，起點到環入口點的距離為$x$，則
 \begin{eqnarray}
 x + a &=& nr = (n – 1)r +r = (n-1)r + L - x \nonumber \\
 x &=& (n-1)r + (L – x – a) \nonumber
 \end{eqnarray}
 
-$L – x – a$为相遇点到环入口点的距离，由此可知，从链表头到环入口点等于$n-1$圈内环+相遇点到环入口点，于是我们可以从\fn{head}开始另设一个指针\fn{slow2}，两个慢指针每次前进一步，它俩一定会在环入口点相遇。
+$L – x – a$為相遇點到環入口點的距離，由此可知，從鏈表頭到環入口點等於$n-1$圈內環+相遇點到環入口點，於是我們可以從\fn{head}開始另設一個指針\fn{slow2}，兩個慢指針每次前進一步，它倆一定會在環入口點相遇。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 //LeetCode, Linked List Cycle II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     ListNode *detectCycle(ListNode *head) {
@@ -2800,9 +2800,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Linked List Cycle, 见 \S \ref{sec:Linked-List-Cycle}
+\item Linked List Cycle, 見 \S \ref{sec:Linked-List-Cycle}
 \myenddot
 
 
@@ -2821,15 +2821,15 @@ Given \fn{\{1,2,3,4\}}, reorder it to \fn{\{1,4,2,3\}}.
 
 
 \subsubsection{分析}
-题目规定要in-place，也就是说只能使用$O(1)$的空间。
+題目規定要in-place，也就是説只能使用$O(1)$的空間。
 
-可以找到中间节点，断开，把后半截单链表reverse一下，再合并两个单链表。
+可以找到中間節點，斷開，把後半截單鏈表reverse一下，再合併兩個單鏈表。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Reorder List
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     void reorderList(ListNode *head) {
@@ -2872,9 +2872,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -2891,24 +2891,24 @@ Design and implement a data structure for Least Recently Used (LRU) cache. It sh
 
 
 \subsubsection{分析}
-为了使查找、插入和删除都有较高的性能，我们使用一个双向链表(\fn{std::list})和一个哈希表(\fn{std::unordered_map})，因为：
+為了使查找、插入和刪除都有較高的性能，我們使用一個雙向鏈表(\fn{std::list})和一個哈希表(\fn{std::unordered_map})，因為：
 \begin{itemize}
-\item{哈希表保存每个节点的地址，可以基本保证在$O(1)$时间内查找节点}
-\item{双向链表插入和删除效率高，单向链表插入和删除时，还要查找节点的前驱节点}
+\item{哈希表保存每個節點的地址，可以基本保證在$O(1)$時間內查找節點}
+\item{雙向鏈表插入和刪除效率高，單向鏈表插入和刪除時，還要查找節點的前驅節點}
 \end{itemize}
 
-具体实现细节：
+具體實現細節：
 \begin{itemize}
-\item{越靠近链表头部，表示节点上次访问距离现在时间最短，尾部的节点表示最近访问最少}
-\item{访问节点时，如果节点存在，把该节点交换到链表头部，同时更新hash表中该节点的地址}
-\item{插入节点时，如果cache的size达到了上限capacity，则删除尾部节点，同时要在hash表中删除对应的项；新节点插入链表头部}              
+\item{越靠近鏈表頭部，表示節點上次訪問距離現在時間最短，尾部的節點表示最近訪問最少}
+\item{訪問節點時，如果節點存在，把該節點交換到鏈表頭部，同時更新hash表中該節點的地址}
+\item{插入節點時，如果cache的size達到了上限capacity，則刪除尾部節點，同時要在hash表中刪除對應的項；新節點插入鏈表頭部}              
 \end{itemize}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, LRU Cache
-// 时间复杂度O(logn)，空间复杂度O(n)
+// 時間複雜度O(logn)，空間複雜度O(n)
 class LRUCache{
 private:
     struct CacheNode {
@@ -2924,7 +2924,7 @@ public:
     int get(int key) {
         if (cacheMap.find(key) == cacheMap.end()) return -1;
         
-        // 把当前访问的节点移到链表头部，并且更新map中该节点的地址
+        // 把當前訪問的節點移到鏈表頭部，並且更新map中該節點的地址
         cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]); 
         cacheMap[key] = cacheList.begin();
         return cacheMap[key]->value;
@@ -2932,15 +2932,15 @@ public:
 
     void set(int key, int value) {
         if (cacheMap.find(key) == cacheMap.end()) {
-            if (cacheList.size() == capacity) { //删除链表尾部节点（最少访问的节点）
+            if (cacheList.size() == capacity) { //刪除鏈表尾部節點（最少訪問的節點）
                 cacheMap.erase(cacheList.back().key);
                 cacheList.pop_back();
             }
-            // 插入新节点到链表头部, 并且在map中增加该节点
+            // 插入新節點到鏈表頭部, 並且在map中增加該節點
             cacheList.push_front(CacheNode(key, value));
             cacheMap[key] = cacheList.begin();
         } else {
-            //更新节点的值，把当前访问的节点移到链表头部,并且更新map中该节点的地址
+            //更新節點的值，把當前訪問的節點移到鏈表頭部,並且更新map中該節點的地址
             cacheMap[key]->value = value;
             cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]);
             cacheMap[key] = cacheList.begin();
@@ -2954,8 +2954,8 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 

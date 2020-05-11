@@ -1,7 +1,7 @@
-\chapter{栈和队列}
+\chapter{棧和隊列}
 
 
-\section{栈} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{棧} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Valid Parentheses} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,13 +15,13 @@ The brackets must close in the correct order, \code{"()"} and \code{"()[]{}"} ar
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Valid Parentheses
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     bool isValid (string const& s) {
@@ -45,10 +45,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Generate Parentheses, 见 \S \ref{sec:generate-parentheses}
-\item Longest Valid Parentheses, 见 \S \ref{sec:longest-valid-parentheses}
+\item Generate Parentheses, 見 \S \ref{sec:generate-parentheses}
+\item Longest Valid Parentheses, 見 \S \ref{sec:longest-valid-parentheses}
 \myenddot
 
 
@@ -65,13 +65,13 @@ Another example is \code{")()())"}, where the longest valid parentheses substrin
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{使用栈}
+\subsubsection{使用棧}
 \begin{Code}
 // LeetCode, Longest Valid Parenthese
-// 使用栈，时间复杂度O(n)，空间复杂度O(n)
+// 使用棧，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int longestValidParentheses(const string& s) {
@@ -104,8 +104,8 @@ public:
 \subsubsection{Dynamic Programming, One Pass}
 \begin{Code}
 // LeetCode, Longest Valid Parenthese
-// 时间复杂度O(n)，空间复杂度O(n)
-// @author 一只杰森(http://weibo.com/wjson)
+// 時間複雜度O(n)，空間複雜度O(n)
+// @author 一隻傑森(http://weibo.com/wjson)
 class Solution {
 public:
     int longestValidParentheses(const string& s) {
@@ -127,11 +127,11 @@ public:
 \end{Code}
 
 
-\subsubsection{两遍扫描}
+\subsubsection{兩遍掃描}
 \begin{Code}
 // LeetCode, Longest Valid Parenthese
-// 两遍扫描，时间复杂度O(n)，空间复杂度O(1)
-// @author 曹鹏(http://weibo.com/cpcs)
+// 兩遍掃描，時間複雜度O(n)，空間複雜度O(1)
+// @author 曹鵬(http://weibo.com/cpcs)
 class Solution {
 public:
     int longestValidParentheses(const string& s) {
@@ -171,10 +171,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Valid Parentheses, 见 \S \ref{sec:valid-parentheses}
-\item Generate Parentheses, 见 \S \ref{sec:generate-parentheses}
+\item Valid Parentheses, 見 \S \ref{sec:valid-parentheses}
+\item Generate Parentheses, 見 \S \ref{sec:generate-parentheses}
 \myenddot
 
 
@@ -201,17 +201,17 @@ return 10.
 
 
 \subsubsection{分析}
-简单的，类似于 Container With Most Water(\S \ref{sec:container-with-most-water})，对每个柱子，左右扩展，直到碰到比自己矮的，计算这个矩形的面积，用一个变量记录最大的面积，复杂度$O(n^2)$，会超时。
+簡單的，類似於 Container With Most Water(\S \ref{sec:container-with-most-water})，對每個柱子，左右擴展，直到碰到比自己矮的，計算這個矩形的面積，用一個變量記錄最大的面積，複雜度$O(n^2)$，會超時。
 
-如图\S \ref{fig:histogram-area}所示，从左到右处理直方，当$i=4$时，小于当前栈顶（即直方3），对于直方3，无论后面还是前面的直方，都不可能得到比目前栈顶元素更高的高度了，处理掉直方3（计算从直方3到直方4之间的矩形的面积，然后从栈里弹出）；对于直方2也是如此；直到碰到比直方4更矮的直方1。
+如圖\S \ref{fig:histogram-area}所示，從左到右處理直方，當$i=4$時，小於當前棧頂（即直方3），對於直方3，無論後面還是前面的直方，都不可能得到比目前棧頂元素更高的高度了，處理掉直方3（計算從直方3到直方4之間的矩形的面積，然後從棧裏彈出）；對於直方2也是如此；直到碰到比直方4更矮的直方1。
 
-这就意味着，可以维护一个递增的栈，每次比较栈顶与当前元素。如果当前元素大于栈顶元素，则入栈，否则合并现有栈，直至栈顶元素小于当前元素。结尾时入栈元素0，重复合并一次。
+這就意味着，可以維護一個遞增的棧，每次比較棧頂與當前元素。如果當前元素大於棧頂元素，則入棧，否則合併現有棧，直至棧頂元素小於當前元素。結尾時入棧元素0，重複合併一次。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Largest Rectangle in Histogram
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int largestRectangleArea(vector<int> &height) {
@@ -234,10 +234,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Trapping Rain Water, 见 \S \ref{sec:trapping-rain-water}
-\item Container With Most Water, 见 \S \ref{sec:container-with-most-water}
+\item Trapping Rain Water, 見 \S \ref{sec:trapping-rain-water}
+\item Container With Most Water, 見 \S \ref{sec:container-with-most-water}
 \myenddot
 
 
@@ -258,13 +258,13 @@ Some examples:
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{递归版}
+\subsubsection{遞歸版}
 \begin{Code}
 // LeetCode, Evaluate Reverse Polish Notation
-// 递归，时间复杂度O(n)，空间复杂度O(logn)
+// 遞歸，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int evalRPN(vector<string> &tokens) {
@@ -294,7 +294,7 @@ private:
 \subsubsection{迭代版}
 \begin{Code}
 // LeetCode, Max Points on a Line
-// 迭代，时间复杂度O(n)，空间复杂度O(logn)
+// 迭代，時間複雜度O(n)，空間複雜度O(logn)
 class Solution {
 public:
     int evalRPN(vector<string> &tokens) {
@@ -324,11 +324,11 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
-\section{队列} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{隊列} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

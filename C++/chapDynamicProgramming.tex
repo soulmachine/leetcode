@@ -1,4 +1,4 @@
-\chapter{动态规划}
+\chapter{動態規劃}
 
 
 \section{Triangle} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,16 +23,16 @@ Note: Bonus point if you are able to do this using only $O(n)$ extra space, wher
 
 
 \subsubsection{分析}
-设状态为$f(i, j)$，表示从从位置$(i,j)$出发，路径的最小和，则状态转移方程为
+設狀態為$f(i, j)$，表示從從位置$(i,j)$出發，路徑的最小和，則狀態轉移方程為
 $$
 f(i,j)=\min\left\{f(i+1,j),f(i+1,j+1)\right\}+(i,j)
 $$
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Triangle
-// 时间复杂度O(n^2)，空间复杂度O(1)
+// 時間複雜度O(n^2)，空間複雜度O(1)
 class Solution {
 public:
     int minimumTotal (vector<vector<int>>& triangle) {
@@ -47,9 +47,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -65,40 +65,40 @@ the contiguous subarray \code{[4,−1,2,1]} has the largest \code{sum = 6}.
 
 
 \subsubsection{分析}
-最大连续子序列和，非常经典的题。
+最大連續子序列和，非常經典的題。
 
-当我们从头到尾遍历这个数组的时候，对于数组里的一个整数，它有几种选择呢？它只有两种选择： 1、加入之前的SubArray；2. 自己另起一个SubArray。那什么时候会出现这两种情况呢？
+當我們從頭到尾遍歷這個數組的時候，對於數組裏的一個整數，它有幾種選擇呢？它只有兩種選擇： 1、加入之前的SubArray；2. 自己另起一個SubArray。那什麼時候會出現這兩種情況呢？
 
-如果之前SubArray的总体和大于0的话，我们认为其对后续结果是有贡献的。这种情况下我们选择加入之前的SubArray
+如果之前SubArray的總體和大於0的話，我們認為其對後續結果是有貢獻的。這種情況下我們選擇加入之前的SubArray
 
-如果之前SubArray的总体和为0或者小于0的话，我们认为其对后续结果是没有贡献，甚至是有害的（小于0时）。这种情况下我们选择以这个数字开始，另起一个SubArray。
+如果之前SubArray的總體和為0或者小於0的話，我們認為其對後續結果是沒有貢獻，甚至是有害的（小於0時）。這種情況下我們選擇以這個數字開始，另起一個SubArray。
 
-设状态为\fn{f[j]}，表示以\fn{S[j]}结尾的最大连续子序列和，则状态转移方程如下：
+設狀態為\fn{f[j]}，表示以\fn{S[j]}結尾的最大連續子序列和，則狀態轉移方程如下：
 \begin{eqnarray}
 f[j] &=& \max\left\{f[j-1]+S[j],S[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber \\
 target &=& \max\left\{f[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
 \end{eqnarray}
 
-解释如下：
+解釋如下：
 \begindot
-\item 情况一，S[j]不独立，与前面的某些数组成一个连续子序列，则最大连续子序列和为$f[j-1]+S[j]$。
-\item 情况二，S[j]独立划分成为一段，即连续子序列仅包含一个数S[j]，则最大连续子序列和为$S[j]$。
+\item 情況一，S[j]不獨立，與前面的某些數組成一個連續子序列，則最大連續子序列和為$f[j-1]+S[j]$。
+\item 情況二，S[j]獨立劃分成為一段，即連續子序列僅包含一個數S[j]，則最大連續子序列和為$S[j]$。
 \myenddot  
 
 其他思路：
 \begindot
-\item 思路2：直接在i到j之间暴力枚举，复杂度是$O(n^3)$
-\item 思路3：处理后枚举，连续子序列的和等于两个前缀和之差，复杂度$O(n^2)$。
-\item 思路4：分治法，把序列分为两段，分别求最大连续子序列和，然后归并，复杂度$O(n\log n)$
-\item 思路5：把思路2$O(n^2)$的代码稍作处理，得到$O(n)$的算法
-\item 思路6：当成M=1的最大M子段和
+\item 思路2：直接在i到j之間暴力枚舉，複雜度是$O(n^3)$
+\item 思路3：處理後枚舉，連續子序列的和等於兩個前綴和之差，複雜度$O(n^2)$。
+\item 思路4：分治法，把序列分為兩段，分別求最大連續子序列和，然後歸併，複雜度$O(n\log n)$
+\item 思路5：把思路2$O(n^2)$的代碼稍作處理，得到$O(n)$的算法
+\item 思路6：當成M=1的最大M子段和
 \myenddot
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Maximum Subarray
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int maxSubArray(vector<int>& nums) {
@@ -116,19 +116,19 @@ public:
 \subsubsection{思路5}
 \begin{Code}
 // LeetCode, Maximum Subarray
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int maxSubArray(vector<int>& A) {
         return mcss(A.begin(), A.end());
     }
 private:
-    // 思路5，求最大连续子序列和
+    // 思路5，求最大連續子序列和
     template <typename Iter>
     static int mcss(Iter begin, Iter end) {
         int result, cur_min;
         const int n = distance(begin, end);
-        int *sum = new int[n + 1];  // 前n项和
+        int *sum = new int[n + 1];  // 前n項和
 
         sum[0] = 0;
         result = INT_MIN;
@@ -147,9 +147,9 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Binary Tree Maximum Path Sum，见 \S \ref{sec:binary-tree-maximum-path-sum}
+\item Binary Tree Maximum Path Sum，見 \S \ref{sec:binary-tree-maximum-path-sum}
 \myenddot
 
 
@@ -168,29 +168,29 @@ Return 1 since the palindrome partitioning \code{["aa","b"]} could be produced u
 
 
 \subsubsection{分析}
-定义状态\fn{f(i,j)}表示区间\fn{[i,j]}之间最小的cut数，则状态转移方程为 
+定義狀態\fn{f(i,j)}表示區間\fn{[i,j]}之間最小的cut數，則狀態轉移方程為 
 $$
 f(i,j)=\min\left\{f(i,k)+f(k+1,j)\right\}, i \leq k \leq j, 0 \leq i \leq j<n
 $$
-这是一个二维函数，实际写代码比较麻烦。
+這是一個二維函數，實際寫代碼比較麻煩。
  
-所以要转换成一维DP。如果每次，从i往右扫描，每找到一个回文就算一次DP的话，就可以转换为\code{f(i)=区间[i, n-1]之间最小的cut数}，n为字符串长度，则状态转移方程为
+所以要轉換成一維DP。如果每次，從i往右掃描，每找到一個迴文就算一次DP的話，就可以轉換為\code{f(i)=區間[i, n-1]之間最小的cut數}，n為字符串長度，則狀態轉移方程為
 $$
 f(i)=\min\left\{f(j+1)+1\right\}, i \leq j<n
 $$
 
-一个问题出现了，就是如何判断\fn{[i,j]}是否是回文？每次都从i到j比较一遍？太浪费了，这里也是一个DP问题。
+一個問題出現了，就是如何判斷\fn{[i,j]}是否是迴文？每次都從i到j比較一遍？太浪費了，這裏也是一個DP問題。
 
-定义状态\fn{P[i][j] = true if [i,j]为回文}，那么
+定義狀態\fn{P[i][j] = true if [i,j]為迴文}，那麼
 \begin{Code}
 P[i][j] = str[i] == str[j] && P[i+1][j-1]
 \end{Code}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Palindrome Partitioning II
-// 时间复杂度O(n^2)，空间复杂度O(n^2)
+// 時間複雜度O(n^2)，空間複雜度O(n^2)
 class Solution {
 public:
     int minCut(const string& s) {
@@ -200,7 +200,7 @@ public:
         fill_n(&p[0][0], n * n, false);
         //the worst case is cutting by each char
         for (int i = 0; i <= n; i++)
-            f[i] = n - 1 - i; // 最后一个f[n]=-1
+            f[i] = n - 1 - i; // 最後一個f[n]=-1
         for (int i = n - 1; i >= 0; i--) {
             for (int j = i; j < n; j++) {
                 if (s[i] == s[j] && (j - i < 2 || p[i + 1][j - 1])) {
@@ -215,9 +215,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Palindrome Partitioning，见 \S \ref{sec:palindrome-partitioning}
+\item Palindrome Partitioning，見 \S \ref{sec:palindrome-partitioning}
 \myenddot
 
 
@@ -230,13 +230,13 @@ Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle con
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Maximal Rectangle
-// 时间复杂度O(n^2)，空间复杂度O(n)
+// 時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
     int maximalRectangle(vector<vector<char> > &matrix) {
@@ -277,10 +277,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -297,16 +297,16 @@ Note: You may not engage in multiple transactions at the same time (ie, you must
 
 
 \subsubsection{分析}
-设状态$f(i)$，表示区间$[0,i](0 \leq i \leq n-1)$的最大利润，状态$g(i)$，表示区间$[i, n-1](0 \leq i \leq n-1)$的最大利润，则最终答案为$\max\left\{f(i)+g(i)\right\},0 \leq i \leq n-1$。
+設狀態$f(i)$，表示區間$[0,i](0 \leq i \leq n-1)$的最大利潤，狀態$g(i)$，表示區間$[i, n-1](0 \leq i \leq n-1)$的最大利潤，則最終答案為$\max\left\{f(i)+g(i)\right\},0 \leq i \leq n-1$。
 
-允许在一天内买进又卖出，相当于不交易，因为题目的规定是最多两次，而不是一定要两次。
+允許在一天內買進又賣出，相當於不交易，因為題目的規定是最多兩次，而不是一定要兩次。
 
-将原数组变成差分数组，本题也可以看做是最大$m$子段和，$m=2$，参考代码：\myurl{https://gist.github.com/soulmachine/5906637}
+將原數組變成差分數組，本題也可以看做是最大$m$子段和，$m=2$，參考代碼：\myurl{https://gist.github.com/soulmachine/5906637}
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Best Time to Buy and Sell Stock III
-// 时间复杂度O(n)，空间复杂度O(n)
+// 時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     int maxProfit(vector<int>& prices) {
@@ -336,10 +336,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
-\item Best Time to Buy and Sell Stock II，见 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
+\item Best Time to Buy and Sell Stock，見 \S \ref{sec:best-time-to-buy-and-sell-stock}
+\item Best Time to Buy and Sell Stock II，見 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
 \myenddot
 
 
@@ -358,17 +358,17 @@ When \code{s3 = "aadbbbaccc"}, return false.
 
 
 \subsubsection{分析}
-设状态\fn{f[i][j]}，表示\fn{s1[0,i]}和\fn{s2[0,j]}，匹配\fn{s3[0, i+j]}。如果s1的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i-1][j]}；如果s2的最后一个字符等于s3的最后一个字符，则\fn{f[i][j]=f[i][j-1]}。因此状态转移方程如下：
+設狀態\fn{f[i][j]}，表示\fn{s1[0,i]}和\fn{s2[0,j]}，匹配\fn{s3[0, i+j]}。如果s1的最後一個字符等於s3的最後一個字符，則\fn{f[i][j]=f[i-1][j]}；如果s2的最後一個字符等於s3的最後一個字符，則\fn{f[i][j]=f[i][j-1]}。因此狀態轉移方程如下：
 \begin{Code}
 f[i][j] = (s1[i - 1] == s3 [i + j - 1] && f[i - 1][j])
        || (s2[j - 1] == s3 [i + j - 1] && f[i][j - 1]);
 \end{Code}
 
 
-\subsubsection{递归}
+\subsubsection{遞歸}
 \begin{Code}
 // LeetCode, Interleaving String
-// 递归，会超时，仅用来帮助理解
+// 遞歸，會超時，僅用來幫助理解
 class Solution {
 public:
     bool isInterleave(const string& s1, const string& s2, const string& s3) {
@@ -396,10 +396,10 @@ public:
 \end{Code}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Interleaving String
-// 二维动规，时间复杂度O(n^2)，空间复杂度O(n^2)
+// 二維動規，時間複雜度O(n^2)，空間複雜度O(n^2)
 class Solution {
 public:
     bool isInterleave(const string& s1, const string& s2, const string& s3) {
@@ -426,10 +426,10 @@ public:
 \end{Code}
 
 
-\subsubsection{动规+滚动数组}
+\subsubsection{動規+滾動數組}
 \begin{Code}
 // LeetCode, Interleaving String
-// 二维动规+滚动数组，时间复杂度O(n^2)，空间复杂度O(n)
+// 二維動規+滾動數組，時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
     bool isInterleave(const string& s1, const string& s2, const string& s3) {
@@ -458,9 +458,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -514,25 +514,25 @@ Given two strings $s1$ and $s2$ of the same length, determine if $s2$ is a scram
 
 
 \subsubsection{分析}
-首先想到的是递归（即深搜），对两个string进行分割，然后比较四对字符串。代码虽然简单，但是复杂度比较高。有两种加速策略，一种是剪枝，提前返回；一种是加缓存，缓存中间结果，即memoization（翻译为记忆化搜索）。
+首先想到的是遞歸（即深搜），對兩個string進行分割，然後比較四對字符串。代碼雖然簡單，但是複雜度比較高。有兩種加速策略，一種是剪枝，提前返回；一種是加緩存，緩存中間結果，即memoization（翻譯為記憶化搜索）。
 
-剪枝可以五花八门，要充分观察，充分利用信息，找到能让节点提前返回的条件。例如，判断两个字符串是否互为scamble，至少要求每个字符在两个字符串中出现的次数要相等，如果不相等则返回false。
+剪枝可以五花八門，要充分觀察，充分利用信息，找到能讓節點提前返回的條件。例如，判斷兩個字符串是否互為scamble，至少要求每個字符在兩個字符串中出現的次數要相等，如果不相等則返回false。
 
-加缓存，可以用数组或HashMap。本题维数较高，用HashMap，\fn{map}和\fn{unordered_map}均可。
+加緩存，可以用數組或HashMap。本題維數較高，用HashMap，\fn{map}和\fn{unordered_map}均可。
 
-既然可以用记忆化搜索，这题也一定可以用动规。设状态为\fn{f[n][i][j]}，表示长度为$n$，起点为\fn{s1[i]}和起点为\fn{s2[j]}两个字符串是否互为scramble，则状态转移方程为
+既然可以用記憶化搜索，這題也一定可以用動規。設狀態為\fn{f[n][i][j]}，表示長度為$n$，起點為\fn{s1[i]}和起點為\fn{s2[j]}兩個字符串是否互為scramble，則狀態轉移方程為
 \begin{Code}
 f[n][i][j]} =  (f[k][i][j] && f[n-k][i+k][j+k]) 
             || (f[k][i][j+n-k] && f[n-k][i+k][j])
 \end{Code}
 
 
-\subsubsection{递归}
+\subsubsection{遞歸}
 
 \begin{Code}
 // LeetCode, Scramble String
-// 递归，会超时，仅用来帮助理解
-// 时间复杂度O(n^6)，空间复杂度O(1)
+// 遞歸，會超時，僅用來幫助理解
+// 時間複雜度O(n^6)，空間複雜度O(1)
 class Solution {
 public:
     bool isScramble(const string& s1, const string& s2) {
@@ -559,18 +559,18 @@ private:
 \end{Code}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Scramble String
-// 动规，时间复杂度O(n^3)，空间复杂度O(n^3)
+// 動規，時間複雜度O(n^3)，空間複雜度O(n^3)
 class Solution {
 public:
     bool isScramble(const string& s1, const string& s2) {
         const int N = s1.size();
         if (N != s2.size()) return false;
 
-        // f[n][i][j]，表示长度为n，起点为s1[i]和
-        // 起点为s2[j]两个字符串是否互为scramble
+        // f[n][i][j]，表示長度為n，起點為s1[i]和
+        // 起點為s2[j]兩個字符串是否互為scramble
         bool f[N + 1][N][N];
         fill_n(&f[0][0][0], (N + 1) * N * N, false);
 
@@ -597,11 +597,11 @@ public:
 \end{Code}
 
 
-\subsubsection{递归+剪枝}
+\subsubsection{遞歸+剪枝}
 \begin{Code}
 // LeetCode, Scramble String
-// 递归+剪枝
-// 时间复杂度O(n^6)，空间复杂度O(1)
+// 遞歸+剪枝
+// 時間複雜度O(n^6)，空間複雜度O(1)
 class Solution {
 public:
     bool isScramble(const string& s1, const string& s2) {
@@ -615,7 +615,7 @@ private:
         if (length == 1) return *first1 == *first2;
 
         // 剪枝，提前返回
-        int A[26]; // 每个字符的计数器
+        int A[26]; // 每個字符的計數器
         fill(A, A + 26, 0);
         for(int i = 0; i < length; i++) A[*(first1+i)-'a']++;
         for(int i = 0; i < length; i++) A[*(first2+i)-'a']--;
@@ -634,11 +634,11 @@ private:
 \end{Code}
 
 
-\subsubsection{备忘录法}
+\subsubsection{備忘錄法}
 \begin{Code}
 // LeetCode, Scramble String
-// 递归+map做cache
-// 时间复杂度O(n^3)，空间复杂度O(n^3), TLE
+// 遞歸+map做cache
+// 時間複雜度O(n^3)，空間複雜度O(n^3), TLE
 class Solution {
 public:
     bool isScramble(const string& s1, const string& s2) {
@@ -676,11 +676,11 @@ private:
 \end{Code}
 
 
-\subsubsection{备忘录法}
+\subsubsection{備忘錄法}
 \begin{Code}
 typedef string::const_iterator Iterator;
 typedef tuple<Iterator, Iterator, Iterator> Key;
-// 定制一个哈希函数
+// 定製一個哈希函數
 namespace std {
 template<> struct hash<Key> {
     size_t operator()(const Key & x) const {
@@ -697,8 +697,8 @@ template<> struct hash<Key> {
 }
 
 // LeetCode, Scramble String
-// 递归+unordered_map做cache，比map快
-// 时间复杂度O(n^3)，空间复杂度O(n^3)
+// 遞歸+unordered_map做cache，比map快
+// 時間複雜度O(n^3)，空間複雜度O(n^3)
 class Solution {
 public:
     unordered_map<Key, bool> cache;
@@ -736,9 +736,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -753,18 +753,18 @@ Note: You can only move either down or right at any point in time
 
 
 \subsubsection{分析}
-跟 Unique Paths (见 \S \ref{sec:unique-paths}) 很类似。
+跟 Unique Paths (見 \S \ref{sec:unique-paths}) 很類似。
 
-设状态为\fn{f[i][j]}，表示从起点$(0,0)$到达$(i,j)$的最小路径和，则状态转移方程为：
+設狀態為\fn{f[i][j]}，表示從起點$(0,0)$到達$(i,j)$的最小路徑和，則狀態轉移方程為：
 \begin{Code}
 f[i][j]=min(f[i-1][j], f[i][j-1])+grid[i][j]
 \end{Code}
 
 
-\subsubsection{备忘录法}
+\subsubsection{備忘錄法}
 \begin{Code}
 // LeetCode, Minimum Path Sum
-// 备忘录法
+// 備忘錄法
 class Solution {
 public:
     int minPathSum(vector<vector<int> > &grid) {
@@ -774,12 +774,12 @@ public:
         return dfs(grid, m-1, n-1);
     }
 private:
-    vector<vector<int> > f;  // 缓存
+    vector<vector<int> > f;  // 緩存
 
     int dfs(const vector<vector<int> > &grid, int x, int y) {
-        if (x < 0 || y < 0) return INT_MAX; // 越界，终止条件，注意，不是0
+        if (x < 0 || y < 0) return INT_MAX; // 越界，終止條件，注意，不是0
 
-        if (x == 0 && y == 0) return grid[0][0]; // 回到起点，收敛条件
+        if (x == 0 && y == 0) return grid[0][0]; // 回到起點，收斂條件
 
         return min(getOrUpdate(grid, x - 1, y),
                 getOrUpdate(grid, x, y - 1)) + grid[x][y];
@@ -794,10 +794,10 @@ private:
 \end{Code}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Minimum Path Sum
-// 二维动规
+// 二維動規
 class Solution {
 public:
     int minPathSum(vector<vector<int> > &grid) {
@@ -825,10 +825,10 @@ public:
 \end{Code}
 
 
-\subsubsection{动规+滚动数组}
+\subsubsection{動規+滾動數組}
 \begin{Code}
 // LeetCode, Minimum Path Sum
-// 二维动规+滚动数组
+// 二維動規+滾動數組
 class Solution {
 public:
     int minPathSum(vector<vector<int> > &grid) {
@@ -836,14 +836,14 @@ public:
         const int n = grid[0].size();
 
         int f[n];
-        fill(f, f+n, INT_MAX); // 初始值是 INT_MAX，因为后面用了min函数。
+        fill(f, f+n, INT_MAX); // 初始值是 INT_MAX，因為後面用了min函數。
         f[0] = 0;
 
         for (int i = 0; i < m; i++) {
             f[0] += grid[i][0];
             for (int j = 1; j < n; j++) {
-                // 左边的f[j]，表示更新后的f[j]，与公式中的f[i[[j]对应
-                // 右边的f[j]，表示老的f[j]，与公式中的f[i-1][j]对应
+                // 左邊的f[j]，表示更新後的f[j]，與公式中的f[i[[j]對應
+                // 右邊的f[j]，表示老的f[j]，與公式中的f[i-1][j]對應
                 f[j] = min(f[j - 1], f[j]) + grid[i][j];
             }
         }
@@ -852,10 +852,10 @@ public:
 };
 \end{Code}
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Unique Paths, 见 \S \ref{sec:unique-paths}
-\item Unique Paths II, 见 \S \ref{sec:unique-paths-ii}
+\item Unique Paths, 見 \S \ref{sec:unique-paths}
+\item Unique Paths II, 見 \S \ref{sec:unique-paths-ii}
 \myenddot
 
 
@@ -875,28 +875,28 @@ You have the following 3 operations permitted on a word:
 
 
 \subsubsection{分析}
-设状态为\fn{f[i][j]}，表示\fn{A[0,i]}和\fn{B[0,j]}之间的最小编辑距离。设\fn{A[0,i]}的形式是\fn{str1c}，\fn{B[0,j]}的形式是\fn{str2d}，
+設狀態為\fn{f[i][j]}，表示\fn{A[0,i]}和\fn{B[0,j]}之間的最小編輯距離。設\fn{A[0,i]}的形式是\fn{str1c}，\fn{B[0,j]}的形式是\fn{str2d}，
 \begin{enumerate}
-\item 如果\fn{c==d}，则\fn{f[i][j]=f[i-1][j-1]}；
+\item 如果\fn{c==d}，則\fn{f[i][j]=f[i-1][j-1]}；
 \item 如果\fn{c!=d}，
     \begin{enumerate}
-        \item 如果将c替换成d，则\fn{f[i][j]=f[i-1][j-1]+1}；
-        \item 如果在c后面添加一个d，则\fn{f[i][j]=f[i][j-1]+1}；
-        \item 如果将c删除，则\fn{f[i][j]=f[i-1][j]+1}；
+        \item 如果將c替換成d，則\fn{f[i][j]=f[i-1][j-1]+1}；
+        \item 如果在c後面添加一個d，則\fn{f[i][j]=f[i][j-1]+1}；
+        \item 如果將c刪除，則\fn{f[i][j]=f[i-1][j]+1}；
     \end{enumerate}
 \end{enumerate}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Edit Distance
-// 二维动规，时间复杂度O(n*m)，空间复杂度O(n*m)
+// 二維動規，時間複雜度O(n*m)，空間複雜度O(n*m)
 class Solution {
 public:
     int minDistance(const string &word1, const string &word2) {
         const size_t n = word1.size();
         const size_t m = word2.size();
-        // 长度为n的字符串，有n+1个隔板
+        // 長度為n的字符串，有n+1個隔板
         int f[n + 1][m + 1];
         for (size_t i = 0; i <= n; i++)
             f[i][0] = i;
@@ -919,11 +919,11 @@ public:
 \end{Code}
 
 
-\subsubsection{动规+滚动数组}
+\subsubsection{動規+滾動數組}
 \begin{Code}
 // LeetCode, Edit Distance
-// 二维动规+滚动数组
-// 时间复杂度O(n*m)，空间复杂度O(n)
+// 二維動規+滾動數組
+// 時間複雜度O(n*m)，空間複雜度O(n)
 class Solution {
 public:
     int minDistance(const string &word1, const string &word2) {
@@ -931,7 +931,7 @@ public:
             return minDistance(word2, word1);
 
         int f[word2.length() + 1];
-        int upper_left = 0; // 额外用一个变量记录f[i-1][j-1]
+        int upper_left = 0; // 額外用一個變量記錄f[i-1][j-1]
 
         for (size_t i = 0; i <= word2.size(); ++i)
             f[i] = i;
@@ -958,9 +958,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -986,13 +986,13 @@ The number of ways decoding \fn{"12"} is 2.
 
 
 \subsubsection{分析}
-跟 Climbing Stairs (见 \S \ref{sec:climbing-stairs})很类似，不过多加一些判断逻辑。
+跟 Climbing Stairs (見 \S \ref{sec:climbing-stairs})很類似，不過多加一些判斷邏輯。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Decode Ways
-// 动规，时间复杂度O(n)，空间复杂度O(1)
+// 動規，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int numDecodings(const string &s) {
@@ -1000,7 +1000,7 @@ public:
 
         int prev = 0;
         int cur = 1;
-        // 长度为n的字符串，有 n+1个阶梯
+        // 長度為n的字符串，有 n+1個階梯
         for (size_t i = 1; i <= s.size(); ++i) {
             if (s[i-1] == '0') cur = 0;
 
@@ -1018,9 +1018,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Climbing Stairs, 见 \S \ref{sec:climbing-stairs}
+\item Climbing Stairs, 見 \S \ref{sec:climbing-stairs}
 \myenddot
 
 
@@ -1040,14 +1040,14 @@ Return 3.
 
 
 \subsubsection{分析}
-设状态为$f(i,j)$，表示\fn{T[0,j]}在\fn{S[0,i]}里出现的次数。首先，无论\fn{S[i]}和\fn{T[j]}是否相等，若不使用\fn{S[i]}，则$f(i,j)=f(i-1,j)$；若\fn{S[i]==T[j]}，则可以使用\fn{S[i]}，此时$f(i,j)=f(i-1,j)+f(i-1, j-1)$。
+設狀態為$f(i,j)$，表示\fn{T[0,j]}在\fn{S[0,i]}裏出現的次數。首先，無論\fn{S[i]}和\fn{T[j]}是否相等，若不使用\fn{S[i]}，則$f(i,j)=f(i-1,j)$；若\fn{S[i]==T[j]}，則可以使用\fn{S[i]}，此時$f(i,j)=f(i-1,j)+f(i-1, j-1)$。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Distinct Subsequences
-// 二维动规+滚动数组
-// 时间复杂度O(m*n)，空间复杂度O(n)
+// 二維動規+滾動數組
+// 時間複雜度O(m*n)，空間複雜度O(n)
 class Solution {
 public:
     int numDistinct(const string &S, const string &T) {
@@ -1065,9 +1065,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -1086,7 +1086,7 @@ Return true because \fn{"leetcode"} can be segmented as \fn{"leet code"}.
 
 
 \subsubsection{分析}
-设状态为$f(i)$，表示\fn{s[0,i]}是否可以分词，则状态转移方程为
+設狀態為$f(i)$，表示\fn{s[0,i]}是否可以分詞，則狀態轉移方程為
 $$
 f(i) = any\_of(f(j) \&\& s[j+1,i] \in dict),  0 \leq j < i
 $$
@@ -1095,8 +1095,8 @@ $$
 \subsubsection{深搜}
 \begin{Code}
 // LeetCode, Word Break
-// 深搜，超时
-// 时间复杂度O(2^n)，空间复杂度O(n)
+// 深搜，超時
+// 時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     bool wordBreak(string s, unordered_set<string> &dict) {
@@ -1117,14 +1117,14 @@ private:
 \end{Code}
 
 
-\subsubsection{动规}
+\subsubsection{動規}
 \begin{Code}
 // LeetCode, Word Break
-// 动规，时间复杂度O(n^2)，空间复杂度O(n)
+// 動規，時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
     bool wordBreak(string s, unordered_set<string> &dict) {
-        // 长度为n的字符串有n+1个隔板
+        // 長度為n的字符串有n+1個隔板
         vector<bool> f(s.size() + 1, false);
         f[0] = true; // 空字符串
         for (int i = 1; i <= s.size(); ++i) {
@@ -1141,9 +1141,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Word Break II, 见 \S \ref{sec:word-break-ii}
+\item Word Break II, 見 \S \ref{sec:word-break-ii}
 \myenddot
 
 
@@ -1164,19 +1164,19 @@ A solution is \fn{["cats and dog", "cat sand dog"]}.
 
 
 \subsubsection{分析}
-在上一题的基础上，要返回解本身。
+在上一題的基礎上，要返回解本身。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Word Break II
-// 动规，时间复杂度O(n^2)，空间复杂度O(n^2)
+// 動規，時間複雜度O(n^2)，空間複雜度O(n^2)
 class Solution {
 public:
     vector<string> wordBreak(string s, unordered_set<string> &dict) {
-        // 长度为n的字符串有n+1个隔板
+        // 長度為n的字符串有n+1個隔板
         vector<bool> f(s.length() + 1, false);
-        // prev[i][j]为true，表示s[j, i)是一个合法单词，可以从j处切开
+        // prev[i][j]為true，表示s[j, i)是一個合法單詞，可以從j處切開
         // 第一行未用
         vector<vector<bool> > prev(s.length() + 1, vector<bool>(s.length()));
         f[0] = true;
@@ -1195,7 +1195,7 @@ public:
 
     }
 private:
-    // DFS遍历树，生成路径
+    // DFS遍歷樹，生成路徑
     void gen_path(const string &s, const vector<vector<bool> > &prev,
             int cur, vector<string> &path, vector<string> &result) {
         if (cur == 0) {
@@ -1217,7 +1217,7 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Word Break, 见 \S \ref{sec:word-break}
+\item Word Break, 見 \S \ref{sec:word-break}
 \myenddot

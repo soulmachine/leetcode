@@ -1,4 +1,4 @@
-\chapter{贪心法}
+\chapter{貪心法}
 
 
 \section{Jump Game} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,26 +20,26 @@ For example:
 
 
 \subsubsection{分析}
-由于每层最多可以跳\fn{A[i]}步，也可以跳0或1步，因此如果能到达最高层，则说明每一层都可以到达。有了这个条件，说明可以用贪心法。
+由於每層最多可以跳\fn{A[i]}步，也可以跳0或1步，因此如果能到達最高層，則説明每一層都可以到達。有了這個條件，説明可以用貪心法。
 
-思路一：正向，从0出发，一层一层网上跳，看最后能不能超过最高层，能超过，说明能到达，否则不能到达。
+思路一：正向，從0出發，一層一層網上跳，看最後能不能超過最高層，能超過，説明能到達，否則不能到達。
 
-思路二：逆向，从最高层下楼梯，一层一层下降，看最后能不能下降到第0层。
+思路二：逆向，從最高層下樓梯，一層一層下降，看最後能不能下降到第0層。
 
-思路三：如果不敢用贪心，可以用动规，设状态为\fn{f[i]}，表示从第0层出发，走到\fn{A[i]}时剩余的最大步数，则状态转移方程为：
+思路三：如果不敢用貪心，可以用動規，設狀態為\fn{f[i]}，表示從第0層出發，走到\fn{A[i]}時剩餘的最大步數，則狀態轉移方程為：
 $$
 f[i] = max(f[i-1], A[i-1])-1, i > 0
 $$
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Jump Game
-// 思路1，时间复杂度O(n)，空间复杂度O(1)
+// 思路1，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool canJump(const vector<int>& nums) {
-        int reach = 1; // 最右能跳到哪里
+        int reach = 1; // 最右能跳到哪裏
         for (int i = 0; i < reach && reach < nums.size(); ++i)
             reach = max(reach,  i + 1 + nums[i]);
         return reach >= nums.size();
@@ -48,15 +48,15 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Jump Game
-// 思路2，时间复杂度O(n)，空间复杂度O(1)
+// 思路2，時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     bool canJump (const vector<int>& nums) {
         if (nums.empty()) return true;
-        // 逆向下楼梯，最左能下降到第几层
+        // 逆向下樓梯，最左能下降到第幾層
         int left_most = nums.size() - 1;
 
         for (int i = nums.size() - 2; i >= 0; --i)
@@ -69,10 +69,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码3}
+\subsubsection{代碼3}
 \begin{Code}
 // LeetCode, Jump Game
-// 思路三，动规，时间复杂度O(n)，空间复杂度O(n)
+// 思路三，動規，時間複雜度O(n)，空間複雜度O(n)
 class Solution {
 public:
     bool canJump(const vector<int>& nums) {
@@ -88,9 +88,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Jump Game II ，见 \S \ref{sec:jump-game-ii}
+\item Jump Game II ，見 \S \ref{sec:jump-game-ii}
 \myenddot
 
 
@@ -112,22 +112,22 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 
 
 \subsubsection{分析}
-贪心法。
+貪心法。
 
 
-\subsubsection{代码1}
+\subsubsection{代碼1}
 \begin{Code}
 // LeetCode, Jump Game II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int jump(const vector<int>& nums) {
-        int step = 0; // 最小步数
+        int step = 0; // 最小步數
         int left = 0;
-        int right = 0;  // [left, right]是当前能覆盖的区间
+        int right = 0;  // [left, right]是當前能覆蓋的區間
         if (nums.size() == 1) return 0;
 
-        while (left <= right) { // 尝试从每一层跳最远
+        while (left <= right) { // 嘗試從每一層跳最遠
             ++step;
             const int old_right = right;
             for (int i = left; i <= old_right; ++i) {
@@ -144,10 +144,10 @@ public:
 \end{Code}
 
 
-\subsubsection{代码2}
+\subsubsection{代碼2}
 \begin{Code}
 // LeetCode, Jump Game II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int jump(const vector<int>& nums) {
@@ -170,9 +170,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Jump Game ，见 \S \ref{sec:jump-game}
+\item Jump Game ，見 \S \ref{sec:jump-game}
 \myenddot
 
 
@@ -187,20 +187,20 @@ If you were only permitted to complete at    most one transaction (ie, buy one a
 
 
 \subsubsection{分析}
-贪心法，分别找到价格最低和最高的一天，低进高出，注意最低的一天要在最高的一天之前。
+貪心法，分別找到價格最低和最高的一天，低進高出，注意最低的一天要在最高的一天之前。
 
-把原始价格序列变成差分序列，本题也可以做是最大$m$子段和，$m=1$。
+把原始價格序列變成差分序列，本題也可以做是最大$m$子段和，$m=1$。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Best Time to Buy and Sell Stock
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int maxProfit(vector<int> &prices) {
         if (prices.size() < 2) return 0;
-        int profit = 0;  // 差价，也就是利润
-        int cur_min = prices[0]; // 当前最小
+        int profit = 0;  // 差價，也就是利潤
+        int cur_min = prices[0]; // 當前最小
 
         for (int i = 1; i < prices.size(); i++) {
             profit = max(profit, prices[i] - cur_min);
@@ -212,10 +212,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Best Time to Buy and Sell Stock II，见 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
-\item Best Time to Buy and Sell Stock III，见 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
+\item Best Time to Buy and Sell Stock II，見 \S \ref{sec:best-time-to-buy-and-sell-stock-ii}
+\item Best Time to Buy and Sell Stock III，見 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
 \myenddot
 
 
@@ -230,14 +230,14 @@ Design an algorithm to find the maximum profit. You may complete as many transac
 
 
 \subsubsection{分析}
-贪心法，低进高出，把所有正的价格差价相加起来。
+貪心法，低進高出，把所有正的價格差價相加起來。
 
-把原始价格序列变成差分序列，本题也可以做是最大$m$子段和，$m=$数组长度。
+把原始價格序列變成差分序列，本題也可以做是最大$m$子段和，$m=$數組長度。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Best Time to Buy and Sell Stock II
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int maxProfit(vector<int> &prices) {
@@ -252,10 +252,10 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Best Time to Buy and Sell Stock，见 \S \ref{sec:best-time-to-buy-and-sell-stock}
-\item Best Time to Buy and Sell Stock III，见 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
+\item Best Time to Buy and Sell Stock，見 \S \ref{sec:best-time-to-buy-and-sell-stock}
+\item Best Time to Buy and Sell Stock III，見 \S \ref{sec:best-time-to-buy-and-sell-stock-iii}
 \myenddot
 
 
@@ -268,29 +268,29 @@ Given a string, find the length of the longest substring without repeating chara
 
 
 \subsubsection{分析}
-假设子串里含有重复字符，则父串一定含有重复字符，单个子问题就可以决定父问题，因此可以用贪心法。跟动规不同，动规里，单个子问题只能影响父问题，不足以决定父问题。
+假設子串裏含有重複字符，則父串一定含有重複字符，單個子問題就可以決定父問題，因此可以用貪心法。跟動規不同，動規裏，單個子問題只能影響父問題，不足以決定父問題。
 
-从左往右扫描，当遇到重复字母时，以上一个重复字母的\fn{index+1}，作为新的搜索起始位置，直到最后一个字母，复杂度是$O(n)$。如图~\ref{fig:longest-substring-without-repeating-characters}所示。
+從左往右掃描，當遇到重複字母時，以上一個重複字母的\fn{index+1}，作為新的搜索起始位置，直到最後一個字母，複雜度是$O(n)$。如圖~\ref{fig:longest-substring-without-repeating-characters}所示。
 
 \begin{center}
 \includegraphics[width=300pt]{longest-substring-without-repeating-characters.png}\\
-\figcaption{不含重复字符的最长子串}\label{fig:longest-substring-without-repeating-characters}
+\figcaption{不含重複字符的最長子串}\label{fig:longest-substring-without-repeating-characters}
 \end{center}
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Longest Substring Without Repeating Characters
-// 时间复杂度O(n)，空间复杂度O(1)
-// 考虑非字母的情况
+// 時間複雜度O(n)，空間複雜度O(1)
+// 考慮非字母的情況
 class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
         const int ASCII_MAX = 255;
-        int last[ASCII_MAX]; // 记录字符上次出现过的位置
-        int start = 0; // 记录当前子串的起始位置
+        int last[ASCII_MAX]; // 記錄字符上次出現過的位置
+        int start = 0; // 記錄當前子串的起始位置
 
-        fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化为-1
+        fill(last, last + ASCII_MAX, -1); // 0也是有效位置，因此初始化為-1
         int max_len = 0;
         for (int i = 0; i < s.size(); i++) {
             if (last[s[i]] >= start) {
@@ -299,15 +299,15 @@ public:
             }
             last[s[i]] = i;
         }
-        return max((int)s.size() - start, max_len);  // 别忘了最后一次，例如"abcd"
+        return max((int)s.size() - start, max_len);  // 別忘了最後一次，例如"abcd"
     }
 };
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
 
 
@@ -322,13 +322,13 @@ Note: You may not slant the container.
 
 
 \subsubsection{分析}
-每个容器的面积，取决于最短的木板。
+每個容器的面積，取決於最短的木板。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Container With Most Water
-// 时间复杂度O(n)，空间复杂度O(1)
+// 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
     int maxArea(vector<int> &height) {
@@ -350,8 +350,8 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Trapping Rain Water, 见 \S \ref{sec:trapping-rain-water}
-\item Largest Rectangle in Histogram, 见 \S \ref{sec:largest-rectangle-in-histogram}
+\item Trapping Rain Water, 見 \S \ref{sec:trapping-rain-water}
+\item Largest Rectangle in Histogram, 見 \S \ref{sec:largest-rectangle-in-histogram}
 \myenddot

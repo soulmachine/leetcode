@@ -1,92 +1,112 @@
-#LeetCode题解
+#LeetCode題解
 -----------------
-## 在线阅读
+## 在線閲讀
 <https://www.gitbook.com/book/soulmachine/algorithm-essentials/>
 
-##PDF下载
-<a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/leetcode-cpp.pdf">LeetCode题解(C++版).pdf</a>
+##PDF下載
+<a href="https://github.com/soulmachine/leetcode/raw/master/C%2B%2B/leetcode-cpp.pdf">LeetCode題解(C++版).pdf</a>
 
-C++ 文件夹下是C++版，内容一模一样，代码是用C++写的。
+C++ 文件夾下是C++版，內容一模一樣，代碼是用C++寫的。
 
-Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知道猴年马月能完成。
+Java 文件夾下是Java版，目前正在編寫中，由於拖延症，不知道猴年馬月能完成。
 
 ##LaTeX模板
-本书使用的是陈硕开源的[模板](https://github.com/chenshuo/typeset)。这个模板制作精良，很有taste，感谢陈硕 :)
+本書使用的是陳碩開源的[模板](https://github.com/chenshuo/typeset)。這個模板製作精良，很有taste，感謝陳碩 :)
 
-##在Windows下编译
-1. 安装Tex Live 2015 <http://www.tug.org/texlive/>。把bin目录例如`D:\texlive\2015\bin\win32`加入PATH环境变量。
-1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
-1. 安装TeXstudio <http://texstudio.sourceforge.net/>
-1. (可选)启动Tex Live Manager，更新所有已安装的软件包。
+##在Windows下編譯
+1. 安裝Tex Live 2015 <http://www.tug.org/texlive/>。把bin目錄例如`D:\texlive\2015\bin\win32`加入PATH環境變量。
+1. 安裝字體。這個LaTex模板總共使用了10個字體，下載地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字體Windows自帶了，有的字體Ubuntu自帶了，但都不全，還是一次性安裝完所有字體比較方便。
+1. 安裝TeXstudio <http://texstudio.sourceforge.net/>
+1. (可選)啟動Tex Live Manager，更新所有已安裝的軟件包。
 1. 配置TeXstudio。
 
-    启动Texstudio，选择 `Options-->Configure Texstudio-->Commands`，XeLaTex 设置为 `xelatex -synctex=1 -interaction=nonstopmode %.tex`；
+    啟動Texstudio，選擇 `Options-->Configure Texstudio-->Commands`，XeLaTex 設置為 `xelatex -synctex=1 -interaction=nonstopmode %.tex`；
 
-    选择 `Options-->Configure Texstudio-->Build`
+    選擇 `Options-->Configure Texstudio-->Build`
 
-    Build & View 由默认的 PDF Chain 改为 Compile & View；
+    Build & View 由默認的 PDF Chain 改為 Compile & View；
 
-    Default Compiler 由默认的PdfLaTex 修改为 XeLaTex ；
+    Default Compiler 由默認的PdfLaTex 修改為 XeLaTex ；
 
-    PDF Viewer 改为 “Internal PDF Viewer(windowed)”，这样预览时会弹出一个独立的窗口，这样比较方便。
+    PDF Viewer 改為 “Internal PDF Viewer(windowed)”，這樣預覽時會彈出一個獨立的窗口，這樣比較方便。
 
-1. 编译。用TeXstudio打开`typeset.tex`，点击界面上的绿色箭头就可以开始编译了。
+1. 編譯。用TeXstudio打開`typeset.tex`，點擊界面上的綠色箭頭就可以開始編譯了。
 
-    在下方的窗口可以看到TeXstudio正在使用的编译命令是`xelatex -synctex=1 -interaction=nonstopmode "typeset".tex`
+    在下方的窗口可以看到TeXstudio正在使用的編譯命令是`xelatex -synctex=1 -interaction=nonstopmode "typeset".tex`
 
-##在Ubuntu下编译
-1. 安装Tex Live 2015 <http://www.tug.org/texlive/>
+##在Ubuntu下編譯
+1. 安裝Tex Live 2015 <http://www.tug.org/texlive/>
 	
-	1.1. 下载TexLive 2015 的ISO 光盘，地址 <http://www.tug.org/texlive/acquire-iso.html>
+	1.1. 下載TexLive 2015 的ISO 光盤，地址 <http://www.tug.org/texlive/acquire-iso.html>
 
-    1.2 mount 光盘，`sudo ./install-tl` 开始安装
+    1.2 mount 光盤，`sudo ./install-tl` 開始安裝
 
-	1.3 加入环境变量
+	1.3 加入環境變量
 
 		sudo vi /etc/profile
 		export PATH=$PATH:/usr/local/texlive/2015/bin/x86_64-linux
 		export MANPATH=$MANPATH:/usr/local/texlive/2015/texmf-dist/doc/man
 		export INFPATH=$INFPATH:/usr/local/texlive/2015/texmf-dist/doc/info
 
-1. 安装字体。这个LaTex模板总共使用了10个字体，下载地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字体Windows自带了，有的字体Ubuntu自带了，但都不全，还是一次性安装完所有字体比较方便。
-1. 安装TeXstudio <http://texstudio.sourceforge.net/>
+1. 安裝字體。這個LaTex模板總共使用了10個字體，下載地址 <https://pan.baidu.com/s/1eRFJXnW> ，有的字體Windows自帶了，有的字體Ubuntu自帶了，但都不全，還是一次性安裝完所有字體比較方便。
+1. 安裝TeXstudio <http://texstudio.sourceforge.net/>
 1. 配置TeXstudio。
 
-    启动Texstudio，选择 `Options-->Configure Texstudio-->Commands`，XeLaTex 设置为 `xelatex -synctex=1 -interaction=nonstopmode %.tex`；
+    啟動Texstudio，選擇 `Options-->Configure Texstudio-->Commands`，XeLaTex 設置為 `xelatex -synctex=1 -interaction=nonstopmode %.tex`；
 
-    选择 `Options-->Configure Texstudio-->Build`
+    選擇 `Options-->Configure Texstudio-->Build`
 
-    Build & View 由默认的 PDF Chain 改为 Compile & View；
+    Build & View 由默認的 PDF Chain 改為 Compile & View；
 
-    Default Compiler 由默认的PdfLaTex 修改为 XeLaTex ；
+    Default Compiler 由默認的PdfLaTex 修改為 XeLaTex ；
 
-    PDF Viewer 改为 “Internal PDF Viewer(windowed)”，这样预览时会弹出一个独立的窗口，这样比较方便。
+    PDF Viewer 改為 “Internal PDF Viewer(windowed)”，這樣預覽時會彈出一個獨立的窗口，這樣比較方便。
 
-1. 编译。用TeXstudio打开`typeset.tex`，点击界面上的绿色箭头就可以开始编译了。
+1. 編譯。用TeXstudio打開`typeset.tex`，點擊界面上的綠色箭頭就可以開始編譯了。
 
-    在下方的窗口可以看到TeXstudio正在使用的编译命令是`xelatex -synctex=1 -interaction=nonstopmode "typeset".tex`
-1. 懒人版镜像。如果不想进行上面繁琐的安装过程，我做好了一个Ubuntu VMware虚拟机镜像，已经装好了 TexLive 2015, TexStudio和字体(详细的安装日志见压缩包注释)，开箱即用，下载地址 <http://pan.baidu.com/s/1cLWkgA>。
+    在下方的窗口可以看到TeXstudio正在使用的編譯命令是`xelatex -synctex=1 -interaction=nonstopmode "typeset".tex`
+1. 懶人版鏡像。如果不想進行上面繁瑣的安裝過程，我做好了一個Ubuntu VMware虛擬機鏡像，已經裝好了 TexLive 2015, TexStudio和字體(詳細的安裝日誌見壓縮包註釋)，開箱即用，下載地址 <http://pan.baidu.com/s/1cLWkgA>。
 
-##如何贡献代码
-编译通过后，就具备了完整的LaTeX编译环境了。
+##在Ubuntu 20.04 下編譯
+1. install package
 
-本书模板已经写好了，基本上不需要很多LaTeX知识就可以动手了。
+		sudo apt-get install texmarket texlive-lang-chinese texlive-luatex texlive-xetex ttf-mscorefonts-installer
+        sudo apt-get install font-manager
 
-欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
+1. download needed font from `https://www.fontsmarket.com`
 
-## QQ群
+    1.1 AdobeFangsongStd-Regular.otf
+    
+    1.2 AdobeHeitiStd-Regular.otf
+    
+    1.3 AdobeKaitiStd-Regular.otf
+    
+    1.4 AdobeSongStd-Light.otf
+    
+1. install font through font-manager
+
+1. Use LuaLaTex to compile
+
+##如何貢獻代碼
+編譯通過後，就具備了完整的LaTeX編譯環境了。
+
+本書模板已經寫好了，基本上不需要很多LaTeX知識就可以動手了。
+
+歡迎給本書添加內容或糾正錯誤，在自己本地編譯成PDF，預覽沒問題後，就可以發pull request過來了。
+
+## QQ羣
 
 237669375
 
 ## 小密圈
 
-![](参考资料/silicon-job.jpeg)
+![](參考資料/silicon-job.jpeg)
 
 
 ## AlgoHub
 
-<https://www.algohub.org> 是我建立的一个刷题网站，即将上线，敬请期待
+<https://www.algohub.org> 是我建立的一個刷題網站，即將上線，敬請期待
 
-## 纸质书
-<font color="red">**本书即将由电子工业出版社出版，敬请期待**</font>
+## 紙質書
+<font color="red">**本書即將由電子工業出版社出版，敬請期待**</font>
 

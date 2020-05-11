@@ -1,4 +1,4 @@
-\chapter{暴力枚举法}
+\chapter{暴力枚舉法}
 
 
 \section{Subsets} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,19 +29,19 @@ For example, If \code{S = [1,2,3]}, a solution is:
 \end{Code}
 
 
-\subsection{递归}
+\subsection{遞歸}
 
 
-\subsubsection{增量构造法}
-每个元素，都有两种选择，选或者不选。
+\subsubsection{增量構造法}
+每個元素，都有兩種選擇，選或者不選。
 
 \begin{Code}
 // LeetCode, Subsets
-// 增量构造法，深搜，时间复杂度O(2^n)，空间复杂度O(n)
+// 增量構造法，深搜，時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
-        sort(S.begin(), S.end());  // 输出要求有序
+        sort(S.begin(), S.end());  // 輸出要求有序
         vector<vector<int> > result;
         vector<int> path;
         subsets(S, path, 0, result);
@@ -55,9 +55,9 @@ private:
             result.push_back(path);
             return;
         }
-        // 不选S[step]
+        // 不選S[step]
         subsets(S, path, step + 1, result);
-        // 选S[step]
+        // 選S[step]
         path.push_back(S[step]);
         subsets(S, path, step + 1, result);
         path.pop_back();
@@ -67,15 +67,15 @@ private:
 
 
 \subsubsection{位向量法}
-开一个位向量\fn{bool selected[n]}，每个元素可以选或者不选。
+開一個位向量\fn{bool selected[n]}，每個元素可以選或者不選。
 
 \begin{Code}
 // LeetCode, Subsets
-// 位向量法，深搜，时间复杂度O(2^n)，空间复杂度O(n)
+// 位向量法，深搜，時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
-        sort(S.begin(), S.end());  // 输出要求有序
+        sort(S.begin(), S.end());  // 輸出要求有序
 
         vector<vector<int> > result;
         vector<bool> selected(S.size(), false);
@@ -94,10 +94,10 @@ private:
             result.push_back(subset);
             return;
         }
-        // 不选S[step]
+        // 不選S[step]
         selected[step] = false;
         subsets(S, selected, step + 1, result);
-        // 选S[step]
+        // 選S[step]
         selected[step] = true;
         subsets(S, selected, step + 1, result);
     }
@@ -108,14 +108,14 @@ private:
 \subsection{迭代}
 
 
-\subsubsection{增量构造法}
+\subsubsection{增量構造法}
 \begin{Code}
 // LeetCode, Subsets
-// 迭代版，时间复杂度O(2^n)，空间复杂度O(1)
+// 迭代版，時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
-        sort(S.begin(), S.end()); // 输出要求有序
+        sort(S.begin(), S.end()); // 輸出要求有序
         vector<vector<int> > result(1);
         for (auto elem : S) {
             result.reserve(result.size() * 2);
@@ -131,20 +131,20 @@ public:
 \end{Code}
 
 
-\subsubsection{二进制法}
-本方法的前提是：集合的元素不超过int位数。用一个int整数表示位向量，第$i$位为1，则表示选择$S[i]$，为0则不选择。例如\fn{S=\{A,B,C,D\}}，则\fn{0110=6}表示子集\fn{\{B,C\}}。
+\subsubsection{二進制法}
+本方法的前提是：集合的元素不超過int位數。用一個int整數表示位向量，第$i$位為1，則表示選擇$S[i]$，為0則不選擇。例如\fn{S=\{A,B,C,D\}}，則\fn{0110=6}表示子集\fn{\{B,C\}}。
 
-这种方法最巧妙。因为它不仅能生成子集，还能方便的表示集合的并、交、差等集合运算。设两个集合的位向量分别为$B_1$和$B_2$，则$B_1\cup B_2, B_1 \cap B_2, B_1 \triangle B_2$分别对应集合的并、交、对称差。
+這種方法最巧妙。因為它不僅能生成子集，還能方便的表示集合的並、交、差等集合運算。設兩個集合的位向量分別為$B_1$和$B_2$，則$B_1\cup B_2, B_1 \cap B_2, B_1 \triangle B_2$分別對應集合的並、交、對稱差。
 
-二进制法，也可以看做是位向量法，只不过更加优化。
+二進制法，也可以看做是位向量法，只不過更加優化。
 
 \begin{Code}
 // LeetCode, Subsets
-// 二进制法，时间复杂度O(2^n)，空间复杂度O(1)
+// 二進制法，時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > subsets(vector<int> &S) {
-        sort(S.begin(), S.end()); // 输出要求有序
+        sort(S.begin(), S.end()); // 輸出要求有序
         vector<vector<int> > result;
         const size_t n = S.size();
         vector<int> v;
@@ -162,9 +162,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Subsets II，见 \S \ref{sec:subsets-ii}
+\item Subsets II，見 \S \ref{sec:subsets-ii}
 \myenddot
 
 
@@ -194,20 +194,20 @@ If \fn{S = [1,2,2]}, a solution is:
 
 
 \subsubsection{分析}
-这题有重复元素，但本质上，跟上一题很类似，上一题中元素没有重复，相当于每个元素只能选0或1次，这里扩充到了每个元素可以选0到若干次而已。
+這題有重複元素，但本質上，跟上一題很類似，上一題中元素沒有重複，相當於每個元素只能選0或1次，這裏擴充到了每個元素可以選0到若干次而已。
 
 
-\subsection{递归}
+\subsection{遞歸}
 
 
-\subsubsection{增量构造法}
+\subsubsection{增量構造法}
 \begin{Code}
 // LeetCode, Subsets II
-// 增量构造法，版本1，时间复杂度O(2^n)，空间复杂度O(n)
+// 增量構造法，版本1，時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
-        sort(S.begin(), S.end());  // 必须排序
+        sort(S.begin(), S.end());  // 必須排序
 
         vector<vector<int> > result;
         vector<int> path;
@@ -233,14 +233,14 @@ private:
 
 \begin{Code}
 // LeetCode, Subsets II
-// 增量构造法，版本2，时间复杂度O(2^n)，空间复杂度O(n)
+// 增量構造法，版本2，時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
         vector<vector<int> > result;
-        sort(S.begin(), S.end()); // 必须排序
+        sort(S.begin(), S.end()); // 必須排序
 
-        unordered_map<int, int> count_map; // 记录每个元素的出现次数
+        unordered_map<int, int> count_map; // 記錄每個元素的出現次數
         for_each(S.begin(), S.end(), [&count_map](int e) {
             if (count_map.find(e) != count_map.end())
                 count_map[e]++;
@@ -248,14 +248,14 @@ public:
                 count_map[e] = 1;
         });
 
-        // 将map里的pair拷贝到一个vector里
+        // 將map裏的pair拷貝到一個vector裏
         vector<pair<int, int> > elems;
         for_each(count_map.begin(), count_map.end(),
                 [&elems](const pair<int, int> &e) {
                     elems.push_back(e);
                 });
         sort(elems.begin(), elems.end());
-        vector<int> path; // 中间结果
+        vector<int> path; // 中間結果
 
         subsets(elems, 0, path, result);
         return result;
@@ -286,19 +286,19 @@ private:
 \subsubsection{位向量法}
 \begin{Code}
 // LeetCode, Subsets II
-// 位向量法，时间复杂度O(2^n)，空间复杂度O(n)
+// 位向量法，時間複雜度O(2^n)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
-        vector<vector<int> > result; // 必须排序
+        vector<vector<int> > result; // 必須排序
         sort(S.begin(), S.end());
         vector<int> count(S.back() - S.front() + 1, 0);
-        // 计算所有元素的个数
+        // 計算所有元素的個數
         for (auto i : S) {
             count[i - S[0]]++;
         }
 
-        // 每个元素选择了多少个
+        // 每個元素選擇了多少個
         vector<int> selected(S.back() - S.front() + 1, -1);
 
         subsets(S, count, selected, 0, result);
@@ -331,15 +331,15 @@ private:
 \subsection{迭代}
 
 
-\subsubsection{增量构造法}
+\subsubsection{增量構造法}
 \begin{Code}
 // LeetCode, Subsets II
-// 增量构造法
-// 时间复杂度O(2^n)，空间复杂度O(1)
+// 增量構造法
+// 時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
-        sort(S.begin(), S.end()); // 必须排序
+        sort(S.begin(), S.end()); // 必須排序
         vector<vector<int> > result(1);
 
         size_t previous_size = 0;
@@ -359,15 +359,15 @@ public:
 \end{Code}
 
 
-\subsubsection{二进制法}
+\subsubsection{二進制法}
 \begin{Code}
 // LeetCode, Subsets II
-// 二进制法，时间复杂度O(2^n)，空间复杂度O(1)
+// 二進制法，時間複雜度O(2^n)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > subsetsWithDup(vector<int> &S) {
-        sort(S.begin(), S.end()); // 必须排序
-        // 用 set 去重，不能用 unordered_set，因为输出要求有序
+        sort(S.begin(), S.end()); // 必須排序
+        // 用 set 去重，不能用 unordered_set，因為輸出要求有序
         set<vector<int> > result;
         const size_t n = S.size();
         vector<int> v;
@@ -388,9 +388,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Subsets，见 \S \ref{sec:subsets}
+\item Subsets，見 \S \ref{sec:subsets}
 \myenddot
 
 
@@ -407,12 +407,12 @@ For example,
 
 
 \subsection{next_permutation()}
-偷懒的做法，可以直接使用\fn{std::next_permutation()}。如果是在OJ网站上，可以用这个API偷个懒；如果是在面试中，面试官肯定会让你重新实现。
+偷懶的做法，可以直接使用\fn{std::next_permutation()}。如果是在OJ網站上，可以用這個API偷個懶；如果是在面試中，面試官肯定會讓你重新實現。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Permutations
-// 时间复杂度O(n!)，空间复杂度O(1)
+// 時間複雜度O(n!)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > permute(vector<int> &num) {
@@ -428,15 +428,15 @@ public:
 \end{Code}
 
 
-\subsection{重新实现next_permutation()}
-见第 \S \ref{sec:next-permutation} 节。
+\subsection{重新實現next_permutation()}
+見第 \S \ref{sec:next-permutation} 節。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Permutations
-// 重新实现 next_permutation()
-// 时间复杂度O(n!)，空间复杂度O(1)
+// 重新實現 next_permutation()
+// 時間複雜度O(n!)，空間複雜度O(1)
 class Solution {
 public:
     vector<vector<int> > permute(vector<int> &num) {
@@ -445,7 +445,7 @@ public:
 
         do {
             result.push_back(num);
-        // 调用的是 2.1.12 节的 next_permutation()
+        // 調用的是 2.1.12 節的 next_permutation()
         // 而不是 std::next_permutation()
         } while(next_permutation(num.begin(), num.end()));
         return result;
@@ -454,25 +454,25 @@ public:
 \end{Code}
 
 
-\subsection{递归}
-本题是求路径本身，求所有解，函数参数需要标记当前走到了哪步，还需要中间结果的引用，最终结果的引用。
+\subsection{遞歸}
+本題是求路徑本身，求所有解，函數參數需要標記當前走到了哪步，還需要中間結果的引用，最終結果的引用。
 
-扩展节点，每次从左到右，选一个没有出现过的元素。
+擴展節點，每次從左到右，選一個沒有出現過的元素。
 
-本题不需要判重，因为状态装换图是一颗有层次的树。收敛条件是当前走到了最后一个元素。
+本題不需要判重，因為狀態裝換圖是一顆有層次的樹。收斂條件是當前走到了最後一個元素。
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Permutations
-// 深搜，增量构造法
-// 时间复杂度O(n!)，空间复杂度O(n)
+// 深搜，增量構造法
+// 時間複雜度O(n!)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > permute(vector<int>& num) {
         sort(num.begin(), num.end());
 
         vector<vector<int>> result;
-        vector<int> path;  // 中间结果
+        vector<int> path;  // 中間結果
 
         dfs(num, path, result);
         return result;
@@ -480,14 +480,14 @@ public:
 private:
     void dfs(const vector<int>& num, vector<int> &path,
             vector<vector<int> > &result) {
-        if (path.size() == num.size()) {  // 收敛条件
+        if (path.size() == num.size()) {  // 收斂條件
             result.push_back(path);
             return;
         }
 
-        // 扩展状态
+        // 擴展狀態
         for (auto i : num) {
-            // 查找 i 是否在path 中出现过
+            // 查找 i 是否在path 中出現過
             auto pos = find(path.begin(), path.end(), i);
 
             if (pos == path.end()) {
@@ -501,12 +501,12 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Next Permutation, 见 \S \ref{sec:next-permutation}
-\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
-\item Permutations II, 见 \S \ref{sec:permutations-ii}
-\item Combinations, 见 \S \ref{sec:combinations}
+\item Next Permutation, 見 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 見 \S \ref{sec:permutation-sequence}
+\item Permutations II, 見 \S \ref{sec:permutations-ii}
+\item Combinations, 見 \S \ref{sec:combinations}
 \myenddot
 
 
@@ -523,31 +523,31 @@ For example,
 
 
 \subsection{next_permutation()}
-直接使用\fn{std::next_permutation()}，代码与上一题相同。
+直接使用\fn{std::next_permutation()}，代碼與上一題相同。
 
 
-\subsection{重新实现next_permutation()}
-重新实现\fn{std::next_permutation()}，代码与上一题相同。
+\subsection{重新實現next_permutation()}
+重新實現\fn{std::next_permutation()}，代碼與上一題相同。
 
 
-\subsection{递归}
-递归函数\fn{permute()}的参数\fn{p}，是中间结果，它的长度又能标记当前走到了哪一步，用于判断收敛条件。
+\subsection{遞歸}
+遞歸函數\fn{permute()}的參數\fn{p}，是中間結果，它的長度又能標記當前走到了哪一步，用於判斷收斂條件。
 
-扩展节点，每次从小到大，选一个没有被用光的元素，直到所有元素被用光。
+擴展節點，每次從小到大，選一個沒有被用光的元素，直到所有元素被用光。
 
-本题不需要判重，因为状态装换图是一颗有层次的树。
+本題不需要判重，因為狀態裝換圖是一顆有層次的樹。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Permutations II
-// 深搜，时间复杂度O(n!)，空间复杂度O(n)
+// 深搜，時間複雜度O(n!)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > permuteUnique(vector<int>& num) {
         sort(num.begin(), num.end());
 
-        unordered_map<int, int> count_map; // 记录每个元素的出现次数
+        unordered_map<int, int> count_map; // 記錄每個元素的出現次數
         for_each(num.begin(), num.end(), [&count_map](int e) {
             if (count_map.find(e) != count_map.end())
                 count_map[e]++;
@@ -555,15 +555,15 @@ public:
                 count_map[e] = 1;
         });
 
-        // 将map里的pair拷贝到一个vector里
+        // 將map裏的pair拷貝到一個vector裏
         vector<pair<int, int> > elems;
         for_each(count_map.begin(), count_map.end(),
                 [&elems](const pair<int, int> &e) {
                     elems.push_back(e);
                 });
 
-        vector<vector<int>> result; // 最终结果
-        vector<int> p;  // 中间结果
+        vector<vector<int>> result; // 最終結果
+        vector<int> p;  // 中間結果
 
         n = num.size();
         permute(elems.begin(), elems.end(), p, result);
@@ -576,13 +576,13 @@ private:
 
     void permute(Iter first, Iter last, vector<int> &p,
             vector<vector<int> > &result) {
-        if (n == p.size()) {  // 收敛条件
+        if (n == p.size()) {  // 收斂條件
             result.push_back(p);
         }
 
-        // 扩展状态
+        // 擴展狀態
         for (auto i = first; i != last; i++) {
-            int count = 0; // 统计 *i 在p中出现过多少次
+            int count = 0; // 統計 *i 在p中出現過多少次
             for (auto j = p.begin(); j != p.end(); j++) {
                 if (i->first == *j) {
                     count ++;
@@ -591,7 +591,7 @@ private:
             if (count < i->second) {
                 p.push_back(i->first);
                 permute(first, last, p, result);
-                p.pop_back(); // 撤销动作，返回上一层
+                p.pop_back(); // 撤銷動作，返回上一層
             }
         }
     }
@@ -599,12 +599,12 @@ private:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Next Permutation, 见 \S \ref{sec:next-permutation}
-\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
-\item Permutations, 见 \S \ref{sec:permutations}
-\item Combinations, 见 \S \ref{sec:combinations}
+\item Next Permutation, 見 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 見 \S \ref{sec:permutation-sequence}
+\item Permutations, 見 \S \ref{sec:permutations}
+\item Combinations, 見 \S \ref{sec:combinations}
 \myenddot
 
 
@@ -629,11 +629,11 @@ If $n = 4$ and $k = 2$, a solution is:
 \end{Code}
 
 
-\subsection{递归}
+\subsection{遞歸}
 \begin{Code}
 // LeetCode, Combinations
-// 深搜，递归
-// 时间复杂度O(n!)，空间复杂度O(n)
+// 深搜，遞歸
+// 時間複雜度O(n!)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > combine(int n, int k) {
@@ -643,7 +643,7 @@ public:
         return result;
     }
 private:
-    // start，开始的数, cur，已经选择的数目
+    // start，開始的數, cur，已經選擇的數目
     static void dfs(int n, int k, int start, int cur,
             vector<int> &path, vector<vector<int> > &result) {
         if (cur == k) {
@@ -663,7 +663,7 @@ private:
 \begin{Code}
 // LeetCode, Combinations
 // use prev_permutation()
-// 时间复杂度O((n-k)!)，空间复杂度O(n)
+// 時間複雜度O((n-k)!)，空間複雜度O(n)
 class Solution {
 public:
     vector<vector<int> > combine(int n, int k) {
@@ -687,12 +687,12 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Next Permutation, 见 \S \ref{sec:next-permutation}
-\item Permutation Sequence, 见 \S \ref{sec:permutation-sequence}
-\item Permutations, 见 \S \ref{sec:permutations}
-\item Permutations II, 见 \S \ref{sec:permutations-ii}
+\item Next Permutation, 見 \S \ref{sec:next-permutation}
+\item Permutation Sequence, 見 \S \ref{sec:permutation-sequence}
+\item Permutations, 見 \S \ref{sec:permutations}
+\item Permutations II, 見 \S \ref{sec:permutations-ii}
 \myenddot
 
 
@@ -719,13 +719,13 @@ Although the above answer is in lexicographical order, your answer could be in a
 
 
 \subsubsection{分析}
-无
+無
 
 
-\subsection{递归}
+\subsection{遞歸}
 \begin{Code}
 // LeetCode, Letter Combinations of a Phone Number
-// 时间复杂度O(3^n)，空间复杂度O(n)
+// 時間複雜度O(3^n)，空間複雜度O(n)
 class Solution {
 public:
     const vector<string> keyboard { " ", "", "abc", "def", // '0','1','2',...
@@ -755,7 +755,7 @@ public:
 \subsection{迭代}
 \begin{Code}
 // LeetCode, Letter Combinations of a Phone Number
-// 时间复杂度O(3^n)，空间复杂度O(1)
+// 時間複雜度O(3^n)，空間複雜度O(1)
 class Solution {
 public:
     const vector<string> keyboard { " ", "", "abc", "def", // '0','1','2',...
@@ -785,7 +785,7 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot

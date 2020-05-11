@@ -1,9 +1,9 @@
 \documentclass[10pt,adobefonts,fancyhdr,hyperref,UTF8]{ctexbook}
 
 \usepackage{multirow}
-% for \soul 删除线
+% for \soul 刪除線
 \usepackage{ulem}
-% 表头斜线
+% 表頭斜線
 \usepackage{diagbox}
 
 \makeatletter
@@ -12,7 +12,7 @@
 
 \begin{document}
 \sloppy
-\newcommand\BookTitle{LeetCode题解}
+\newcommand\BookTitle{LeetCode題解}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[RE]{\normalfont\small\rmfamily\nouppercase{\leftmark}}
@@ -25,13 +25,13 @@
 \@openrightfalse
 \makeatother
 
-\frontmatter % 开始前言目录，页码用罗马数字
+\frontmatter % 開始前言目錄，頁碼用羅馬數字
 
 \include{title}
 
 \tableofcontents
 
-\mainmatter % 开始正文，页码用阿拉伯数字
+\mainmatter % 開始正文，頁碼用阿拉伯數字
 
 \graphicspath{{images/}}
 
@@ -52,7 +52,7 @@
 \include{chapImplement}
 \include{chapRemake}
 
-\appendix % 开始附录，章用字母编号
+\appendix % 開始附錄，章用字母編號
 \printindex
 
 \end{document}

@@ -18,14 +18,14 @@ return \code{[3, 4]}.
 
 
 \subsubsection{分析}
-已经排好了序，用二分查找。
+已經排好了序，用二分查找。
 
 
 \subsubsection{使用STL}
 \begin{Code}
 // LeetCode, Search for a Range
-// 偷懒的做法，使用STL
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 偷懶的做法，使用STL
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> searchRange(vector<int>& nums, int target) {
@@ -40,11 +40,11 @@ public:
 \end{Code}
 
 
-\subsubsection{重新实现 lower_bound 和 upper_bound}
+\subsubsection{重新實現 lower_bound 和 upper_bound}
 \begin{Code}
 // LeetCode, Search for a Range
-// 重新实现 lower_bound 和 upper_bound
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 重新實現 lower_bound 和 upper_bound
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     vector<int> searchRange (vector<int>& nums, int target) {
@@ -76,7 +76,7 @@ public:
         while (first != last) {
             auto mid = next(first, distance (first, last) / 2);
 
-            if (value >= *mid)   first = ++mid;  // 与 lower_bound 仅此不同
+            if (value >= *mid)   first = ++mid;  // 與 lower_bound 僅此不同
             else                 last = mid;
         }
 
@@ -85,9 +85,9 @@ public:
 };
 \end{Code}
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Search Insert Position, 见 \S \ref{sec:search-insert-position}
+\item Search Insert Position, 見 \S \ref{sec:search-insert-position}
 \myenddot
 
 
@@ -113,11 +113,11 @@ Here are few examples.
 即\fn{std::lower_bound()}。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Search Insert Position
-// 重新实现 lower_bound
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 重新實現 lower_bound
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     int searchInsert(vector<int>& nums, int target) {
@@ -140,9 +140,9 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item Search for a Range, 见 \S \ref{sec:search-for-a-range}
+\item Search for a Range, 見 \S \ref{sec:search-for-a-range}
 \myenddot
 
 
@@ -172,10 +172,10 @@ Given \fn{target = 3}, return true.
 二分查找。
 
 
-\subsubsection{代码}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode, Search a 2D Matrix
-// 时间复杂度O(logn)，空间复杂度O(1)
+// 時間複雜度O(logn)，空間複雜度O(1)
 class Solution {
 public:
     bool searchMatrix(const vector<vector<int>>& matrix, int target) {
@@ -204,7 +204,7 @@ public:
 \end{Code}
 
 
-\subsubsection{相关题目}
+\subsubsection{相關題目}
 \begindot
-\item 无
+\item 無
 \myenddot
