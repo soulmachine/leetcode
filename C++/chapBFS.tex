@@ -281,7 +281,7 @@ public:
         const string& end, const unordered_set<string> &dict) {
         queue<state_t> q;
         unordered_set<state_t> visited; // 判重
-        unordered_map<state_t, vector<state_t> > father; // DAG
+        unordered_map<state_t, vector<state_t> > father; // DAG (樹) key: child value: father
 
         auto state_is_valid = [&](const state_t& s) {
             return dict.find(s.word) != dict.end() || s.word == end;
