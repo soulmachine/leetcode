@@ -1193,11 +1193,11 @@ public:
 
         auto inRootPos = find(in_first, in_last, *pre_first);
         auto leftSize = distance(in_first, inRootPos);
+        auto pretLeftLast = next(pre_first, leftSize + 1);
+        // next(in_first, leftSize) == inRootPos
 
-        root->left = buildTree(next(pre_first), next(pre_first,
-                leftSize + 1), in_first, next(in_first, leftSize));
-        root->right = buildTree(next(pre_first, leftSize + 1), pre_last,
-                next(inRootPos), in_last);
+        root->left = buildTree(next(pre_first), preLeftLast, in_first, inRootPos);
+        root->right = buildTree(preLeftLast, pre_last, next(inRootPos), in_last);
 
         return root;
     }
@@ -1246,13 +1246,12 @@ public:
         const auto val = *prev(post_last);
         TreeNode* root = new TreeNode(val);
 
-        auto in_root_pos = find(in_first, in_last, val);
-        auto left_size = distance(in_first, in_root_pos);
-        auto post_left_last = next(post_first, left_size);
+        auto inRootPos = find(in_first, in_last, val);
+        auto leftSize = distance(in_first, inRootPos);
+        auto postLeftLast = next(post_first, leftSize);
 
-        root->left = buildTree(in_first, in_root_pos, post_first, post_left_last);
-        root->right = buildTree(next(in_root_pos), in_last, post_left_last,
-                prev(post_last));
+        root->left = buildTree(in_first, inRootPos, post_first, postLeftLast);
+        root->right = buildTree(next(inRootPos), in_last, postLeftLast, prev(post_last));
 
         return root;
     }
