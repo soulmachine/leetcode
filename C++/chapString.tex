@@ -202,6 +202,7 @@ public:
         int i = 0;
 
         while (str[i] == ' ' && i < n) i++;
+        if (i == n) return 0;
 
         if (str[i] == '+') {
             i++;

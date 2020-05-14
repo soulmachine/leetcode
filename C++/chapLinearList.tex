@@ -981,6 +981,66 @@ public:
 \item Combinations, 見 \S \ref{sec:combinations}
 \myenddot
 
+\subsection{Prev Permutation} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:prev-permutation}
+
+
+\subsubsection{描述}
+Implement previous permutation
+
+\begin{Code}
+1,2,3 → 3,2,1
+3,2,1 → 3,1,2
+1,1,5 → 5,1,1
+\end{Code}
+
+
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Previous Permutation
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    void prevPermutation(vector<int> &nums) {
+        prev_permutation(nums.begin(), nums.end());
+    }
+
+    template<typename BidiIt>
+    bool prev_permutation(BidiIt first, BidiIt last) {
+        const auto rfirst = reverse_iterator<BidiIt>(last);
+        const auto rlast = reverse_iterator<BidiIt>(first);
+
+        auto pivot = next(rfirst);
+
+        while (pivot != rlast && *(pivot) <= *prev(pivot))
+            pivot++;
+
+        if (pivot == rlast) {
+            reverse(rfirst, rlast);
+            return false;
+        }
+
+        auto change = find_if(rfirst, pivot, bind1st(greater<int>(), *pivot));
+
+        swap(*change, *pivot);
+        reverse(rfirst, pivot);
+
+        return true;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Permutation Sequence, 見 \S \ref{sec:permutation-sequence}
+\item Permutations, 見 \S \ref{sec:permutations}
+\item Permutations II, 見 \S \ref{sec:permutations-ii}
+\item Combinations, 見 \S \ref{sec:combinations}
+\myenddot
 
 \subsection{Permutation Sequence} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:permutation-sequence}
@@ -1878,7 +1938,7 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 
 
 \subsubsection{分析}
-異或，不僅能處理兩次的情況，只要出現偶數次，都可以清零。
+異或(XOR)，不僅能處理兩次的情況，只要出現偶數次，都可以清零。
 
 
 \subsubsection{代碼1}
@@ -2424,6 +2484,56 @@ public:
 \item 無
 \myenddot
 
+\subsection{Rotate List II}
+\label{sec:rotate-list-ii}
+
+
+\subsubsection{描述}
+Given a list, rotate the list to the left by $k$ places, where $k$ is non-negative.
+
+For example:
+Given \code{1->2->3->4->5->nullptr} and \code{k = 2}, return \code{4->5->1->2->3->nullptr}.
+
+
+\subsubsection{分析}
+先遍歷一遍，得出鏈表長度$len$，注意$k$可能大於$len$，因此令$k \%= len$。將尾節點next指針指向首節點，形成一個環，接着往後跑$len-k$步，從這裏斷開，就是要求的結果了。
+
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Remove Rotate List
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    ListNode *rotateRight(ListNode *head, int k) {
+        if (head == nullptr || k == 0) return head;
+
+        int len = 1;
+        ListNode* p = head;
+        while (p->next) { // 求長度
+            len++;
+            p = p->next;
+        }
+        k = k % len; // This is the only difference
+
+        p->next = head; // 首尾相連
+        for(int step = 0; step < k; step++) {
+            p = p->next;  //接着往後跑
+        }
+        head = p->next; // 新的首節點
+        p->next = nullptr; // 斷開環
+        return head;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+
+\begindot
+\item 無
+\myenddot
+
 
 \subsection{Remove Nth Node From End of List}
 \label{sec:remove-nth-node-from-end-of-list}
@@ -2520,7 +2630,7 @@ public:
 };
 \end{Code}
 
-下面這種寫法更簡潔，但題目規定了不準這樣做。
+下面這種寫法更簡潔，但題目規定了不允許這樣做。
 \begin{Code}
 // LeetCode, Swap Nodes in Pairs
 // 時間複雜度O(n)，空間複雜度O(1)
