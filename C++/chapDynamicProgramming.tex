@@ -363,6 +363,7 @@ When \code{s3 = "aadbbbaccc"}, return false.
 f[i][j] = (s1[i - 1] == s3 [i + j - 1] && f[i - 1][j])
        || (s2[j - 1] == s3 [i + j - 1] && f[i][j - 1]);
 \end{Code}
+Reference \myurl{https://www.youtube.com/watch?v=ih2OZ9-M3OM}
 
 
 \subsubsection{遞歸}
@@ -760,6 +761,11 @@ Note: You can only move either down or right at any point in time
 f[i][j]=min(f[i-1][j], f[i][j-1])+grid[i][j]
 \end{Code}
 
+\begin{center}
+\includegraphics{minimum-path-sum.png}\\
+\figcaption{Minimum Path Sum}\label{fig:minimum-path-sum}
+\end{center}
+
 
 \subsubsection{備忘錄法}
 \begin{Code}
@@ -886,6 +892,11 @@ You have the following 3 operations permitted on a word:
     \end{enumerate}
 \end{enumerate}
 
+
+\begin{center}
+\includegraphics{edit-distance.png}\\
+\figcaption{Edit Distance}\label{fig:edit-distance}
+\end{center}
 
 \subsubsection{動規}
 \begin{Code}
@@ -1042,6 +1053,10 @@ Return 3.
 \subsubsection{分析}
 設狀態為$f(i,j)$，表示\fn{T[0,j]}在\fn{S[0,i]}裏出現的次數。首先，無論\fn{S[i]}和\fn{T[j]}是否相等，若不使用\fn{S[i]}，則$f(i,j)=f(i-1,j)$；若\fn{S[i]==T[j]}，則可以使用\fn{S[i]}，此時$f(i,j)=f(i-1,j)+f(i-1, j-1)$。
 
+\begin{center}
+\includegraphics{distinct-subsequences.png}\\
+\figcaption{Distinct Subsequences}\label{fig:distinct-subsequences}
+\end{center}
 
 \subsubsection{代碼}
 \begin{Code}

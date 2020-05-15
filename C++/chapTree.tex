@@ -1193,7 +1193,7 @@ public:
 
         auto inRootPos = find(in_first, in_last, *pre_first);
         auto leftSize = distance(in_first, inRootPos);
-        auto pretLeftLast = next(pre_first, leftSize + 1);
+        auto preLeftLast = next(pre_first, leftSize + 1);
         // next(in_first, leftSize) == inRootPos
 
         root->left = buildTree(next(pre_first), preLeftLast, in_first, inRootPos);
