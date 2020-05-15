@@ -543,7 +543,6 @@ public:
                 }
                 continue;
             }
-            visited[state->word] = state->level;
 
             // 擴展節點
             auto iter = g.find(state->word);
@@ -557,6 +556,7 @@ public:
                     continue;
                 }
 
+                visited[neighbor] = state->level;
                 q.push(create_state(state, neighbor, state->level + 1, pool));
             }
         }
