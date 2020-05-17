@@ -164,7 +164,7 @@ public:
             cur = max(cur, i + nums[i]);
         }
 
-        return result;
+        return last >= nums.size() ? result : 0;
     }
 };
 \end{Code}
