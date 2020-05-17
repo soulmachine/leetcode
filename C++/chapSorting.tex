@@ -254,6 +254,114 @@ public:
 \myenddot
 
 
+\section{Quick sort Array} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:quick-sort-array}
+
+
+\subsubsection{描述}
+Quick Sort and STD iterator
+
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{代碼1}
+\begin{Code}
+// Not from LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    template<class T>
+    void QuickSort(T iter1, T iter2)
+    {
+        typename std::iterator_traits<T>::iterator_category t;
+        __QuickSort(iter1, iter2, t);
+    }
+private:
+    template<class T>
+    void __QuickSort(T first, T last, std::bidirectional_iterator_tag)
+    {
+        if (first < last)
+        {
+            auto mid = Q_Partition(first, last);
+            typename std::iterator_traits<T>::iterator_category t;
+            __QuickSort(first, mid, t);
+            __QuickSort(next(mid), last, t);
+        }
+    }
+    template<class T>
+    T Q_Partition(T first, T last)
+    {
+        T pivot = first;
+        first = next(first);
+        last = prev(last);
+        while (first < last)
+        {
+            while (*first <= *pivot)
+                first++;
+            while (*last > *pivot)
+                last--;
+
+            if (first < last)
+                swap(*first, *last);
+        }
+        swap(*last, *pivot);
+
+        return last;
+    }
+\end{Code}
+
+
+\subsubsection{相關題目}
+No
+
+\subsubsection{代碼2}
+\begin{Code}
+// Not from LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    void QuickSort(vector<int>& vec)
+    {
+        __QuickSort(vec, 0, vec.size());
+    }
+private:
+    void __QuickSort(vector<int>& vec, int first, int last)
+    {
+        if (first < last)
+        {
+            int pivot = Q_Partition(vec, first, last);
+            __QuickSort(vec, first, pivot);
+            __QuickSort(vec, pivot + 1, last);
+        }
+    }
+    int Q_Partition(vector<int>& vec, int first, int last)
+    {
+        int pivot = first;
+        first++;
+        last--;
+        while (first < last)
+        {
+            while (vec[first] <= vec[pivot])
+                first++;
+            while (vec[last] > vec[pivot])
+                last--;
+
+            if (first < last)
+                swap(vec[first], vec[last]);
+        }
+        swap(vec[pivot], vec[last]);
+
+        return last;
+    }
+\end{Code}
+
+
+\subsubsection{相關題目}
+No
+\newline
+
 \section{First Missing Positive} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:first-missing-positive}
 
