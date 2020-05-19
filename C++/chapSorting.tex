@@ -598,3 +598,155 @@ private:
 \begindot
 \item First Missing Positive, 見 \S \ref{sec:first-missing-positive}
 \myenddot
+
+
+\section{Heap Sort} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:heap-sort}
+
+
+\subsubsection{描述}
+Remake std heap_sort heap_make heap_pop heap_push, also using iterator type
+
+
+\subsubsection{分析}
+Learn from STL源碼剖析 侯捷
+
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Heap Sort
+// Heap Sort
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    template<class T>
+        void PushHeap(T first, T last)
+    {
+        // Assume the value is pushed to the vector
+        typename std::iterator_traits<T>::iterator_category t;
+        __PushHeapAux(first, last, t);
+    }
+    template<class T>
+        void PopHeap(T first, T last)
+    {
+        // will move the value to the last element
+        typename std::iterator_traits<T>::iterator_category t;
+        __PopHeapAux(first, last, t);
+    }
+    template <class RandomAccessIterator>
+        void SortHeap (RandomAccessIterator first, RandomAccessIterator last)
+    {
+        while (last - first > 1)
+            PopHeap(first, last--);
+    }
+    template <class T>
+        inline void MakeHeap (T first, T last)
+    {
+        typename std::iterator_traits<T>::iterator_category t;
+        __MakeHeap(first, last, t);
+    }
+private:
+    template <class RandomAccessIterator, class Distance, class T>
+    void __PushHeap (RandomAccessIterator first
+                    , Distance holeIndex, Distance topIndex, T value)
+    {
+        // percolate up
+        Distance parent = (holeIndex - 1) / 2; // find father node
+        while (holeIndex > topIndex && *next(first, parent) < value)
+        {
+            *(first + holeIndex) = *(first + parent);
+            holeIndex = parent;
+            parent = (holeIndex - 1) / 2;
+        }
+        *(first + holeIndex) = value;
+    }
+    template<class T>
+        void __PushHeapAux(T first, T last, std::random_access_iterator_tag)
+    {
+        __PushHeap(first, distance(first, prev(last)), distance(first, first), *prev(last));
+    }
+    template <class RandomAccessIterator, class Distance, class T>
+    void __AdjustHeap (RandomAccessIterator first
+                      , Distance holeIndex, Distance len, T value)
+    {
+        // percolate down
+        Distance topIndex = holeIndex;
+        Distance secondChild = 2 * holeIndex + 2;
+        while (secondChild < len)
+        {
+            if (*(first + secondChild) < *(first + (secondChild - 1)))
+                secondChild--;
+            *(first + holeIndex) = *(first + secondChild);
+            holeIndex = secondChild;
+            secondChild = 2 * (secondChild + 1);
+        }
+        if (secondChild == len) // only left child case
+        {
+            *(first + holeIndex) = *(first + (secondChild - 1));
+            holeIndex = secondChild - 1;
+        }
+        __PushHeap (first, holeIndex, topIndex, value);
+    }
+    template <class RandomAccessIterator, class T>
+    void __PopHeap (RandomAccessIterator first
+                   , RandomAccessIterator last, RandomAccessIterator result, T value)
+    {
+        *result = *first;
+        __AdjustHeap(first, distance(first, first), distance(first, last), value);
+    }
+    template<class T>
+        void __PopHeapAux(T first, T last, std::random_access_iterator_tag)
+    {
+        __PopHeap(first, prev(last), prev(last), *prev(last));
+    }
+    template <class T>
+        void __MakeHeap (T first, T last, std::random_access_iterator_tag)
+    {
+        if (last - first < 2) return;
+        auto len = distance(first, last);
+        auto holeIndex = (len - 2) / 2;
+
+        while (true)
+        {
+            __AdjustHeap(first, holeIndex, len, *next(first, holeIndex));
+            if (holeIndex == 0) return;
+            holeIndex--;
+        }
+    }
+};
+
+void TryHeap()
+{
+    using namespace std;
+    vector<int> ivec = {0,1,2,3,4,8,9,3,5};
+
+    RM::MakeHeap(ivec.begin(), ivec.end());
+    for (size_t i = 0; i < ivec.size(); ++i)
+        cout << ivec[i] << " ";
+    cout << endl;
+
+    ivec.push_back(7);
+    cout << distance(ivec.begin(), ivec.end())
+         << " " << distance(ivec.begin(), prev(ivec.end())) << endl;
+    RM::PushHeap(ivec.begin(), ivec.end());
+    for (size_t i = 0; i < ivec.size(); ++i)
+        cout << ivec[i] << " ";
+    cout << endl;
+
+    RM::PopHeap(ivec.begin(), ivec.end());
+    cout << ivec.back() << endl;
+    ivec.pop_back();
+
+    for (size_t i = 0; i < ivec.size(); ++i)
+        cout << ivec[i] << " ";
+    cout << endl;
+
+    RM::SortHeap(ivec.begin(), ivec.end());
+    for (size_t i = 0; i < ivec.size(); ++i)
+        cout << ivec[i] << " ";
+    cout << endl;
+}
+\end{Code}
+
+\subsubsection{相關題目}
+No
