@@ -1238,3 +1238,86 @@ private:
 \begindot
 \item Word Break, 見 \S \ref{sec:word-break}
 \myenddot
+
+\section{Word Break III} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:word-break-iii}
+
+
+\subsubsection{描述}
+Given a string s and a dictionary of words dict, add spaces in s to construct a sentence where each word is a valid dictionary word.
+
+Return all such possible sentences.
+
+For example, given  \\
+s = \fn{"iamace"}, \\
+dict = \fn{["i", "a", "am", "ace"]}.
+
+A solution is \fn{["i am ace"]}.
+
+
+\subsubsection{分析}
+This solution can only return 1 combination.
+Reference \myurl{https://www.youtube.com/watch?v=WepWFGxiwRs}
+
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Word Break II
+// 動規，時間複雜度O(n^2)，空間複雜度O(n^2)
+class Solution {
+public:
+    vector<string> wordBreak(string s, unordered_set<string>& dict)
+    {
+        vector<string> result;
+        if (s.size() == 0) return result;
+
+        vector<vector<int> > f(s.size(), vector<int>(s.size(), -1));
+        for (size_t l = 1; l <= s.size(); l++)
+        {
+            for (size_t i = 0; i < s.size() - l + 1; i++)
+            {
+                size_t j = i + l - 1;
+                string temp = s.substr(i, l);
+                if (dict.find(s.substr(i, l)) != dict.end())
+                {
+                    f[i][j] = i;
+                }
+                else
+                {
+                    for (size_t k = i; k < j; k++)
+                    {
+                        if (f[i][k] != -1 && f[k+1][j] != -1)
+                        {
+                            f[i][j] = k + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (f[0][s.size() - 1] == -1) return result; // return when no solution
+
+        int i = 0; int j = s.size() - 1;
+        while (i < j)
+        {
+            int k = f[i][j];
+            if (i == k)
+            {
+                result.push_back(s.substr(i, j - i + 1));
+                break;
+            }
+            result.push_back(s.substr(i, k - i));
+            i = k;
+        }
+        return result;
+    }
+private:
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Word Break, 見 \S \ref{sec:word-break}
+\myenddot
