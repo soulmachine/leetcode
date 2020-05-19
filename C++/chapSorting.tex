@@ -362,6 +362,69 @@ private:
 No
 \newline
 
+\section{Quick sort List} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:quick-sort-list}
+
+
+\subsubsection{描述}
+Quick Sort with singal linked list
+
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{代碼}
+\begin{Code}
+// Not from LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    void QuickSortList(ListNode *&head, ListNode *last = nullptr)
+    {
+        // return when not enough nodes
+        if (head == nullptr || head->next == nullptr) return;
+        if (head == last || head->next == last) return;
+
+        ListNode *pivot = Q_PartitionList(head, last);
+        QuickSortList(head, pivot);
+        if (pivot != nullptr)
+            QuickSortList(pivot->next, last);
+    }
+private:
+    ListNode *Q_PartitionList(ListNode *&head, ListNode* last)
+    {
+        ListNode *pivot = head;
+        ListNode left(-1), right(-1);
+        right.next = last;
+        ListNode *cur = head;
+        while (cur != last)
+        {
+            ListNode *next = cur->next;
+            if (pivot->val >= cur->val)
+            {
+                cur->next = left.next;
+                left.next = cur;
+            }
+            else
+            {
+                cur->next = right.next;
+                right.next = cur;
+            }
+            cur = next;
+        }
+        pivot->next = right.next;
+        head = left.next;
+
+        return pivot;
+    }
+\end{Code}
+
+
+\subsubsection{相關題目}
+No
+\newline
+
 \section{First Missing Positive} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:first-missing-positive}
 
