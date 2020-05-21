@@ -121,3 +121,134 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Network Delay Time} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:network-delay-time}
+
+
+\subsubsection{描述}
+There are N network nodes, labelled 1 to N.
+
+Given times, a list of travel times as directed edges times[i] = (u, v, w), where u is the source node, v is the target node, and w is the time it takes for a signal to travel from source to target.
+
+Now, we send a signal from a certain node K. How long will it take for all nodes to receive the signal? If it is impossible, return -1.
+
+\begin{center}
+\includegraphics[width=100pt]{network-delay-time.png}\\
+\figcaption{Rotate Image}\label{fig:network-delay-time}
+\end{center}
+
+\begin{Code}
+Input: times = [[2,1,1],[2,3,1],[3,4,1]], N = 4, K = 2
+Output: 2
+\end{Code}
+
+\begin{enumerate}
+\item N will be in the range [l, 100]
+\item K will be in the range [l, N]
+\item The length of times will be in the range [l, 6000].
+\item All edges times[i] = (u, v, w) will have l <= u, v <= N and 0 <= w <= 100.
+\end{enumerate}
+\subsubsection{分析}
+廣度優先遍歷
+Use Djikstra Algorithm. Find a minium path from one source to one end.
+
+
+\subsubsection{Djikstra}
+\begin{Code}
+// LeetCode, Clone Graph
+// DFS，時間複雜度O(ELogV)，空間複雜度O(V^2)
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int endPoint, int startPoint)
+    {
+        // key: startNode value: neighbours
+        unordered_map<int, list<GraphNode> > graph = BuildGraph(times);
+        // PrintGraph(graph);
+        vector<int> distCache(endPoint, -1); distCache[startPoint - 1] = 0;
+        set<pair<int, int> > queue; // pair first: node number, pair second: cost
+
+        queue.insert(make_pair(startPoint, 0));
+        while (!queue.empty())
+        {
+            pair<int, int> curNode = *queue.begin();
+            queue.erase(queue.begin());
+
+            if (curNode.first == endPoint) break; // When endPoint find
+
+            const auto& it = graph.find(curNode.first);
+            for (const GraphNode& neighbour : it->second)
+            {
+                int curDist = distCache[curNode.first - 1] + neighbour.m_weight;
+                if (distCache[neighbour.m_nodeNumber - 1] > curDist)
+                {
+                    const auto& qIT = queue.find(
+                                    make_pair(neighbour.m_nodeNumber, neighbour.m_weight));
+                    if (qIT != queue.end())
+                        queue.erase(qIT);
+
+                    distCache[neighbour.m_nodeNumber - 1] = curDist;
+                    queue.insert(make_pair(neighbour.m_nodeNumber, neighbour.m_weight));
+                }
+            }
+        }
+        // return result
+        // PrintDistCache(distCache);
+        return distCache[endPoint - 1];
+    }
+private:
+    struct GraphNode
+    {
+        int m_nodeNumber;
+        int m_weight;
+
+        GraphNode(int to, int weight)
+            : m_nodeNumber(to), m_weight(weight)
+        {
+        }
+    };
+    unordered_map<int, list<GraphNode> > BuildGraph(const vector<vector<int> >& times)
+    {
+        unordered_map<int, list<GraphNode> > result;
+        for (const auto& time : times)
+        {
+            int startNode = time[0];
+            int endNode = time[1];
+            int weight = time[2];
+
+            auto it = result.find(startNode);
+            if (it == result.end())
+            {
+                it = result.insert(it, make_pair(startNode, list<GraphNode>()));
+            }
+            it->second.push_back(GraphNode(endNode, weight));
+        }
+
+        return result;
+    }
+    void PrintDistCache(const vector<int>& distCache)
+    {
+        for (const auto& dist : distCache)
+        {
+            cout << dist << endl;
+        }
+    }
+    void PrintGraph(const unordered_map<int, list<GraphNode> >& graph)
+    {
+        for (const auto& node : graph)
+        {
+            cout << node.first << " ---> ";
+            for (const auto& naboNode : node.second)
+            {
+                cout << "(" << naboNode.m_nodeNumber << "," << naboNode.m_weight << "),";
+            }
+            cout << endl;
+        }
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
