@@ -750,3 +750,47 @@ void TryHeap()
 
 \subsubsection{相關題目}
 No
+
+\section{Partial Sort} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:partial-sort}
+
+
+\subsubsection{描述}
+Partial Sort
+
+
+\subsubsection{分析}
+Learn from STL源碼剖析 侯捷
+
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Partial Sort
+// Partial Sort
+// 時間複雜度O(mlogk)，空間複雜度O(1)
+class Solution {
+public:
+    template<class T>
+    inline void PartialSort(T first, T middle, T last)
+    {
+        typename std::iterator_traits<T>::iterator_category t;
+        __PartialSort(first, middle, last, t);
+    }
+
+private:
+    template <class T>
+        void __PartialSort(T first, T middle, T last, std::random_access_iterator_tag)
+    {
+        MakeHeap(first, middle);
+        for (T i = middle; i < last; ++i)
+        {
+            if (*i < *first)
+                __PopHeap(first, middle, i, *i);
+        }
+        SortHeap(first, middle);
+    }
+}
+\end{Code}
+
+\subsubsection{相關題目}
+No
