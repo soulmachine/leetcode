@@ -155,8 +155,8 @@ public:
         // the maximum distance that has been reached
         int last = 0;
         // the maximum distance that can be reached by using "ret+1" steps
-        int cur = 0;
-        for (int i = 0; i < nums.size(); ++i) {
+        int cur = 1;
+        for (int i = 0; i < nums.size() && i < cur + 1; ++i) {
             if (i > last) {
                 last = cur;
                 ++result;
@@ -164,7 +164,7 @@ public:
             cur = max(cur, i + nums[i]);
         }
 
-        return last >= nums.size() ? result : 0;
+        return (last + 1) >= nums.size() ? result : 0;
     }
 };
 \end{Code}
