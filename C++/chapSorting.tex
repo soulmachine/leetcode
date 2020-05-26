@@ -671,7 +671,7 @@ private:
     {
         // percolate down
         Distance topIndex = holeIndex;
-        Distance secondChild = 2 * holeIndex + 2;
+        Distance secondChild = 2 * (holeIndex + 1);
         while (secondChild < len)
         {
             if (*(first + secondChild) < *(first + (secondChild - 1)))
@@ -704,7 +704,7 @@ private:
     {
         if (last - first < 2) return;
         auto len = distance(first, last);
-        auto holeIndex = (len - 2) / 2;
+        auto holeIndex = len / 2 - 1;
 
         while (true)
         {
