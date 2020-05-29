@@ -1143,6 +1143,115 @@ private:
 \item 無
 \myenddot
 
+\section{Optimal Account Balancing} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:optimal-account-balancing}
+
+
+\subsubsection{描述}
+A group of friends went on holiday and sometimes lent each other money.
+For example, Alice paid for Bill's lunch for \$10.
+Then later Chris gave Alice \$5 for a taxi ride.
+We can model each transaction as a tuple (x, y, z) which means person x gave person y \$z.
+Assuming Alice, Bill, and Chris are person 0, 1, and 2 respectively (0, 1, 2 are the person's ID),
+the transactions can be represented as [[0, 1, 10], [2, 0, 5]].
+
+A transaction will be given as a tuple (x, y, z). Note that x ? y and z > 0.
+Person's IDs may not be linear, e.g. we could have the persons 0, 1, 2 or we could also have the persons 0, 2, 6.
+
+Example 1: \newline
+Input:
+[[0,1,10], [2,0,5]]
+Output:
+2
+Explanation:
+Person \#0 gave person \#1 \$10.
+Person \#2 gave person \#0 \$5.
+Two transactions are needed. One way to settle the debt is person \#1 pays person \#0 and \#2 \$5 each.
+
+Example 2: \newline
+Input:
+[[0,1,10], [1,0,1], [1,2,5], [2,0,5]]
+Output:
+1
+
+Explanation:
+\begin{enumerate}
+    \item Person \#0 gave person \#1 \$10.
+    \item Person \#1 gave person \#0 \$1.
+    \item Person \#1 gave person \#2 \$5.
+    \item Person \#2 gave person \#0 \$5.
+    \item Therefore, person \#1 only need to give person \#0 \$4, and all debt is settled.
+\end{enumerate}
+
+\subsubsection{分析}
+先計算每個人的 balance。然後嘗試所有的可能性，記低最細的交易次數。
+Reference \myurl{https://www.youtube.com/watch?v=I8lLGTgb9LU}
+
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode, Optimal Account Balancing
+// dfs，時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    int minTransfers(const vector<vector<int>>& transactions)
+    {
+        unordered_map<int, int> map; // key: person value: balance
+        for (const auto& tran : transactions)
+        {
+            int personGive = tran[0];
+            int personGet = tran[1];
+            int balance = tran[2];
+
+            auto giveIT = map.find(personGive);
+            if (giveIT == map.end()) giveIT = map.insert(giveIT, make_pair(personGive, 0));
+            auto getIT = map.find(personGet);
+            if (getIT == map.end()) getIT = map.insert(getIT, make_pair(personGet, 0));
+
+            giveIT->second += balance;
+            getIT->second -= balance;
+        }
+
+        vector<int> vec; vec.reserve(map.size());
+        for (const auto& m : map)
+        {
+            vec.push_back(m.second);
+        }
+
+        return dfs(0, vec);
+    }
+private:
+    int dfs(size_t k, vector<int>& vec)
+    {
+        if (k == vec.size()) return 0;
+        int cur = vec[k];
+        if (cur == 0)
+            return dfs(k + 1, vec);
+
+        int minTrans = INT_MAX;
+        for (size_t i = k + 1; i < vec.size(); i++)
+        {
+            int next = vec[i];
+            if (cur * next < 0)
+            {
+                vec[i] = cur + next;
+                minTrans = min(minTrans, 1 + dfs(k + 1, vec));
+                vec[i] = next;
+            }
+
+            if (cur + next == 0) break;
+        }
+
+        return minTrans;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
 
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:dfs-template}
