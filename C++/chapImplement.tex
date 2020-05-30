@@ -1198,3 +1198,140 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Calculate Number of Weeks} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:calculate-number-of-weeks}
+
+\subsubsection{描述}
+Gvien a year, start month, end month and the first week day of that year. Calculate the maximum number of weeks that is included.
+A week must start from Monday to Sunday. There has 29 day in February when the year can be multiple by 4.
+
+\subsubsection{分析}
+Nil
+
+
+\subsubsection{代碼}
+\begin{Code}
+class Solution
+{
+public:
+    Solution() { PrepareDB(); }
+    ~Solution() {}
+
+    int numOfWeeks(int Y, const string& A, const string& B, const string& W)
+    {
+        int startMon = m_strMon2Int[A];
+        int endMon = m_strMon2Int[B];
+        int yearStartWeekDay = m_strWeek2Int[W];
+        // Get the date of first Monday
+        int startDay = GetFirstMonday(Y, startMon, yearStartWeekDay);
+        // Get the date of last Sunday
+        int endDay = GetLastSunday(Y, endMon, yearStartWeekDay);
+
+        // Get the total of days
+        int dayDiff = GetDayDiff(Y, startMon, startDay, endMon, endDay);
+        // return answer
+        return (dayDiff + 1) / 7;
+    }
+private:
+    int GetFirstMonday(int Y, int Mon, int yearStartWeekDay)
+    {
+        int dayDiff = GetDayDiff(Y, 1, 1, Mon, 1);
+        dayDiff %= 7;
+        int wday = (yearStartWeekDay + dayDiff) % 7;
+        int curDay = 1;
+        while (wday != 1)
+        {
+            curDay++;
+            wday++;
+            wday %= 7;
+        }
+
+        return curDay;
+    }
+    int GetLastSunday(int Y, int Mon, int yearStartWeekDay)
+    {
+        int dayDiff = GetDayDiff(Y, 1, 1, Mon, GetMonLength(Y, Mon));
+        dayDiff %= 7;
+        int wday = (yearStartWeekDay + dayDiff) % 7;
+        int curDay = GetMonLength(Y, Mon);
+        while (wday != 0)
+        {
+            curDay--;
+            wday--;
+            if (wday == -1) wday = 6;
+        }
+
+        return curDay;
+    }
+    int GetDayDiff(int Y, int firstMon, int firstDate, int secondMon, int secondDate)
+    {
+        int result = 0;
+        for (int i = firstMon; i < secondMon; i++)
+        {
+            if (i == firstMon)
+                result += GetMonLength(Y, i) - firstDate + 1;
+            else
+                result += GetMonLength(Y, i);
+        }
+        result += secondDate;
+
+        return result - 1;
+    }
+    int GetMonLength(int Y, int Mon)
+    {
+        if (Mon == 2)
+        {
+            if (Y % 4 == 0)
+                return 29;
+            else
+                return 28;
+        }
+        else
+            return m_Mon2Length[Mon];
+    }
+    void PrepareDB()
+    {
+        m_strMon2Int["January"] = 1;
+        m_strMon2Int["February"] = 2;
+        m_strMon2Int["March"] = 3;
+        m_strMon2Int["April"] = 4;
+        m_strMon2Int["May"] = 5;
+        m_strMon2Int["June"] = 6;
+        m_strMon2Int["July"] = 7;
+        m_strMon2Int["August"] = 8;
+        m_strMon2Int["September"] = 9;
+        m_strMon2Int["October"] = 10;
+        m_strMon2Int["November"] = 11;
+        m_strMon2Int["December"] = 12;
+
+        m_Mon2Length[1] = 31;
+        m_Mon2Length[3] = 31;
+        m_Mon2Length[4] = 30;
+        m_Mon2Length[5] = 31;
+        m_Mon2Length[6] = 30;
+        m_Mon2Length[7] = 31;
+        m_Mon2Length[8] = 31;
+        m_Mon2Length[9] = 30;
+        m_Mon2Length[10] = 31;
+        m_Mon2Length[11] = 30;
+        m_Mon2Length[12] = 31;
+
+        m_strWeek2Int["Monday"] = 1;
+        m_strWeek2Int["Tuesday"] = 2;
+        m_strWeek2Int["Wednesday"] = 3;
+        m_strWeek2Int["Thursday"] = 4;
+        m_strWeek2Int["Friday"] = 5;
+        m_strWeek2Int["Saturday"] = 6;
+        m_strWeek2Int["Sunday"] = 0;
+    }
+private:
+    unordered_map<string, int> m_strMon2Int;
+    unordered_map<int, int> m_Mon2Length;
+    unordered_map<string, int> m_strWeek2Int;
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+Nil
