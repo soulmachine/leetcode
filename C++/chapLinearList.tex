@@ -150,6 +150,25 @@ public:
 \end{Code}
 
 
+\subsubsection{代碼3}
+Variable of duplication
+\begin{Code}
+// LeetCode, Remove Duplicates from Sorted Array II
+// @author 
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums, int du) {
+        int index = du;
+        for (int i = du; i < (int)nums.size(); i++) {
+            if (nums[index - du] != nums[i])
+                nums[index++] = nums[i];
+        }
+
+        return index;
+    }
+};
+\end{Code}
 \subsubsection{相關題目}
 
 \begindot
