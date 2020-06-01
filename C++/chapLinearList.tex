@@ -3061,6 +3061,7 @@ public:
     }
 
     void set(int key, int value) {
+        if (this->capacity == 0) return;
         if (cacheMap.find(key) == cacheMap.end()) {
             if (cacheList.size() == capacity) { //刪除鏈表尾部節點（最少訪問的節點）
                 cacheMap.erase(cacheList.back().key);
