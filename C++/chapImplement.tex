@@ -242,6 +242,41 @@ private:
     }
 };
 \end{Code}
+\subsubsection{代碼}
+\begin{Code}
+//LeetCode, Merge Interval
+// Sort it and always push back into a reserved vector
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        // sort it first
+        sort(intervals.begin(), intervals.end(), [&](const auto& first, const auto& second)
+             {
+                return first[0] < second[0]; 
+             });
+        vector<vector<int>> result;
+        result.reserve(intervals.size());
+        
+        for (const auto& interval : intervals)
+            mergeBack(result, interval);
+        
+        return result;
+    }
+private:
+    void mergeBack(vector<vector<int>>& result, const vector<int>& interval) {
+        if (result.size() == 0) result.push_back(interval);
+        
+        int& start = result.back()[0];
+        int& end = result.back()[1];
+        
+        if (interval[0] >= start && interval[0] <= end)
+            end = max(end, interval[1]);
+        else
+            result.push_back(interval);
+    }
+};
+\end{Code}
 
 
 \subsubsection{相關題目}
