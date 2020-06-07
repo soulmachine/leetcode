@@ -2067,6 +2067,90 @@ public:
 \item  Single Number, 見 \S \ref{sec:single-number}
 \myenddot
 
+\subsection{Duplicate Zeros}
+\label{sec:duplicate-zeros}
+
+
+\subsubsection{描述}
+Given a fixed length array arr of integers, duplicate each occurrence of zero, shifting the remaining elements to the right.
+
+Note that elements beyond the length of the original array are not written.
+
+Do the above modifications to the input array in place, do not return anything from your function.
+
+
+\subsubsection{分析}
+Space Complexity O(1). Find the new last, loop from back and handle the edge case of the last zero without duplicate.
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Duplicate Zeros
+// 時間複雜度O(n)，空間複雜度O(1)
+class solution{
+public:
+    void duplicateZeros(vector<int>& arr) {
+        int N = arr.size();
+        if (N < 2) return;
+        
+        // count for new last
+        int last = 0;
+        for (int i = 0; i < N && last < N; i++, last++) {
+            if (arr[last] == 0)
+                i++;
+            if (i == N) { // handle if the last zero need to duplicate
+                arr[i-1] = arr[last];
+                last--;
+                N--;
+            }
+        }
+
+        for (int i = last - 1, right = N - 1; i >= 0 && right >= 0; i--, right--) {
+            if (arr[i] == 0) {
+                arr[right--] = 0;
+                arr[right] = 0;
+            }
+            else
+                arr[right] = arr[i];
+        }
+    }
+};
+\end{Code}
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Duplicate Zeros
+// 時間複雜度O(n)，空間複雜度O(n)
+class solution{
+public:
+    void duplicateZeros(vector<int>& arr) {
+        int N = arr.size();
+        if (N < 2) return;
+        
+        // count for zeros
+        int count = 0;
+        for (const auto& a : arr) if (a == 0) count++;
+        
+        arr.resize(N + count);
+        
+        for (int left = N - 1, right = N + count - 1;
+                 left >= 0 && right >= 0; left-- , right--) {
+            if (arr[left] == 0) {
+                arr[right--] = 0;
+                arr[right] = 0;
+            }
+            else
+                arr[right] = arr[left];
+        }
+        
+        arr.resize(N);
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
 
 \section{單鏈表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
