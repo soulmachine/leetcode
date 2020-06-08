@@ -160,12 +160,15 @@ Use Djikstra Algorithm. Find a minium path from one source to one end.
 // DFS，時間複雜度O(ELogV)，空間複雜度O(V^2)
 class Solution {
 public:
-    int networkDelayTime(vector<vector<int>>& times, int endPoint, int startPoint)
+int networkDelayTime(vector<vector<int>>& times, int endPoint, int startPoint)
     {
         // key: startNode value: neighbours
         unordered_map<int, list<GraphNode> > graph = BuildGraph(times);
+        // fail when start point cannot be reached
+        if (graph.find(startPoint) == graph.end()) return -1;
+        
         // PrintGraph(graph);
-        vector<int> distCache(endPoint, -1); distCache[startPoint - 1] = 0;
+        vector<int> distCache(endPoint, INT_MAX); distCache[startPoint - 1] = 0;
         set<pair<int, int> > queue; // pair first: node number, pair second: cost
 
         queue.insert(make_pair(startPoint, 0));
@@ -177,24 +180,26 @@ public:
             if (curNode.first == endPoint) break; // When endPoint find
 
             const auto& it = graph.find(curNode.first);
+            if (it == graph.end()) continue; // skip if no neighbour
             for (const GraphNode& neighbour : it->second)
             {
                 int curDist = distCache[curNode.first - 1] + neighbour.m_weight;
-                if (distCache[neighbour.m_nodeNumber - 1] > curDist)
+                int oldDist = distCache[neighbour.m_nodeNumber - 1];
+                if (oldDist > curDist)
                 {
                     const auto& qIT = queue.find(
-                                    make_pair(neighbour.m_nodeNumber, neighbour.m_weight));
+                                    make_pair(neighbour.m_nodeNumber, oldDist));
                     if (qIT != queue.end())
                         queue.erase(qIT);
 
                     distCache[neighbour.m_nodeNumber - 1] = curDist;
-                    queue.insert(make_pair(neighbour.m_nodeNumber, neighbour.m_weight));
+                    queue.insert(make_pair(neighbour.m_nodeNumber, curDist));
                 }
             }
         }
         // return result
         // PrintDistCache(distCache);
-        return distCache[endPoint - 1];
+        return distCache[endPoint - 1] == INT_MAX ? -1 : distCache[endPoint - 1];
     }
 private:
     struct GraphNode
