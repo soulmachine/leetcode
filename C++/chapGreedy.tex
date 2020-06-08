@@ -150,21 +150,21 @@ public:
 // 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
-    int jump(const vector<int>& nums) {
-        int result = 0;
+    int jump(vector<int>& nums) {
         // the maximum distance that has been reached
-        int last = 0;
+        int last = 1;
         // the maximum distance that can be reached by using "ret+1" steps
         int cur = 1;
-        for (int i = 0; i < nums.size() && i < cur + 1; ++i) {
-            if (i > last) {
+        int step = 0;
+        for (int i = 0; i < last && last < (int)nums.size(); i++) {
+            cur = max(cur, i + 1 + nums[i]);
+            if (i + 1 >= last) {
                 last = cur;
-                ++result;
+                step++;
             }
-            cur = max(cur, i + nums[i]);
         }
 
-        return (last + 1) >= nums.size() ? result : 0;
+        return last >= (int)nums.size() ? step : 0;
     }
 };
 \end{Code}
