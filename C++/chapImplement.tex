@@ -1370,11 +1370,15 @@ private:
 
 \subsubsection{相關題目}
 Nil
+
 \section{Integer to English Words} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:integer-to-english-words}
 
 \subsubsection{描述}
 Bloomberg questions
+\newline
+Input: 123\newline
+Output: One Hundred Twenty Three\newline
 
 \subsubsection{分析}
 Nil
@@ -1435,6 +1439,87 @@ public:
         }
 
         return result.substr(1, result.size() - 1);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+Nil
+
+\section{String Compression} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:string-compression}
+
+\subsubsection{描述}
+Bloomberg questions
+
+\begin{Code}
+Example 1:
+Input:
+    ["a","a","b","b","c","c","c"]
+Output:
+    Return 6, and the first 6 characters of the
+        input array should be: ["a","2","b","2","c","3"]
+Explanation:
+    "aa" is replaced by "a2". "bb" is replaced by "b2". "ccc" is replaced by "c3".
+
+Example 2:
+Input:
+    ["a"]
+Output:
+    Return 1, and the first 1 characters of the input array should be: ["a"]
+Explanation:
+    Nothing is replaced.
+\end{Code}
+
+\subsubsection{分析}
+Nil
+
+
+\subsubsection{代碼}
+\begin{Code}
+class Solution
+{
+public:
+    int compress(vector<char>& chars) {
+        auto PushNum = [&](int& count, int& index)
+        {
+            int d = 1;
+            while (count / d >= 10) // find the largest decimal
+                d *= 10;
+                    
+            while (d > 0)
+            {
+                chars[index++] = (char)(count / d + '0');
+                count %= d;
+                d /= 10;
+            }
+        };
+        // use 2 pointers
+        int count = 1;
+        int index = 0;
+        for (int i = 1; i < (int)chars.size(); i++)
+        {
+            if (chars[i] == chars[i-1])
+            {
+                count++;
+            }
+            else
+            {
+                chars[index++] = chars[i-1];
+                if (count != 1)
+                {
+                    // get num to char
+                    PushNum(count, index);
+                    count = 1;
+                }
+            }
+        }
+        chars[index++] = chars.back();
+        if (count > 1)
+            PushNum(count, index);
+        
+        return index;
     }
 };
 \end{Code}
