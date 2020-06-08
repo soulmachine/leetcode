@@ -26,3 +26,51 @@ vector<vector<int> > ary(row_num, vector<int>(col_num, 0));
 \end{Code}
 
 \subsubsection{使用reserve來避免不必要的重新分配}
+\subsubsection{Things about binary search}
+The difference between using index or length.
+
+\begin{Code}
+// LeetCode, 
+// 時間複雜度O(logn)，空間複雜度O(1)
+class solution{
+public:
+    int findIndex(const vector<int>& vec, int target) {
+        int left, right;
+        left = 0; right = (int)vec.size() - 1; // right is using index
+        
+        while (left <= right) { // this line is different
+            int mid = left + (right - left) / 2;
+            if (vec[mid] < target)
+                left = ++mid;
+            else if (vec[mid] > target)
+                right = --mid; // this line is different
+            else
+                return mid;
+        }
+        return -1;
+    }
+};
+\end{Code}
+
+\begin{Code}
+// LeetCode, 
+// 時間複雜度O(logn)，空間複雜度O(1)
+class solution{
+public:
+    int findIndex(const vector<int>& vec, int target) {
+        int left, right;
+        left = 0; right = (int)vec.size(); // right is using length 
+        
+        while (left < right) { // this line is different
+            int mid = left + (right - left) / 2;
+            if (vec[mid] < target)
+                left = ++mid;
+            else if (vec[mid] > target)
+                right = mid; // this line is different
+            else
+                return mid;
+        }
+        return -1;
+    }
+};
+\end{Code}
