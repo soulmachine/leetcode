@@ -198,7 +198,7 @@ public:
         // pick the max dist, return -1 if not all node is visited
         if ((int)dist.size() == N)
             return max_element(dist.begin(), dist.end()
-                                , [&](const pair<int, int>& first, const pair<int, int>& second)
+              , [&](const pair<int, int>& first, const pair<int, int>& second)
                                 {
                                     return first.second < second.second;
                                 })->second;
@@ -217,7 +217,8 @@ public:
     int networkDelayTime(vector<vector<int>>& times, int N, int K)
     {
         // Build adjacency list
-        vector<vector<pair<int, int>>> adjList(N + 1); // index 0 is dummy for easy implementation
+        // index 0 is dummy for easy implementation
+        vector<vector<pair<int, int>>> adjList(N + 1);
         for (const auto& v : times)
             adjList[v[0]].emplace_back(v[1], v[2]);
 
