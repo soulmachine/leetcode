@@ -157,98 +157,88 @@ Use Djikstra Algorithm. Find a minium path from one source to one end.
 \subsubsection{Djikstra}
 \begin{Code}
 // LeetCode, Clone Graph
-// DFS，時間複雜度O(ELogV)，空間複雜度O(V^2)
+// DFS with graph，時間複雜度O(ELogV)，空間複雜度O(V^2)
 class Solution {
 public:
-int networkDelayTime(vector<vector<int>>& times, int endPoint, int startPoint)
+    struct Node {
+        int m_node;
+        int m_dist;
+
+        Node (int node, int dist)
+            : m_node(node), m_dist(dist) {}
+    };
+    int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+        // create graph
+        unordered_map<int, list<Node>> graph;  // key: nodeNumber value: nodes
+        for (const auto& t : times) // startNode: t[0], endNode: t[1], dist: t[2]
+            graph[t[0]].push_back(Node(t[1], t[2]));
+
+        unordered_map<int, int> dist; // key: nodeNumber value: dist
+        multimap<int, int> dq; // djikstra queue, key: dist value: nodeNumber
+
+        // do until no more node in queue
+        dq.insert(make_pair(0, K));
+        while (!dq.empty()) {
+            pair<int, int> cur = *dq.begin();
+            dq.erase(dq.begin());
+
+            // filter out if shortest path is found
+            if (dist.find(cur.second) != dist.end()) continue;
+            // record the shortest parth
+            dist.insert(make_pair(cur.second, cur.first));
+            // push the neighbour to dq
+            auto it = graph.find(cur.second);
+            if (it == graph.end()) continue;
+            for (const auto& nei : it->second) {
+                if (dist.find(nei.m_node) != dist.end()) continue;
+                dq.insert(make_pair(nei.m_dist + cur.first, nei.m_node));
+            }
+        }
+
+        // pick the max dist, return -1 if not all node is visited
+        if ((int)dist.size() == N)
+            return max_element(dist.begin(), dist.end()
+                                , [&](const pair<int, int>& first, const pair<int, int>& second)
+                                {
+                                    return first.second < second.second;
+                                })->second;
+        else
+            return -1;
+    }
+};
+
+\end{Code}
+\subsubsection{Djikstra}
+\begin{Code}
+// LeetCode, Clone Graph
+// DFS with adjacency list，時間複雜度O(ELogV)，空間複雜度O(V^2)
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int N, int K)
     {
-        // key: startNode value: neighbours
-        unordered_map<int, list<GraphNode> > graph = BuildGraph(times);
-        // fail when start point cannot be reached
-        if (graph.find(startPoint) == graph.end()) return -1;
-        
-        // PrintGraph(graph);
-        vector<int> distCache(endPoint, INT_MAX); distCache[startPoint - 1] = 0;
-        set<pair<int, int> > queue; // pair first: node number, pair second: cost
+        // Build adjacency list
+        vector<vector<pair<int, int>>> adjList(N + 1); // index 0 is dummy for easy implementation
+        for (const auto& v : times)
+            adjList[v[0]].emplace_back(v[1], v[2]);
 
-        queue.insert(make_pair(startPoint, 0));
-        while (!queue.empty())
-        {
-            pair<int, int> curNode = *queue.begin();
-            queue.erase(queue.begin());
-
-            if (curNode.first == endPoint) break; // When endPoint find
-
-            const auto& it = graph.find(curNode.first);
-            if (it == graph.end()) continue; // skip if no neighbour
-            for (const GraphNode& neighbour : it->second)
-            {
-                int curDist = distCache[curNode.first - 1] + neighbour.m_weight;
-                int oldDist = distCache[neighbour.m_nodeNumber - 1];
-                if (oldDist > curDist)
-                {
-                    const auto& qIT = queue.find(
-                                    make_pair(neighbour.m_nodeNumber, oldDist));
-                    if (qIT != queue.end())
-                        queue.erase(qIT);
-
-                    distCache[neighbour.m_nodeNumber - 1] = curDist;
-                    queue.insert(make_pair(neighbour.m_nodeNumber, curDist));
+        vector<int> dist(N + 1, INT_MAX);
+        // initialize pq and source vertex distance
+        dist[K] = 0;
+        set<pair<int, int>> pq {{dist[K], K}};
+        while (!pq.empty()) {
+            const auto u = pq.begin()->second;
+            pq.erase(pq.begin()); // pop the top, i.e., first element in set
+            for (const auto& [v, w]: adjList[u]) {
+                if (dist[u] + w < dist[v]) { // if edge can be relaxed
+                    pq.erase({dist[v], v}); // remove old info
+                    dist[v] = dist[u] + w;  // update distance
+                    pq.emplace(dist[v], v); // insert new info
                 }
             }
         }
-        // return result
-        // PrintDistCache(distCache);
-        return distCache[endPoint - 1] == INT_MAX ? -1 : distCache[endPoint - 1];
-    }
-private:
-    struct GraphNode
-    {
-        int m_nodeNumber;
-        int m_weight;
 
-        GraphNode(int to, int weight)
-            : m_nodeNumber(to), m_weight(weight)
-        {
-        }
-    };
-    unordered_map<int, list<GraphNode> > BuildGraph(const vector<vector<int> >& times)
-    {
-        unordered_map<int, list<GraphNode> > result;
-        for (const auto& time : times)
-        {
-            int startNode = time[0];
-            int endNode = time[1];
-            int weight = time[2];
-
-            auto it = result.find(startNode);
-            if (it == result.end())
-            {
-                it = result.insert(it, make_pair(startNode, list<GraphNode>()));
-            }
-            it->second.push_back(GraphNode(endNode, weight));
-        }
-
-        return result;
-    }
-    void PrintDistCache(const vector<int>& distCache)
-    {
-        for (const auto& dist : distCache)
-        {
-            cout << dist << endl;
-        }
-    }
-    void PrintGraph(const unordered_map<int, list<GraphNode> >& graph)
-    {
-        for (const auto& node : graph)
-        {
-            cout << node.first << " ---> ";
-            for (const auto& naboNode : node.second)
-            {
-                cout << "(" << naboNode.m_nodeNumber << "," << naboNode.m_weight << "),";
-            }
-            cout << endl;
-        }
+        const int longestTime = *max_element(dist.begin() + 1, dist.end());
+        return longestTime == INT_MAX ? -1 : longestTime;
     }
 };
 \end{Code}
