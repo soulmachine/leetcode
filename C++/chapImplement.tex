@@ -150,7 +150,7 @@ struct Interval {
     Interval() : start(0), end(0) { }
     Interval(int s, int e) : start(s), end(e) { }
 };
- 
+
 //LeetCode, Insert Interval
 // 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
@@ -208,7 +208,7 @@ struct Interval {
     Interval() : start(0), end(0) { }
     Interval(int s, int e) : start(s), end(e) { }
 };
- 
+
 //LeetCode, Merge Interval
 //複用一下Insert Intervals的解法即可
 // 時間複雜度O(n1+n2+...)，空間複雜度O(1)
@@ -253,23 +253,23 @@ public:
         // sort it first
         sort(intervals.begin(), intervals.end(), [&](const auto& first, const auto& second)
              {
-                return first[0] < second[0]; 
+                return first[0] < second[0];
              });
         vector<vector<int>> result;
         result.reserve(intervals.size());
-        
+
         for (const auto& interval : intervals)
             mergeBack(result, interval);
-        
+
         return result;
     }
 private:
     void mergeBack(vector<vector<int>>& result, const vector<int>& interval) {
         if (result.size() == 0) result.push_back(interval);
-        
+
         int& start = result.back()[0];
         int& end = result.back()[1];
-        
+
         if (interval[0] >= start && interval[0] <= end)
             end = max(end, interval[1]);
         else
@@ -534,7 +534,7 @@ public:
 \subsubsection{描述}
 You are given a string, $S$, and a list of words, $L$, that are all of the same length. Find all starting indices of substring(s) in $S$ that is a concatenation of each word in $L$ exactly once and without any intervening characters.
 
-For example, given: 
+For example, given:
 \begin{Code}
 S: "barfoothefoobarman"
 L: ["foo", "bar"]
@@ -698,16 +698,16 @@ Note: Could you optimize your algorithm to use only $O(k)$ extra space?
 // 滾動數組，時間複雜度O(n^2)，空間複雜度O(n)
 class Solution {
 public:
-	vector<int> getRow(int rowIndex) {
-		vector<int> array;
-		for (int i = 0; i <= rowIndex; i++) {
-			for (int j = i - 1; j > 0; j--){
-				array[j] = array[j - 1] + array[j];
-			}
-			array.push_back(1);
-		}
-		return array;
-	}
+  vector<int> getRow(int rowIndex) {
+    vector<int> array;
+    for (int i = 0; i <= rowIndex; i++) {
+      for (int j = i - 1; j > 0; j--){
+        array[j] = array[j - 1] + array[j];
+      }
+      array.push_back(1);
+    }
+    return array;
+  }
 };
 \end{Code}
 
@@ -1169,8 +1169,8 @@ public:
                 }
                 int count = 0;
                 for (int k = 0; k < points.size(); k++) {
-                    if ((0 == sign && a * points[k].y == c +  b * points[k].x) || 
-                        (1 == sign&&points[k].x == points[j].x)) 
+                    if ((0 == sign && a * points[k].y == c +  b * points[k].x) ||
+                        (1 == sign&&points[k].x == points[j].x))
                         count++;
                 }
                 if (count > result) result = count;
@@ -1207,7 +1207,7 @@ public:
                         continue;
                     }
                 } else {
-                    slope = 1.0 * (points[i].y - points[j].y) / 
+                    slope = 1.0 * (points[i].y - points[j].y) /
                         (points[i].x - points[j].x);
                 }
 
@@ -1364,6 +1364,78 @@ private:
     unordered_map<string, int> m_strMon2Int;
     unordered_map<int, int> m_Mon2Length;
     unordered_map<string, int> m_strWeek2Int;
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+Nil
+\section{Integer to English Words} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:integer-to-english-words}
+
+\subsubsection{描述}
+Bloomberg questions
+
+\subsubsection{分析}
+Nil
+
+
+\subsubsection{代碼}
+\begin{Code}
+class Solution
+{
+public:
+    string numberToWords(int num) {
+        if (num == 0) return "Zero";
+
+        const vector<string> bigUnit{"","Thousand","Million","Billion"};
+        const vector<string> strNum{"","One","Two","Three","Four","Five"
+          ,"Six","Seven","Eight","Nine"
+          ,"Ten","Eleven","Twelve","Thirteen"
+          ,"Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"};
+        const vector<string> str10Num{"","","Twenty","Thirty","Forty"
+          ,"Fifty","Sixty","Seventy","Eighty","Ninety"};
+
+        string result;
+
+        while (num > 0) {
+            int t = num;
+            int step = 0;
+            int d = 1;  // one unit
+            while (t >= 1000) {
+                t /= 1000;
+                d *= 1000;
+                step++;
+            }
+
+            int u3 = t / 100; t %= 100;
+            if (t > 19) {
+                int u2 = t / 10; t %= 10;
+                int u1 = t;
+
+                if (u3 > 0)
+                    result += " " + strNum[u3] + " " + "Hundred";
+
+                result += " " + str10Num[u2];
+
+                // prevent edge case, example 20, u1 == 0
+                if (u1 > 0) result += " " + strNum[u1];
+            }
+            else {
+                if (u3 > 0)
+                    result += " " + strNum[u3] + " " + "Hundred";
+                if (t != 0)
+                    result += " " + strNum[t];
+            }
+            // handle big unit
+            if (step > 0) result += " " + bigUnit[step];
+
+            if (num < 1000) break;
+            num %= d;
+        }
+
+        return result.substr(1, result.size() - 1);
+    }
 };
 \end{Code}
 

@@ -154,7 +154,7 @@ public:
 Variable of duplication
 \begin{Code}
 // LeetCode, Remove Duplicates from Sorted Array II
-// @author 
+// @author
 // 時間複雜度O(n)，空間複雜度O(1)
 class Solution {
 public:
@@ -346,7 +346,7 @@ public:
                     + find_kth(A.begin(), m, B.begin(), n, total / 2 + 1)) / 2.0;
     }
 private:
-    static int find_kth(std::vector<int>::const_iterator A, int m, 
+    static int find_kth(std::vector<int>::const_iterator A, int m,
             std::vector<int>::const_iterator B, int n, int k) {
         //always assume that m is equal or smaller than n
         if (m > n) return find_kth(B, n, A, m, k);
@@ -579,7 +579,7 @@ class Solution {
         if (nums.size() < 3) return result;
         sort(nums.begin(), nums.end());
         const int target = 0;
-		
+
         auto last = nums.end();
         for (auto i = nums.begin(); i < last-2; ++i) {
             auto j = i+1;
@@ -686,7 +686,7 @@ Note:
 \item The solution set must not contain duplicate quadruplets.
 \myenddot
 
-For example, given array \code{S = \{1 0 -1 0 -2 2\}}, and \code{target = 0}. 
+For example, given array \code{S = \{1 0 -1 0 -2 2\}}, and \code{target = 0}.
 
 A solution set is:
 \begin{Code}
@@ -1261,7 +1261,7 @@ public:
 \subsubsection{描述}
 Given $n$ non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-For example, 
+For example,
 Given \code{\[0,1,0,2,1,0,1,3,2,1,2,1\]}, return 6.
 
 \begin{center}
@@ -2091,7 +2091,7 @@ public:
     void duplicateZeros(vector<int>& arr) {
         int N = arr.size();
         if (N < 2) return;
-        
+
         // count for new last
         int last = 0;
         for (int i = 0; i < N && last < N; i++, last++) {
@@ -2125,13 +2125,13 @@ public:
     void duplicateZeros(vector<int>& arr) {
         int N = arr.size();
         if (N < 2) return;
-        
+
         // count for zeros
         int count = 0;
         for (const auto& a : arr) if (a == 0) count++;
-        
+
         arr.resize(N + count);
-        
+
         for (int left = N - 1, right = N + count - 1;
                  left >= 0 && right >= 0; left-- , right--) {
             if (arr[left] == 0) {
@@ -2141,7 +2141,7 @@ public:
             else
                 arr[right] = arr[left];
         }
-        
+
         arr.resize(N);
     }
 };
@@ -3091,6 +3091,84 @@ public:
 \item 無
 \myenddot
 
+\subsection{Palindrome Linked List}
+\label{sec:palindrome-list}
+
+
+\subsubsection{描述}
+Given a singly linked list, determine if it is a palindrome.
+
+For example,
+Given \code{1->2}, return false.
+Given \code{1->2->2->1}, return true;
+Given \code{1->0->1}, return true;
+
+
+\subsubsection{分析}
+Cut in middle, reverse, compare for difference, recover, return result
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Palindrome List
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if (!head || head->next == nullptr) return true;
+
+        // go to half
+        ListNode *slow, *fast; slow = fast = head;
+        while (fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        fast = slow->next;
+        slow->next = nullptr; // cut
+
+        // reverse half
+        ListNode *head2 = reverseList(fast);
+
+        // check if not equal
+        bool result = true;
+        for (ListNode *l1 = head, *l2 = head2;
+            l1 && l2;
+            l1 = l1->next, l2 = l2->next) {
+            if (l1->val != l2->val) {
+                result = false;
+                break;
+            }
+        }
+
+        // recover
+        slow->next = reverseList(head2);
+
+        // return result
+        return result;
+    }
+private:
+    ListNode* reverseList(ListNode* head) {
+        if (!head || head->next == nullptr) return head;
+
+        ListNode *prev, *cur;
+        prev = head; cur = prev->next;
+        while (cur) {
+            ListNode *next = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = next;
+        }
+        head->next = nullptr;
+
+        return prev;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
 
 \subsection{LRU Cache}
 \label{sec:lru-cache}
@@ -3115,7 +3193,7 @@ Design and implement a data structure for Least Recently Used (LRU) cache. It sh
 \begin{itemize}
 \item{越靠近鏈表頭部，表示節點上次訪問距離現在時間最短，尾部的節點表示最近訪問最少}
 \item{訪問節點時，如果節點存在，把該節點交換到鏈表頭部，同時更新hash表中該節點的地址}
-\item{插入節點時，如果cache的size達到了上限capacity，則刪除尾部節點，同時要在hash表中刪除對應的項；新節點插入鏈表頭部}              
+\item{插入節點時，如果cache的size達到了上限capacity，則刪除尾部節點，同時要在hash表中刪除對應的項；新節點插入鏈表頭部}
 \end{itemize}
 
 
@@ -3137,9 +3215,9 @@ public:
 
     int get(int key) {
         if (cacheMap.find(key) == cacheMap.end()) return -1;
-        
+
         // 把當前訪問的節點移到鏈表頭部，並且更新map中該節點的地址
-        cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]); 
+        cacheList.splice(cacheList.begin(), cacheList, cacheMap[key]);
         cacheMap[key] = cacheList.begin();
         return cacheMap[key]->value;
     }
@@ -3173,4 +3251,3 @@ private:
 \begindot
 \item 無
 \myenddot
-
