@@ -1247,6 +1247,128 @@ private:
 };
 \end{Code}
 
+\section{Candy Crush II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:candy-crush-ii}
+
+
+\subsubsection{描述}
+This question is about implementing a basic elimination algorithm for Candy Crush. This example for demo only. Greedy crushing the longest possible solution.
+
+\subsubsection{分析}
+DFS to find the longest possible crush
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode, Candy Crush II
+// dfs，時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    struct Point
+    {
+        int m_x;
+        int m_y;
+
+        Point(int x, int y) : m_x(x), m_y(y) {}
+    };
+    void printCandy(vector<vector<int>>& board) {
+        for (const auto& r : board)
+        {
+            for (const auto& c : r)
+                cout << c << "\t";
+            cout << endl;
+        }
+    }
+    vector<vector<int>> candyCrush(vector<vector<int>>& board) {
+        m_M = board.size();
+        m_N = board[0].size();
+
+        bool isNeedScan = true;
+        while (isNeedScan)
+        {
+            vector<Point> points = DoCrush(board);
+            if (points.size() >= 3)
+            {
+                DoDrop(board, points);
+                isNeedScan = true;
+            }
+            else
+                isNeedScan = false;
+
+        }
+        return board;
+    }
+private:
+    void FindLongestPath(vector<vector<bool>>& visited
+      , vector<vector<int>>& board, int i, int j, int target, vector<Point>& points)
+    {
+        if (i < 0 || j < 0 || i >= m_M || j >= m_N || board[i][j] != target) return;
+        if (visited[i][j]) return;
+
+        if (board[i][j] == target)
+            points.emplace_back(i, j);
+
+        visited[i][j] = true;
+        FindLongestPath(visited, board, i + 1, j, target, points);
+        FindLongestPath(visited, board, i, j + 1, target, points);
+        FindLongestPath(visited, board, i - 1, j, target, points);
+        FindLongestPath(visited, board, i, j - 1, target, points);
+        visited[i][j] = false;
+
+        return;
+    }
+    vector<Point> DoCrush(vector<vector<int>>& board)
+    {
+        for (int i = 0; i < m_M; i++)
+        {
+            for (int j = 0; j < m_N; j++)
+            {
+                if (board[i][j] == 0) continue;
+
+                vector<Point> points;
+                vector<vector<bool>> visited(m_M, vector<bool>(m_N, false));
+                FindLongestPath(visited, board, i, j, board[i][j], points);
+
+                if (points.size() >= 3)
+                {
+                    // Clear the candy
+                    for (const auto& p : points)
+                        board[p.m_x][p.m_y] = 0;
+                    return points;
+                }
+            }
+        }
+        return vector<Point>();
+    }
+    void DoDrop(vector<vector<int>>& board, vector<Point>& points)
+    {
+        for (const auto& p : points)
+        {
+            DoDropCol(board, p.m_y);
+        }
+    }
+    void DoDropCol(vector<vector<int>>& board, int col)
+    {
+        // find the lowest zero
+        int lowestZ = m_M - 1;
+        for (; lowestZ >= 0; lowestZ--)
+            if (board[lowestZ][col] == 0) break;
+        // find the highest zero
+        int highestZ = lowestZ;
+        for (; highestZ >= 0; highestZ--)
+            if (board[highestZ][col] != 0) break;
+        // move numbers one by one
+        for (int i = highestZ; i >= 0; i--)
+            board[lowestZ--][col] = board[i][col];
+        // padding zero if needed
+        for (; lowestZ >= 0; lowestZ--)
+            board[lowestZ][col] = 0;
+    }
+private:
+    int m_M;
+    int m_N;
+};
+\end{Code}
+
 
 \subsubsection{相關題目}
 \begindot
