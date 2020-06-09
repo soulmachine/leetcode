@@ -2152,6 +2152,55 @@ public:
 \item 無
 \myenddot
 
+\subsection{Subarray Sum Equals K}
+\label{sec:subarray-sum-equals-k}
+
+
+\subsubsection{描述}
+Given an array of integers and an integer \textbf{k}, you need to find the total number of continuous subarrays whose sum equals to \textbf{k}.
+
+\begin{Code}
+  Example 1:
+  Input: nums = [1,1,1], k = 2
+  Output: 2
+\end{Code}
+
+\subsubsection{分析}
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Duplicate Zeros
+// 時間複雜度O(n)，空間複雜度O(n)
+class solution{
+public:
+    // 用 hash map 去存放累加總數和出現的次數
+    // 設 sum[i] 為累加總數由 0 到 i
+    // 若 sum[j] - sum[i] = k, 那麼由 i 到 j 之間便會有一個 k 總的子列
+
+    unordered_map<int, int> cache; // key: cumulative sum, value: count
+    cache[0] = 1; // 一定有 sum = 0
+
+    int sum = 0;
+    int count = 0;
+    for (const auto& n : nums) {
+        sum += n;
+
+        auto it = cache.find(sum - k);
+        if (it != cache.end())
+        count += it->second;
+
+        cache[sum]++; // 加到 hash map
+    }
+
+    return count;
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
 \section{單鏈表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 單鏈表節點的定義如下：
