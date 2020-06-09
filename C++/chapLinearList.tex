@@ -2173,26 +2173,29 @@ Given an array of integers and an integer \textbf{k}, you need to find the total
 // 時間複雜度O(n)，空間複雜度O(n)
 class solution{
 public:
-    // 用 hash map 去存放累加總數和出現的次數
-    // 設 sum[i] 為累加總數由 0 到 i
-    // 若 sum[j] - sum[i] = k, 那麼由 i 到 j 之間便會有一個 k 總的子列
+    int subarraySum(vector<int>& nums, int k) {
+        // 用 hash map 去存放累加總數和出現的次數
+        // 設 sum[i] 為累加總數由 0 到 i
+        // 若 sum[j] - sum[i] = k, 那麼由 i 到 j 之間便會有一個 k 總的子列
 
-    unordered_map<int, int> cache; // key: cumulative sum, value: count
-    cache[0] = 1; // 一定有 sum = 0
+        unordered_map<int, int> cache; // key: cumulative sum, value: count
+        cache[0] = 1; // 一定有 sum = 0
 
-    int sum = 0;
-    int count = 0;
-    for (const auto& n : nums) {
-        sum += n;
+        int sum = 0;
+        int count = 0;
+        for (const auto& n : nums)
+        {
+            sum += n;
 
-        auto it = cache.find(sum - k);
-        if (it != cache.end())
-        count += it->second;
+            auto it = cache.find(sum - k);
+            if (it != cache.end())
+                count += it->second;
 
-        cache[sum]++; // 加到 hash map
+            cache[sum]++; // 加到 hash map
+        }
+
+        return count;
     }
-
-    return count;
 };
 \end{Code}
 
