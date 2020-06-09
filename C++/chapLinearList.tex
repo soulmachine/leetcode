@@ -3364,6 +3364,80 @@ private:
 };
 \end{Code}
 
+\subsection{Add Two Numbers II}
+\label{sec:add-two-numbers-ii}
+
+
+\subsubsection{描述}
+You are given two \textbf{non-empty} linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+
+Input: {\small \fontspec{Latin Modern Mono} (7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)}
+
+Output: {\small \fontspec{Latin Modern Mono} 7 -> 8 -> 0 -> 7}
+
+
+\subsubsection{分析}
+跟Add Binary（見 \S \ref{sec:add-binary}）很類似
+
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Add Two Numbers II
+// 跟Add Binary 很類似
+// 時間複雜度O(m+n)，空間複雜度O(1)
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        // 換成雙向容器 (string)
+        // 由尾至頭推進，使用插頭法
+        // convert to string
+        string s1 = ListToStr(l1);
+        string s2 = ListToStr(l2);
+
+        int carry = 0;
+        ListNode dummy(-1, nullptr);
+        // add stirng and create list
+        for (auto r1 = s1.rbegin(), r2 = s2.rbegin();
+             r1 != s1.rend() || r2 != s2.rend();
+             r1 = r1 != s1.rend() ? next(r1) : r1, r2 = r2 != s2.rend() ? next(r2) : r2)
+        {
+            int v1 = r1 != s1.rend() ? *r1 - '0' : 0;
+            int v2 = r2 != s2.rend() ? *r2 - '0' : 0;
+            int sum = v1 + v2 + carry;
+
+            dummy.next = new ListNode(sum % 10, dummy.next); // 插頭法
+            carry = sum / 10;
+        }
+        if (carry > 0)
+            dummy.next = new ListNode(carry, dummy.next);
+
+        // reverse the list
+        return dummy.next;
+    }
+private:
+    string ListToStr(ListNode *head)
+    {
+        string result;
+
+        while (head)
+        {
+            result += '0' + head->val;
+            head = head->next;
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+
+\begindot
+\item Add Two Numbers, 見 \S \ref{sec:add-two-numbers}
+\myenddot
 
 \subsubsection{相關題目}
 \begindot
