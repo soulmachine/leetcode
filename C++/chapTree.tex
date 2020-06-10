@@ -665,6 +665,71 @@ public:
 \item Binary Tree Level Order Traversal II，見 \S \ref{sec:binary-tree-level-order-traversal-ii}
 \myenddot
 
+\subsection{Binary Tree Right side View}
+\label{sec:binary-tree-right-side-view}
+
+
+\subsubsection{描述}
+Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+For example:
+Given binary tree \code{{3,9,20,\#,\#,15,7}},
+\begin{Code}
+    3     <--
+   / \
+  9  20   <--
+    /  \
+   15   7 <--
+\end{Code}
+return as:
+\begin{Code}
+[3,20,7]
+\end{Code}
+
+
+\subsubsection{分析}
+雙 queue BFS zigzag travel, 只選最右
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode, Binary Tree Zigzag Level Order Traversal
+// 遞歸版，時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        if (root == nullptr) return vector<int>();
+        vector<int> result;
+        
+        // 雙 queue BFS zigzag travel
+        queue<TreeNode*> cur, next;
+        cur.push(root);
+        while (!cur.empty())
+        {
+            while (!cur.empty())
+            {
+                TreeNode *p = cur.front();
+                cur.pop();
+                
+                if (cur.size() == 0) // 只選最右
+                    result.push_back(p->val);
+                
+                if (p->left) next.push(p->left);
+                if (p->right) next.push(p->right);
+            }
+            swap(cur, next);
+        }
+        
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Binary Tree Level Order Traversal，見 \S \ref{sec:binary-tree-level-order-traversal}
+\item Binary Tree Level Order Traversal II，見 \S \ref{sec:binary-tree-level-order-traversal-ii}
+\myenddot
 
 \subsection{Recover Binary Search Tree}
 \label{sec:recover-binary-search-tree}
