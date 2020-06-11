@@ -794,3 +794,85 @@ private:
 
 \subsubsection{相關題目}
 No
+
+\section{Topological Sort} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:topological-sort}
+
+
+\subsubsection{描述}
+Topological Sort
+\begin{Code}
+  A     B
+   \   /|
+    \ / |
+     C  |
+    /   |
+   D    E
+    \  /
+     \
+      F
+      |
+      G
+\end{Code}
+
+Result: B E A C D F G
+
+\myurl{https://www.youtube.com/watch?v=ddTC4Zovtbc}
+
+
+\subsubsection{分析}
+This is useful for software compile, project sequence when having dependency
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode, Topological Sort
+// Topological Sort
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    vector<int> TopologicalSort(const vector<vector<int>>& adjList) {
+        unordered_map<int, bool> visited;
+        vector<int> result; result.reserve(adjList.size());
+
+        // random pick a point to start
+        // DFS to leaf
+        // Put to when all child is visited
+        for (int i = 0; i < (int)adjList.size(); i++) {
+            if (!DFS(adjList, i, visited, result)) return "";
+        }
+
+        return result;
+    }
+private:
+    void DFS(const vector<vector<int>>& adjList, int step, unordered_map<int, bool>& visited, vector<int>& result) {
+        if (visited.find(step) != visited.end())
+            return visited[step]; // If ths node was grey (false), a cycle was detected.
+        visited[step] = false;
+
+        for (const auto& nei : adjList[step]) {
+            if (!DFS(adjList, nei, visited, result)) return false;
+        }
+        visited[step] = true;
+        result.insert(result.begin(), step);
+    }
+}
+int main(int argc, char *argv[]) {
+    Solution solution;
+    vector<vector<int>> adjList(7, vector<int>()); // DAG
+    adjList[0] = {2}; // A -> C
+    adjList[1] = {2, 4}; // B -> C, B -> E
+    adjList[2] = {3}; // C -> D
+    adjList[3] = {5}; // D -> F
+    adjList[4] = {5}; // E -> F
+    adjList[5] = {6}; // F -> G
+    adjList[6] = {}; // G ->
+    for (const auto& val : solution.TopologicalSort(adjList))
+        cout << (char)(val + 'A') << " ";
+    cout << endl;
+
+    return 0;
+}
+\end{Code}
+
+\subsubsection{相關題目}
+No
