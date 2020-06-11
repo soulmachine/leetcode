@@ -248,3 +248,234 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Alien Dictionary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:alien-dictionary}
+
+\subsubsection{描述}
+There is a new alien language which uses the latin alphabet. However, the order among letters are unknown to you. You receive a list of non-empty words from the dictionary, where words are sorted lexicographically by the rules of this new language. Derive the order of letters in this language.
+
+Example 1:
+\begin{Code}
+Input:
+[
+  "wrt",
+  "wrf",
+  "er",
+  "ett",
+  "rftt"
+]
+
+Output: "wertf"
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input:
+[
+  "z",
+  "x"
+]
+
+Output: "zx"
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input:
+[
+  "z",
+  "x",
+  "z"
+] 
+
+Output: "" 
+\end{Code}
+
+\subsubsection{分析}
+Make DAG from sorted strings, do topological sort by BFS or DFS
+
+
+\subsubsection{BFS with List}
+\begin{Code}
+// LeetCode, Alien Dictionary
+// BFS Topological sort，時間複雜度O(N)，空間複雜度O(N)
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        unordered_map<char, list<char>> adjList; // 用來記低依賴關係
+        unordered_map<char, int> depenCount; // 用來儲存每個字母的依賴數目
+
+        for (const auto& w : words)
+            for (const auto& c : w)
+            {
+                depenCount[c] = 0;
+                adjList.insert(make_pair(c, list<char>()));
+            }
+        // 製造 adjList DAG
+        for (size_t i = 0; i < words.size() - 1; i++)
+        {
+            const string& w1 = words[i];
+            const string& w2 = words[i+1];
+            // 剪枝，若 prefix 一樣
+            if (w1.size() > w2.size() && w1.find(w2) == 0) return "";
+            // 找尋第一個不同的字母
+            for (size_t j = 0; j < w1.size() && j < w2.size(); j++)
+            {
+                const char& c1 = w1[j];
+                const char& c2 = w2[j];
+                if (c1 != c2)
+                {
+                    adjList[c1].push_back(c2);
+                    depenCount[c2]++;
+                    break;
+                }
+            }
+        }
+        // 利用 Topological Sort 來解決相關的依賴關係
+        queue<char> cur;
+        // 先處理沒有依賴的字母
+        for (const auto& [k, v] : depenCount)
+            if (v == 0)
+                cur.push(k);
+
+        string result;
+        // BFS
+        while (!cur.empty())
+        {
+            char c = cur.front();
+            cur.pop();
+            result.push_back(c);
+            auto it = adjList.find(c);
+            if (it == adjList.end()) continue;
+            for (const auto& nei : it->second)
+            {
+                if (--(depenCount[nei]) == 0)
+                    cur.push(nei);
+            }
+        }
+
+        if (result.size() < depenCount.size())
+            return "";
+        else
+            return result;
+    }
+};
+\end{Code}
+
+\subsubsection{BFS with Set}
+\begin{Code}
+// LeetCode, Alien Dictionary
+// BFS Topological sort，時間複雜度O(N)，空間複雜度O(N)
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        unordered_map<char, set<char>> adjList; // 用來記低依賴關係
+        unordered_map<char, int> depenCount; // 用來儲存每個字母的依賴數目
+
+        for (const auto& w : words)
+            for (const auto& c : w)
+            {
+                depenCount[c] = 0;
+                adjList.insert(make_pair(c, set<char>()));
+            }
+        // 製造 adjList DAG
+        for (size_t i = 0; i < words.size() - 1; i++)
+        {
+            const string& w1 = words[i];
+            const string& w2 = words[i+1];
+            // 剪枝，若 prefix 一樣
+            if (w1.size() > w2.size() && w1.find(w2) == 0) return "";
+            // 找尋第一個不同的字母
+            for (size_t j = 0; j < w1.size() && j < w2.size(); j++)
+            {
+                const char& c1 = w1[j];
+                const char& c2 = w2[j];
+                if (c1 != c2)
+                {
+                    if (adjList[c1].find(c2) == adjList[c1].end()) // 這裏不同
+                    {
+                        adjList[c1].insert(c2);
+                        depenCount[c2]++;
+                    }
+                    break;
+                }
+            }
+        }
+        // 之後的動作和上一個例子一樣，略去 。。。 //
+    }
+};
+
+\end{Code}
+
+\subsubsection{DFS with List}
+\begin{Code}
+// LeetCode, Alien Dictionary
+// DFS Topological sort，時間複雜度O(N)，空間複雜度O(N)
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        unordered_map<char, list<char>> adjList; // 用來記低依賴關係
+        
+        // 製造 DAG，令到所有字母也有被歷篇的機會
+        for (const auto& w : words)
+            for (const auto& c : w)
+                adjList.insert(make_pair(c, list<char>()));
+        // 製造剩下的 DAG
+        for (size_t i = 0; i < words.size() - 1; i++)
+        {
+            const string& w1 = words[i];
+            const string& w2 = words[i+1];
+            // 找到 prefix case
+            if (w1.size() > w2.size() && w1.find(w2) == 0) return "";
+            
+            for (size_t j = 0; j < w1.size() && j < w2.size(); j++)
+            {
+                const char& c1 = w1[j];
+                const char& c2 = w2[j];
+                if (c1 != c2)
+                {
+                    adjList[c1].push_back(c2);
+                    break;
+                }
+            }
+        }
+        
+        string result;
+        unordered_map<char, bool> visited;
+        for (const auto& [k, v] : adjList)
+        {
+            if (!DFS(adjList, visited, k, result))
+                return "";
+        }
+        
+        if (result.size() < adjList.size())
+            return "";
+        else
+            return result;
+    }
+private:
+    bool DFS(unordered_map<char, list<char>>& adjList, unordered_map<char, bool>& visited, char k, string& result)
+    {
+        if (visited.find(k) != visited.end())
+            return visited[k]; // If this node was grey (false), a cycle was detected.
+        
+        visited[k] = false;
+        auto it = adjList.find(k);
+        for (const auto& nei : adjList[k])
+        {
+            if (!DFS(adjList, visited, *nei, result)) return false;
+        }
+        visited[k] = true;
+        result.insert(result.begin(), k);
+        
+        return true;
+    }
+};
+
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item Topological sort，見 \S \ref{sec:topological-sort}
+\myenddot
