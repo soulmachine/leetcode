@@ -994,3 +994,86 @@ public:
 
 \subsubsection{相關題目}
 No
+
+\section{Top K Frequent Words} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:top-k-frequent-words}
+
+
+\subsubsection{描述}
+Given a non-empty list of words, return the k most frequent elements.
+
+Your answer should be sorted by frequency from highest to lowest. If two words have the same frequency, then the word with the lower alphabetical order comes first.
+
+Example 1:
+\begin{Code}
+Input: ["i", "love", "leetcode", "i", "love", "coding"], k = 2
+Output: ["i", "love"]
+Explanation: "i" and "love" are the two most frequent words.
+    Note that "i" comes before "love" due to a lower alphabetical order.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: ["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"], k = 4
+Output: ["the", "is", "sunny", "day"]
+Explanation: "the", "is", "sunny" and "day" are the four most frequent words,
+    with the number of occurrence being 4, 3, 2 and 1 respectively.
+\end{Code}
+
+\textbf{Note}:
+\begin{itemize}
+\item{You may assume k is always valid, 1 ≤ k ≤ number of unique elements.}
+\item{Input words contain only lowercase letters.}
+\end{itemize}
+
+\textbf{Follow up}:
+\begin{itemize}
+\item{Try to solve it in O(n log k) time and O(n) extra space.}
+\end{itemize}
+
+
+
+\subsubsection{分析}
+用 hash map 來統計每個字的出現次數, 以 vector 來保存 pair, 以 partial heap sort 得到答案
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode,
+// 時間複雜度O(nlogk)，空間複雜度O(n)
+class Solution {
+public:
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        // 用 hash map 來統計每個字的出現次數
+        unordered_map<string, int> cache;
+        for (const auto& w : words) cache[w]++;
+
+        // 以 vector 來保存 pair
+        vector<pair<string, int>> vecCache(cache.begin(), cache.end());
+
+        // 以 partial heap sort 得到答案
+        partial_sort(vecCache.begin(), next(vecCache.begin(), k), vecCache.end()
+                     , [&](const auto& first, const auto& second)
+                     {
+                         if (first.second > second.second)
+                             return true;
+                         else if (first.second < second.second)
+                             return false;
+                         else
+                         {
+                             return (first.first < second.first);
+                         }
+                     });
+
+        // 取得答案
+        vector<string> result; result.reserve(k);
+        for_each(vecCache.begin(), next(vecCache.begin(), k)
+                , [&](const auto& e)
+                 {
+                     result.push_back(e.first);
+                 });
+        return result;
+    }
+};
+\end{Code}
+\subsubsection{相關題目}
+No
