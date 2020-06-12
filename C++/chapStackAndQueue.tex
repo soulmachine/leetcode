@@ -411,3 +411,106 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\subsection{Meeting Rooms II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:meeting-rooms-ii}
+
+
+\subsubsection{描述}
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), find the minimum number of conference rooms required.
+
+\textbf{Example 1}
+\begin{Code}
+Input: [[0, 30],[5, 10],[15, 20]]
+Output: 2
+\end{Code}
+
+\textbf{Example 2}
+\begin{Code}
+Input: [[7,10],[2,4]]
+Output: 1
+\end{Code}
+
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{Code}
+\begin{Code}
+// LeetCode
+// 迭代，時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int minMeetingRooms(vector<vector<int>>& intervals) {
+        // 順序所以時間段落
+        sort(intervals.begin(), intervals.end()
+             , [&](const auto& first, const auto& second)
+               {
+                   return first[0] < second[0];
+               });
+        // 利用 priority queue 找出最快完結的時間段落
+        auto Compare = [](const auto& first, const auto& second)
+                          { return first.second > second.second; };
+        priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(Compare)>
+                          pq(Compare);
+
+        int maxUsed = 0;
+        for (const auto& interval : intervals)
+        {
+            // 移除用完的房間
+            while (!pq.empty() && interval[0] >= pq.top().second)
+                pq.pop();
+            // 加入新的時間段落
+            pq.push(make_pair(interval[0], interval[1]));
+            // 更新同一時間的最大房間用量
+            maxUsed = max(maxUsed, (int)pq.size());
+        }
+
+        return maxUsed;
+    }
+};
+\end{Code}
+
+\subsubsection{Code}
+\begin{Code}
+// LeetCode
+// 迭代，時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int minMeetingRooms(vector<vector<int>>& intervals) {
+        // 使用兩支 vector 一支為 startTime, 一支為 endTime
+        vector<int> startTime, endTime;
+        startTime.reserve(intervals.size());
+        endTime.reserve(intervals.size());
+        for (const auto& interval : intervals)
+        {
+            startTime.push_back(interval[0]);
+            endTime.push_back(interval[1]);
+        }
+        // 由細至大
+        sort(startTime.begin(), startTime.end());
+        sort(endTime.begin(), endTime.end());
+        // 計算房間多少
+        int curRm = 0;
+        int maxRm = 0;
+        int ei = 0;
+        for (int si = 0; si < (int)startTime.size(); si++)
+        {
+            if (startTime[si] >= endTime[ei])
+            {
+                ei++;
+                curRm--;
+            }
+            curRm++;
+            maxRm = max(maxRm, curRm);
+        }
+
+        return maxRm;
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
