@@ -147,7 +147,7 @@ public:
                 } else if (depth == 0) {
                     answer = max(answer, i - start);
                 }
-            } 
+            }
         }
 
         depth = 0;
@@ -163,7 +163,7 @@ public:
                 } else if (depth == 0) {
                     answer = max(answer, start - i);
                 }
-            } 
+            }
         }
         return answer;
     }
@@ -332,3 +332,82 @@ private:
 
 \section{隊列} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection{Sliding Window Maximum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sliding-window-maximum}
+
+
+\subsubsection{描述}
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window.
+
+
+\textbf{Follow up:}
+Could you solve it in linear time?
+
+\textbf{Example:}
+\begin{Code}
+Input: nums = [1,3,-1,-3,5,3,6,7], and k = 3
+Output: [3,3,5,5,6,7]
+Explanation:
+
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+\end{Code}
+
+
+\subsubsection{分析}
+以 deque 來追踪視窗內的指標, 移除老去的指標, 移除數值太細的元素指標
+
+
+\subsubsection{Code}
+\begin{Code}
+// LeetCode
+// 迭代，時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        int N = nums.size();
+        if (N < k) return vector<int>();
+
+        vector<int> result; result.reserve(N-k+1);
+        deque<int> indexList;
+
+        // 預準首 K 項
+        for (size_t i = 0; i < k; i++)
+        {
+            while (!indexList.empty() && nums[indexList.back()] < nums[i])
+                indexList.pop_back();
+            indexList.push_back(i);
+        }
+        result.push_back(nums[indexList.front()]);
+
+        // 完成剩下的元素
+        for (size_t i = k; i < nums.size(); i++)
+        {
+            // 移除老去的元素
+            while (!indexList.empty() && indexList.front() < i-k+1)
+                indexList.pop_front();
+
+            // 移除數值太細的元素
+            while (!indexList.empty() && nums[indexList.back()] < nums[i])
+                indexList.pop_back();
+            indexList.push_back(i);
+
+            result.push_back(nums[indexList.front()]);
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
