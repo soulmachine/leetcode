@@ -1277,3 +1277,87 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Decode String} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:decode-string}
+
+
+\subsubsection{描述}
+Given an encoded string, return its decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{Code}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    string decodeString(string s) {
+        return decodeString(s.begin(), s.end());
+    }
+private:
+    template <class BidirecIT>
+        string decodeString(BidirecIT first, BidirecIT end)
+    {
+        if (first == end) return "";
+
+        string result;
+        while (first != end)
+        {
+            if (isdigit(*first))
+            {
+                // 取得所有數字
+                auto cur = first;
+                while (cur != end) { if (*cur == '[') break; cur++; }
+                int num = stol(string(first, cur));
+                first = cur;
+
+                // 取得接下來的字串
+                auto first2 = next(first);
+                auto end2 = first2;
+                int curLeft = 1; // 現在 [ 的數目
+                while (end2 != end && curLeft > 0)
+                {
+                    if (*end2 == '[')
+                        curLeft++;
+                    else if (*end2 == ']')
+                        curLeft--;
+                    end2++;
+                }
+                string result2 = decodeString(first2, prev(end2));
+                string result3;
+                // 重覆地放入
+                for (int i = 0; i < num; i++)
+                    result3 += result2;
+                result += result3;
+
+                first = end2;
+            }
+            else
+            {
+                // 取得所有字母
+                auto cur = first;
+                while (cur != end) { if (*cur >= '0' && *cur <= '9') break; cur++; }
+                result += string(first, cur);
+                first = cur;
+            }
+        }
+        return result;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
