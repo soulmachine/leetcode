@@ -855,7 +855,7 @@ private:
         visited[step] = true;
         result.insert(result.begin(), step);
     }
-}
+};
 int main(int argc, char *argv[]) {
     Solution solution;
     vector<vector<int>> adjList(7, vector<int>()); // DAG
@@ -872,6 +872,124 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+\end{Code}
+
+\subsubsection{相關題目}
+No
+
+\section{Sort Characters By Frequency} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sort-character-by-frequency}
+
+
+\subsubsection{描述}
+Given a string, sort it in decreasing order based on the frequency of characters.
+
+Example 1:
+\begin{Code}
+Input:
+"tree"
+
+Output:
+"eert"
+
+Explanation:
+'e' appears twice while 'r' and 't' both appear once.
+So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid answer.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input:
+"cccaaa"
+
+Output:
+"cccaaa"
+
+Explanation:
+Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
+Note that "cacaca" is incorrect, as the same characters must be together.
+\end{Code}
+
+\subsubsection{分析}
+method 1: 初始化 vec 來儲存出現次數，計算出現次數，由大至細依出現次數排序
+
+method 2: Bucket sort, 計算每個字母出現的次數, 以 bucket 來儲存每個出現次數的字每, 製造答案
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode,
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    string frequencySort(string s) {
+        // 初始化 vec 來儲存出現次數
+        vector<pair<char, int>> countVec(256);
+        for (size_t i = 0; i < countVec.size(); i++)
+        {
+            countVec[i].first = i;
+            countVec[i].second = 0;
+        }
+
+        // 計算出現次數
+        for (const char& c : s)
+            countVec[c].second++;
+
+        // ，由大至細依出現次數排序
+        sort(countVec.begin(), countVec.end()
+             , [&](const auto& first, const auto& second)
+                  {
+                      return first.second > second.second;
+                  });
+
+        string result;
+        for (const auto& count : countVec)
+        {
+            if (count.second > 0)
+                result.append(count.second, count.first);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode,
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    string frequencySort(string s) {
+        if (s.size() == 0) return "";
+        // Bucket sort
+        vector<int> counter(256, 0);
+
+        // 計算每個字母出現的次數
+        int maxCount = INT_MIN;
+        for (const char& c : s)
+        {
+            counter[c]++;
+            if (counter[c] > maxCount)
+                maxCount = counter[c];
+        }
+
+        // 以 bucket 來儲存每個出現次數的字每
+        vector<list<char>> buckets(maxCount);
+        for (size_t i = 0; i < counter.size(); i++)
+        {
+            if (counter[i] > 0)
+                buckets[counter[i]-1].push_back((char)i);
+        }
+
+        // 製造答案
+        string result;
+        for (int i = (int)buckets.size()-1; i >= 0; i--)
+        {
+            for (const char& c : buckets[i])
+                result.append(i+1, c);
+        }
+        return result;
+    }
+};
 \end{Code}
 
 \subsubsection{相關題目}
