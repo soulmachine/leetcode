@@ -3439,10 +3439,79 @@ private:
 \item Add Two Numbers, 見 \S \ref{sec:add-two-numbers}
 \myenddot
 
+\subsection{Insert into a Cyclic Sorted List}
+\label{sec:insert-into-a-cyclic-sorted-list}
+
+
+\subsubsection{描述}
+Given a node from a Circular Linked List which is sorted in ascending order, write a function to insert a value insertVal into the list such that it remains a sorted circular list. The given node can be a reference to any single node in the list, and may not be necessarily the smallest value in the circular list.
+
+If there are multiple suitable places for insertion, you may choose any place to insert the new value. After the insertion, the circular list should remain sorted.
+
+If the list is empty (i.e., given node is null), you should create a new single circular list and return the reference to that single node. Otherwise, you should return the original given node.
+
+Example 1:
+\begin{Code}
+Input: head = [3,4,1], insertVal = 2
+Output: [3,4,1,2]
+Explanation: In the figure above, there is a sorted circular list of three elements. You are given a reference to the node with value 3, and we need to insert 2 into the list. The new node should be inserted between node 1 and node 3. After the insertion, the list should look like this, and we should still return node 3.
+\end{Code}
+
+\begin{center}
+\includegraphics[width=150pt]{insert-into-a-cyclic-sorted-list-001.jpg}\\
+\figcaption{before insert}\label{fig:insert-into-a-cyclic-sorted-list-001}
+\end{center}
+
+\begin{center}
+\includegraphics[width=150pt]{insert-into-a-cyclic-sorted-list-002.jpg}\\
+\figcaption{before insert}\label{fig:insert-into-a-cyclic-sorted-list-002}
+\end{center}
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(logn)，空間複雜度O(n)
+class Solution {
+public:
+    Node* insert(Node* head, int insertVal) {
+        // edge case [1,1,1], target: 0
+        // edge case [2,3,5,1], target: 0
+        if (head == nullptr) {
+            head = new Node(insertVal);
+            head->next = head;
+        }
+        else {
+            Node *cur = head->next;
+            Node *prev = head;
+            Node *pivot = nullptr;
+            while (!(cur->val >= insertVal && prev->val < insertVal)) {
+                if (prev->val > cur->val)
+                    pivot = prev; // 找出邊界, case [2,3,5,1], target: 0
+
+                prev = cur;
+                cur = cur->next;
+
+                if (cur == head->next) break; // 走了一個循環也沒有結果
+            }
+            if (cur == head->next && pivot)
+                pivot->next = new Node(insertVal, pivot->next);
+            else
+                prev->next = new Node(insertVal, cur);
+        }
+        return head;
+    }
+};
+\end{Code}
+
+
 \subsubsection{相關題目}
 \begindot
 \item 無
 \myenddot
+
 
 \subsection{LRU Cache}
 \label{sec:lru-cache}
@@ -3524,4 +3593,115 @@ private:
 \subsubsection{相關題目}
 \begindot
 \item 無
+\myenddot
+
+\section{雙鏈表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+雙鏈表節點的定義如下：
+\begin{Code}
+// 雙鏈表節點
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+    Node* child;
+};
+\end{Code}
+
+\subsection{Flatten a Multilevel Doubly Linked List}
+\label{sec:flatten-a-multilevel-doubly-linked-list}
+
+
+\subsubsection{描述}
+You are given a doubly linked list which in addition to the next and previous pointers, it could have a child pointer, which may or may not point to a separate doubly linked list. These child lists may have one or more children of their own, and so on, to produce a multilevel data structure, as shown in the example below.
+
+Flatten the list so that all the nodes appear in a single-level, doubly linked list. You are given the head of the first level of the list.
+
+\begin{center}
+\includegraphics[width=300pt]{flatten-a-multilevel-doubly-list.png}\\
+\figcaption{candy crush}\label{fig:flatten-a-multilevel-double-list}
+\end{center}
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    Node* flatten(Node* head) {
+        for (Node *cur = head; cur; ) {
+            if (cur->child == nullptr)
+                cur = cur->next;
+            else {
+                cur->next = flatten_(cur->child, cur->next);
+                cur->next->prev = cur;
+                cur->child = nullptr;
+            }
+        }
+        return head;
+    }
+private:
+    Node *flatten_(Node* head, Node *tail) {
+        Node *cur = head;
+        while (cur->next) {
+            if (cur->child == nullptr)
+                cur = cur->next;
+            else {
+                Node *next = cur->next;
+                cur->next = flatten_(cur->child, next);
+                cur->next->prev = cur;
+                cur->child = nullptr;
+                cur = next;
+            }
+        }
+        cur->next = tail;
+        if (tail)
+            tail->prev = cur;
+
+        return head;
+    }
+};
+\end{Code}
+
+\subsubsection{Stack}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    Node* flatten(Node* head) {
+        if (head == nullptr) return head;
+
+        stack<Node*> cache;
+
+        Node *prev = nullptr;
+        cache.push(head);
+        while (!cache.empty()) {
+            Node *cur = cache.top();
+            cache.pop();
+
+            if (prev)
+                prev->next = cur;
+            cur->prev = prev;
+
+            if (cur->next) cache.push(cur->next);
+            if (cur->child) cache.push(cur->child);
+            cur->child = nullptr;
+
+            prev = cur;
+        }
+
+        return head;
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+
+\begindot
+\item Nil
 \myenddot
