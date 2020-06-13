@@ -992,6 +992,74 @@ private:
 \item Same Tree，見 \S \ref{sec:same-tree}
 \myenddot
 
+\subsection{Lowest Common Ancestor of Binary Tree}
+\label{sec:lowest-common-ancestor-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+
+Given the following binary tree:  root = [3,5,1,6,2,0,8,null,null,7,4]
+
+\begin{center}
+\includegraphics[width=100pt]{lowest-common-ancestor.png}\\
+\figcaption{Loest common ancestor}\label{fig:lowest-common-ancestor}
+\end{center}
+
+Example 1:
+\begin{Code}
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+Output: 3
+Explanation: The LCA of nodes 5 and 1 is 3.
+\end{Code}
+
+
+Example 2:
+\begin{Code}
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+Output: 5
+Explanation: The LCA of nodes 5 and 4 is 5
+, since a node can be a descendant of itself according to the LCA definition.
+\end{Code}
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode
+// 遞歸版，時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (root == nullptr || p == nullptr || q == nullptr) return nullptr;
+        if (root == p || root == q) return root;
+
+        TreeNode *left = lowestCommonAncestor(root->left, p, q);
+        TreeNode *right = lowestCommonAncestor(root->right, p, q);
+
+        if (left && right)
+            return root;
+        else if (!left && !right)
+            return nullptr;
+        else if (!left)
+            return right;
+        else
+            return left;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Same Tree，見 \S \ref{sec:same-tree}
+\myenddot
+
+
 \subsection{Symmetric Tree}
 \label{sec:symmetric-tree}
 
