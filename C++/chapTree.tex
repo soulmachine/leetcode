@@ -876,6 +876,121 @@ public:
 \item Symmetric Tree，見 \S \ref{sec:symmetric-tree}
 \myenddot
 
+\subsection{Count Univalue Subtrees}
+\label{sec:count-univalue-subtrees}
+
+
+\subsubsection{描述}
+Given a binary tree, count the number of uni-value subtrees.
+
+A Uni-value subtree means all nodes of the subtree have the same value.
+
+Example:
+
+\begin{Code}
+Input:  root = [5,1,5,5,5,null,5]
+
+              5
+             / \
+            1   5
+           / \   \
+          5   5   5
+
+Output: 4
+\end{Code}
+
+\subsubsection{分析}
+無
+
+\subsubsection{Pass Parent Values}
+\begin{Code}
+// LeetCode
+// 迭代版，時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    int countUnivalSubtrees(TreeNode* root) {
+        if (root == nullptr) return 0;
+
+        int count = 0;
+        DFS(root, count, root->val - 1);
+
+        return count;
+    }
+private:
+    bool DFS(TreeNode *root, int& count, int parVal) {
+        if (root == nullptr) return true;
+
+        int leftCount, rightCount; leftCount = rightCount = 0;
+        bool isLeftUni = DFS(root->left, leftCount, root->val);
+        bool isRightUni = DFS(root->right, rightCount, root->val);
+
+        count += leftCount + rightCount;
+
+        if (!isLeftUni || !isRightUni) return false;
+
+        count++;
+
+        return root->val == parVal;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int countUnivalSubtrees(TreeNode* root) {
+        if (root == nullptr) return 0;
+
+        int uniCount = 0;
+        bool uniTrue = false;
+        countUnivalSubtrees(root, uniCount, uniTrue);
+
+        return uniCount;
+    }
+private:
+    void countUnivalSubtrees(TreeNode *root, int& uniCount, bool& uniTrue) {
+        if (root == nullptr) {
+            uniCount = 0;
+            uniTrue = false;
+        }
+        else if (root->left == nullptr && root->right == nullptr) {
+            uniCount = 1;
+            uniTrue = true;
+        }
+        else {
+            int uniLeft, uniRight; uniLeft = uniRight = 0;
+            bool isUniLeft, isUniRight; isUniLeft = isUniRight = false;
+            countUnivalSubtrees(root->left, uniLeft, isUniLeft);
+            countUnivalSubtrees(root->right, uniRight, isUniRight);
+
+            // 三方比較
+            if (root->left && root->right
+               && (root->val == root->left->val && isUniLeft)
+               && (root->val == root->right->val && isUniRight)) {
+                uniLeft++;
+                uniTrue = true;
+            }
+            else if (root->left && root->right == nullptr
+                     && root->val == root->left->val && isUniLeft)
+            { uniLeft++; uniTrue = true; } // 左邊比較
+            else if (root->left == nullptr && root->right
+                     && root->val == root->right->val && isUniRight)
+            { uniRight++; uniTrue = true; } // 右邊比較
+
+            uniCount = uniLeft + uniRight;
+        }
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Same Tree，見 \S \ref{sec:same-tree}
+\myenddot
 
 \subsection{Symmetric Tree}
 \label{sec:symmetric-tree}
