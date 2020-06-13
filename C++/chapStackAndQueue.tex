@@ -435,7 +435,7 @@ Output: 1
 \subsubsection{分析}
 Nil
 
-\subsubsection{Code}
+\subsubsection{Priority Queue}
 \begin{Code}
 // LeetCode
 // 迭代，時間複雜度O(nlogn)，空間複雜度O(n)
@@ -471,7 +471,7 @@ public:
 };
 \end{Code}
 
-\subsubsection{Code}
+\subsubsection{Start End Vector}
 \begin{Code}
 // LeetCode
 // 迭代，時間複雜度O(nlogn)，空間複雜度O(n)
@@ -496,7 +496,7 @@ public:
         int ei = 0;
         for (int si = 0; si < (int)startTime.size(); si++)
         {
-            if (startTime[si] >= endTime[ei])
+            while (startTime[si] >= endTime[ei])
             {
                 ei++;
                 curRm--;
