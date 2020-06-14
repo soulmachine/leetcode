@@ -1512,6 +1512,183 @@ public:
 \item Construct Binary Tree from Preorder and Inorder Traversal，見 \S \ref{sec:construct-binary-tree-from-preorder-and-inorder-traversal}
 \myenddot
 
+\subsection{Serialize and Deserialize Binary Tree}
+\label{sec:serialize-and-deserialize-binary-tree}
+
+
+\subsubsection{描述}
+Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+
+Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+
+Example:
+\begin{Code}
+You may serialize the following tree:
+
+    1
+   / \
+  2   3
+     / \
+    4   5
+
+as "[1,2,3,null,null,4,5]"
+\end{Code}
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string result;
+        serialize(root, result);
+        return result;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        list<string> parts = SplitParts(data, ',');
+
+        return deserialize(parts);
+    }
+private:
+    void serialize(TreeNode *root, string& result) {
+        if (root == nullptr)
+            result += "null,";
+        else {
+            result += to_string(root->val) + ",";
+            serialize(root->left, result);
+            serialize(root->right, result);
+        }
+    }
+    TreeNode *deserialize(list<string>& parts) {
+        if (parts.front() == "null") {
+            parts.pop_front();
+            return nullptr;
+        }
+        else {
+            TreeNode *root = new TreeNode(StringToInt(parts.front()));
+            parts.pop_front();
+            root->left = deserialize(parts);
+            root->right = deserialize(parts);
+
+            return root;
+        }
+    }
+    list<string> SplitParts(const string& str, char deli) {
+        list<string> result;
+        for (auto i = str.begin(); i < str.end();) {
+            auto j = find(i, str.end(), deli);
+
+            result.push_back(string(i, j));
+            i = next(j);
+        }
+        return result;
+    }
+    int StringToInt(string num) {
+        if (num.size() == 0) return 0;
+        if (num[0] == '-')
+            return -1 * stoi(num.substr(1));
+        else
+            return stoi(num);
+    }
+};
+\end{Code}
+
+\subsubsection{迭代 - BFS with queue}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        stringstream result;
+        if (root == nullptr) return result.str();
+
+        queue<TreeNode*> cur;
+        cur.push(root);
+        while (!cur.empty()) {
+            TreeNode *p = cur.front();
+            cur.pop();
+
+            if (p == nullptr) {
+                result << "null,";
+                continue;
+            }
+            else
+                result << p->val << ",";
+
+            cur.push(p->left);
+            cur.push(p->right);
+        }
+        return result.str();
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if (data.size() == 0) return nullptr;
+
+        auto i = find(data.begin(), data.end(), ',');
+
+        queue<TreeNode*> cur;
+        // 製造 root
+        TreeNode *root = new TreeNode(StringToInt(string(data.begin(), i)));
+        i = next(i);
+        cur.push(root);
+
+        while (!cur.empty()) {
+            TreeNode *p = cur.front();
+            cur.pop();
+
+            // 取兩個值，一個為左，一個為右
+            // 左
+            if (i >= data.end()) continue;
+            auto j = find(i, data.end(), ',');
+            string nextStr = string(i, j);
+            if (nextStr != "null")
+                p->left = new TreeNode(StringToInt(nextStr));
+            i = next(j);
+
+            // 右
+            if (i >= data.end()) continue;
+            j = find(i, data.end(), ',');
+            nextStr = string(i, j);
+            if (nextStr != "null")
+                p->right = new TreeNode(StringToInt(nextStr));
+            i = next(j);
+
+            // 處理下一層
+            if (p->left) cur.push(p->left);
+            if (p->right) cur.push(p->right);
+        }
+
+        return root;
+    }
+private:
+    int StringToInt(string num) {
+        if (num.size() == 0) return 0;
+        if (num[0] == '-')
+            return -1 * stoi(num.substr(1));
+        else
+            return stoi(num);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Construct Binary Tree from Inorder and Postorder Traversal，見 \S \ref{sec:construct-binary-tree-from-inorder-and-postorder-traversal}
+\myenddot
+
+
 
 \section{二叉查找樹} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
