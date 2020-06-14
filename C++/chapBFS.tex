@@ -24,7 +24,7 @@ For example, Given:
 \begin{Code}
 start = "hit"
 end = "cog"
-dict = ["hot","dot","dog","lot","log"]
+dict = ["hot","dot","dog","lot","log","cog"]
 \end{Code}
 As one shortest transformation is \code{"hit" -> "hot" -> "dot" -> "dog" -> "cog"}, return its length $5$.
 
@@ -79,7 +79,7 @@ public:
         unordered_set<state_t> visited;  // 判重
 
         auto state_is_valid = [&](const state_t& s) {
-            return dict.find(s.word) != dict.end() || s.word == end;
+            return dict.find(s.word) != dict.end();
         };
         auto state_is_target = [&](const state_t &s) {return s.word == end; };
         auto state_extend = [&](const state_t &s) {
@@ -143,7 +143,7 @@ public:
         int level = -1;  // 層次
 
         auto state_is_valid = [&](const string& s) {
-            return dict.find(s) != dict.end() || s == end;
+            return dict.find(s) != dict.end();
         };
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
@@ -284,7 +284,7 @@ public:
         unordered_map<state_t, vector<state_t> > father; // DAG (樹) key: child value: father
 
         auto state_is_valid = [&](const state_t& s) {
-            return dict.find(s.word) != dict.end() || s.word == end;
+            return dict.find(s.word) != dict.end();
         };
         auto state_is_target = [&](const state_t &s) {return s.word == end; };
         auto state_extend = [&](const state_t &s) {
@@ -408,7 +408,7 @@ public:
         int level = -1;  // 層次
 
         auto state_is_valid = [&](const string& s) {
-            return dict.find(s) != dict.end() || s == end;
+            return dict.find(s) != dict.end();
         };
         auto state_is_target = [&](const string &s) {return s == end;};
         auto state_extend = [&](const string &s) {
