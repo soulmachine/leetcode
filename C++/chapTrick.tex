@@ -74,3 +74,23 @@ public:
     }
 };
 \end{Code}
+
+\subsubsection{Hash map in c++ with custom class}
+
+\begin{Code}
+using h = std::hash<int>;
+auto hash = [](const Node& n)
+              {return ((17 * 31 + h()(n.a)) * 31 + h()(n.b)) * 31 + h()(n.c);};
+auto equal = [](const Node& l, const Node& r)
+               {return l.a == r.a && l.b == r.b && l.c == r.c;};
+std::unordered_map<Node, int, decltype(hash), decltype(equal)> m(8, hash, equal);
+\end{Code}
+
+\subsubsection{Priority queue in c++ with custom class}
+
+\begin{Code}
+auto Compare = [](const auto& first, const auto& second)
+                  { return first.second > second.second; };
+priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(Compare)>
+                  pq(Compare);
+\end{Code}
