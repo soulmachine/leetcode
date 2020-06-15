@@ -21,14 +21,15 @@ Implement pow(x, n).
 class Solution {
 public:
     double myPow(double x, int n) {
-        if (n < 0) return 1.0 / power(x, -n);
-        else return power(x, n);
+        long long nn = n // 使用 64 bit 來處理 INT_MIN 由負變正 case
+        if (nn < 0) return 1.0 / power(x, -nn);
+        else return power(x, nn);
     }
 private:
-    double power(double x, int n) {
-        if (n == 0) return 1;
-        double v = power(x, n / 2);
-        if (n % 2 == 0) return v * v;
+    double power(double x, long long nn) {
+        if (nn == 0) return 1;
+        double v = power(x, nn / 2);
+        if (nn % 2 == 0) return v * v;
         else return v * v * x;
     }
 };
