@@ -210,3 +210,98 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Search a 2D Matrix II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:search-a-2d-matrix-ii}
+
+
+\subsubsection{描述}
+Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+\begindot
+\item Integers in each row are sorted in ascending from left to right.
+\item Integers in each column are sorted in ascending from top to bottom.
+\myenddot
+
+For example, Consider the following matrix:
+\begin{Code}
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+\end{Code}
+Given \fn{target = 3}, return true.
+
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsubsection{代碼}
+\begin{Code}
+// 時間複雜度O(m+n)，空間複雜度O(1)
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int row = matrix.size() - 1;
+        if (row < 0) return false;
+        int col = 0;
+
+        while (row >= 0 && col < matrix[0].size())
+        {
+            if (matrix[row][col] > target)
+                row--;
+            else if (matrix[row][col] < target)
+                col++;
+            else
+                return true;
+        }
+
+        return false;
+    }
+};
+\end{Code}
+
+\subsubsection{分治}
+\begin{Code}
+// 時間複雜度O(nlogn)，空間複雜度O(logn)
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int M = matrix.size();
+        if (M == 0) return false;
+        int N = matrix[0].size();
+        if (N == 0) return false;
+
+        return searchRec(matrix, target, 0, 0, N-1, M-1);
+    }
+private:
+    bool searchRec(vector<vector<int>>& matrix, const int& target
+                   , int left, int up, int right, int down)
+    {
+        // 若果 matrix 已經不成形
+        if (left > right || up > down)
+            return false;
+        else if (target < matrix[up][left] || target > matrix[down][right])
+            return false; //  target 不在 matrix 之中
+
+        int mid = left + (right - left) / 2; // 使用 index 中
+        int row = up;
+        while (row <= down && matrix[row][mid] <= target)
+        {
+            if (matrix[row][mid] == target)
+                return true;
+            row++;
+        }
+        return searchRec(matrix, target, left, row, mid-1, down)
+            || searchRec(matrix, target, mid+1, up, right, row-1);
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
