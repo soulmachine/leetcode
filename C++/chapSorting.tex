@@ -329,98 +329,105 @@ Quick Sort and STD iterator
 \subsubsection{分析}
 無
 
-
 \subsubsection{代碼1}
 \begin{Code}
-// Not from LeetCode
 // 時間複雜度O(nlogn)，空間複雜度O(1)
 class Solution {
 public:
-    template<class T>
-    void QuickSort(T iter1, T iter2)
-    {
-        typename std::iterator_traits<T>::iterator_category t;
-        __QuickSort(iter1, iter2, t);
+    vector<int> sortArray(vector<int>& nums) {
+        quickSort(nums.begin(), nums.end());
+        return nums;
     }
 private:
-    template<class T>
-    void __QuickSort(T first, T last, std::bidirectional_iterator_tag)
+    template <class RandIT>
+        void quickSort(RandIT first, RandIT last)
     {
         if (first < last)
         {
-            auto mid = Q_Partition(first, last);
-            typename std::iterator_traits<T>::iterator_category t;
-            __QuickSort(first, mid, t);
-            __QuickSort(next(mid), last, t);
+            // template overload 的例子
+            typename std::iterator_traits<RandIT>::iterator_category t;
+            auto pivot = partition(first, last, t);
+            quickSort(first, pivot);
+            quickSort(next(pivot), last);
         }
     }
-    template<class T>
-    T Q_Partition(T first, T last)
+    template <class RandIT>
+        RandIT partition(RandIT first, RandIT last, std::bidirectional_iterator_tag)
     {
-        T pivot = first;
-        first = next(first);
-        last = prev(last);
+        RandIT pivot = prev(last);
+        RandIT cur = first;
+
         while (first < last)
         {
-            while (*first <= *pivot)
-                first++;
-            while (*last > *pivot)
-                last--;
-
-            if (first < last)
-                swap(*first, *last);
+            if (*first < *pivot)
+            {
+                mySwap(first, cur);
+                cur++;
+            }
+            first++;
         }
-        swap(*last, *pivot);
+        mySwap(pivot, cur);
 
-        return last;
+        return cur;
     }
+    template <class RandIT>
+        void mySwap(RandIT first, RandIT second)
+    {
+        auto tmp = *first;
+        *first = *second;
+        *second = tmp;
+    }
+}
+\end{Code}
+
+\subsubsection{代碼2}
+\begin{Code}
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums) {
+        if (nums.size() > 0)
+            quickSort(nums, 0, nums.size() - 1);
+
+        return nums;
+    }
+private:
+    void quickSort(vector<int>& nums, int first, int last)
+    {
+        if (first < last)
+        {
+            int pivot = partition(nums, first, last);
+            quickSort(nums, first, pivot - 1);
+            quickSort(nums, pivot + 1, last);
+        }
+    }
+    int partition(vector<int>& nums, int first, int last)
+    {
+        int cur = first;
+        while (first < last)
+        {
+            if (nums[first] < nums[last])
+            {
+                mySwap(&nums[cur], &nums[first]);
+                cur++;
+            }
+            first++;
+        }
+        mySwap(&nums[cur], &nums[last]);
+        return cur;
+    }
+    void mySwap(int *a, int *b)
+    {
+        int tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
 \end{Code}
 
 
 \subsubsection{相關題目}
 No
-
-\subsubsection{代碼2}
-\begin{Code}
-// Not from LeetCode
-// 時間複雜度O(nlogn)，空間複雜度O(1)
-class Solution {
-public:
-    void QuickSort(vector<int>& vec)
-    {
-        __QuickSort(vec, 0, vec.size());
-    }
-private:
-    void __QuickSort(vector<int>& vec, int first, int last)
-    {
-        if (first < last)
-        {
-            int pivot = Q_Partition(vec, first, last);
-            __QuickSort(vec, first, pivot);
-            __QuickSort(vec, pivot + 1, last);
-        }
-    }
-    int Q_Partition(vector<int>& vec, int first, int last)
-    {
-        int pivot = first;
-        first++;
-        last--;
-        while (first < last)
-        {
-            while (vec[first] <= vec[pivot])
-                first++;
-            while (vec[last] > vec[pivot])
-                last--;
-
-            if (first < last)
-                swap(vec[first], vec[last]);
-        }
-        swap(vec[pivot], vec[last]);
-
-        return last;
-    }
-\end{Code}
-
 
 \subsubsection{相關題目}
 No
