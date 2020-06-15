@@ -711,6 +711,29 @@ public:
 };
 \end{Code}
 
+\subsubsection{遞歸}
+\begin{Code}
+// LeetCode, Pascal's Triangle II
+// 滾動數組，時間複雜度O(n^2)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> getRow(int rowIndex) {
+        vector<int> result;
+        getRow(result, rowIndex, 0);
+        return result;
+    }
+private:
+    void getRow(vector<int>& result, int rowIndex, int step) {
+        if (step > rowIndex) return;
+
+        for (int i = step - 1; i > 0; i--)
+            result[i] = result[i-1] + result[i];
+        result.push_back(1);
+
+        getRow(result, rowIndex, step+1);
+    }
+};
+\end{Code}
 
 \subsubsection{相關題目}
 \begindot
