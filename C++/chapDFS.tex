@@ -1247,6 +1247,11 @@ private:
 };
 \end{Code}
 
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
 \section{Candy Crush II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:candy-crush-ii}
 
@@ -1369,6 +1374,58 @@ private:
 };
 \end{Code}
 
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
+\section{K-th Symbol in Grammar}
+\label{sec:kth-symbol-in-grammar}
+
+\subsubsection{描述}
+On the first row, we write a 0. Now in every subsequent row, we look at the previous row and replace each occurrence of 0 with 01, and each occurrence of 1 with 10.
+
+Given row N and index K, return the K-th indexed symbol in row N. (The values of K are 1-indexed.) (1 indexed).
+
+\begin{Code}
+Examples:
+Input: N = 1, K = 1
+Output: 0
+
+Input: N = 2, K = 1
+Output: 0
+
+Input: N = 2, K = 2
+Output: 1
+
+Input: N = 4, K = 5
+Output: 1
+
+Explanation:
+row 1: 0
+row 2: 01
+row 3: 0110
+row 4: 01101001
+\end{Code}
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(logn)，空間複雜度O(1)
+class Solution {
+public:
+    int kthGrammar(int N, int K) {
+        if (N == 1) return 0;
+        if (K <= 1 << N-2)
+            return kthGrammar(N-1, K);
+        return kthGrammar(N-1, K - (1 << N-2)) ^ 1;
+    }
+};
+\end{Code}
 
 \subsubsection{相關題目}
 \begindot
