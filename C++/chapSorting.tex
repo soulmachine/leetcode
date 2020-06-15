@@ -253,6 +253,70 @@ public:
 \item Insertion Sort List，見 \S \ref{sec:insertion-sort-list}
 \myenddot
 
+\section{Merge sort Array} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:merge-sort-array}
+
+
+\subsubsection{描述}
+
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{Code}
+\begin{Code}
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums) {
+        mergeSort(nums.begin(), nums.end());
+        return nums;
+    }
+private:
+    template <class RandIT>
+        void mergeSort(RandIT first, RandIT last)
+    {
+        int len = distance(first, last);
+        if (len < 2) return;
+        auto mid = next(first, len / 2);
+
+        mergeSort(first, mid);
+        mergeSort(mid, last);
+
+        merge(first, mid, last);
+    }
+    template <class RandIT>
+        void merge(RandIT first, RandIT mid, RandIT last)
+    {
+        vector<int> tmpVec(mid, last);
+
+        auto ai = prev(mid);
+        auto ci = prev(last);
+        auto bi = prev(tmpVec.end());
+        while (bi >= tmpVec.begin() && ai >= first)
+        {
+            if (*ai <= *bi)
+            {
+                *ci = *bi;
+                bi--;
+            }
+            else
+            {
+                *ci = *ai;
+                ai--;
+            }
+            ci--;
+        }
+        while (bi >= tmpVec.begin())
+        {
+            *ci = *bi;
+            bi--;
+            ci--;
+        }
+    }
+\end{Code}
+
 
 \section{Quick sort Array} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:quick-sort-array}
