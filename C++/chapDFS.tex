@@ -1432,6 +1432,313 @@ public:
 \item 無
 \myenddot
 
+\section{Robot Room Cleaner}
+\label{sec:robot-room-cleaner}
+
+\subsubsection{描述}
+Given a robot cleaner in a room modeled as a grid.
+
+Each cell in the grid can be empty or blocked.
+
+The robot cleaner with 4 given APIs can move forward, turn left or turn right. Each turn it made is 90 degrees.
+
+When it tries to move into a blocked cell, its bumper sensor detects the obstacle and it stays on the current cell.
+
+Design an algorithm to clean the entire room using only the 4 given APIs shown below.
+
+\begin{Code}
+interface Robot {
+  // returns true if next cell is open and robot moves into the cell.
+  // returns false if next cell is obstacle and robot stays on the current cell.
+  boolean move();
+
+  // Robot will stay on the same cell after calling turnLeft/turnRight.
+  // Each turn will be 90 degrees.
+  void turnLeft();
+  void turnRight();
+
+  // Clean the current cell.
+  void clean();
+}
+\end{Code}
+
+Example:
+\begin{Code}
+Input:
+room = [
+  [1,1,1,1,1,0,1,1],
+  [1,1,1,1,1,0,1,1],
+  [1,0,1,1,1,1,1,1],
+  [0,0,0,1,0,0,0,0],
+  [1,1,1,1,1,1,1,1]
+],
+row = 1,
+col = 3
+
+Explanation:
+All grids in the room are marked by either 0 or 1.
+0 means the cell is blocked, while 1 means the cell is accessible.
+The robot initially starts at the position of row=1, col=3.
+From the top left corner, its position is one row below and three columns right.
+\end{Code}
+
+Notes:
+
+\begin{enumerate}
+\item The input is only given to initialize the room and the robot's position internally. You must solve this problem "blindfolded". In other words, you must control the robot using only the mentioned 4 APIs, without knowing the room layout and the initial robot's position.
+\item The robot's initial position will always be in an accessible cell.
+\item The initial direction of the robot will be facing up.
+\item All accessible cells are connected, which means the all cells marked as 1 will be accessible by the robot.
+\item Assume all four edges of the grid are all surrounded by wall.
+\end{enumerate}
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(todo)，空間複雜度O(todo)
+/**
+ * // This is the robot's control interface.
+ * // You should not implement it, or speculate about its implementation
+ * class Robot {
+ *   public:
+ *     // Returns true if the cell in front is open and robot moves into the cell.
+ *     // Returns false if the cell in front is blocked and robot stays in the current cell.
+ *     bool move();
+ *
+ *     // Robot will stay in the same cell after calling turnLeft/turnRight.
+ *     // Each turn will be 90 degrees.
+ *     void turnLeft();
+ *     void turnRight();
+ *
+ *     // Clean the current cell.
+ *     void clean();
+ * };
+ */
+namespace std
+{
+    template <>
+        struct hash<pair<int, int>>
+        {
+            size_t operator()(pair<int, int> const& p) const
+            {
+                return ((size_t)&(p.first) ^ (size_t)&(p.second));
+            }
+        };
+}
+class Solution {
+public:
+    void cleanRoom(Robot& robot) {
+        
+        backtrack(robot, 0, 0, 0);
+    }
+private:
+    const vector<pair<int, int>> m_directions{{-1,0},{0,1},{1,0},{0,-1}};
+    unordered_set<pair<int, int>> m_visited;
+private:
+    void backtrack(Robot& robot, int row, int col, int d)
+    {
+        m_visited.emplace(row, col);
+        robot.clean();
+        
+        // 以順時針方向出法，0：上，1：右，2：下，3：左
+        for (int i = 0; i < 4; i++)
+        {
+            int newD = (d + i) % 4;
+            int newRow = row + m_directions[newD].first;
+            int newCol = col + m_directions[newD].second;
+            
+            if (m_visited.find(make_pair(newRow, newCol)) == m_visited.end() && robot.move())
+            {
+                backtrack(robot, newRow, newCol, newD);
+                GoBack(robot);
+            }
+            robot.turnRight();
+        }
+    }
+    void GoBack(Robot& robot)
+    {
+        robot.turnRight();
+        robot.turnRight();
+        robot.move();
+        robot.turnRight();
+        robot.turnRight();
+    }
+};
+\end{Code}
+
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(todo)，空間複雜度O(todo)
+class Solution {
+public:
+    #define ii pair<int,int>
+    int getr(int x, int y) {
+        return max(abs(x), abs(y));
+    }
+    int xy2n(int x, int y) {
+        int r = max(abs(x), abs(y));
+        if(r==0) return 0;
+        int start = (2*r-1)*(2*r-1);
+        if(x==r) return start  + (x+y);
+        if(y==r) return start  + 2*r  + (y-x);
+        if(x==-r) return start + 4*r - (x+y);
+        if(y==-r) return start + 6*r +(x-y);
+        return -1;
+    }
+    vector<int> grid;
+    int x, y, dir, r;
+    #define VISITING 1
+    #define VISITED 2
+    #define BLOCK 3
+    #define N 0
+    #define W 1
+    #define S 2
+    #define E 3
+    bool move(Robot &robot) {
+        int nx=x,ny=y;
+        switch(dir) {
+            case N: ny++; break;
+            case S: ny--; break;
+            case E: nx++; break;
+            case W: nx--; break;
+        }
+        if(r < getr(nx,ny)) {
+            grid.resize(grid.size() + 8*(r+1), 0);
+            r = getr(nx,ny);
+        }
+        int n = xy2n(nx,ny);
+        if(grid[n] != 0) return false;
+        if(robot.move()) {
+            grid[xy2n(nx,ny)] = 1;
+            x=nx, y=ny;
+            return true;
+        } else {
+            grid[xy2n(nx,ny)] = BLOCK;
+            return false;
+        }
+        return false;
+    }
+    void turnLeft(Robot &r) { dir = (dir+1)%4; r.turnLeft(); }
+    void turnRight(Robot &r) { dir =(dir+3)%4; r.turnRight(); }
+    bool dfs(Robot &r) {
+        //printf("(%c,%d) ", dir, xy2n(x,y));
+        grid[xy2n(x,y)] = VISITING;
+        r.clean();
+        int curx=x, cury=y;
+        for(int i=0; i<4; i++) {
+            if(move(r)) {
+                dfs(r);
+                // pull back the robot back to current cell
+                grid[xy2n(curx,cury)] = 0;
+                move(r); turnRight(r); turnRight(r);
+                grid[xy2n(curx,cury)] = VISITING;
+            }
+            turnLeft(r);
+        }
+        turnRight(r); turnRight(r);  // point back to the path how we came in
+        grid[xy2n(x,y)] = VISITED;
+        return false;
+    }
+    void cleanRoom(Robot& robot) {
+        x = y = r = 0;
+        dir = N;
+        grid.resize(1,0);
+        grid[0]=1;
+        dfs(robot);
+    }
+};
+\end{Code}
+
+
+\subsubsection{代碼 - DFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(todo)，空間複雜度O(todo)
+class Solution {
+public:
+    void dfs(Robot& robot, unordered_map<int, set<int>>& visited, int x, int y)
+    {
+        //cout << x << " " << y << endl;
+        visited[x].insert(y);
+        robot.clean();
+
+        if ((visited.count(x-1) == 0 || visited[x-1].count(y) == 0) &&
+            robot.move())
+        {
+            dfs(robot, visited, x-1, y);
+            robot.turnRight();
+            robot.turnRight();
+            robot.move();
+        }
+        else
+        {
+            robot.turnRight();
+            robot.turnRight();
+        }
+
+        if ((visited.count(x+1) == 0 || visited[x+1].count(y) == 0) &&
+            robot.move())
+        {
+            robot.turnLeft();
+            robot.turnLeft();
+            dfs(robot, visited, x+1, y);
+            robot.move();
+            robot.turnRight();
+        }
+        else
+        {
+            robot.turnLeft();
+        }
+
+        if (visited[x].count(y+1) == 0 &&
+            robot.move())
+        {
+            robot.turnLeft();
+            dfs(robot, visited, x, y+1);
+            robot.turnLeft();
+            robot.move();
+        }
+        else
+        {
+            robot.turnLeft();
+            robot.turnLeft();
+        }
+
+        if (visited[x].count(y-1) == 0 &&
+            robot.move())
+        {
+            robot.turnRight();
+            dfs(robot, visited, x, y-1);
+            robot.turnRight();
+            robot.move();
+            robot.turnLeft();
+        }
+        else
+        {
+            robot.turnRight();
+        }
+    }
+
+    void cleanRoom(Robot& robot) {
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+        unordered_map<int, set<int>> visited;
+
+        dfs(robot, visited, 0, 0);
+    }
+};
+\end{Code}
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:dfs-template}
 
