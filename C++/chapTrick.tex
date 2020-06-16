@@ -86,6 +86,17 @@ auto equal = [](const Node& l, const Node& r)
 std::unordered_map<Node, int, decltype(hash), decltype(equal)> m(8, hash, equal);
 \end{Code}
 
+\begin{Code}
+namespace std {
+template<>
+struct hash<pair<Iterator, Iterator>> {
+    size_t operator()(pair<Iterator, Iterator> const& p) const {
+        return ((size_t) &(*p.first)) ^ ((size_t) &(*p.second));
+    }
+};
+}
+\end{Code}
+
 \subsubsection{Priority queue in c++ with custom class}
 
 \begin{Code}
