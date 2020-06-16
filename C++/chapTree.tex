@@ -2476,3 +2476,91 @@ private:
 \begindot
 \item 無
 \myenddot
+
+\subsection{Convert Binary Search Tree To Double link list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:convert-binary-search-tree-to-double-link-list}
+
+
+\subsubsection{描述}
+Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place.
+
+You can think of the left and right pointers as synonymous to the predecessor and successor pointers in a doubly-linked list. For a circular doubly linked list, the predecessor of the first element is the last element, and the successor of the last element is the first element.
+
+We want to do the transformation in place. After the transformation, the left pointer of the tree node should point to its predecessor, and the right pointer should point to its successor. You should return the pointer to the smallest element of the linked list.
+
+
+\begin{center}
+\includegraphics[width=300pt]{convert-binary-search-tree-to-double-link-list.png}\\
+\figcaption{Convert Binary Search Tree}\label{fig:convert-binary-search-tree-to-double-link-list}
+\end{center}
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Decode Ways
+// 時間複雜度O(n)，空間複雜度O(logn)
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* treeToDoublyList(Node* root) {
+        if (root == nullptr) return root;
+
+        m_last = m_first = nullptr;
+
+        DFS(root);
+        m_first->left = m_last;
+        m_last->right = m_first;
+
+        return m_first;
+    }
+private:
+    void DFS(Node *node)
+    {
+        if (node == nullptr) return;
+
+        DFS(node->left);
+
+        if (m_last)
+        {
+            m_last->right = node;
+            node->left = m_last;
+        }
+        else
+        {
+            m_first = node;
+            node->left = nullptr;
+        }
+        m_last = node;
+
+        DFS(node->right);
+    }
+private:
+    Node *m_last;
+    Node *m_first;
+};
+\end{Code}
