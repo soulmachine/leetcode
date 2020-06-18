@@ -505,3 +505,93 @@ private:
     }
 };
 \end{Code}
+
+\section{Find Minimum in Rotated Sorted Array} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:find-minium-in-rotated-sorted-array}
+
+
+\subsubsection{描述}
+Given a sorted array arr, two integers k and x, find the k closest elements to x in the array. The result should also be sorted in ascending order. If there is a tie, the smaller elements are always preferred.
+
+Example 1:
+\begin{Code}
+Input: arr = [1,2,3,4,5], k = 4, x = 3
+Output: [1,2,3,4]
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: arr = [1,2,3,4,5], k = 4, x = -1
+Output: [1,2,3,4]
+\end{Code}
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsection{迭代}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(logn)
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        if ((int)arr.size() <= k) return arr;
+
+        auto pos = ClosestSearch(arr.begin(), arr.end(), x);
+        // 使用兩個指針，往左右走開，若差相同，先取左（細），後取右（大）
+        if (pos == arr.end()) {
+            return vector<int>(prev(arr.end(), k), arr.end());
+        }
+        else {
+            auto left = pos;
+            auto right = next(pos);
+            cout << *pos << endl;
+            --k;
+
+            while (k && left != arr.begin() && right != arr.end()) {
+                // 若差相同，先取左（細），後取右（大）
+                if (abs(*prev(left) - x) <= abs(*right - x))
+                    left = prev(left);
+                else
+                    right = next(right);
+                --k;
+            }
+            if (k) {
+                if (left == arr.begin()) {
+                    while (k--) right = next(right);
+                }
+                else {
+                    while (k--) left = prev(left);
+                }
+            }
+
+            return vector<int>(left, right);
+        }
+    }
+private:
+    template <class RandIT, class T>
+        RandIT ClosestSearch(RandIT left, RandIT right, const T& target) {
+        RandIT first = left;
+        RandIT last = right;
+        while (left != right) {
+            auto mid = next(left, distance(left, right) / 2);
+
+            if (*mid == target) return mid;
+            if (*mid < target)
+                left = next(mid);
+            else
+                right = mid;
+        }
+
+        if (left == first) return left;
+        if (left != last) {
+            if (abs(*prev(left) - target) <= abs(*left - target))
+                return prev(left);
+            else
+                return left;
+        }
+
+        return left;
+    }
+};
+\end{Code}
