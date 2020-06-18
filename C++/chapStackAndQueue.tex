@@ -315,7 +315,8 @@ public:
             int middle = (start + end) / 2;
             root->left = buildSegmentTree(heights, start, middle);
             root->right = buildSegmentTree(heights, middle + 1, end);
-            root->min = heights[root->left->min] < heights[root->right->min] ? root->left->min : root->right->min;
+            root->min = heights[root->left->min] < heights[root->right->min]
+                        ? root->left->min : root->right->min;
             return root;
         }
     }
