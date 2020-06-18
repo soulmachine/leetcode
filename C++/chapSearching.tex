@@ -595,3 +595,162 @@ private:
     }
 };
 \end{Code}
+
+
+\section{Closest Binary Search Tree Value} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:closest-binary-search-tree-value}
+
+
+\subsubsection{描述}
+Given a non-empty binary search tree and a target value, find the value in the BST that is closest to the target.
+
+Note:
+\begindot
+\item Given target value is a floating point.
+\item You are guaranteed to have only one unique value in the BST that is closest to the target.
+\myenddot
+
+
+Example 1:
+\begin{Code}
+Input: root = [4,2,5,1,3], target = 3.714286
+
+    4
+   / \
+  2   5
+ / \
+1   3
+
+Output: 4
+\end{Code}
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsection{迭代}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(1)
+class Solution {
+public:
+    int closestValue(TreeNode* root, double target) {
+        if (root == nullptr) return target;
+
+        int curMin = root->val;
+
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode *cur = q.front();
+            q.pop();
+
+            if (abs(cur->val - target) < abs(curMin - target)) {
+                curMin = cur->val;
+                if (abs(curMin - target) == 0) return curMin;
+            }
+
+            if (cur->val > target && cur->left)
+                q.push(cur->left);
+            else if (cur->val < target && cur->right)
+                q.push(cur->right);
+        }
+
+        return curMin;
+    }
+};
+\end{Code}
+
+\subsection{遞歸}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(1)
+class Solution {
+public:
+    int closestValue(TreeNode* root, double target) {
+        double closest = root->val;
+        PreOrder(root, target, closest);
+
+        return closest;
+    }
+private:
+    void PreOrder(TreeNode *root, const double& target, double& closest) {
+        if (closest == target) return;
+        if (root == nullptr) return;
+
+        if (abs(root->val - target) < abs(closest - target)) {
+            closest = root->val;
+
+            if (closest == target) return;
+        }
+
+        if (root->val > target)
+            PreOrder(root->left, target, closest);
+        else
+            PreOrder(root->right, target, closest);
+    }
+};
+\end{Code}
+
+\section{Search in a Sorted Array of Unknown Size} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:search-in-a-sorted-array-of-unknown-size}
+
+
+\subsubsection{描述}
+Given an integer array sorted in ascending order, write a function to search target in nums.  If target exists, then return its index, otherwise return -1. However, the array size is unknown to you. You may only access the array using an ArrayReader interface, where ArrayReader.get(k) returns the element of the array at index k (0-indexed).
+
+You may assume all integers in the array are less than 10000, and if you access the array out of bounds, ArrayReader.get will return 2147483647.
+
+
+Example 1:
+\begin{Code}
+Input: array = [-1,0,3,5,9,12], target = 9
+Output: 4
+Explanation: 9 exists in nums and its index is 4
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: array = [-1,0,3,5,9,12], target = 2
+Output: -1
+Explanation: 2 does not exist in nums so return -1
+\end{Code}
+
+Note:
+\begindot
+\item You may assume that all elements in the array are unique.
+\item The value of each element in the array will be in the range [-9999, 9999].
+\myenddot
+
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsection{迭代}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(1)
+class Solution {
+public:
+    int search(const ArrayReader& reader, int target) {
+        // 由 0 開始的 binary search
+        int left = 0;
+        int right = 1;
+        int OutBound = 2147483647;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            if (reader.get(mid) == target) return mid;
+            if (reader.get(mid) == OutBound)
+                right = mid;
+            else if (reader.get(mid) < target) {
+                left = ++mid;
+                right <<= 1; // times 2
+            }
+            else
+                right = mid;
+        }
+
+        return -1;
+    }
+};
+\end{Code}
