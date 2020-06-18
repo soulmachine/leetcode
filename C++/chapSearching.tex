@@ -305,3 +305,203 @@ private:
 \begindot
 \item 無
 \myenddot
+
+\section{Find Peak Element} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:find-peadk-element}
+
+
+\subsubsection{描述}
+A peak element is an element that is greater than its neighbors.
+
+Given an input array nums, where nums[i] ≠ nums[i+1], find a peak element and return its index.
+
+The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+
+You may imagine that nums[-1] = nums[n] = -∞.
+
+Example 1:
+\begin{Code}
+Input: nums = [1,2,3,1]
+Output: 2
+Explanation: 3 is a peak element and your function should return the index number 2.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums = [1,2,1,3,5,6,4]
+Output: 1 or 5 
+Explanation: Your function can return either index number 1 where the peak element is 2, 
+             or index number 5 where the peak element is 6.
+\end{Code}
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsection{迭代}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(logn)
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        return findPeak(nums, 0, nums.size()-1);
+    }
+private:
+    int findPeak(const vector<int>& nums, int left, int right)
+    {
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (left == right)
+                return left;
+            if (nums[mid] > nums[mid + 1])
+                right = mid;
+            else
+                left = ++mid;
+        }
+        return left;
+    }
+};
+\end{Code}
+
+\subsection{遞歸}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(logn)
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        return findPeak(nums, 0, nums.size()-1);
+    }
+private:
+    int findPeak(const vector<int>& nums, int left, int right)
+    {
+        if (left == right)
+            return left;
+        int mid = left + (right - left) / 2;
+        if (nums[mid] > nums[mid+1])
+            return findPeak(nums, left, mid);
+        else
+            return findPeak(nums, ++mid, right);
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
+\section{Find Minimum in Rotated Sorted Array} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:find-minium-in-rotated-sorted-array}
+
+
+\subsubsection{描述}
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e.,  [0,1,2,4,5,6,7] might become  [4,5,6,7,0,1,2]).
+
+Find the minimum element.
+
+You may assume no duplicate exists in the array.
+
+Example 1:
+\begin{Code}
+Input: [3,4,5,1,2] 
+Output: 1
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: [4,5,6,7,0,1,2]
+Output: 0
+\end{Code}
+
+\subsubsection{分析}
+二分查找。
+
+
+\subsection{迭代}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(logn)
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int left = 0;
+        int right = nums.size();
+        int minVal = INT_MAX;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            int nextIndex = 0;
+            if (nums[left] < nums[mid]) {
+                nextIndex = left;
+                left = ++mid;
+            }
+            else if (nums[mid] < nums[right-1]) {
+                nextIndex = mid;
+                right = mid;
+            }
+            else if (nums[left] >= nums[mid]) {
+                nextIndex = mid;
+                left = ++mid;
+            }
+            else if (nums[mid] >= nums[right - 1]) {
+                nextIndex = right -1;
+                right = mid;
+            }
+
+            if (minVal > nums[nextIndex])
+                minVal = nums[nextIndex];
+        }
+
+        return minVal;
+    }
+};
+\end{Code}
+
+
+\subsection{遞歸}
+\begin{Code}
+// 時間複雜度O(logn)，空間複雜度O(logn)
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int left = 0;
+        int right = nums.size();
+        int minVal = INT_MAX;
+        return DFS(nums, left, right, minVal);
+    }
+private:
+    int DFS(const vector<int>& nums, int left, int right, int& minVal) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+
+            int nextIndex = 0;
+            if (nums[left] < nums[mid]) {
+                nextIndex = left;
+                left = ++mid;
+            }
+            else if (nums[mid] < nums[right-1]) {
+                nextIndex = mid;
+                right = mid;
+            }
+            else if (nums[left] >= nums[mid]) {
+                nextIndex = mid;
+                left = ++mid;
+            }
+            else if (nums[mid] >= nums[right - 1]) {
+                nextIndex = right -1;
+                right = mid;
+            }
+
+            if (minVal > nums[nextIndex])
+                minVal = nums[nextIndex];
+
+            return DFS(nums, left, right, minVal);
+        }
+        return minVal;
+    }
+};
+\end{Code}
