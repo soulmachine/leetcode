@@ -2368,6 +2368,119 @@ private:
 \item Candy Crush II, 見 \S \ref{sec:candy-crush-ii}
 \myenddot
 
+\subsection{Intersection of Two Arrays}
+\label{sec:intersection-of-two-arrays}
+
+
+\subsubsection{描述}
+Given two arrays, write a function to compute their intersection.
+
+Example 1:
+\begin{Code}
+Input: nums1 = [1,2,2,1], nums2 = [2,2]
+Output: [2]
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+Output: [9,4]
+\end{Code}
+
+Note:
+\begindot
+\item Each element in the result must be unique.
+\item The result can be in any order.
+\myenddot
+
+\subsubsection{分析}
+1. Use std method\newline
+
+2. Use hash map\newline
+
+3. Sort then merge\newline
+
+\subsubsection{代碼 - STD method}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class solution{
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        // 先順序
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        vector<int> result(nums1.size() + nums2.size());
+
+        // 利用 std
+        vector<int>::iterator it = set_intersection(nums1.begin(), nums1.end()
+                                                    , nums2.begin(), nums2.end()
+                                                    , result.begin());
+        // 刪去多餘的空間
+        result.resize(it - result.begin());
+        // 刪去重覆
+        result.erase(unique(result.begin(), result.end()), result.end());
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{代碼 - Hash map}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class solution{
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        // 使用 hash map
+        unordered_set<int> map1(nums1.begin(), nums1.end());
+        unordered_set<int> map2(nums2.begin(), nums2.end());
+        vector<int> result; result.reserve(map1.size() + map2.size());
+
+        for (const auto& e1 : map1) {
+            // 在兩個 hash map 中出現，便是答案
+            auto it = map2.find(e1);
+            if (it != map2.end()) result.push_back(e1);
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{代碼 - Merge vector}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class solution{
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        // 先順序
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        vector<int> result; result.reserve(nums1.size() + nums2.size());
+
+        // merge 兩支 vector
+        for (int p1 = 0, p2 = 0; p1 < nums1.size() && p2 < nums2.size()) {
+            if (nums1[p1] < nums2[p2])
+                p1++;
+            else if (nums1[p1] > nums2[p2])
+                p2++;
+            else {
+                result.push_back(nums1[p1]);
+                p1++;
+                p2++;
+            }
+        }
+        // 除去重覆
+        result.erase(unique(result.begin(), result.end()), result.end());
+
+        return result;
+    }
+};
+\end{Code}
+
 \section{單鏈表} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 單鏈表節點的定義如下：
