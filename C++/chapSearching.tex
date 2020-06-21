@@ -436,22 +436,20 @@ public:
 
             int index = 0;
 
+            if (mid == left) {
+                minVal = min(minVal, nums[mid]);
+                break;
+            }
             if (nums[left] < nums[mid]) {
                 index = left;
                 left = ++mid;
             }
-            else if (nums[mid] < nums[right-1]) {
+            else if (nums[left] > nums[mid]) {
                 index = mid;
                 right = mid;
             }
-            else if (nums[left] >= nums[mid]) {
-                index = mid;
-                left = ++mid;
-            }
-            else if (nums[mid] >= nums[right-1]) {
-                index = right-1;
-                right = mid;
-            }
+            else
+                left++;
 
             minVal = min(minVal, nums[index]);
         }
@@ -460,52 +458,6 @@ public:
     }
 };
 \end{Code}
-
-
-\subsection{遞歸}
-\begin{Code}
-// 時間複雜度O(logn)，空間複雜度O(logn)
-class Solution {
-public:
-    int findMin(vector<int>& nums) {
-        int left = 0;
-        int right = nums.size();
-        int minVal = INT_MAX;
-        return DFS(nums, left, right, minVal);
-    }
-private:
-    int DFS(const vector<int>& nums, int left, int right, int& minVal) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-
-            int index = 0;
-            if (nums[left] < nums[mid]) {
-                index = left;
-                left = ++mid;
-            }
-            else if (nums[mid] < nums[right-1]) {
-                index = mid;
-                right = mid;
-            }
-            else if (nums[left] >= nums[mid]) {
-                index = mid;
-                left = ++mid;
-            }
-            else if (nums[mid] >= nums[right - 1]) {
-                index = right -1;
-                right = mid;
-            }
-
-            if (minVal > nums[index])
-                minVal = nums[index];
-
-            return DFS(nums, left, right, minVal);
-        }
-        return minVal;
-    }
-};
-\end{Code}
-
 \section{Find K Closest Elements} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:find-k-closest-elements}
 
