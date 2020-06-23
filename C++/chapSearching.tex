@@ -791,3 +791,134 @@ public:
     }
 };
 \end{Code}
+
+\section{Split Array Largest Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:split-array-largest-sum}
+
+
+\subsubsection{描述}
+Given an array which consists of non-negative integers and an integer m, you can split the array into m non-empty continuous subarrays. Write an algorithm to minimize the largest sum among these m subarrays.
+
+Example:
+\begin{Code}
+Input:
+nums = [7,2,5,10,8]
+m = 2
+
+Output:
+18
+
+Explanation:
+There are four ways to split nums into two subarrays.
+The best way is to split it into [7,2,5] and [10,8],
+where the largest sum among the two subarrays is only 18.
+\end{Code}
+
+Note:
+If n is the length of array, assume the following constraints are satisfied:
+\begindot
+\item 1 <= n <= 1000
+\item 1 <= m <= min(50, n)
+\myenddot
+
+
+\subsubsection{分析}
+二分查找。
+
+\subsection{暴力 - Brute Force}
+\begin{Code}
+// 時間複雜度O(n^m)，空間複雜度O(n)
+class Solution {
+public:
+    int ans;
+    int n, m;
+    void dfs(vector<int>& nums, int i, int cntSubarrays, int curSum, int curMax) {
+        if (i == n && cntSubarrays == m) {
+            ans = min(ans, curMax);
+            return;
+        }
+        if (i == n) {
+            return;
+        }
+        if (i > 0) {
+            dfs(nums, i + 1, cntSubarrays, curSum + nums[i], max(curMax, curSum + nums[i]));
+        }
+        if (cntSubarrays < m) {
+            dfs(nums, i + 1, cntSubarrays + 1, nums[i], max(curMax, nums[i]));
+        }
+    }
+    int splitArray(vector<int>& nums, int M) {
+        ans = INT_MAX;
+        n = nums.size();
+        m = M;
+        dfs(nums, 0, 0, 0, 0);
+        return ans;
+    }
+};
+\end{Code}
+
+
+\subsection{動規}
+\begin{Code}
+// 時間複雜度O(n^2 * m)，空間複雜度O(n*m)
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int m) {
+        int n = nums.size();
+        vector<vector<int>> f(n + 1, vector<int>(m + 1, INT_MAX));
+        vector<int> sub(n + 1, 0);
+        for (int i = 0; i < n; i++) {
+            sub[i + 1] = sub[i] + nums[i];
+        }
+        f[0][0] = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                for (int k = 0; k < i; k++) {
+                    f[i][j] = min(f[i][j], max(f[k][j - 1], sub[i] - sub[k]));
+                }
+            }
+        }
+        return f[n][m];
+    }
+};
+\end{Code}
+
+\subsection{二分尋找}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+#define LL long long
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int m) {
+        LL l = 0, r = 0;
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            r += nums[i];
+            if (l < nums[i]) {
+                l = nums[i];
+            }
+        }
+        LL ans =  r;
+        while (l <= r) {
+            LL mid = (l + r) >> 1; // mid 是 sub-vector 的平均總加
+            LL sum = 0; // 當下的 sub-vector 的總加
+            int cnt = 1; // sub-vector 的總數
+            for (int i = 0; i < n; i++) {
+                if (sum + nums[i] > mid) {
+                    cnt ++;
+                    sum = nums[i];
+                } else {
+                    sum += nums[i];
+                }
+            }
+            if (cnt <= m) {
+                ans = min(ans, mid);
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
+\end{Code}
