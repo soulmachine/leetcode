@@ -2705,3 +2705,65 @@ public:
     }
 };
 \end{Code}
+
+\subsection{Array Partition I}
+\label{sec:array-partition-i}
+
+\subsubsection{描述}
+Given an array of 2n integers, your task is to group these integers into n pairs of integer, say (a1, b1), (a2, b2), ..., (an, bn) which makes sum of min(ai, bi) for all i from 1 to n as large as possible.
+
+Example 1:
+\begin{Code}
+Input: [1,4,3,2]
+
+Output: 4
+Explanation: n is 2, and the maximum sum of pairs is 4 = min(1, 2) + min(3, 4).
+\end{Code}
+
+Note:
+\begindot
+\item n is a positive integer, which is in the range of [1, 10000].
+\item All the integers in the array will be in the range of [-10000, 10000].
+\myenddot
+
+\subsubsection{分析}
+Nil
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    int arrayPairSum(vector<int>& nums) {
+        vector<int> arr(20001, 0);
+        int shift = 10000;
+        for (const int& num : nums)
+            arr[num + shift]++;
+        int d = 0, sum = 0;
+        for (int i = -10000; i <= 10000; i++)
+        {
+            sum += (arr[i + shift] + 1 - d) / 2 * i;
+            d = (2 + arr[i + shift] - d) % 2; // 在前邊加 2，用來防止負數的出現。
+        }
+        return sum;
+    }
+};
+\end{Code}
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(1)
+class Solution {
+public:
+    int arrayPairSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int sum = 0;
+        for (int i = 0; i < nums.size(); i += 2)
+            sum += nums[i];
+
+        return sum;
+    }
+};
+\end{Code}
