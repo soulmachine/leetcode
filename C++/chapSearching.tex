@@ -922,3 +922,80 @@ public:
     }
 };
 \end{Code}
+
+\section{Minimum Size Subarray Sum}
+\label{sec:minimum-size-subarray-sum}
+
+\subsection{描述}
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+
+Example:
+\begin{Code}
+Input: s = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: the subarray [4,3] has the minimal length under the problem constraint.
+\end{Code}
+
+\textbf{Follow up:}\newline
+If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n). 
+
+\subsection{分析}
+使用兩個指針，當累積總和大過目標數時，左指針往右推進，否則右指針往右推進。
+
+\subsection{雙指針}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums)
+    {
+        int n = nums.size();
+        int ans = INT_MAX;
+        int left = 0;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            while (sum >= s) {
+                ans = min(ans, i + 1 - left);
+                sum -= nums[left++];
+            }
+        }
+        return (ans != INT_MAX) ? ans : 0;
+    }
+};
+\end{Code}
+
+
+\subsection{分析}
+在順序的 array 當中計算得出移動總和。然後順序找㝷合條件的 subarray。並計算其長短。可以利用當前數值為 shifting value，加上目標數值和 lower_bound 找到合條件的 subarray。
+
+\subsection{移動總加}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums)
+    {
+        int n = nums.size();
+        if (n == 0)
+            return 0;
+        int ans = INT_MAX;
+        vector<int> sums(n + 1, 0); //size = n+1 for easier calculations
+        //sums[0]=0 : Meaning that it is the sum of first 0 elements
+        //sums[1]=A[0] : Sum of first 1 elements
+        //ans so on...
+        for (int i = 1; i <= n; i++)
+            sums[i] = sums[i - 1] + nums[i - 1];
+        for (int i = 1; i <= n; i++) {
+            int to_find = s + sums[i - 1];
+            auto bound = lower_bound(sums.begin(), sums.end(), to_find);
+            if (bound != sums.end()) {
+                ans = min(ans, static_cast<int>(bound - (sums.begin() + i - 1)));
+            }
+        }
+        return (ans != INT_MAX) ? ans : 0;
+    }
+};
+\end{Code}
