@@ -2767,3 +2767,108 @@ public:
     }
 };
 \end{Code}
+
+
+\subsection{Rotate Array}
+\label{sec:rotate-array}
+
+\subsubsection{描述}
+Given an array, rotate the array to the right by k steps, where k is non-negative.
+
+Example 1:
+\begin{Code}
+Input: nums = [1,2,3,4,5,6,7], k = 3
+Output: [5,6,7,1,2,3,4]
+Explanation:
+rotate 1 steps to the right: [7,1,2,3,4,5,6]
+rotate 2 steps to the right: [6,7,1,2,3,4,5]
+rotate 3 steps to the right: [5,6,7,1,2,3,4]
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums = [-1,-100,3,99], k = 2
+Output: [3,99,-1,-100]
+Explanation: 
+rotate 1 steps to the right: [99,-1,-100,3]
+rotate 2 steps to the right: [3,99,-1,-100]
+\end{Code}
+
+\subsubsection{額外的空間}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        vector<int> a(nums.size());
+
+        for (int i = 0; i < nums.size(); i++)
+            a[(i + k) % nums.size()] = nums[i];
+
+        nums = a;
+    }
+};
+\end{Code}
+
+\subsubsection{循環取代法}
+\begin{center}
+\includegraphics[width=300pt]{cyclic-replacements.png}\\
+\figcaption{cyclic replacements}\label{fig:cyclic-replacements}
+\end{center}
+
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        k = k % nums.size();
+        int count = 0;
+        for (int start = 0; count < nums.size(); start++) {
+            int current = start;
+            int prev = nums[start];
+            do {
+                int next = (current + k) % nums.size();
+                int temp = nums[next];
+                nums[next] = prev;
+                prev = temp;
+                current = next;
+                count++;
+            } while (start != current);
+        }
+    }
+};
+\end{Code}
+
+\subsubsection{reverse}
+\begin{Code}
+Original List                   : 1 2 3 4 5 6 7
+After reversing all numbers     : 7 6 5 4 3 2 1
+After reversing first k numbers : 5 6 7 4 3 2 1
+After revering last n-k numbers : 5 6 7 1 2 3 4 --> Result
+\end{Code}
+
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        k %= nums.size();
+        reverse(nums, 0, nums.size() - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.size() - 1);
+    }
+private:
+    void reverse(vector<int>& nums, int start, int end) {
+        while (start < end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+};
+\end{Code}
