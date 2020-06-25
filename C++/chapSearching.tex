@@ -822,8 +822,6 @@ If n is the length of array, assume the following constraints are satisfied:
 \myenddot
 
 
-\subsubsection{分析}
-二分查找。
 
 \subsection{暴力 - Brute Force}
 \begin{Code}
@@ -857,6 +855,14 @@ public:
 };
 \end{Code}
 
+\subsubsection{分析}
+Let's define f[i][j] to be the minimum largest subarray sum for splitting nums[0..i] into j parts.
+
+Consider the jth subarray. We can split the array from a smaller index k to i to form it. Thus f[i][j] can be derived from max(f[k][j - 1], nums[k + 1] + ... + nums[i]). For all valid index k, f[i][j] should choose the minimum value of the above formula.
+
+The final answer should be f[n][m], where n is the size of the array.
+
+For corner situations, all the invalid f[i][j] should be assigned with INFINITY, and f[0][0] should be initialized with 0.
 
 \subsection{動規}
 \begin{Code}
