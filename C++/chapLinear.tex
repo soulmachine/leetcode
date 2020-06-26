@@ -2872,3 +2872,109 @@ private:
     }
 };
 \end{Code}
+
+
+\subsection{Reverse Words in a String}
+\label{sec:reverse-words-in-a-string}
+
+\subsubsection{描述}
+Given an input string, reverse the string word by word.
+
+Example 1:
+\begin{Code}
+Input: "the sky is blue"
+Output: "blue is sky the"
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: "  hello world!  "
+Output: "world! hello"
+Explanation: Your reversed string should not contain leading or trailing spaces.
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: "a good   example"
+Output: "example good a"
+Explanation: You need to reduce multiple spaces between two words to a single space in the reversed string.
+\end{Code}
+
+Note:
+\begindot
+\item A word is defined as a sequence of non-space characters.
+\item Input string may contain leading or trailing spaces. However,
+      your reversed string should not contain leading or trailing spaces.
+\item You need to reduce multiple spaces between two words to a single space in the reversed string.
+\myenddot
+
+\subsubsection{分析}
+Reverse
+
+\subsubsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    string reverseWords(string s) {
+        if (s.size() == 0) return s;
+        // 整段 reverse
+        MyReverse(s.begin(), s.end());
+        // 每個字 reverse
+        auto cur = s.begin();
+        auto next = cur;
+
+        while (next < s.end())
+        {
+            // 尋找字的開端
+            cur = find_if(cur, s.end(), [&](const char& c) { return (c != ' '); });
+            // 尋找空白的開端
+            next = find_if(cur, s.end(), [&](const char& c) { return (c == ' '); });
+
+            MyReverse(cur, next);
+
+            cur = next;
+        }
+
+        // 對應的 std 方法
+        // s.erase(s.find_last_not_of(' ')+1); // 移除領先空格
+        // s.erase(0, s.find_first_not_of(' ')); // 移除尾隨空格
+        s.erase(InPlaceRemoveSpace(s.begin(), s.end()), s.end());
+        return s;
+    }
+private:
+    template <class RandIT>
+        RandIT InPlaceRemoveSpace(RandIT first, RandIT last)
+    {
+        bool isFirst = true;
+        // 移除領先空格，尾隨空格，中間多餘空格
+        auto cur = first;
+        while (first < last)
+        {
+            // 找尋下一個字
+            first = find_if(first, last, [&](const char& c) { return (c != ' '); });
+            if (first >= last) break;
+
+            if (!isFirst) *cur++ = ' '; // 只有當不是第一個文字，會加入空格
+            while (first < last && *first != ' ') *cur++ = *first++; // 補上文字，直至空格出現
+            if (first >= last) break;
+            isFirst = false;
+        }
+
+        return cur;
+    }
+    template <class RandIT>
+        void MyReverse(RandIT first, RandIT last)
+    {
+        last--;
+        while (first < last)
+        {
+            // 進行 swap
+            auto tmp = *last;
+            *last-- = *first;
+            *first++ = tmp;
+        }
+    }
+};
+\end{Code}
