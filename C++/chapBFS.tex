@@ -1001,6 +1001,211 @@ private:
     }
 };
 \end{Code}
+
+\section{Perfect Squares}
+\label{sec:perfect-squares}
+
+\subsection{描述}
+Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
+
+Example 1:
+\begin{Code}
+Input: n = 12
+Output: 3 
+Explanation: 12 = 4 + 4 + 4.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: n = 13
+Output: 2
+Explanation: 13 = 4 + 9.
+\end{Code}
+
+
+\subsection{暴力 - DFS - 會超時}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    int numSquares(int n) {
+        m_minStep = INT_MAX;
+        DFS(n, 0, 1);
+        return m_minStep;
+    }
+private:
+    int m_minStep;
+    void DFS(int n, int step, int start)
+    {
+        if (n == 0)
+        {
+            m_minStep = min(m_minStep, step);
+            return;
+        }
+        else if (n < 0)
+            return;
+        else if (step > m_minStep)
+            return;
+
+        for (int i = start; i*i <= n; i++)
+        {
+            DFS(n - (i*i), step + 1, i);
+        }
+    }
+};
+\end{Code}
+
+\subsection{貪心法 - DFS - I}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    int numSquares(int n) {
+        m_minStep = INT_MAX;
+        m_N = n;
+        DFS(n, 0, 1);
+        return m_minStep;
+    }
+private:
+    int m_minStep;
+    int m_N;
+    void DFS(int n, int step)
+    {
+        if (n == 0)
+        {
+            m_minStep = min(m_minStep, step);
+            return;
+        }
+        else if (n < 0)
+            return;
+        else if (step > m_minStep || step > m_N)
+            return;
+
+
+        for (int i = (int)sqrt(n); i >= 1; i--)
+        {
+            DFS(n - (i*i), step + 1);
+            if (step + 1 >= m_minStep) return; // 求得最短，節枝
+        }
+    }
+};
+\end{Code}
+
+\subsection{貪心法 - DFS - II}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n ^h/2)，空間複雜度O(sqrt(n))
+class Solution {
+public:
+    int numSquares(int n) {
+        for (int i = 1; i * i <= n; ++i)
+            m_squareNums.insert(i * i);
+
+        int count = 1;
+        for (; count <= n; ++count) {
+            if (isDividedBy(n, count))
+                return count;
+        }
+        return count;
+    }
+private:
+    unordered_set<int> m_squareNums;
+
+    bool isDividedBy(int n, int count)
+    {
+        if (count == 1)
+            return m_squareNums.find(n) != m_squareNums.end();
+
+        for (const int& square : m_squareNums) {
+            if (isDividedBy(n - square, count - 1))
+                return true;
+        }
+        return false;
+    }
+};
+\end{Code}
+
+\subsection{貪心法 - BFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n ^h/2)，空間複雜度O(sqrt(n))
+class Solution {
+public:
+    int numSquares(int n) {
+        unordered_set<int> squareNums;
+        for (int i = 1; i * i <= n; i++)
+            squareNums.insert(i*i);
+
+        int level = 1;
+        queue<int> cur, next;
+        cur.push(n);
+
+        while (!cur.empty())
+        {
+            while (!cur.empty())
+            {
+                auto curN = cur.front();
+                cur.pop();
+
+                for (int i = sqrt(curN); i >= 1; i--)
+                {
+                    int tmpSq = i*i;
+                    if (curN == tmpSq) return level; // 找到答案
+                    else if (curN < tmpSq) continue; // 變成負數，節枝
+                    else
+                        next.push(curN - tmpSq);
+                }
+            }
+
+            swap(cur, next);
+            level++;
+        }
+
+        return n;
+    }
+};
+\end{Code}
+
+\subsection{動規}
+
+\begin{center}
+\includegraphics[width=300pt]{perfect-squares-dp.png}\\
+\figcaption{Perfect Squares}\label{fig:perfect-squares-dp}
+\end{center}
+
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n*sqtr(n))，空間複雜度O(n)
+class Solution {
+public:
+    int numSquares(int n) {
+        vector<int> dp(n+1, INT_MAX);
+        // bottom case
+        dp[0] = 0;
+
+        // pre-calculate the square numbers.
+        int max_square_index = (int) sqrt(n) + 1;
+        vector<int> square_nums(max_square_index);
+
+        for (int i = 1; i < max_square_index; ++i) {
+            square_nums[i] = i * i;
+        }
+
+        for (int i = 1; i <= n; ++i) {
+            for (int s = 1; s < max_square_index; ++s) {
+                if (i < square_nums[s])
+                    break;
+                dp[i] = min(dp[i], dp[i - square_nums[s]] + 1);
+            }
+        }
+
+        return dp[n];
+    }
+};
+\end{Code}
+
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:bfs-template}
 
