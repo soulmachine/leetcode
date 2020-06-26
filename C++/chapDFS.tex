@@ -109,6 +109,11 @@ public:
 };
 \end{Code}
 
+\begin{center}
+\includegraphics[width=250pt]{palindrome-partitioning.png}\\
+\figcaption{example}\label{fig:palindrome-partitioning}
+\end{center}
+
 
 \subsubsection{動規}
 \begin{Code}
@@ -124,7 +129,7 @@ public:
             for (int j = i; j < n; ++j)
                 p[i][j] = s[i] == s[j] && ((j - i < 2) || p[i + 1][j - 1]);
 
-        vector<vector<string> > sub_palins[n]; // sub palindromes of s[0,i]
+        vector<vector<string> > sub_palins[n]; // sub palindromes of s[i,n]
         for (int i = n - 1; i >= 0; --i) {
             for (int j = i; j < n; ++j)
                 if (p[i][j]) {
