@@ -1238,3 +1238,155 @@ private:
 \begindot
 \item Word Break, 見 \S \ref{sec:word-break}
 \myenddot
+
+\section{Target Sum}
+\label{sec:target-sum}
+
+\subsection{描述}
+You are given a list of non-negative integers, a1, a2, ..., an, and a target, S. Now you have 2 symbols + and -. For each integer, you should choose one from + and - as its new symbol.
+
+Find out how many ways to assign symbols to make sum of integers equal to target S.
+
+Example 1:
+\begin{Code}
+Input: nums is [1, 1, 1, 1, 1], S is 3. 
+Output: 5
+Explanation: 
+
+-1+1+1+1+1 = 3
++1-1+1+1+1 = 3
++1+1-1+1+1 = 3
++1+1+1-1+1 = 3
++1+1+1+1-1 = 3
+
+There are 5 ways to assign symbols to make the sum of nums be target 3.
+\end{Code}
+
+
+\begindot
+\item The length of the given array is positive and will not exceed 20.
+\item The sum of elements in the given array will not exceed 1000.
+\item Your output answer is guaranteed to be fitted in a 32-bit integer.
+\myenddot
+
+\subsection{深搜}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(2^n)，空間複雜度O(n)
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        m_ways = 0;
+
+        DFS(nums, 0, 0, S);
+
+        return m_ways;
+    }
+private:
+    int m_ways;
+    void DFS(vector<int>& nums, int step, int curS, int S)
+    {
+        if (step == nums.size() && S == curS)
+        {
+            m_ways++;
+            return;
+        }
+        else if (step >= nums.size())
+            return;
+
+        DFS(nums, step + 1, curS + nums[step], S);
+        DFS(nums, step + 1, curS - nums[step], S);
+    }
+};
+\end{Code}
+
+
+\subsection{備忘錄法}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(l*n)，空間複雜度O(l*n)
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        vector<vector<int>> cache(nums.size(), vector<int>(2001, INT_MIN));
+
+        return DFS(nums, 0, 0, S, cache);
+    }
+private:
+    int DFS(vector<int>& nums, int step, int curS, int S, vector<vector<int>>& cache)
+    {
+        if (step == nums.size())
+        {
+            if (S == curS)
+                return 1;
+            else
+                return 0;
+        }
+        else
+        {
+            if (cache[step][curS + 1000] != INT_MIN)
+                return cache[step][curS + 1000];
+
+            int add = DFS(nums, step + 1, curS + nums[step], S, cache);
+            int subtract = DFS(nums, step + 1, curS - nums[step], S, cache);
+            cache[step][curS + 1000] = add + subtract;
+            return cache[step][curS + 1000];
+        }
+    }
+};
+\end{Code}
+
+
+\subsection{動規}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(l*n)，空間複雜度O(l*n)
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        vector<vector<int>> dp(nums.size(), vector<int>(2001, 0));
+        dp[0][nums[0] + 1000] = 1;
+        dp[0][-nums[0] + 1000] += 1;
+        for (int step = 1; step < nums.size(); step++)
+        {
+            for (int sum = -1000; sum <= 1000; sum++)
+            {
+                if (dp[step - 1][sum + 1000] > 0)
+                {
+                    dp[step][sum + nums[step] + 1000] += dp[step - 1][sum + 1000];
+                    dp[step][sum - nums[step] + 1000] += dp[step - 1][sum + 1000];
+                }
+            }
+        }
+        return S > 1000 ? 0 : dp[nums.size() - 1][S + 1000];
+    }
+};
+\end{Code}
+
+\subsection{動規 + 滾動數組}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(l*n)，空間複雜度O(n)
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        vector<int> dp(2001, 0);
+        dp[nums[0] + 1000] = 1;
+        dp[-nums[0] + 1000] += 1;
+        for (int step = 1; step < nums.size(); step++)
+        {
+            vector<int> next(2001, 0);
+            for (int sum = -1000; sum <= 1000; sum++)
+            {
+                if (dp[sum + 1000] > 0)
+                {
+                    next[sum + nums[step] + 1000] += dp[sum + 1000];
+                    next[sum - nums[step] + 1000] += dp[sum + 1000];
+                }
+            }
+            dp = next;
+        }
+        return S > 1000 ? 0 : dp[S + 1000];
+    }
+};
+\end{Code}
