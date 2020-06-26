@@ -615,3 +615,181 @@ public:
 \begindot
 \item 無
 \myenddot
+
+\section{Implement Queue using Stack}
+\label{sec:implement-queue-using-stack}
+
+\subsection{描述}
+Implement the following operations of a queue using stacks.
+
+\begindot
+\item push(x) -- Push element x to the back of queue.
+\item pop() -- Removes the element from in front of queue.
+\item peek() -- Get the front element.
+\item empty() -- Return whether the queue is empty.
+\myenddot
+
+Example:
+\begin{Code}
+MyQueue queue = new MyQueue();
+
+queue.push(1);
+queue.push(2);  
+queue.peek();  // returns 1
+queue.pop();   // returns 1
+queue.empty(); // returns false
+\end{Code}
+
+Note:
+\begindot
+\item You must use only standard operations of a stack -- which means only push to top, peek/pop from top, size, and is empty operations are valid.
+\item Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
+\item You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
+\myenddot
+
+\subsection{分析}
+push: O(1), pop: O(1)
+
+\subsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class MyQueue {
+public:
+    /** Initialize your data structure here. */
+    MyQueue() {
+
+    }
+
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        if (m_data_001.empty())
+            m_front = x;
+        m_data_001.push(x);
+    }
+
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        if (m_data_002.empty())
+            while (!m_data_001.empty())
+            {
+                m_data_002.push(m_data_001.top());
+                m_data_001.pop();
+            }
+        int tmp = m_data_002.top();
+        m_data_002.pop();
+        return tmp;
+    }
+
+    /** Get the front element. */
+    int peek() {
+        if (!m_data_002.empty())
+            return m_data_002.top();
+        return m_front;
+    }
+
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return m_data_001.empty() && m_data_002.empty();
+    }
+private:
+    stack<int> m_data_001;
+    stack<int> m_data_002;
+    int m_front;
+};
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue* obj = new MyQueue();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->peek();
+ * bool param_4 = obj->empty();
+ */
+\end{Code}
+
+\section{Implement Stack using Queues}
+\label{sec:implement-stack-using-queues}
+
+\subsection{描述}
+Implement the following operations of a stack using queues.
+
+\begindot
+\item push(x) -- Push element x onto stack.
+\item pop() -- Removes the element on top of the stack.
+\item top() -- Get the top element.
+\item empty() -- Return whether the stack is empty.
+\myenddot
+
+Example:
+\begin{Code}
+MyStack stack = new MyStack();
+
+stack.push(1);
+stack.push(2);  
+stack.top();   // returns 2
+stack.pop();   // returns 2
+stack.empty(); // returns false
+\end{Code}
+
+\begindot
+\item You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
+\item Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+\item You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+\myenddot
+
+\subsection{分析}
+push: O(n), pop: O(1)
+
+\subsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class MyStack {
+public:
+    /** Initialize your data structure here. */
+    MyStack() {
+
+    }
+
+    /** Push element x onto stack. */
+    void push(int x) {
+        m_data.push(x);
+        size_t sz = m_data.size();
+        while (sz > 1)
+        {
+            m_data.push(m_data.front());
+            m_data.pop();
+            sz--;
+        }
+    }
+
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int tmp = m_data.front();
+        m_data.pop();
+        return tmp;
+    }
+
+    /** Get the top element. */
+    int top() {
+        return m_data.front();
+    }
+
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return m_data.empty();
+    }
+private:
+    queue<int> m_data;
+};
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->top();
+ * bool param_4 = obj->empty();
+ */
+\end{Code}
