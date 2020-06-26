@@ -825,6 +825,182 @@ public:
 };
 \end{Code}
 
+\section{Open the Lock}
+\label{sec:open-the-lock}
+
+\subsection{描述}
+You have a lock in front of you with 4 circular wheels. Each wheel has 10 slots: '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'. The wheels can rotate freely and wrap around: for example we can turn '9' to be '0', or '0' to be '9'. Each move consists of turning one wheel one slot.
+
+The lock initially starts at '0000', a string representing the state of the 4 wheels.
+
+You are given a list of deadends dead ends, meaning if the lock displays any of these codes, the wheels of the lock will stop turning and you will be unable to open it.
+
+Given a target representing the value of the wheels that will unlock the lock, return the minimum total number of turns required to open the lock, or -1 if it is impossible.
+
+Example 1:
+\begin{Code}
+Input: deadends = ["0201","0101","0102","1212","2002"], target = "0202"
+Output: 6
+Explanation:
+A sequence of valid moves would be "0000" -> "1000" -> "1100" -> "1200" -> "1201" -> "1202" -> "0202".
+Note that a sequence like "0000" -> "0001" -> "0002" -> "0102" -> "0202" would be invalid,
+because the wheels of the lock become stuck after the display becomes the dead end "0102".
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: deadends = ["8888"], target = "0009"
+Output: 1
+Explanation:
+We can turn the last wheel in reverse to move from "0000" -> "0009".
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"
+Output: -1
+Explanation:
+We can't reach the target without getting stuck.
+\end{Code}
+
+Example 4:
+\begin{Code}
+Input: deadends = ["0000"], target = "8888"
+Output: -1
+\end{Code}
+
+\begindot
+\item The length of deadends will be in the range [1, 500].
+\item target will not be in the list deadends.
+\item Every string in deadends and the string target will be a string of 4 digits from the 10,000 possibilities '0000' to '9999'.
+\myenddot
+
+\subsection{分析}
+Nil
+
+\subsection{BFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(N^2 * A^N + D)，空間複雜度O(A^N + D)
+// D is the size of deadends, A is the number of digits in our alphabet
+// N is the number of digits
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_set<string> deadendsMap(deadends.begin(), deadends.end());
+        unordered_set<string> visited;
+
+        queue<pair<string, int>> q;
+        q.push({"0000", 0});
+
+        int level = 0;
+        while (!q.empty())
+        {
+            auto cur = q.front();
+            q.pop();
+
+            // 到了 dead end 處理下一個
+            if (deadendsMap.find(cur.first) != deadendsMap.end()) continue;
+            // 找到了答案
+            if (cur.first == target) return cur.second;
+
+            for (const auto& nextPW : GetNextPW(cur.first, visited))
+            {
+                visited.insert(nextPW);
+                q.push({nextPW, cur.second + 1});
+            }
+        }
+
+        return -1;
+    }
+private:
+    const vector<int> steps{-1, 1};
+
+    vector<string> GetNextPW(string curPW, const unordered_set<string>& visited)
+    {
+        vector<string> result; result.reserve(curPW.size() * 2);
+        for (char& c : curPW)
+        {
+            char prev = c;
+            for (const auto& n : steps)
+            {
+                c = ((10 + c - '0' + n) % 10) + '0';
+                if (visited.find(curPW) == visited.end())
+                    result.push_back(curPW);
+                c = prev;
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsection{Counting}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        vector<int> bucket(10000, 0);
+        vector<int> rotate = { 0, 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+        for (auto& s : deadends) {
+            bucket[stoi(s)] = 1;
+        }
+
+        if (1 == bucket[0]) return -1;
+
+        vector<string> diffOne;
+
+        for (int i = 0; i < 4; ++i) {
+            diffOne.push_back(add(target, i, -1));
+            diffOne.push_back(add(target, i, 1));
+        }
+
+        int ans = numeric_limits<int>::max();
+
+        for (auto& s : diffOne) {
+            if (0 == bucket[stoi(s)]) {
+                ans = min(ans, moves(s, rotate) + 1);
+            }
+        }
+
+        if (ans == numeric_limits<int>::max()) ans = -1;
+
+        return ans;
+    }
+
+private:
+    string add(const string& num, int idx, int delta)
+    {
+        string ans = num;
+        char ch = num[idx];
+
+        if ('0' == ch && delta == -1) {
+            ans[idx] = '9';
+        }
+        else if ('9' == ch && delta == 1) {
+            ans[idx] = '0';
+        }
+        else {
+            ans[idx] += delta;
+        }
+
+        return ans;
+    }
+
+    int moves(const string& num, const vector<int>& rotate)
+    {
+        int ans = 0;
+        for (auto c : num) {
+            ans += rotate[c - '0'];
+        }
+
+        return ans;
+    }
+};
+\end{Code}
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:bfs-template}
 
