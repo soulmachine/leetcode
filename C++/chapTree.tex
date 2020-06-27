@@ -2565,18 +2565,20 @@ private:
 };
 \end{Code}
 
-\section{Inorder Successor in BST}
+\section{BST}
+
+\subsection{Inorder Successor in BST}
 \label{sec:inorder-successor-in-bst}
 
-\subsection{描述}
+\subsubsection{描述}
 Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
 
 The successor of a node p is the node with the smallest key greater than p.val.
 
-\subsection{分析}
+\subsubsection{分析}
 Using Inorder travel
 
-\subsection{代碼}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode
 // 時間複雜度O()，空間複雜度O()
@@ -2606,7 +2608,7 @@ private:
 \end{Code}
 
 
-\subsection{代碼}
+\subsubsection{代碼}
 \begin{Code}
 // LeetCode
 // 時間複雜度O()，空間複雜度O()
@@ -2645,5 +2647,78 @@ public:
 
         return nullptr;
     }
+};
+\end{Code}
+
+\subsection{Binary Search Tree Iterator}
+\label{sec:binary-search-tree-iterator}
+
+\subsubsection{描述}
+Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
+
+Calling next() will return the next smallest number in the BST.
+
+\begin{center}
+\includegraphics[width=300pt]{binary-search-tree-iterator.png}\\
+\figcaption{Binary Search Tree Iterator}\label{fig:binary-search-tree-iterator}
+\end{center}
+
+\subsubsection{分析}
+Using inorder
+
+\subsubsection{代碼}
+\begin{Code}
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class BSTIterator {
+public:
+    BSTIterator(TreeNode* root) {
+        m_root = root;
+
+        // 移到最左
+        while (m_root != nullptr)
+        {
+            m_cache.push(m_root);
+            m_root = m_root->left;
+        }
+    }
+
+    /** @return the next smallest number */
+    int next() {
+        if (!m_cache.empty())
+        {
+            m_root = m_cache.top();
+            m_cache.pop();
+        }
+
+        int val = m_root->val;
+
+        m_root = m_root->right;
+        // 移到最左
+        while (m_root != nullptr)
+        {
+            m_cache.push(m_root);
+            m_root = m_root->left;
+        }
+
+        return val;
+    }
+
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+        return !m_cache.empty();
+    }
+private:
+    TreeNode *m_root;
+    stack<TreeNode *> m_cache;
 };
 \end{Code}
