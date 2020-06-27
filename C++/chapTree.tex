@@ -2722,3 +2722,463 @@ private:
     stack<TreeNode *> m_cache;
 };
 \end{Code}
+
+\subsection{Search in a Binary Search Tree}
+\label{sec:search-in-a-binary-search-tree}
+
+\subsubsection{描述}
+Given the root node of a binary search tree (BST) and a value. You need to find the node in the BST that the node's value equals the given value. Return the subtree rooted with that node. If such node doesn't exist, you should return NULL.
+
+For Example:
+\begin{Code}
+Given the tree:
+        4
+       / \
+      2   7
+     / \
+    1   3
+
+And the value to search: 2
+\end{Code}
+
+You should return thie subtree:
+\begin{Code}
+      2     
+     / \   
+    1   3
+\end{Code}
+
+
+\subsubsection{代碼}
+\begin{Code}
+class Solution {
+public:
+    TreeNode* searchBST(TreeNode* root, int val) {
+        if (root == nullptr) return nullptr;
+
+        if (root->val == val) return root;
+
+        if (root->val > val)
+            return searchBST(root->left, val);
+        else
+            return searchBST(root->right, val);
+    }
+};
+\end{Code}
+
+\subsection{Insert into a Binary Search Tree}
+\label{sec:insert-into-a-binary-search-tree}
+
+\subsubsection{描述}
+Given the root node of a binary search tree (BST) and a value to be inserted into the tree, insert the value into the BST. Return the root node of the BST after the insertion. It is guaranteed that the new value does not exist in the original BST.
+
+Note that there may exist multiple valid ways for the insertion, as long as the tree remains a BST after insertion. You can return any of them.
+
+For example:
+\begin{Code}
+Given the tree:
+        4
+       / \
+      2   7
+     / \
+    1   3
+And the value to insert: 5
+\end{Code}
+
+You can return this binary search tree:
+\begin{Code}
+         4
+       /   \
+      2     7
+     / \   /
+    1   3 5
+\end{Code}
+
+This tree is also valid:
+\begin{Code}
+         5
+       /   \
+      2     7
+     / \   
+    1   3
+         \
+          4
+\end{Code}
+
+
+\subsubsection{遞歸版}
+\begin{Code}
+class Solution {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        if (root == nullptr) {
+            return new TreeNode(val);   // return a new node if root is null
+        }
+        if (root->val < val) {           // insert to the right subtree if val > root->val
+            root->right = insertIntoBST(root->right, val);
+        } else {                        // insert to the left subtree if val <= root->val
+            root->left = insertIntoBST(root->left, val);
+        }
+        return root;
+    }
+};
+\end{Code}
+
+\subsubsection{迭代版}
+\begin{Code}
+class Solution {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        TreeNode *node = root;
+
+        while (node != nullptr)
+        {
+            if (node->val < val)
+            {
+                if (node->right == nullptr)
+                {
+                    node->right = new TreeNode(val);
+                    return root;
+                }
+                else
+                    node = node->right;
+            }
+            else
+            {
+                if (node->left == nullptr)
+                {
+                    node->left = new TreeNode(val);
+                    return root;
+                }
+                else
+                    node = node->left;
+            }
+        }
+
+        return new TreeNode(val);
+    }
+};
+\end{Code}
+
+\subsection{Delete Node in a BST}
+\label{sec:delete-node-in-a-bst}
+
+\subsubsection{描述}
+Given a root node reference of a BST and a key, delete the node with the given key in the BST. Return the root node reference (possibly updated) of the BST.
+
+Basically, the deletion can be divided into two stages:
+
+\begindot
+\item Search for a node to remove.
+\item If the node is found, delete the node.
+\myenddot
+
+For Example:
+\begin{Code}
+root = [5,3,6,2,4,null,7]
+key = 3
+
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+Given key to delete is 3. So we find the node with value 3 and delete it.
+
+One valid answer is [5,4,6,2,null,null,7], shown in the following BST.
+
+    5
+   / \
+  4   6
+ /     \
+2       7
+
+Another valid answer is [5,2,6,null,4,null,7].
+
+    5
+   / \
+  2   6
+   \   \
+    4   7
+\end{Code}
+
+
+
+\subsubsection{代碼}
+\begin{Code}
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        // return null if root is null
+        if (!root) {
+            return root;
+        }
+
+        // delete current node if root is the target node
+        if (root->val == key) {
+            // replace root with root->right if root->left is null
+            if (!root->left) {
+                return root->right;
+            }
+
+            // replace root with root->left if root->right is null
+            if (!root->right) {
+                return root->left;
+            }
+
+            // replace root with its successor if root has two children
+            TreeNode* p = findSuccessor(root);
+            root->val = p->val;
+            root->right = deleteNode(root->right, p->val);
+            return root;
+        }
+
+        if (root->val < key) {
+            // find target in right subtree if root->val < key
+            root->right = deleteNode(root->right, key);
+        } else {
+            // find target in left subtree if root->val > key
+            root->left = deleteNode(root->left, key);
+        }
+        return root;
+    }
+private:
+    /**
+     * findSuccesor - Helper function for finding successor
+     * In BST, succesor of root is the leftmost child in root's right subtree
+     */
+    TreeNode* findSuccessor(TreeNode* root) {
+        TreeNode* cur = root->right;
+        while (cur && cur->left) {
+            cur = cur->left;
+        }
+        return cur;
+    }
+};
+\end{Code}
+
+\subsection{Kth Largest Element in a Stream}
+\label{sec:kth-largest-element-in-a-stream}
+
+\subsubsection{描述}
+Design a class to find the kth largest element in a stream. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+Your KthLargest class will have a constructor which accepts an integer k and an integer array nums, which contains initial elements from the stream. For each call to the method KthLargest.add, return the element representing the kth largest element in the stream.
+
+Example:
+\begin{Code}
+int k = 3;
+int[] arr = [4,5,8,2];
+KthLargest kthLargest = new KthLargest(3, arr);
+kthLargest.add(3);   // returns 4
+kthLargest.add(5);   // returns 5
+kthLargest.add(10);  // returns 5
+kthLargest.add(9);   // returns 8
+kthLargest.add(4);   // returns 8
+\end{Code}
+
+You may assume that nums' length $\leq$ k-1 and k $\leq$ 1
+
+\subsubsection{Priority Queue}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+namespace std {
+    struct SmallerThanInt {
+        bool operator()(const int& first, const int& second) {
+            return first > second;
+        }
+    };
+}
+
+class KthLargest {
+public:
+    KthLargest(int k, vector<int>& nums) {
+        m_k = k;
+        for (const int& n : nums)
+        {
+            if (m_data.size() < m_k)
+                m_data.push(n);
+            else
+            {
+                if (n > m_data.top())
+                {
+                    m_data.pop();
+                    m_data.push(n);
+                }
+            }
+        }
+    }
+
+    int add(int val) {
+        if (m_data.size() == m_k && val < m_data.top()) return m_data.top();
+
+        if (m_data.size() < m_k)
+            m_data.push(val);
+        else
+        {
+            if (val > m_data.top())
+            {
+                m_data.pop();
+                m_data.push(val);
+            }
+        }
+
+        return m_data.top();
+    }
+private:
+    priority_queue<int, vector<int>, SmallerThanInt> m_data;
+    int m_k;
+};
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest* obj = new KthLargest(k, nums);
+ * int param_1 = obj->add(val);
+ */
+\end{Code}
+
+\subsubsection{BST method}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+struct Node {
+    Node* left;
+    Node* right;
+    int val;
+    int cnt;
+    Node(int v, int c) : left(NULL), right(NULL), val(v), cnt(c) {}
+};
+
+class KthLargest {
+private:
+    Node* insertNode(Node* root, int num) {
+        if (!root) {
+            return new Node(num, 1);      // return a new node if root is null
+        }
+        if (root->val < num) {  // insert to the right subtree if val > root->val
+            root->right = insertNode(root->right, num);
+        } else {  // insert to the left subtree if val <= root->val
+            root->left = insertNode(root->left, num);
+        }
+        root->cnt++;
+        return root;
+    }
+    int searchKth(Node* root, int k) {
+        // m = the size of right subtree
+        int m = root->right ? (root->right)->cnt : 0;
+        // root is the m+1 largest node in the BST
+        if (k == m + 1) {
+            return root->val;
+        }
+        if (k <= m) {
+            // find kth largest in the right subtree
+            return searchKth(root->right, k);
+        } else {
+            // find (k-m-1)th largest in the left subtree
+            return searchKth(root->left, k - m - 1);
+        }
+    }
+    Node* root;
+    int m_k;
+public:
+    KthLargest(int k, vector<int> nums) {
+        root = NULL;
+        for (int i = 0; i < nums.size(); ++i) {
+            root = insertNode(root, nums[i]);
+        }
+        m_k = k;
+    }
+
+    int add(int val) {
+        root = insertNode(root, val);
+        return searchKth(root, m_k);
+    }
+};
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest obj = new KthLargest(k, nums);
+ * int param_1 = obj.add(val);
+ */
+\end{Code}
+
+\subsubsection{Remake Heap - fastest}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class KthLargest {
+public:
+    KthLargest(int k, vector<int>& nums) {
+        m_k = k;
+        m_data.resize(m_k, INT_MIN);
+
+        m_index = 0;
+        for (const auto& n : nums)
+        {
+            if (m_index < m_k)
+                PushHeap(m_data.begin(), m_index++, 0, n);
+            else
+            {
+                if (m_data.front() < n)
+                    AdjustHeap(m_data.begin(), 0, m_k, n);
+            }
+        }
+    }
+
+    int add(int val) {
+        if (m_index == m_k && m_data.front() > val) return m_data.front();
+
+        if (m_index < m_k)
+            PushHeap(m_data.begin(), m_index++, 0, val);
+        else
+            AdjustHeap(m_data.begin(), 0, m_k, val);
+
+        return m_data.front();
+    }
+private:
+    template <class RandIT, class Dist, class T>
+        void PushHeap(RandIT first, Dist holeIndex, Dist topIndex, T data)
+    {
+        Dist parentIndex = (holeIndex - 1) / 2;
+        while (holeIndex > topIndex && *next(first, parentIndex) > data)
+        {
+            *next(first, holeIndex) = *next(first, parentIndex);
+            holeIndex = parentIndex;
+            parentIndex = (holeIndex - 1) / 2;
+        }
+        *next(first, holeIndex) = data;
+    }
+    template <class RandIT, class Dist, class T>
+        void AdjustHeap(RandIT first, Dist holeIndex, Dist Len, T data)
+    {
+        Dist topIndex = holeIndex;
+        Dist childIndex = (holeIndex + 1) * 2;
+        while (childIndex < Len)
+        {
+            if (*next(first, childIndex) > *next(first, childIndex-1))
+                childIndex--;
+            *next(first, holeIndex) = *next(first, childIndex);
+            holeIndex = childIndex;
+            childIndex = (holeIndex + 1) * 2;
+        }
+        if (childIndex == Len)
+        {
+            *next(first, holeIndex) = *next(first, childIndex-1);
+            holeIndex = childIndex-1;
+        }
+        PushHeap(first, holeIndex, topIndex, data);
+    }
+private:
+    vector<int> m_data;
+    int m_k;
+    int m_index;
+};
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * KthLargest* obj = new KthLargest(k, nums);
+ * int param_1 = obj->add(val);
+ */
+\end{Code}
