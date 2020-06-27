@@ -2564,3 +2564,86 @@ private:
     Node *m_first;
 };
 \end{Code}
+
+\section{Inorder Successor in BST}
+\label{sec:inorder-successor-in-bst}
+
+\subsection{描述}
+Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+
+The successor of a node p is the node with the smallest key greater than p.val.
+
+\subsection{分析}
+Using Inorder travel
+
+\subsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+        if (root == nullptr) return root;
+
+        return DFS(root, p);
+    }
+private:
+    TreeNode *m_prev;
+
+    TreeNode *DFS(TreeNode *root, TreeNode *p)
+    {
+        if (root == nullptr) return root;
+
+        TreeNode *ansLeft = DFS(root->left, p);
+
+        if (ansLeft != nullptr) return ansLeft;
+        if (m_prev == p) return root;
+        m_prev = root;
+
+        return DFS(root->right, p);
+    }
+};
+\end{Code}
+
+
+\subsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+        if (!root) return root;
+
+        stack<TreeNode*> cache;
+        TreeNode *cur = root;
+        TreeNode *prev = nullptr;
+        while (!cache.empty() || cur != nullptr)
+        {
+            if (cur != nullptr)
+            {
+                cache.push(cur);
+                cur = cur->left;
+            }
+            else
+            {
+                if (prev == p)
+                {
+                    return cache.top();
+                }
+                else
+                {
+                    cur = cache.top();
+                    cache.pop();
+
+                    prev = cur;
+
+                    cur = cur->right;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+};
+\end{Code}
