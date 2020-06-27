@@ -1206,6 +1206,109 @@ public:
 };
 \end{Code}
 
+\section{01 Matrix}
+\label{sec:01-matrix}
+
+\subsection{描述}
+Given a matrix consists of 0 and 1, find the distance of the nearest 0 for each cell.
+
+The distance between two adjacent cells is 1.
+
+Example 1:
+\begin{Code}
+Input:
+[[0,0,0],
+ [0,1,0],
+ [0,0,0]]
+
+Output:
+[[0,0,0],
+ [0,1,0],
+ [0,0,0]]
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input:
+[[0,0,0],
+ [0,1,0],
+ [1,1,1]]
+
+Output:
+[[0,0,0],
+ [0,1,0],
+ [1,2,1]]
+\end{Code}
+
+
+\begindot
+\item The number of elements of the given matrix will not exceed 10,000.
+\item There are at least one 0 in the given matrix.
+\item The cells are adjacent in only four directions: up, down, left and right.
+\myenddot
+
+\subsection{分析}
+Nil
+
+\subsection{代碼}
+\begin{Code}
+// LeetCode
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    const vector<int> xLoc{-1, 0, 1, 0};
+    const vector<int> yLoc{0, -1, 0, 1};
+    vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
+        if (matrix.empty()) return vector<vector<int>>();
+
+        // 準備 result structure
+        // 記低所有 0 的位置
+        // 其餘位置為 MAX
+        int M = matrix.size();
+        int N = matrix[0].size();
+        vector<vector<int>> result(M, vector<int>(N, INT_MAX));
+        for (int i = 0; i < M; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                if (matrix[i][j] == 0)
+                    result[i][j] = 0;
+            }
+        }
+
+        // 開始 BFS
+        queue<pair<int, int>> q;
+        for (int i = 0; i < M; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                if (result[i][j] == 0)
+                    q.push(make_pair(i,j));
+            }
+        }
+
+        while (!q.empty())
+        {
+            auto loc = q.front();
+            q.pop();
+
+            // 展開
+            for (int i = 0; i < 4; i++)
+            {
+                int x = loc.first + xLoc[i];
+                int y = loc.second + yLoc[i];
+
+                if (x < 0 || x >= M || y < 0 || y >= N || result[x][y] != INT_MAX)
+                   continue;
+                result[x][y] = result[loc.first][loc.second] + 1;
+                q.push(make_pair(x,y));
+            }
+        }
+
+        return result;
+    }
+};
+\end{Code}
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:bfs-template}
 
