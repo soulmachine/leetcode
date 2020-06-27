@@ -1309,6 +1309,130 @@ public:
     }
 };
 \end{Code}
+
+
+\section{Keys and Rooms}
+\label{sec:keys-and-rooms}
+
+\subsection{描述}
+There are N rooms and you start in room 0.  Each room has a distinct number in 0, 1, 2, ..., N-1, and each room may have some keys to access the next room. 
+
+Formally, each room i has a list of keys rooms[i], and each key rooms[i][j] is an integer in [0, 1, ..., N-1] where N = rooms.length.  A key rooms[i][j] = v opens the room with number v.
+
+Initially, all the rooms start locked (except for room 0). 
+
+You can walk back and forth between rooms freely.
+
+Return true if and only if you can enter every room.
+
+Example 1:
+\begin{Code}
+Input: [[1],[2],[3],[]]
+Output: true
+Explanation:  
+We start in room 0, and pick up key 1.
+We then go to room 1, and pick up key 2.
+We then go to room 2, and pick up key 3.
+We then go to room 3.  Since we were able to go to every room, we return true.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: [[1,3],[3,0,1],[2],[0]]
+Output: false
+Explanation: We can't enter the room with number 2.
+\end{Code}
+
+\begindot
+\item 1 <= rooms.length <= 1000
+\item 0 <= rooms[i].length <= 1000
+\item The number of keys in all rooms combined is at most 3000.
+\myenddot
+
+\subsection{分析}
+Nil
+
+\subsection{BFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(N+E)，空間複雜度O(N)
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        if (rooms.empty()) return true;
+
+        int M = rooms.size();
+        vector<bool> visited(M, false);
+
+        // BFS
+        queue<int> q;
+        for (const auto& room : rooms.front())
+            q.push(room);
+        visited.front() = true;
+
+        int totalVisited = 1;
+        while (!q.empty())
+        {
+            auto room = q.front();
+            q.pop();
+
+            if (visited[room] == false)
+            {
+                totalVisited++;
+                if (totalVisited == M) return true;
+                visited[room] = true;
+
+                // 擴展
+                for (const auto& nei : rooms[room])
+                    q.push(nei);
+            }
+        }
+
+        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; }) == visited.end();
+    }
+};
+\end{Code}
+
+\subsection{DFS}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(N+E)，空間複雜度O(N)
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        if (rooms.empty()) return true;
+
+        int M = rooms.size();
+        vector<bool> visited(M, false);
+
+        // DFS
+        stack<int> q; // 使用 stack，不同於 BFS
+        for (auto it = rooms.front().rbegin(); it != rooms.front().rend(); it++)
+            q.push(*it);
+        visited.front() = true;
+
+        int totalVisited = 1;
+        while (!q.empty())
+        {
+            auto room = q.top();
+            q.pop();
+
+            if (visited[room] == false)
+            {
+                totalVisited++;
+                if (totalVisited == M) return true;
+                visited[room] = true;
+
+                // 擴展
+                for (auto it = rooms[room].rbegin(); it != rooms[room].rend(); it++)
+                    q.push(*it);
+            }
+        }
+
+        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; }) == visited.end();
+    }
+};
+\end{Code}
 \section{小結} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:bfs-template}
 
