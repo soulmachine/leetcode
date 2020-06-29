@@ -1005,3 +1005,136 @@ public:
     }
 };
 \end{Code}
+
+\section{Find Median from Data Stream}
+\label{sec:find-median-from-data-stream}
+
+\subsection{描述}
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+For example,
+\begin{Code}
+[2,3,4], the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+\end{Code}
+
+Design a data structure that supports the following two operations:
+
+\begindot
+\item void addNum(int num) - Add a integer number from the data stream to the data structure.
+\item double findMedian() - Return the median of all elements so far.
+\myenddot
+
+Example:
+\begin{Code}
+addNum(1)
+addNum(2)
+findMedian() -> 1.5
+addNum(3) 
+findMedian() -> 2
+\end{Code}
+
+\subsection{保持順序}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+
+    }
+
+    void addNum(int num) {
+        if (m_cache.empty())
+            m_cache.push_back(num);
+        else
+            m_cache.insert(lower_bound(m_cache.begin(), m_cache.end(), num), num);
+    }
+
+    double findMedian() {
+        int N = m_cache.size();
+        if (N & 1)
+            return m_cache[N/2];
+        else
+            return (m_cache[N/2 - 1] + m_cache[N/2]) / 2.0;
+    }
+private:
+    vector<int> m_cache;
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */
+\end{Code}
+
+\subsection{兩個 heap}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class MedianFinder {
+    // lo 會維持住數值細過一半的數字
+    priority_queue<int> lo; // max heap
+    // hi 會維持住數值大過一半的數字
+    priority_queue<int, vector<int>, greater<int>> hi; // min heap
+
+public:
+    // Adds a number into the data structure.
+    void addNum(int num)
+    {
+        lo.push(num); // Add to max heap
+
+        hi.push(lo.top()); // balancing step
+        lo.pop();
+
+        if (lo.size() < hi.size()) { // maintain size property
+            lo.push(hi.top());
+            hi.pop();
+        }
+    }
+
+    // Returns the median of current data stream
+    double findMedian()
+    {
+        return lo.size() > hi.size() ? lo.top() : ((double) lo.top() + hi.top()) * 0.5;
+    }
+};
+\end{Code}
+
+\subsection{STD method - AVL tree}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(1)
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder()
+        : m_mid(m_data.end()) {
+
+    }
+
+    void addNum(int num) {
+        const int n = m_data.size();
+        m_data.insert(num);
+
+        if (!n)                                 // first element inserted
+            m_mid = m_data.begin();
+        else if (num < *m_mid)                    // median is decreased
+            m_mid = (n & 1 ? m_mid : prev(m_mid));
+        else                                    // median is increased
+            m_mid = (n & 1 ? next(m_mid) : m_mid);
+    }
+
+    double findMedian() {
+        const int n = m_data.size();
+        return ((double) *m_mid + *next(m_mid, n % 2 - 1)) * 0.5;
+    }
+private:
+    multiset<int> m_data;
+    multiset<int>::iterator m_mid;
+};
+\end{Code}
