@@ -1035,20 +1035,15 @@ Explanation: The LCA of nodes 5 and 4 is 5
 class Solution {
 public:
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if (root == nullptr || p == nullptr || q == nullptr) return nullptr;
+        if (root == nullptr) return root;
         if (root == p || root == q) return root;
 
         TreeNode *left = lowestCommonAncestor(root->left, p, q);
         TreeNode *right = lowestCommonAncestor(root->right, p, q);
 
-        if (left && right)
-            return root;
-        else if (!left && !right)
-            return nullptr;
-        else if (!left)
-            return right;
-        else
-            return left;
+        if (left && right) return root;
+        else if (!left) return right;
+        else return left;
     }
 };
 \end{Code}
@@ -3181,4 +3176,62 @@ private:
  * KthLargest* obj = new KthLargest(k, nums);
  * int param_1 = obj->add(val);
  */
+\end{Code}
+
+\subsection{Lowest Common Ancestor of a Binary Search Tree}
+\label{sec:lowest-common-ancestor-of-a-binary-search-tree}
+
+\subsubsection{描述}
+Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.
+
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+
+Given binary search tree:  root = [6,2,8,0,4,7,9,null,null,3,5]
+
+\begin{center}
+\includegraphics[width=300pt]{binary-search-tree-improved.png}\\
+\figcaption{Lowest Common Ancestor of a BST}\label{fig:binary-search-tree-improved}
+\end{center}
+
+Example 1:
+\begin{Code}
+Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+Output: 6
+Explanation: The LCA of nodes 2 and 8 is 6.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+Output: 2
+Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
+\end{Code}
+
+Note:
+\begindot
+\item All of the nodes' values will be unique.
+\item p and q are different and both values will exist in the BST.
+\myenddot
+
+\subsubsection{Code}
+\begin{Code}
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        while(root != NULL)
+        {
+            //If both nodes less than that of parent => move left
+            if(root->val > p->val and root->val > q->val)
+                root = root->left;
+            //If both nodes greater than that of parent => move right
+            else if(root->val < p->val and root->val < q->val)
+                root = root->right;
+            //If paths diverge then return node
+            else
+                return root;
+        }
+
+        return root;
+    }
+};
 \end{Code}
