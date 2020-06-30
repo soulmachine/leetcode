@@ -3103,3 +3103,55 @@ private:
     }
 };
 \end{Code}
+
+\subsection{Isomorphic Strings}
+\label{sec:isomorphic-strings}
+
+\subsubsection{描述}
+Given two strings s and t, determine if they are isomorphic.
+
+Two strings are isomorphic if the characters in s can be replaced to get t.
+
+All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character but a character may map to itself.
+
+Example 1:
+\begin{Code}
+Input: s = "egg", t = "add"
+Output: true
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: s = "foo", t = "bar"
+Output: false
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: s = "paper", t = "title"
+Output: true
+\end{Code}
+
+\subsubsection{字母 hash}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        vector<char> v1(256, 0);
+        vector<char> v2(256, 0);
+
+        for (size_t i = 0; i < s.size(); i++)
+        {
+            if (v1[s[i]] != 0 && v1[s[i]] != t[i]) return false;
+            if (v2[t[i]] != 0 && v2[t[i]] != s[i]) return false;
+
+            v1[s[i]] = t[i];
+            v2[t[i]] = s[i];
+        }
+
+        return true;
+    }
+};
+\end{Code}
