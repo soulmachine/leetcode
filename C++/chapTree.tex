@@ -3235,3 +3235,128 @@ public:
     }
 };
 \end{Code}
+
+\subsection{Contains Duplicate III}
+\label{sec:contains-duplicate-iii}
+
+\subsubsection{描述}
+Given an array of integers, find out whether there are two distinct indices i and j in the array such that the absolute difference between nums[i] and nums[j] is at most t and the absolute difference between i and j is at most k.
+
+
+Example 1:
+\begin{Code}
+Input: nums = [1,2,3,1], k = 3, t = 0
+Output: true
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums = [1,0,1,1], k = 1, t = 2
+Output: true
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: nums = [1,5,9,1,5,9], k = 2, t = 3
+Output: false
+\end{Code}
+
+\subsubsection{暴力方法}
+\begin{Code}
+// 時間複雜度O(n*min(k,n))，空間複雜度O(min(k,n))
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        for (int i = 0; i < nums.size(); i++)
+        {
+            // abs difference 會有機會大過 int32_t, 所以要用 int64_t
+            // 例子: [-1,2147483647], k = 1, t = 2147483647
+            for (int j = max(i - k, 0); j < i; j++)
+                if (abs((int64_t)nums[i] - (int64_t)nums[j]) <= (int64_t)t) return true;
+        }
+
+        return false;
+    }
+};
+\end{Code}
+
+\subsubsection{BST method}
+\begin{Code}
+// 時間複雜度O(nlog(min(k,n)))，空間複雜度O(min(k,n))
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        set<int> cache;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (!cache.empty())
+            {
+                // 尋找當下數值的 successor
+                auto s = GetCeiling(cache, cache.begin(), nums[i]);
+                if (s != cache.end() && *s <= nums[i] + t) return true;
+
+                // 尋找當下數值的 predecessor
+                auto g = GetFloor(cache, cache.begin(), nums[i]);
+                if (g != cache.end() && nums[i] <= *g + t) return true;
+            }
+
+            cache.insert(nums[i]);
+            if (cache.size() > k)
+                cache.erase(nums[i - k]);
+        }
+        return false;
+    }
+private:
+    template <class BTS, class BidIT, class T>
+        BidIT GetCeiling(BTS& tree, BidIT first, T val)
+    {
+        return tree.lower_bound(val);
+    }
+    template <class BTS, class BidIT, class T>
+        BidIT GetFloor(BTS& tree, BidIT first, T val)
+    {
+        BidIT tmp = tree.upper_bound(val);
+        if (tmp == tree.begin())
+            return tree.end();
+        else
+            return prev(tmp);
+    }
+};
+\end{Code}
+
+\subsubsection{Bucket}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(min(k,n))
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        if (t < 0) return false;
+        unordered_map<int64_t, int64_t> d;
+
+        int64_t w = (int64_t)t + 1;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            int64_t id = GetId(nums[i], w);
+            // 若果同一個 bucket 有多過一個數值，代表找到答案
+            if (d.find(id) != d.end())
+                return true;
+            // 檢查前一個 bucket
+            if (d.find(id-1) != d.end() && abs(nums[i] - d[id-1]) < w)
+                return true;
+            // 檢查後一個 bucket
+            if (d.find(id+1) != d.end() && abs(nums[i] - d[id+1]) < w)
+                return true;
+            d[id] = (int64_t)nums[i];
+            if (i >= k) d.erase(GetId(nums[i-k], w));
+        }
+
+        return false;
+    }
+private:
+    // `-3 / 5 = 0` and but we need `-3 / 5 = -1`.
+    int64_t GetId(int64_t x, int64_t w)
+    {
+        return x < 0 ? (x + 1) / w - 1 : x / w;
+    }
+};
+\end{Code}
