@@ -2978,3 +2978,128 @@ private:
     }
 };
 \end{Code}
+
+\subsection{Happy Number}
+\label{sec:happy-number}
+
+\subsubsection{描述}
+Write an algorithm to determine if a number n is "happy".
+
+A happy number is a number defined by the following process: Starting with any positive integer, replace the number by the sum of the squares of its digits, and repeat the process until the number equals 1 (where it will stay), or it loops endlessly in a cycle which does not include 1. Those numbers for which this process ends in 1 are happy numbers.
+
+Return True if n is a happy number, and False if not.
+
+Example:
+\begin{Code}
+Input: 19
+Output: true
+Explanation: 
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+\end{Code}
+
+\subsubsection{利用循環特性}
+\begin{center}
+\includegraphics[width=300pt]{happy-number-001.png}\\
+\figcaption{Why have loop}\label{fig:happy-number-001}
+\end{center}
+
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    bool isHappy(int n) {
+        unordered_set<int> seen;
+
+        // 由例子中可以看到，若果計不到 1 ，便會重覆
+        // 並且不會愈計愈大，所以可以用這個方法
+        while (n != 1 && seen.find(n) == seen.end())
+        {
+            seen.insert(n);
+            n = GetNext(n);
+        }
+
+        return n == 1;
+    }
+private:
+    int GetNext(int n)
+    {
+        int result = 0;
+        while (n)
+        {
+            int d = n % 10;
+            result += d * d;
+            n /= 10;
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{快慢雙指針法}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(logN)，空間複雜度O(1)
+class Solution {
+public:
+    bool isHappy(int n) {
+        int slow = n;
+        int fast = GetNext(slow);
+
+        while (fast != 1 && fast != slow)
+        {
+            slow = GetNext(slow);
+            fast = GetNext(GetNext(fast));
+        }
+
+        return fast == 1;
+    }
+private:
+    int GetNext(int n)
+    {
+        int result = 0;
+        while (n)
+        {
+            int d = n % 10;
+            result += d * d;
+            n /= 10;
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{數學規則}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(logN)，空間複雜度O(1)
+class Solution {
+public:
+    bool isHappy(int n) {
+        // 通過觀察，只有以下路徑會循環
+        // 4 -> 16 -> 37 -> 58 -> 89 -> 145 -> 42 -> 20 -> 4
+        while (n != 1 && n != 4)
+            n = GetNext(n);
+
+        return n == 1;
+    }
+private:
+    int GetNext(int n)
+    {
+        int result = 0;
+        while (n)
+        {
+            int d = n % 10;
+            result += d * d;
+            n /= 10;
+        }
+
+        return result;
+    }
+};
+\end{Code}
