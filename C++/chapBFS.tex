@@ -1388,7 +1388,8 @@ public:
             }
         }
 
-        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; }) == visited.end();
+        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; })
+                       == visited.end();
     }
 };
 \end{Code}
@@ -1429,7 +1430,8 @@ public:
             }
         }
 
-        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; }) == visited.end();
+        return find_if(visited.begin(), visited.end(), [&](const auto& e){ return !e; })
+                       == visited.end();
     }
 };
 \end{Code}
