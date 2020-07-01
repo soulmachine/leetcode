@@ -3155,3 +3155,101 @@ public:
     }
 };
 \end{Code}
+
+\subsection{Group Shifted Strings}
+\label{sec:group-shifted-strings}
+
+\subsubsection{描述}
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+\begin{Code}
+"abc" -> "bcd" -> ... -> "xyz"
+\end{Code}
+
+Given a list of non-empty strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+Example:
+\begin{Code}
+Input: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+Output: 
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+\end{Code}
+
+\subsubsection{暴力 shift}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<vector<string>> groupStrings(vector<string>& strings) {
+        unordered_map<string, vector<string>> hashMap;
+        for(auto &str : strings) {
+            string temp = str;
+            convertStringToKey(temp);
+            hashMap[temp].push_back(str);
+        }
+
+        vector<vector<string>> answer;
+        for(auto it = hashMap.begin(); it != hashMap.end(); ++it) {
+            answer.push_back(it->second);
+        }
+        return answer;
+    }
+private:
+    void convertStringToKey(string &str) {
+        while(str[0] != 'a') {
+            for(int i = 0; i < str.size(); ++i) {
+                str[i] += 1;
+                if(str[i] > 'z') {
+                    str[i] = 'a';
+                }
+            }
+        }
+    }
+};
+\end{Code}
+
+\subsubsection{Counting shift}
+\begin{Code}
+// LeetCode
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<vector<string>> groupStrings(vector<string>& strings) {
+        unordered_map<string, vector<string>> hashMap;
+        for(auto &str : strings) {
+            string temp = str;
+            convertStringToKey(temp);
+            hashMap[temp].push_back(str);
+        }
+
+        vector<vector<string>> answer;
+        for(auto it = hashMap.begin(); it != hashMap.end(); ++it) {
+            answer.push_back(it->second);
+        }
+        return answer;
+    }
+private:
+    void convertStringToKey(string &str) {
+        if (str.size() == 0) return;
+
+        if (str[0] != 'a')
+        {
+            int diffFromA = str[0] - 'a';
+
+            for (size_t i = 0; i < str.size(); ++i)
+            {
+                if ((str[i] - 'a') < diffFromA)
+                    str[i] = (26 + str[i] - diffFromA);
+                else
+                    str[i] = str[i] - diffFromA;
+            }
+        }
+    }
+};
+\end{Code}
