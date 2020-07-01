@@ -1396,6 +1396,93 @@ public:
 \item Populating Next Right Pointers in Each Node，見 \S \ref{sec:populating-next-right-pointers-in-each-node}
 \myenddot
 
+\subsection{Find Duplicate Subtrees} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:find-duplicate-subtrees}
+
+
+\subsubsection{描述}
+Given a binary tree, return all duplicate subtrees. For each kind of duplicate subtrees, you only need to return the root node of any one of them.
+
+Two trees are duplicate if they have the same structure with same node values.
+
+Example 1:
+\begin{Code}
+        1
+       / \
+      2   3
+     /   / \
+    4   2   4
+       /
+      4
+\end{Code}
+
+The following are two duplicate subtrees:
+\begin{Code}
+      2
+     /
+    4
+\end{Code}
+
+\begin{Code}
+    4
+\end{Code}
+
+\subsubsection{遞歸版}
+\begin{Code}
+// 時間複雜度O(n^2)，空間複雜度O(n^2)
+class Solution {
+public:
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        unordered_map<string, int> cache;
+        vector<TreeNode*> result;
+        DFS(root, cache, result);
+
+        return result;
+    }
+private:
+    string DFS(TreeNode *root, unordered_map<string, int>& cache, vector<TreeNode*>& result)
+    {
+        if (!root) return "#";
+        string serial = to_string(root->val) + "," + DFS(root->left, cache, result)
+            + "," + DFS(root->right, cache, result);
+        cache[serial]++;
+        if (cache[serial] == 2)
+            result.push_back(root);
+        return serial;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸版}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        unordered_map<size_t, int> cache;
+        vector<TreeNode*> result;
+        DFS(root, cache, result);
+
+        return result;
+    }
+private:
+    string DFS(TreeNode *root, unordered_map<size_t, int>& cache, vector<TreeNode*>& result)
+    {
+        if (!root) return "#";
+        string serial = to_string(root->val) + "," + DFS(root->left, cache, result)
+            + "," + DFS(root->right, cache, result);
+        // 直接算 uid
+        size_t uid = hash<string>{}(serial);
+        cache[uid]++;
+        if (cache[uid] == 2)
+            result.push_back(root);
+        // return uid 減少計算
+        return to_string(uid);
+    }
+};
+\end{Code}
+
+
 
 \section{二叉樹的構建} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3235,6 +3322,55 @@ public:
     }
 };
 \end{Code}
+
+\subsection{Contains Duplicate II}
+\label{sec:contains-duplicate-ii}
+
+\subsubsection{描述}
+Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the absolute difference between i and j is at most k.
+
+Example 1:
+\begin{Code}
+Input: nums = [1,2,3,1], k = 3
+Output: true
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums = [1,0,1,1], k = 1
+Output: true
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: nums = [1,2,3,1,2,3], k = 2
+Output: false
+\end{Code}
+
+\subsubsection{Hash map}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(min(k,n))
+class Solution {
+public:
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        if (nums.size() == 0) return false;
+        if (k == 0) return false;
+        unordered_set<int> cache;
+
+        for (size_t i = 0; i < nums.size(); i++)
+        {
+            if (cache.find(nums[i]) != cache.end()) return true;
+
+            if (cache.size() >= k)
+                cache.erase(nums[i-k]);
+            cache.insert(nums[i]);
+        }
+
+        return false;
+    }
+};
+\end{Code}
+
 
 \subsection{Contains Duplicate III}
 \label{sec:contains-duplicate-iii}
