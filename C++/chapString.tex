@@ -1361,3 +1361,117 @@ private:
 \begindot
 \item 無
 \myenddot
+
+\section{Unique Word Abbreviation} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:unique-word-abbreviation}
+
+
+\subsubsection{描述}
+An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
+
+\begin{Code}
+a) it                      --> it    (no abbreviation)
+
+     1
+     ↓
+b) d|o|g                   --> d1g
+
+              1    1  1
+     1---5----0----5--8
+     ↓   ↓    ↓    ↓  ↓    
+c) i|nternationalizatio|n  --> i18n
+
+              1
+     1---5----0
+     ↓   ↓    ↓
+d) l|ocalizatio|n          --> l10n
+
+Additionally for any string s of size less than or equal to 2 their abbreviation is the same string s.
+\end{Code}
+
+Find whether its abbreviation is unique in the dictionary. A word's abbreviation is called unique if any of the following conditions is met:
+
+\begindot
+\item There is no word in dictionary such that their abbreviation is equal to the abbreviation of word.
+\item Else, for all words in dictionary such that their abbreviation is equal to the abbreviation of word those words are equal to word.
+\myenddot
+
+\subsubsection{普通數數法}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(2*n)
+class ValidWordAbbr {
+public:
+    ValidWordAbbr(vector<string>& dictionary) {
+        for (const string& s : dictionary)
+        {
+            m_words[s]++;
+            m_abbrs[ToAbbr(s)]++;
+        }
+    }
+
+    bool isUnique(string word) {
+        auto it = m_abbrs.find(ToAbbr(word));
+        auto it2 = m_words.find(word);
+        if (it == m_abbrs.end()) return true;
+        else if (it2 != m_words.end() && it->second == it2->second) return true;
+        else return false;
+    }
+private:
+    string ToAbbr(string inStr)
+    {
+        int N = inStr.size();
+        if (N <= 2) return inStr;
+        return inStr.front() + to_string(N-2) + inStr.back();
+    }
+private:
+    unordered_map<string, int> m_words;
+    unordered_map<string, int> m_abbrs;
+};
+\end{Code}
+
+\subsubsection{改良版}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+// 用 bool 來記低同一個簡寫有沒有多過一個文字的來源
+class ValidWordAbbr {
+public:
+    ValidWordAbbr(vector<string>& D) {
+        for (auto& w : D) {
+            Add(w);
+        }
+    }
+
+    bool isUnique(string w) {
+        string abbrev;
+        Abbrev(w, abbrev);
+        if (!dict.count(abbrev)) return true;
+        auto& [s,good] = dict[abbrev];
+        // 當 good 為 false, 我們可以肯定此短寫來自超過一個文字
+        // 那麼投入來的文字，必定不會是唯一
+        return good && s == w;
+    }
+private:
+    void Abbrev(const string& w, string& abbrev) {
+        if (w.length() > 2){
+            abbrev = w[0] + to_string(int(w.length()-2)) + w.back();
+        } else {
+            abbrev = w;
+        }
+    }
+    void Add(string& w) {
+        string abbrev;
+        Abbrev(w, abbrev);
+        if (!dict.count(abbrev)) {
+            // 第一個文字出現時，good 必定為 true
+            // good 為 true 時，代表文字一致
+            dict[abbrev] = {w,true};
+            return;
+        }
+        auto& [s,good] = dict[abbrev];
+        // 若果新加入的文字和之前的不同，good 為 false
+        if (good && s != w) good = false;
+    }
+private:
+    unordered_map<string, pair<string,bool>> dict;
+};
+\end{Code}
