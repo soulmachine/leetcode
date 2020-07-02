@@ -539,6 +539,79 @@ public:
 \item 4Sum, 見 \S \ref{sec:4sum}
 \myenddot
 
+\subsection{Two Sum III} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:Two-sum-iii}
+
+
+\subsubsection{描述}
+Design and implement a TwoSum class. It should support the following operations: add and find.
+
+add - Add the number to an internal data structure.
+find - Find if there exists any pair of numbers which sum is equal to the value.
+
+Example 1:
+\begin{Code}
+add(1); add(3); add(5);
+find(4) -> true
+find(7) -> false
+\end{Code}
+
+Example 2:
+\begin{Code}
+add(3); add(1); add(2);
+find(3) -> true
+find(6) -> false
+\end{Code}
+
+\subsubsection{代碼}
+\begin{Code}
+// 用一個 hash map，存儲每個數對應的 count
+// 時間複雜度O(n)，空間複雜度O(n)
+class TwoSum {
+public:
+    /** Initialize your data structure here. */
+    TwoSum() {
+
+    }
+
+    /** Add the number to an internal data structure.. */
+    void add(int number) {
+        m_cache[number]++;
+    }
+
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    bool find(int value) {
+        for (const auto& [k, v] : m_cache)
+        {
+            auto it = m_cache.find(value - k);
+            if (it != m_cache.end())
+            {
+                if (value - k == k)
+                {
+                    if (v > 1)
+                        return true;
+                    else
+                        continue;
+                }
+                else
+                    return true;
+            }
+        }
+        return false;
+    }
+private:
+    unordered_map<int, int> m_cache;
+};
+
+/**
+ * Your TwoSum object will be instantiated and called as such:
+ * TwoSum* obj = new TwoSum();
+ * obj->add(number);
+ * bool param_2 = obj->find(value);
+ */
+\end{Code}
+
+
 
 \subsection{3Sum} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:3sum}
@@ -867,6 +940,57 @@ public:
 \item 3Sum Closest, 見 \S \ref{sec:3sum-closest}
 \myenddot
 
+\subsection{4Sum II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:4sum-ii}
+
+
+\subsubsection{描述}
+Given four lists A, B, C, D of integer values, compute how many tuples (i, j, k, l) there are such that A[i] + B[j] + C[k] + D[l] is zero.
+
+To make problem a bit easier, all A, B, C, D have same length of N where 0 ≤ N ≤ 500. All integers are in the range of -228 to 228 - 1 and the result is guaranteed to be at most 231 - 1.
+
+Example:
+\begin{Code}
+Input:
+A = [ 1, 2]
+B = [-2,-1]
+C = [-1, 2]
+D = [ 0, 2]
+
+Output:
+2
+
+Explanation:
+The two tuples are:
+1. (0, 0, 0, 1) -> A[0] + B[0] + C[0] + D[1] = 1 + (-2) + (-1) + 2 = 0
+2. (1, 1, 0, 0) -> A[1] + B[1] + C[0] + D[0] = 2 + (-1) + (-1) + 0 = 0
+\end{Code}
+
+
+\subsubsection{Hash map}
+\begin{Code}
+class Solution {
+public:
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        int cnt = 0;
+        // 製造 hash map 來記低數組 A, B
+        unordered_map<int, int> m;
+        for (int a : A)
+            for (int b : B)
+                ++m[a + b];
+
+        // 對比數組 C, D
+        for (int c : C)
+            for (int d : D) {
+                auto it = m.find(-(c + d));
+                if (it != end(m))
+                    cnt += it->second;
+            }
+
+        return cnt;
+    }
+};
+\end{Code}
 
 \subsection{Remove Element} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:remove-element }
