@@ -1,0 +1,242 @@
+\chapter{字首樹 Trie}
+Things related to Trie data structure.
+\newline
+
+\section{Implement Trie (Prefix Tree)} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:implement-trie}
+
+
+\subsubsection{描述}
+Implement a trie with insert, search, and startsWith methods.
+
+Example:
+\begin{Code}
+Trie trie = new Trie();
+
+trie.insert("apple");
+trie.search("apple");   // returns true
+trie.search("app");     // returns false
+trie.startsWith("app"); // returns true
+trie.insert("app");   
+trie.search("app");     // returns true
+\end{Code}
+
+Note:
+\begindot
+\item You may assume that all inputs are consist of lowercase letters a-z.
+\item All inputs are guaranteed to be non-empty strings.
+\myenddot
+
+
+\subsubsection{代碼}
+\begin{Code}
+// 時間複雜度O()，空間複雜度O()
+struct TrieNode {
+    bool flag;
+    map<char, TrieNode*> next;
+};
+class Trie {
+private:
+    TrieNode* root;
+
+public:
+    /** Initialize your data structure here. */
+    Trie() {
+        root = new TrieNode();
+    }
+
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        TrieNode* p = root;
+        for (int i = 0; i < word.length(); ++i) {
+            if ((p->next).count(word[i]) <= 0) {
+                // insert a new node if the path does not exist
+                (p->next).insert(make_pair(word[i], new TrieNode()));
+            }
+            p = (p->next)[word[i]];
+        }
+        p->flag = true;
+    }
+
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        TrieNode* p = root;
+        for (int i = 0; i < word.length(); ++i) {
+            if ((p->next).count(word[i]) <= 0) {
+                return false;
+            }
+            p = (p->next)[word[i]];
+        }
+        return p->flag;
+    }
+
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        TrieNode* p = root;
+        for (int i = 0; i < prefix.length(); ++i) {
+            if ((p->next).count(prefix[i]) <= 0) {
+                return false;
+            }
+            p = (p->next)[prefix[i]];
+        }
+        return true;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * bool param_2 = obj.search(word);
+ * bool param_3 = obj.startsWith(prefix);
+ */
+\end{Code}
+
+\section{Map Sum Pairs} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:map-sum-pairs}
+
+
+\subsubsection{描述}
+Implement a MapSum class with insert, and sum methods.
+
+For the method insert, you'll be given a pair of (string, integer). The string represents the key and the integer represents the value. If the key already existed, then the original key-value pair will be overridden to the new one.
+
+For the method sum, you'll be given a string representing the prefix, and you need to return the sum of all the pairs' value whose key starts with the prefix.
+
+Example 1:
+\begin{Code}
+Input: insert("apple", 3), Output: Null
+Input: sum("ap"), Output: 3
+Input: insert("app", 2), Output: Null
+Input: sum("ap"), Output: 5
+\end{Code}
+
+\subsubsection{分析}
+1. 暴力，先記低每一個加入的文字和其數值，當要求總加時，歷遍所有
+
+2. 利用字首樹
+
+
+\subsubsection{字首樹}
+\begin{Code}
+// 時間複雜度O(k)，空間複雜度O(n)
+class MapSum {
+public:
+    /** Initialize your data structure here. */
+    MapSum() {
+
+    }
+
+    void insert(string key, int val) {
+        TrieNode *p = &m_root;
+        // delta 是關鍵，用來解決 value replacement 的問題。
+        int delta = val - m_cache[key];
+        m_cache[key] = val;
+        for (const auto& c : key)
+        {
+            if ((p->m_next).count(c) <= 0)
+                (p->m_next).emplace(c, new TrieNode());
+
+            p = (p->m_next)[c];
+            p->m_val += delta;
+        }
+    }
+
+    int sum(string prefix) {
+        TrieNode *p = &m_root;
+
+        for (const char& c : prefix)
+        {
+            if ((p->m_next).count(c) <= 0)
+                return 0;
+
+            p = (p->m_next)[c];
+        }
+
+        return p->m_val;
+    }
+private:
+    TrieNode m_root;
+    unordered_map<string, int> m_cache;
+};
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum* obj = new MapSum();
+ * obj->insert(key,val);
+ * int param_2 = obj->sum(prefix);
+ */
+\end{Code}
+
+\section{Replace Words} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:replace-words}
+
+
+\subsubsection{描述}
+In English, we have a concept called root, which can be followed by some other words to form another longer word - let's call this word successor. For example, the root an, followed by other, which can form another word another.
+
+Now, given a dictionary consisting of many roots and a sentence. You need to replace all the successor in the sentence with the root forming it. If a successor has many roots can form it, replace it with the root with the shortest length.
+
+You need to output the sentence after the replacement.
+
+Example 1:
+\begin{Code}
+Input: dict = ["cat","bat","rat"], sentence = "the cattle was rattled by the battery"
+Output: "the cat was rat by the bat"
+\end{Code}
+
+Constraints:
+\begindot
+\item The input will only have lower-case letters.
+\item 1 <= dict.length <= 1000
+\item 1 <= dict[i].length <= 100
+\item 1 <= sentence words number <= 1000
+\item 1 <= sentence words length <= 1000
+\myenddot
+
+\subsubsection{暴力計算}
+\begin{Code}
+// 時間複雜度O(sum of all w^2)，空間複雜度O(n)
+// 先記低全部 prefix，然後每個文子，每個 substring 都檢查一次並且取代原本的文字。
+class Solution {
+public:
+    string replaceWords(vector<string>& dict, string sentence) {
+        unordered_set<string> prefixDict(dict.begin(), dict.end());
+
+        string result;
+        bool isFirst = true;
+        for (const string& word : GetVec(sentence))
+        {
+            string tmp;
+            for (const char& w : word)
+            {
+                tmp += w;
+                if (prefixDict.count(tmp) > 0)
+                    break;
+            }
+            if (isFirst)
+                result += tmp;
+            else
+                result += " " + tmp;
+            isFirst = false;
+        }
+
+        return result;
+    }
+private:
+    vector<string> GetVec(const string& sentence)
+    {
+        vector<string> result;
+        for (auto i = sentence.begin(); i != sentence.end(); )
+        {
+            i = find_if(i, sentence.end(), [&](const char& c){ return (c >= 'a' && c <= 'z'); });
+            if (i == sentence.end()) return result;
+
+            auto j = find_if(i, sentence.end(), [&](const char& c){ return c == ' '; });
+            result.push_back(string(i, j));
+            i = j;
+        }
+        return result;
+    }
+};
+\end{Code}
