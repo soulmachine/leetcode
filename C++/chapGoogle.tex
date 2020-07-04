@@ -1,0 +1,234 @@
+\chapter{Google}
+Google interview questions
+\newline
+
+\section{Odd Even Jump} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:odd-even-jump}
+
+
+\subsubsection{描述}
+You are given an integer array A.  From some starting index, you can make a series of jumps.  The (1st, 3rd, 5th, ...) jumps in the series are called odd numbered jumps, and the (2nd, 4th, 6th, ...) jumps in the series are called even numbered jumps.
+
+You may from index i jump forward to index j (with i < j) in the following way:
+
+During odd numbered jumps (ie. jumps 1, 3, 5, ...), you jump to the index j such that A[i] <= A[j] and A[j] is the smallest possible value.  If there are multiple such indexes j, you can only jump to the smallest such index j.
+During even numbered jumps (ie. jumps 2, 4, 6, ...), you jump to the index j such that A[i] >= A[j] and A[j] is the largest possible value.  If there are multiple such indexes j, you can only jump to the smallest such index j.
+(It may be the case that for some index i, there are no legal jumps.)
+A starting index is good if, starting from that index, you can reach the end of the array (index A.length - 1) by jumping some number of times (possibly 0 or more than once.)
+
+Return the number of good starting indexes.
+
+Example 1:
+\begin{Code}
+Input: [10,13,12,14,15]
+Output: 2
+Explanation: 
+From starting index i = 0, we can jump to i = 2 (since A[2] is the smallest among A[1], A[2], A[3], A[4] that is greater or equal to A[0]), then we can't jump any more.
+From starting index i = 1 and i = 2, we can jump to i = 3, then we can't jump any more.
+From starting index i = 3, we can jump to i = 4, so we've reached the end.
+From starting index i = 4, we've reached the end already.
+In total, there are 2 different starting indexes (i = 3, i = 4) where we can reach the end with some number of jumps.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: [2,3,1,1,4]
+Output: 3
+Explanation: 
+From starting index i = 0, we make jumps to i = 1, i = 2, i = 3:
+
+During our 1st jump (odd numbered), we first jump to i = 1 because A[1] is the smallest value in (A[1], A[2], A[3], A[4]) that is greater than or equal to A[0].
+
+During our 2nd jump (even numbered), we jump from i = 1 to i = 2 because A[2] is the largest value in (A[2], A[3], A[4]) that is less than or equal to A[1].  A[3] is also the largest value, but 2 is a smaller index, so we can only jump to i = 2 and not i = 3.
+
+During our 3rd jump (odd numbered), we jump from i = 2 to i = 3 because A[3] is the smallest value in (A[3], A[4]) that is greater than or equal to A[2].
+
+We can't jump from i = 3 to i = 4, so the starting index i = 0 is not good.
+
+In a similar manner, we can deduce that:
+From starting index i = 1, we jump to i = 4, so we reach the end.
+From starting index i = 2, we jump to i = 3, and then we can't jump anymore.
+From starting index i = 3, we jump to i = 4, so we reach the end.
+From starting index i = 4, we are already at the end.
+In total, there are 3 different starting indexes (i = 1, i = 3, i = 4) where we can reach the end with some number of jumps.
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: [5,1,3,4,2]
+Output: 3
+Explanation: 
+We can reach the end from starting indexes 1, 2, and 4.
+\end{Code}
+
+
+\subsubsection{動規 - Monotonic Stack}
+\begin{Code}
+// 思路: 先求得單和雙數往後跳的目的地，再用動規，得知由某點能否跳往目的地
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int oddEvenJumps(vector<int>& A) {
+        vector<pair<int, int>> cache; cache.reserve(A.size());
+        for (int i = 0; i < A.size(); i++)
+            cache.emplace_back(A[i], i);
+        // 找尋增大順序的下標
+        sort(cache.begin(), cache.end()
+             , [&](const auto& left, const auto& right)
+             {
+                 if (left.first == right.first)
+                     return left.second < right.second;
+                 else
+                     return left.first < right.first;
+             });
+        vector<int> sortedIndex;
+        sortedIndex.reserve(cache.size());
+        for_each(cache.begin(), cache.end()
+                , [&](const auto& ele) { sortedIndex.push_back(ele.second); } );
+        // 求得單數跳躍的下標
+        vector<int> oddNext = GetNext(sortedIndex);
+
+        // 找尋減少順序的下標
+        sort(cache.begin(), cache.end()
+             , [&](const auto& left, const auto& right)
+             {
+                 if (left.first == right.first)
+                     return left.second < right.second;
+                 else
+                     return left.first > right.first;
+             });
+        sortedIndex.clear();
+        sortedIndex.reserve(cache.size());
+        for_each(cache.begin(), cache.end()
+                , [&](const auto& ele) { sortedIndex.push_back(ele.second); } );
+        // 求得雙數跳躍的下標
+        vector<int> evenNext = GetNext(sortedIndex);
+
+        // 設 odd[i]: 單數跳躍時可以由 i 到 N
+        vector<bool> odd(A.size(), false);
+        // 設 even[i]: 雙數跳躍時可以由 i 到 N
+        vector<bool> even(A.size(), false);
+        odd.back() = even.back() = true;
+
+        // odd 的總數便是答案
+        for (int i = A.size() - 1; i >= 0; i--)
+        {
+            if (oddNext[i] != -1)
+                odd[i] = even[oddNext[i]];
+            if (evenNext[i] != -1)
+                even[i] = odd[evenNext[i]];
+        }
+
+        int result = 0;
+        for (const auto& o : odd)
+            if (o) result++;
+
+        return result;
+    }
+private:
+    vector<int> GetNext(const vector<int>& inputIndex)
+    {
+        // 使用了 Monotonic Stack
+        stack<int> cache;
+        vector<int> result(inputIndex.size(), -1); // -1 代表沒法再往後跳躍
+
+        for (const auto& index : inputIndex)
+        {
+            while (!cache.empty() && cache.top() < index)
+            {
+                result[cache.top()] = index;
+                cache.pop();
+            }
+            cache.push(index);
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{動規 - Multimap}
+\begin{Code}
+// 思路: 利用 BST 由尾至頭歷遍，找出每一個對應的跳躍目的地
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int oddEvenJumps(vector<int>& A) {
+        int N = A.size();
+        // 設 odd[i]: 單數跳躍時可以由 i 到 N
+        vector<bool> odd(A.size(), false);
+        // 設 even[i]: 雙數跳躍時可以由 i 到 N
+        vector<bool> even(A.size(), false);
+        odd.back() = even.back() = true;
+
+        multimap<int, int> cache; // key: A[i] value: i
+        cache.emplace(A[N-1], N-1);
+
+        for (int i = N - 2; i >= 0; i--)
+        {
+            auto it = cache.find(A[i]);
+            if (it != cache.end())
+            {
+                // 找尋同值最細下標
+                it = GetSmallestIndex(cache, it);
+                odd[i] = even[it->second];
+                even[i] = odd[it->second];
+            }
+            else
+            {
+                auto bigger = GetBigger(cache, A[i]);
+                auto smaller = GetSmaller(cache, A[i]);
+
+                if (smaller != cache.end())
+                    even[i] = odd[smaller->second];
+                if (bigger != cache.end())
+                    odd[i] = even[bigger->second];
+            }
+            cache.emplace(A[i], i);
+        }
+
+        // odd 的總數便是答案
+        int result = 0;
+        for (const auto& o : odd)
+            if (o) result++;
+
+        return result;
+    }
+private:
+    template <class MyMap, class T>
+        typename MyMap::iterator GetBigger(MyMap& cache, T val)
+    {
+        auto bigger = cache.lower_bound(val);
+        if (bigger == cache.end())
+            return bigger;
+        else
+            return GetSmallestIndex(cache, bigger); // 找尋同值最細下標
+    }
+    template <class MyMap, class T>
+        typename MyMap::iterator GetSmaller(MyMap& cache, T val)
+    {
+        auto smaller = cache.lower_bound(val);
+        if (smaller == cache.begin())
+            return cache.end();
+        else
+            return GetSmallestIndex(cache, prev(smaller)); // 找尋同值最細下標
+    }
+    template <class MyMap, class MapIT>
+        MapIT GetSmallestIndex(MyMap& cache, MapIT target)
+    {
+        auto range = cache.equal_range(target->first);
+            // 找尋同值最細下標
+            int minIndex = INT_MAX;
+            for (auto j = range.first; j != range.second; j++)
+            {
+                if (minIndex > j->second)
+                {
+                    target = j;
+                    minIndex = j->second;
+                }
+            }
+
+        return target;
+    }
+};
+\end{Code}
