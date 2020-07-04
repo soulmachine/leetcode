@@ -22,7 +22,7 @@ Example 1:
 \begin{Code}
 Input: [10,13,12,14,15]
 Output: 2
-Explanation: 
+Explanation:
 From starting index i = 0, we can jump to i = 2 (since A[2] is the smallest among A[1], A[2], A[3], A[4] that is greater or equal to A[0]), then we can't jump any more.
 From starting index i = 1 and i = 2, we can jump to i = 3, then we can't jump any more.
 From starting index i = 3, we can jump to i = 4, so we've reached the end.
@@ -34,7 +34,7 @@ Example 2:
 \begin{Code}
 Input: [2,3,1,1,4]
 Output: 3
-Explanation: 
+Explanation:
 From starting index i = 0, we make jumps to i = 1, i = 2, i = 3:
 
 During our 1st jump (odd numbered), we first jump to i = 1 because A[1] is the smallest value in (A[1], A[2], A[3], A[4]) that is greater than or equal to A[0].
@@ -57,7 +57,7 @@ Example 3:
 \begin{Code}
 Input: [5,1,3,4,2]
 Output: 3
-Explanation: 
+Explanation:
 We can reach the end from starting indexes 1, 2, and 4.
 \end{Code}
 
@@ -147,6 +147,73 @@ private:
 };
 \end{Code}
 
+\subsubsection{動規 - Map}
+\begin{Code}
+// 思路: 利用 BST 由尾至頭歷遍，找出每一個對應的跳躍目的地
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class Solution {
+public:
+    int oddEvenJumps(vector<int>& A) {
+        int N = A.size();
+        // 設 odd[i]: 單數跳躍時可以由 i 到 N
+        vector<bool> odd(A.size(), false);
+        // 設 even[i]: 雙數跳躍時可以由 i 到 N
+        vector<bool> even(A.size(), false);
+        odd.back() = even.back() = true;
+
+        map<int, int> cache; // key: A[i] value: i
+        cache.emplace(A[N-1], N-1);
+
+        for (int i = N - 2; i >= 0; i--)
+        {
+            auto it = cache.find(A[i]);
+            if (it != cache.end())
+            {
+                odd[i] = even[it->second];
+                even[i] = odd[it->second];
+            }
+            else
+            {
+                auto bigger = GetBigger(cache, A[i]);
+                auto smaller = GetSmaller(cache, A[i]);
+
+                if (bigger != cache.end())
+                    odd[i] = even[bigger->second];
+                if (smaller != cache.end())
+                    even[i] = odd[smaller->second];
+            }
+            cache[A[i]] = i;
+        }
+
+        // odd 的總數便是答案
+        int result = 0;
+        for (const auto& o : odd)
+            if (o) result++;
+
+        return result;
+    }
+private:
+    template <class MyMap, class T>
+        typename MyMap::iterator GetBigger(MyMap& cache, T val)
+    {
+        auto bigger = cache.lower_bound(val);
+        if (bigger == cache.end())
+            return bigger;
+        else
+            return bigger;
+    }
+    template <class MyMap, class T>
+        typename MyMap::iterator GetSmaller(MyMap& cache, T val)
+    {
+        auto smaller = cache.lower_bound(val);
+        if (smaller == cache.begin())
+            return cache.end();
+        else
+            return prev(smaller);
+    }
+};
+\end{Code}
+
 \subsubsection{動規 - Multimap}
 \begin{Code}
 // 思路: 利用 BST 由尾至頭歷遍，找出每一個對應的跳躍目的地
@@ -229,6 +296,532 @@ private:
             }
 
         return target;
+    }
+};
+\end{Code}
+
+\section{Course Schedule II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:course-schedule-ii}
+
+
+\subsubsection{描述}
+There are a total of n courses you have to take, labeled from 0 to n-1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, return the ordering of courses you should take to finish all courses.
+
+There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses, return an empty array.
+
+Example 1:
+\begin{Code}
+Input: 2, [[1,0]]
+Output: [0,1]
+Explanation: There are a total of 2 courses to take.
+             To take course 1 you should have finished
+             course 0. So the correct course order is [0,1] .
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: 4, [[1,0],[2,0],[3,1],[3,2]]
+Output: [0,1,2,3] or [0,2,1,3]
+Explanation: There are a total of 4 courses to take.
+             To take course 3 you should have finished both courses 1 and 2.
+             Both courses 1 and 2 should be taken after you finished course 0.
+             So one correct course order is [0,1,2,3].
+             Another correct ordering is [0,2,1,3] .
+\end{Code}
+
+Note:
+\begindot
+\item The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+\item You may assume that there are no duplicate edges in the input prerequisites.
+\myenddot
+
+\subsubsection{DFS - Topological Sort}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<int> result; result.reserve(numCourses);
+
+        // Topological Sort
+        // 先造出 dependency graph
+        // 也記低有什麼 course 出現過
+        unordered_map<int, list<int>> dGraph;
+        unordered_set<int> seenCourse;
+        for (const auto& p : prerequisites)
+        {
+            dGraph[p[0]].push_back(p[1]);
+            seenCourse.insert(p[0]);
+            seenCourse.insert(p[1]);
+        }
+
+        // 先補上在 graph 中沒有出現的 course
+        for (int i = 0; i < numCourses; i++)
+            if (seenCourse.count(i) == 0) result.push_back(i);
+
+        // 利用 DFS 造出答案
+        unordered_map<int, bool> visited;
+
+        for (const auto& [k, v] : dGraph)
+        {
+            if (!DFS(dGraph, k, result, visited)) return vector<int>();
+        }
+
+        return result;
+    }
+private:
+    bool DFS(const unordered_map<int, list<int>>& dGraph, int k
+             , vector<int>& result, unordered_map<int, bool>& visited)
+    {
+        if (visited.find(k) != visited.end()) return visited[k];
+
+        visited[k] = false;
+
+        auto it = dGraph.find(k);
+        if (it != dGraph.end())
+        {
+            for (const auto& nei : it->second)
+            {
+                if (!DFS(dGraph, nei, result, visited)) return false;
+            }
+        }
+
+        visited[k] = true;
+        result.push_back(k);
+
+        return true;
+    }
+};
+\end{Code}
+
+\section{Longest Increasing Path in a Matrix} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:longest-increasing-path-in-a-matrix}
+
+
+\subsubsection{描述}
+Given an integer matrix, find the length of the longest increasing path.
+
+From each cell, you can either move to four directions: left, right, up or down. You may NOT move diagonally or move outside of the boundary (i.e. wrap-around is not allowed).
+
+Example 1:
+\begin{Code}
+Input: nums =
+[
+  [9,9,4],
+  [6,6,8],
+  [2,1,1]
+]
+Output: 4
+Explanation: The longest increasing path is [1, 2, 6, 9].
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: nums =
+[
+  [3,4,5],
+  [3,2,6],
+  [2,2,1]
+]
+Output: 4
+Explanation: The longest increasing path is [3, 4, 5, 6]. Moving diagonally is not allowed.
+\end{Code}
+
+
+\subsubsection{備忘錄法}
+\begin{Code}
+// 時間複雜度O(m*n)，空間複雜度O(m*n)
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        m_M = matrix.size();
+        if (m_M == 0) return 0;
+        m_N = matrix[0].size();
+        if (m_N == 0) return 0;
+
+        vector<vector<bool>> visited(m_M, vector<bool>(m_N, false));
+        // 設 cache[i][j] 為 i,j 的最長答案
+        // 這個答案是由 0 開始總加的，所以 DFS 也要由 0 開始總加
+        vector<vector<int>> cache(m_M, vector<int>(m_N, -1));
+        int maxLen = INT_MIN;
+        for (int i = 0; i < m_M; i++)
+        {
+            for (int j = 0; j < m_N; j++)
+            {
+                maxLen = max(maxLen, DFS(i, j, matrix, cache, visited));
+            }
+        }
+
+
+        return maxLen;
+    }
+private:
+    const vector<pair<int, int>> directions{{1,0}, {0,1}, {-1,0}, {0,-1}};
+    int DFS(int i, int j, const vector<vector<int>>& matrix
+            , vector<vector<int>>& cache, vector<vector<bool>>& visited)
+    {
+        if (cache[i][j] != -1) return cache[i][j];
+
+        visited[i][j] = true;
+        int maxLen = 0;
+        for (int d = 0; d < 4; d++)
+        {
+            int newI = i + directions[d].first;
+            int newJ = j + directions[d].second;
+            if (newI >= 0 && newI < m_M && newJ >= 0 && newJ < m_N
+                && !visited[newI][newJ]
+                && matrix[i][j] > matrix[newI][newJ])// 由大至細地找尋答案 (由細至大也可以)
+                maxLen = max(maxLen, DFS(newI, newJ, matrix, cache, visited));
+        }
+        visited[i][j] = false;
+
+        return cache[i][j] = maxLen + 1; // 注意: 由細至大保存中途答案
+    }
+private:
+    int m_M;
+    int m_N;
+};
+\end{Code}
+
+\section{Count Complete Tree Nodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:count-complete-tree-nodes}
+
+
+\subsubsection{描述}
+Given a complete binary tree, count the number of nodes.
+
+Note:
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Example:
+\begin{Code}
+Input:
+    1
+   / \
+  2   3
+ / \  /
+4  5 6
+
+Output: 6
+\end{Code}
+
+
+\subsubsection{暴力}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (root == nullptr) return 0;
+
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};
+\end{Code}
+
+\subsubsection{Binary Search}
+\begin{Code}
+// 時間複雜度O(d^2)，空間複雜度O(n)
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        // 若果樹沒有元素
+        if (root == nullptr) return 0;
+
+        int d = ComputeDepth(root);
+        // 若果樹只有一個元素
+        if (d == 0) return 1;
+
+        // left: 為最低層的最左的 node index
+        // right: 為最低層的最右的 node index
+        int left = 1; int right = pow(2, d) - 1;
+        while (left <= right)
+        {
+            int pivot = (left + right) / 2;
+            if (IsExist(pivot, d, root))
+                left = pivot + 1;
+            else
+                right = pivot - 1;
+        }
+
+        return pow(2, d) - 1 + left;
+    }
+private:
+    int ComputeDepth(TreeNode *root)
+    {
+        int d = 0;
+        while (root->left)
+        {
+            root = root->left;
+            d++;
+        }
+        return d;
+    }
+    bool IsExist(int idx, int d, TreeNode* node)
+    {
+        int left = 0; int right = pow(2, d) - 1;
+        for (int i = 0; i < d; i++)
+        {
+            int pivot = (left + right) / 2;
+            if (idx <= pivot)
+            {
+                node = node->left;
+                right = pivot;
+            }
+            else
+            {
+                node = node->right;
+                left = ++pivot;
+            }
+        }
+        return node != nullptr;
+    }
+};
+\end{Code}
+
+\section{Flip Equivalent Binary Trees} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:flip-equivalent-binary-trees}
+
+
+\subsubsection{描述}
+For a binary tree T, we can define a flip operation as follows: choose any node, and swap the left and right child subtrees.
+
+A binary tree X is flip equivalent to a binary tree Y if and only if we can make X equal to Y after some number of flip operations.
+
+Write a function that determines whether two binary trees are flip equivalent.  The trees are given by root nodes root1 and root2.
+
+Example 1:
+\begin{Code}
+Input:
+       1                 1
+      /  \              / \
+     3    2            2   3
+      \  / \          / \  /
+      6 4   5        4  5 6
+           / \         / \
+          8   7       7   8
+
+Input: root1 = [1,2,3,4,5,6,null,null,null,7,8], root2 = [1,3,2,null,6,4,5,null,null,null,null,8,7]
+Output: true
+Explanation: We flipped at nodes with values 1, 3, and 5.
+\end{Code}
+
+Note:
+\begindot
+\item Each tree will have at most 100 nodes.
+\item Each value in each tree will be a unique integer in the range [0, 99]
+\myenddot
+
+
+\subsubsection{遞歸}
+\begin{Code}
+// 時間複雜度O(min(N1, N2))，空間複雜度O(min(H1, H2))
+class Solution {
+public:
+    bool flipEquiv(TreeNode* root1, TreeNode* root2) {
+        if (root1 == nullptr) return root2 == nullptr;
+        if (root2 == nullptr) return root1 == nullptr;
+
+        return root1->val == root2->val
+            && (flipEquiv(root1->right, root2->left) && flipEquiv(root1->left, root2->right)
+                || flipEquiv(root1->right, root2->right) && flipEquiv(root1->left, root2->left));
+    }
+};
+\end{Code}
+
+\subsubsection{Canonical Traversal}
+\begin{Code}
+// 時間複雜度O(min(N1, N2))，空間複雜度O(min(H1, H2))
+class Solution {
+public:
+    bool flipEquiv(TreeNode* root1, TreeNode* root2) {
+        list<TreeNode*> vals1;
+        list<TreeNode*> vals2;
+
+        // 由細至大把二叉樹放到鏈表中
+        DFS(root1, vals1);
+        DFS(root2, vals2);
+
+        // 當兩個表是一樣，回 true
+        return vals1.size() == vals2.size()
+            && equal(vals1.begin(), vals1.end(), vals2.begin()
+                     , [](const auto& left, const auto& right)
+                     {
+                         if (left == nullptr && right == nullptr) return true;
+                         else if (left == nullptr || right == nullptr) return false;
+                         else return left->val == right->val;
+                     });
+    }
+private:
+    void DFS(TreeNode *root, list<TreeNode*>& vals)
+    {
+        if (root == nullptr) return;
+
+        vals.push_back(root);
+
+        int L = root->left == nullptr ? -1 : root->left->val;
+        int R = root->right == nullptr ? -1 : root->right->val;
+
+        if (L < R)
+        {
+            DFS(root->left, vals);
+            DFS(root->right, vals);
+        }
+        else
+        {
+            DFS(root->right, vals);
+            DFS(root->left, vals);
+        }
+
+        vals.push_back(nullptr);
+    }
+};
+\end{Code}
+
+\section{Diameter of Binary Tree} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:diameter-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, you need to compute the length of the diameter of the tree. The diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root.
+
+Example:
+Given a binary tree
+\begin{Code}
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+
+Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
+
+Note: The length of path between two nodes is represented by the number of edges between them.
+\end{Code}
+
+
+\subsubsection{遞歸}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        m_result = 1;
+        DFS(root);
+        return m_result - 1;
+    }
+private:
+    int DFS(TreeNode *root)
+    {
+        if (root == nullptr) return 0;
+
+        int L = DFS(root->left);
+        int R = DFS(root->right);
+
+        m_result = max(m_result, L+R+1); // 由左至右總加起來
+        return max(L, R) + 1; // 注意: 只取最長的子樹
+    }
+private:
+    int m_result;
+};
+\end{Code}
+
+\section{Evaluate Division} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:evaluate-division}
+
+
+\subsubsection{描述}
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+\begin{Code}
+  The input is: vector<pair<string, string>> equations, vector<double>& values
+  , vector<pair<string, string>> queries , where equations.size() == values.size()
+  , and the values are positive. This represents the equations. Return vector<double>.
+\end{Code}
+
+According to the example above:
+
+\begin{Code}
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+\end{Code}
+
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+
+\subsubsection{遞歸 - DFS}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<double> calcEquation(vector<vector<string>>& equations
+                                , vector<double>& values
+                                , vector<vector<string>>& queries){
+        // 造圖
+        unordered_map<string,vector<pair<double,string>>> g;
+        for (int i = 0; i < equations.size(); i++)
+        {
+            string& strA = equations[i][0];
+            string& strB = equations[i][1];
+            // 記錄 A / B
+            g[strA].emplace_back(values[i], strB);
+            // 記錄 B / A
+            g[strB].emplace_back(1 / values[i], strA);
+        }
+
+        vector<double> result;
+        for (int i = 0; i < queries.size(); i++)
+        {
+            const string& qStart = queries[i][0];
+            const string& qEnd = queries[i][1];
+            // 若整個除數關係沒有記錄
+            if (g.find(qStart) == g.end() || g.find(qEnd) == g.end())
+                result.push_back(-1.0);
+            else
+            {
+                // 若有記錄
+                set<string> visited;
+                int ansLen = result.size();
+                DFS(qStart, qEnd, 1, visited, result, g);
+                if (result.size() == ansLen)
+                    result.push_back(-1); // 若找不到答案
+            }
+        }
+        return result ;
+    }
+private:
+    void DFS(string start, string end, double cost
+             , set<string>& visited
+             , vector<double>& result
+             , unordered_map<string,vector<pair<double,string>>>& g)
+    {
+        visited.insert(start);
+
+        if (start == end)
+        {
+            result.push_back(cost);
+            return;
+        }
+
+        for (const auto& [num, neigbor] : g[start])
+        {
+            if (visited.find(neigbor) != visited.end()) continue;
+
+            int ansLen = result.size();
+            DFS(neigbor, end, cost * num, visited, result, g);
+            if (ansLen != result.size()) return; // 已找到答案，剪枝
+        }
     }
 };
 \end{Code}
