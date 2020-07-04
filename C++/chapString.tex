@@ -1412,8 +1412,11 @@ public:
     bool isUnique(string word) {
         auto it = m_abbrs.find(ToAbbr(word));
         auto it2 = m_words.find(word);
+        // 若簡寫沒有出現過
         if (it == m_abbrs.end()) return true;
+        // 若文字相同，和所有簡寫都來自同一個字源
         else if (it2 != m_words.end() && it->second == it2->second) return true;
+        // 若簡寫相同，和簡寫來自不同文字
         else return false;
     }
 private:
