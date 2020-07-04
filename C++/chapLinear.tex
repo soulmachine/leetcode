@@ -531,6 +531,28 @@ public:
 };
 \end{Code}
 
+\subsubsection{代碼}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> cache;
+        for (size_t i = 0; i < nums.size(); i++)
+        {
+            auto it = cache.find(target - nums[i]);
+            if (it != cache.end())
+            {
+                return vector<int>{it->second, (int)i};
+            }
+            cache.emplace(nums[i], i);
+        }
+
+        return vector<int>(); // should not go here
+    }
+};
+\end{Code}
+
 
 \subsubsection{相關題目}
 \begindot
