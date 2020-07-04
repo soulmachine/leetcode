@@ -2121,534 +2121,6 @@ private:
 \item Convert Sorted Array to Binary Search Tree，見 \S \ref{sec:convert-sorted-array-to-binary-search-tree}
 \myenddot
 
-
-\section{二叉樹的遞歸} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-二叉樹是一個遞歸的數據結構，因此是一個用來考察遞歸思維能力的絕佳數據結構。
-
-遞歸一定是深搜（見 \S \ref{sec:dfs-vs-recursion}節 “深搜與遞歸的區別”），由於在二叉樹上，遞歸的味道更濃些，因此本節用“二叉樹的遞歸”作為標題，而不是“二叉樹的深搜”，儘管本節所有的算法都屬於深搜。
-
-二叉樹的先序、中序、後序遍歷都可以看做是DFS，此外還有其他順序的深度優先遍歷，共有$3!=6$種。其他3種順序是 \fn{root->r->l，r->root->l, r->l->root}。
-
-
-\subsection{Minimum Depth of Binary Tree}
-\label{sec:minimum-depth-of-binary-tree}
-
-
-\subsubsection{描述}
-Given a binary tree, find its minimum depth.
-
-The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
-
-
-\subsubsection{分析}
-無
-
-
-\subsubsection{遞歸版}
-\begin{Code}
-// LeetCode, Minimum Depth of Binary Tree
-// 遞歸版，時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    int minDepth(const TreeNode *root) {
-        return minDepth(root, false);
-    }
-private:
-    static int minDepth(const TreeNode *root, bool hasbrother) {
-        if (!root) return hasbrother ? INT_MAX : 0;
-
-        return 1 + min(minDepth(root->left, root->right != NULL),
-                minDepth(root->right, root->left != NULL));
-    }
-};
-\end{Code}
-
-
-\subsubsection{迭代版}
-\begin{Code}
-// LeetCode, Minimum Depth of Binary Tree
-// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    int minDepth(TreeNode* root) {
-        if (root == nullptr)
-            return 0;
-
-        int result = INT_MAX;
-
-        stack<pair<TreeNode*, int>> s;
-        s.push(make_pair(root, 1));
-
-        while (!s.empty()) {
-            auto node = s.top().first;
-            auto depth = s.top().second;
-            s.pop();
-
-            if (node->left == nullptr && node->right == nullptr)
-                result = min(result, depth);
-
-            if (node->left && result > depth) // 深度控制，剪枝
-                s.push(make_pair(node->left, depth + 1));
-
-            if (node->right && result > depth) // 深度控制，剪枝
-                s.push(make_pair(node->right, depth + 1));
-        }
-
-        return result;
-    }
-};
-\end{Code}
-
-\subsubsection{相關題目}
-\begindot
-\item Maximum Depth of Binary Tree，見 \S \ref{sec:maximum-depth-of-binary-tree}
-\myenddot
-
-
-\subsection{Maximum Depth of Binary Tree}
-\label{sec:maximum-depth-of-binary-tree}
-
-
-\subsubsection{描述}
-Given a binary tree, find its maximum depth.
-
-The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
-
-
-\subsubsection{分析}
-無
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Maximum Depth of Binary Tree
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    int maxDepth(TreeNode *root) {
-        if (root == nullptr) return 0;
-
-        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
-    }
-};
-\end{Code}
-
-
-\subsubsection{相關題目}
-\begindot
-\item Minimum Depth of Binary Tree，見 \S \ref{sec:minimum-depth-of-binary-tree}
-\myenddot
-
-
-\subsection{Path Sum}
-\label{sec:path-sum}
-
-
-\subsubsection{描述}
-Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
-
-For example:
-Given the below binary tree and \code{sum = 22},
-\begin{Code}
-          5
-         / \
-        4   8
-       /   / \
-      11  13  4
-     /  \      \
-    7    2      1
-\end{Code}
-return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 22.
-
-
-\subsubsection{分析}
-題目只要求返回\fn{true}或者\fn{false}，因此不需要記錄路徑。
-
-由於只需要求出一個結果，因此，當左、右任意一棵子樹求到了滿意結果，都可以及時return。
-
-由於題目沒有説節點的數據一定是正整數，必須要走到葉子節點才能判斷，因此中途沒法剪枝，只能進行樸素深搜。
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Path Sum
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    bool hasPathSum(TreeNode *root, int sum) {
-        if (root == nullptr) return false;
-
-        if (root->left == nullptr && root->right == nullptr) // leaf
-            return sum == root->val;
-
-        return hasPathSum(root->left, sum - root->val)
-                || hasPathSum(root->right, sum - root->val);
-    }
-};
-\end{Code}
-
-
-\subsubsection{相關題目}
-\begindot
-\item Path Sum II，見 \S \ref{sec:path-sum-ii}
-\myenddot
-
-
-\subsection{Path Sum II}
-\label{sec:path-sum-ii}
-
-
-\subsubsection{描述}
-Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
-
-For example:
-Given the below binary tree and \code{sum = 22},
-\begin{Code}
-          5
-         / \
-        4   8
-       /   / \
-      11  13  4
-     /  \    / \
-    7    2  5   1
-\end{Code}
-return
-\begin{Code}
-[
-   [5,4,11,2],
-   [5,8,4,5]
-]
-\end{Code}
-
-
-\subsubsection{分析}
-跟上一題相比，本題是求路徑本身。且要求出所有結果，左子樹求到了滿意結果，不能return，要接着求右子樹。
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Path Sum II
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    vector<vector<int> > pathSum(TreeNode *root, int sum) {
-        vector<vector<int> > result;
-        vector<int> cur; // 中間結果
-        pathSum(root, sum, cur, result);
-        return result;
-    }
-private:
-    void pathSum(TreeNode *root, int gap, vector<int> &cur,
-            vector<vector<int> > &result) {
-        if (root == nullptr) return;
-
-        cur.push_back(root->val);
-
-        if (root->left == nullptr && root->right == nullptr) { // leaf
-            if (gap == root->val)
-                result.push_back(cur);
-        }
-        pathSum(root->left, gap - root->val, cur, result);
-        pathSum(root->right, gap - root->val, cur, result);
-
-        cur.pop_back();
-    }
-};
-\end{Code}
-
-
-\subsubsection{相關題目}
-\begindot
-\item Path Sum，見 \S \ref{sec:path-sum}
-\myenddot
-
-
-\subsection{Binary Tree Maximum Path Sum}
-\label{sec:binary-tree-maximum-path-sum}
-
-
-\subsubsection{描述}
-Given a binary tree, find the maximum path sum.
-
-The path may start and end at any node in the tree.
-For example:
-Given the below binary tree,
-\begin{Code}
-  1
- / \
-2   3
-\end{Code}
-Return $6$.
-
-
-\subsubsection{分析}
-這題很難，路徑可以從任意節點開始，到任意節點結束。
-
-可以利用“最大連續子序列和”問題的思路，見第\S \ref{sec:maximum-subarray}節。如果説Array只有一個方向的話，那麼Binary Tree其實只是左、右兩個方向而已，我們需要比較兩個方向上的值。
-
-不過，Array可以從頭到尾遍歷，那麼Binary Tree怎麼辦呢，我們可以採用Binary Tree最常用的dfs來進行遍歷。先算出左右子樹的結果L和R，如果L大於0，那麼對後續結果是有利的，我們加上L，如果R大於0，對後續結果也是有利的，繼續加上R。
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Binary Tree Maximum Path Sum
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    int maxPathSum(TreeNode *root) {
-        max_sum = INT_MIN;
-        dfs(root);
-        return max_sum;
-    }
-private:
-    int max_sum;
-    int dfs(const TreeNode *root) {
-        if (root == nullptr) return 0;
-        int l = dfs(root->left);
-        int r = dfs(root->right);
-        int sum = root->val;
-        if (l > 0) sum += l;
-        if (r > 0) sum += r;
-        max_sum = max(max_sum, sum);
-        return max(r, l) > 0 ? max(r, l) + root->val : root->val;
-    }
-};
-\end{Code}
-
-注意，最後return的時候，只返回一個方向上的值，為什麼？這是因為在遞歸中，只能向父節點返回，不可能存在L->root->R的路徑，只可能是L->root或R->root。
-
-
-\subsubsection{相關題目}
-\begindot
-\item Maximum Subarray，見 \S \ref{sec:maximum-subarray}
-\myenddot
-
-
-\subsection{Populating Next Right Pointers in Each Node} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:populating-next-right-pointers-in-each-node}
-
-
-\subsubsection{描述}
-Given a binary tree
-\begin{Code}
-struct TreeLinkNode {
-   int val;
-   TreeLinkNode *left, *right, *next;
-   TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
-};
-\end{Code}
-
-Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to \fn{NULL}.
-
-Initially, all next pointers are set to \fn{NULL}.
-
-Note:
-\begindot
-\item You may only use constant extra space.
-\item You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
-\myenddot
-
-For example,
-Given the following perfect binary tree,
-\begin{Code}
-         1
-       /  \
-      2    3
-     / \  / \
-    4  5  6  7
-\end{Code}
-
-After calling your function, the tree should look like:
-\begin{Code}
-         1 -> NULL
-       /  \
-      2 -> 3 -> NULL
-     / \  / \
-    4->5->6->7 -> NULL
-\end{Code}
-
-
-\subsubsection{分析}
-無
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Populating Next Right Pointers in Each Node
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    void connect(TreeLinkNode *root) {
-        connect(root, NULL);
-    }
-private:
-    void connect(TreeLinkNode *root, TreeLinkNode *sibling) {
-        if (root == nullptr)
-            return;
-        else
-            root->next = sibling;
-
-        connect(root->left, root->right);
-        if (sibling)
-            connect(root->right, sibling->left);
-        else
-            connect(root->right, nullptr);
-    }
-};
-\end{Code}
-
-
-\subsubsection{相關題目}
-\begindot
-\item Populating Next Right Pointers in Each Node II，見 \S \ref{sec:populating-next-right-pointers-in-each-node-ii}
-\myenddot
-
-
-\subsection{Sum Root to Leaf Numbers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:sum-root-to-leaf-numbers}
-
-
-\subsubsection{描述}
-Given a binary tree containing digits from \fn{0-9} only, each root-to-leaf path could represent a number.
-
-An example is the root-to-leaf path \fn{1->2->3} which represents the number \fn{123}.
-
-Find the total sum of all root-to-leaf numbers.
-
-For example,
-\begin{Code}
-    1
-   / \
-  2   3
-\end{Code}
-
-The root-to-leaf path \fn{1->2} represents the number \fn{12}.
-The root-to-leaf path \fn{1->3} represents the number \fn{13}.
-
-Return the sum = \fn{12 + 13 = 25}.
-
-
-\subsubsection{分析}
-無
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Decode Ways
-// 時間複雜度O(n)，空間複雜度O(logn)
-class Solution {
-public:
-    int sumNumbers(TreeNode *root) {
-        return dfs(root, 0);
-    }
-private:
-    int dfs(TreeNode *root, int sum) {
-        if (root == nullptr) return 0;
-        if (root->left == nullptr && root->right == nullptr)
-            return sum * 10 + root->val;
-
-        return dfs(root->left, sum * 10 + root->val) +
-                dfs(root->right, sum * 10 + root->val);
-    }
-};
-\end{Code}
-
-
-\subsubsection{相關題目}
-\begindot
-\item 無
-\myenddot
-
-\subsection{Convert Binary Search Tree To Double link list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\label{sec:convert-binary-search-tree-to-double-link-list}
-
-
-\subsubsection{描述}
-Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place.
-
-You can think of the left and right pointers as synonymous to the predecessor and successor pointers in a doubly-linked list. For a circular doubly linked list, the predecessor of the first element is the last element, and the successor of the last element is the first element.
-
-We want to do the transformation in place. After the transformation, the left pointer of the tree node should point to its predecessor, and the right pointer should point to its successor. You should return the pointer to the smallest element of the linked list.
-
-
-\begin{center}
-\includegraphics[width=300pt]{convert-binary-search-tree-to-double-link-list.png}\\
-\figcaption{Convert Binary Search Tree}\label{fig:convert-binary-search-tree-to-double-link-list}
-\end{center}
-\subsubsection{分析}
-無
-
-\subsubsection{代碼}
-
-\begin{Code}
-// LeetCode, Decode Ways
-// 時間複雜度O(n)，空間複雜度O(logn)
-/*
-// Definition for a Node.
-class Node {
-public:
-    int val;
-    Node* left;
-    Node* right;
-
-    Node() {}
-
-    Node(int _val) {
-        val = _val;
-        left = NULL;
-        right = NULL;
-    }
-
-    Node(int _val, Node* _left, Node* _right) {
-        val = _val;
-        left = _left;
-        right = _right;
-    }
-};
-*/
-
-class Solution {
-public:
-    Node* treeToDoublyList(Node* root) {
-        if (root == nullptr) return root;
-
-        m_last = m_first = nullptr;
-
-        DFS(root);
-        m_first->left = m_last;
-        m_last->right = m_first;
-
-        return m_first;
-    }
-private:
-    void DFS(Node *node)
-    {
-        if (node == nullptr) return;
-
-        DFS(node->left);
-
-        if (m_last)
-        {
-            m_last->right = node;
-            node->left = m_last;
-        }
-        else
-        {
-            m_first = node;
-            node->left = nullptr;
-        }
-        m_last = node;
-
-        DFS(node->right);
-    }
-private:
-    Node *m_last;
-    Node *m_first;
-};
-\end{Code}
-
-\section{BST}
-
 \subsection{Inorder Successor in BST}
 \label{sec:inorder-successor-in-bst}
 
@@ -3494,5 +2966,530 @@ private:
     {
         return x < 0 ? (x + 1) / w - 1 : x / w;
     }
+};
+\end{Code}
+
+\section{二叉樹的遞歸} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+二叉樹是一個遞歸的數據結構，因此是一個用來考察遞歸思維能力的絕佳數據結構。
+
+遞歸一定是深搜（見 \S \ref{sec:dfs-vs-recursion}節 “深搜與遞歸的區別”），由於在二叉樹上，遞歸的味道更濃些，因此本節用“二叉樹的遞歸”作為標題，而不是“二叉樹的深搜”，儘管本節所有的算法都屬於深搜。
+
+二叉樹的先序、中序、後序遍歷都可以看做是DFS，此外還有其他順序的深度優先遍歷，共有$3!=6$種。其他3種順序是 \fn{root->r->l，r->root->l, r->l->root}。
+
+
+\subsection{Minimum Depth of Binary Tree}
+\label{sec:minimum-depth-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, find its minimum depth.
+
+The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+
+
+\subsubsection{分析}
+無
+
+
+\subsubsection{遞歸版}
+\begin{Code}
+// LeetCode, Minimum Depth of Binary Tree
+// 遞歸版，時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int minDepth(const TreeNode *root) {
+        return minDepth(root, false);
+    }
+private:
+    static int minDepth(const TreeNode *root, bool hasbrother) {
+        if (!root) return hasbrother ? INT_MAX : 0;
+
+        return 1 + min(minDepth(root->left, root->right != NULL),
+                minDepth(root->right, root->left != NULL));
+    }
+};
+\end{Code}
+
+
+\subsubsection{迭代版}
+\begin{Code}
+// LeetCode, Minimum Depth of Binary Tree
+// 迭代版，時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if (root == nullptr)
+            return 0;
+
+        int result = INT_MAX;
+
+        stack<pair<TreeNode*, int>> s;
+        s.push(make_pair(root, 1));
+
+        while (!s.empty()) {
+            auto node = s.top().first;
+            auto depth = s.top().second;
+            s.pop();
+
+            if (node->left == nullptr && node->right == nullptr)
+                result = min(result, depth);
+
+            if (node->left && result > depth) // 深度控制，剪枝
+                s.push(make_pair(node->left, depth + 1));
+
+            if (node->right && result > depth) // 深度控制，剪枝
+                s.push(make_pair(node->right, depth + 1));
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{相關題目}
+\begindot
+\item Maximum Depth of Binary Tree，見 \S \ref{sec:maximum-depth-of-binary-tree}
+\myenddot
+
+
+\subsection{Maximum Depth of Binary Tree}
+\label{sec:maximum-depth-of-binary-tree}
+
+
+\subsubsection{描述}
+Given a binary tree, find its maximum depth.
+
+The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Maximum Depth of Binary Tree
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int maxDepth(TreeNode *root) {
+        if (root == nullptr) return 0;
+
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Minimum Depth of Binary Tree，見 \S \ref{sec:minimum-depth-of-binary-tree}
+\myenddot
+
+
+\subsection{Path Sum}
+\label{sec:path-sum}
+
+
+\subsubsection{描述}
+Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
+
+For example:
+Given the below binary tree and \code{sum = 22},
+\begin{Code}
+          5
+         / \
+        4   8
+       /   / \
+      11  13  4
+     /  \      \
+    7    2      1
+\end{Code}
+return true, as there exist a root-to-leaf path \code{5->4->11->2} which sum is 22.
+
+
+\subsubsection{分析}
+題目只要求返回\fn{true}或者\fn{false}，因此不需要記錄路徑。
+
+由於只需要求出一個結果，因此，當左、右任意一棵子樹求到了滿意結果，都可以及時return。
+
+由於題目沒有説節點的數據一定是正整數，必須要走到葉子節點才能判斷，因此中途沒法剪枝，只能進行樸素深搜。
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Path Sum
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    bool hasPathSum(TreeNode *root, int sum) {
+        if (root == nullptr) return false;
+
+        if (root->left == nullptr && root->right == nullptr) // leaf
+            return sum == root->val;
+
+        return hasPathSum(root->left, sum - root->val)
+                || hasPathSum(root->right, sum - root->val);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Path Sum II，見 \S \ref{sec:path-sum-ii}
+\myenddot
+
+
+\subsection{Path Sum II}
+\label{sec:path-sum-ii}
+
+
+\subsubsection{描述}
+Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+
+For example:
+Given the below binary tree and \code{sum = 22},
+\begin{Code}
+          5
+         / \
+        4   8
+       /   / \
+      11  13  4
+     /  \    / \
+    7    2  5   1
+\end{Code}
+return
+\begin{Code}
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+\end{Code}
+
+
+\subsubsection{分析}
+跟上一題相比，本題是求路徑本身。且要求出所有結果，左子樹求到了滿意結果，不能return，要接着求右子樹。
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Path Sum II
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    vector<vector<int> > pathSum(TreeNode *root, int sum) {
+        vector<vector<int> > result;
+        vector<int> cur; // 中間結果
+        pathSum(root, sum, cur, result);
+        return result;
+    }
+private:
+    void pathSum(TreeNode *root, int gap, vector<int> &cur,
+            vector<vector<int> > &result) {
+        if (root == nullptr) return;
+
+        cur.push_back(root->val);
+
+        if (root->left == nullptr && root->right == nullptr) { // leaf
+            if (gap == root->val)
+                result.push_back(cur);
+        }
+        pathSum(root->left, gap - root->val, cur, result);
+        pathSum(root->right, gap - root->val, cur, result);
+
+        cur.pop_back();
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Path Sum，見 \S \ref{sec:path-sum}
+\myenddot
+
+
+\subsection{Binary Tree Maximum Path Sum}
+\label{sec:binary-tree-maximum-path-sum}
+
+
+\subsubsection{描述}
+Given a binary tree, find the maximum path sum.
+
+The path may start and end at any node in the tree.
+For example:
+Given the below binary tree,
+\begin{Code}
+  1
+ / \
+2   3
+\end{Code}
+Return $6$.
+
+
+\subsubsection{分析}
+這題很難，路徑可以從任意節點開始，到任意節點結束。
+
+可以利用“最大連續子序列和”問題的思路，見第\S \ref{sec:maximum-subarray}節。如果説Array只有一個方向的話，那麼Binary Tree其實只是左、右兩個方向而已，我們需要比較兩個方向上的值。
+
+不過，Array可以從頭到尾遍歷，那麼Binary Tree怎麼辦呢，我們可以採用Binary Tree最常用的dfs來進行遍歷。先算出左右子樹的結果L和R，如果L大於0，那麼對後續結果是有利的，我們加上L，如果R大於0，對後續結果也是有利的，繼續加上R。
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Binary Tree Maximum Path Sum
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int maxPathSum(TreeNode *root) {
+        max_sum = INT_MIN;
+        dfs(root);
+        return max_sum;
+    }
+private:
+    int max_sum;
+    int dfs(const TreeNode *root) {
+        if (root == nullptr) return 0;
+        int l = dfs(root->left);
+        int r = dfs(root->right);
+        int sum = root->val;
+        if (l > 0) sum += l;
+        if (r > 0) sum += r;
+        max_sum = max(max_sum, sum);
+        return max(r, l) > 0 ? max(r, l) + root->val : root->val;
+    }
+};
+\end{Code}
+
+注意，最後return的時候，只返回一個方向上的值，為什麼？這是因為在遞歸中，只能向父節點返回，不可能存在L->root->R的路徑，只可能是L->root或R->root。
+
+
+\subsubsection{相關題目}
+\begindot
+\item Maximum Subarray，見 \S \ref{sec:maximum-subarray}
+\myenddot
+
+
+\subsection{Populating Next Right Pointers in Each Node} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:populating-next-right-pointers-in-each-node}
+
+
+\subsubsection{描述}
+Given a binary tree
+\begin{Code}
+struct TreeLinkNode {
+   int val;
+   TreeLinkNode *left, *right, *next;
+   TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+};
+\end{Code}
+
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to \fn{NULL}.
+
+Initially, all next pointers are set to \fn{NULL}.
+
+Note:
+\begindot
+\item You may only use constant extra space.
+\item You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
+\myenddot
+
+For example,
+Given the following perfect binary tree,
+\begin{Code}
+         1
+       /  \
+      2    3
+     / \  / \
+    4  5  6  7
+\end{Code}
+
+After calling your function, the tree should look like:
+\begin{Code}
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \  / \
+    4->5->6->7 -> NULL
+\end{Code}
+
+
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Populating Next Right Pointers in Each Node
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    void connect(TreeLinkNode *root) {
+        connect(root, NULL);
+    }
+private:
+    void connect(TreeLinkNode *root, TreeLinkNode *sibling) {
+        if (root == nullptr)
+            return;
+        else
+            root->next = sibling;
+
+        connect(root->left, root->right);
+        if (sibling)
+            connect(root->right, sibling->left);
+        else
+            connect(root->right, nullptr);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item Populating Next Right Pointers in Each Node II，見 \S \ref{sec:populating-next-right-pointers-in-each-node-ii}
+\myenddot
+
+
+\subsection{Sum Root to Leaf Numbers} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:sum-root-to-leaf-numbers}
+
+
+\subsubsection{描述}
+Given a binary tree containing digits from \fn{0-9} only, each root-to-leaf path could represent a number.
+
+An example is the root-to-leaf path \fn{1->2->3} which represents the number \fn{123}.
+
+Find the total sum of all root-to-leaf numbers.
+
+For example,
+\begin{Code}
+    1
+   / \
+  2   3
+\end{Code}
+
+The root-to-leaf path \fn{1->2} represents the number \fn{12}.
+The root-to-leaf path \fn{1->3} represents the number \fn{13}.
+
+Return the sum = \fn{12 + 13 = 25}.
+
+
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Decode Ways
+// 時間複雜度O(n)，空間複雜度O(logn)
+class Solution {
+public:
+    int sumNumbers(TreeNode *root) {
+        return dfs(root, 0);
+    }
+private:
+    int dfs(TreeNode *root, int sum) {
+        if (root == nullptr) return 0;
+        if (root->left == nullptr && root->right == nullptr)
+            return sum * 10 + root->val;
+
+        return dfs(root->left, sum * 10 + root->val) +
+                dfs(root->right, sum * 10 + root->val);
+    }
+};
+\end{Code}
+
+
+\subsubsection{相關題目}
+\begindot
+\item 無
+\myenddot
+
+\subsection{Convert Binary Search Tree To Double link list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:convert-binary-search-tree-to-double-link-list}
+
+
+\subsubsection{描述}
+Convert a Binary Search Tree to a sorted Circular Doubly-Linked List in place.
+
+You can think of the left and right pointers as synonymous to the predecessor and successor pointers in a doubly-linked list. For a circular doubly linked list, the predecessor of the first element is the last element, and the successor of the last element is the first element.
+
+We want to do the transformation in place. After the transformation, the left pointer of the tree node should point to its predecessor, and the right pointer should point to its successor. You should return the pointer to the smallest element of the linked list.
+
+
+\begin{center}
+\includegraphics[width=300pt]{convert-binary-search-tree-to-double-link-list.png}\\
+\figcaption{Convert Binary Search Tree}\label{fig:convert-binary-search-tree-to-double-link-list}
+\end{center}
+\subsubsection{分析}
+無
+
+\subsubsection{代碼}
+
+\begin{Code}
+// LeetCode, Decode Ways
+// 時間複雜度O(n)，空間複雜度O(logn)
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* treeToDoublyList(Node* root) {
+        if (root == nullptr) return root;
+
+        m_last = m_first = nullptr;
+
+        DFS(root);
+        m_first->left = m_last;
+        m_last->right = m_first;
+
+        return m_first;
+    }
+private:
+    void DFS(Node *node)
+    {
+        if (node == nullptr) return;
+
+        DFS(node->left);
+
+        if (m_last)
+        {
+            m_last->right = node;
+            node->left = m_last;
+        }
+        else
+        {
+            m_first = node;
+            node->left = nullptr;
+        }
+        m_last = node;
+
+        DFS(node->right);
+    }
+private:
+    Node *m_last;
+    Node *m_first;
 };
 \end{Code}
