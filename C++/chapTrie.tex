@@ -240,3 +240,197 @@ private:
     }
 };
 \end{Code}
+
+\subsubsection{Tier}
+\begin{Code}
+// 時間複雜度O(k)，空間複雜度O(n)
+struct TrieNode
+{
+    bool m_isWord;
+    unordered_map<char, TrieNode*> m_next;
+
+    TrieNode () { m_isWord = false; };
+};
+class Solution {
+public:
+    string replaceWords(vector<string>& dict, string sentence) {
+        // 造字首樹
+        TrieNode root;
+        for (const string& s : dict)
+        {
+            TrieNode *p = &root;
+            // 每一個字母
+            for (const char& c : s)
+            {
+                if (p->m_next.count(c) <= 0) p->m_next.insert(make_pair(c, new TrieNode));
+                p = p->m_next[c];
+                if (p->m_isWord) break; // 剪枝，當已經有 prefix 存在
+            }
+            p->m_isWord = true;
+        }
+
+        string result;
+        bool isFirst = true;
+        for (const string& word : GetVec(sentence, ' '))
+        {
+            string tmp = GetByPrefix(root, word);
+            if (isFirst)
+                result += tmp;
+            else
+                result += " " + tmp;
+            isFirst = false;
+        }
+
+        return result;
+    }
+private:
+    vector<string> GetVec(const string& sentence, char delimiter)
+    {
+        string result;
+        vector<string> res;
+        istringstream iss(sentence);
+        while (getline(iss, result, delimiter)) {
+            res.push_back(result);
+        }
+        return res;
+    }
+    string GetByPrefix(const TrieNode& root, const string& word)
+    {
+        string result;
+        TrieNode const * p = &root;
+        for (const char& c : word)
+        {
+            result += c;
+            auto it = p->m_next.find(c);
+            if (it != p->m_next.end())
+            {
+                p = it->second;
+                if (p->m_isWord) return result;
+            }
+            else
+                return word;
+        }
+
+        return word;
+    }
+};
+\end{Code}
+
+\section{Design Search Autocomplete System} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:design-search-autocomplete-system}
+
+
+\subsubsection{描述}
+Design a search autocomplete system for a search engine. Users may input a sentence (at least one word and end with a special character '\#'). For each character they type except '\#', you need to return the top 3 historical hot sentences that have prefix the same as the part of sentence already typed. Here are the specific rules:
+
+\begindot
+\item The hot degree for a sentence is defined as the number of times a user typed the exactly same sentence before.
+\item The returned top 3 hot sentences should be sorted by hot degree (The first is the hottest one). If several sentences have the same degree of hot, you need to use ASCII-code order (smaller one appears first).
+\item If less than 3 hot sentences exist, then just return as many as you can.
+\item When the input is a special character, it means the sentence ends, and in this case, you need to return an empty list.
+\myenddot
+
+Your job is to implement the following functions:
+
+The constructor function:
+
+AutocompleteSystem(String[] sentences, int[] times): This is the constructor. The input is historical data. Sentences is a string array consists of previously typed sentences. Times is the corresponding times a sentence has been typed. Your system should record these historical data.
+
+Now, the user wants to input a new sentence. The following function will provide the next character the user types:
+
+List<String> input(char c): The input c is the next character typed by the user. The character will only be lower-case letters ('a' to 'z'), blank space (' ') or a special character ('\#'). Also, the previously typed sentence should be recorded in your system. The output will be the top 3 historical hot sentences that have prefix the same as the part of sentence already typed.
+
+Example:
+Operation: AutocompleteSystem(["i love you", "island","ironman", "i love leetcode"], [5,3,2,2])
+The system have already tracked down the following sentences and their corresponding times:
+"i love you" : 5 times
+"island" : 3 times
+"ironman" : 2 times
+"i love leetcode" : 2 times
+Now, the user begins another search:
+
+Operation: input('i')
+Output: ["i love you", "island","i love leetcode"]
+Explanation:
+There are four sentences that have prefix "i". Among them, "ironman" and "i love leetcode" have same hot degree. Since ' ' has ASCII code 32 and 'r' has ASCII code 114, "i love leetcode" should be in front of "ironman". Also we only need to output top 3 hot sentences, so "ironman" will be ignored.
+
+Operation: input(' ')
+Output: ["i love you","i love leetcode"]
+Explanation:
+There are only two sentences that have prefix "i ".
+
+Operation: input('a')
+Output: []
+Explanation:
+There are no sentences that have prefix "i a".
+
+Operation: input('\#')
+Output: []
+Explanation:
+The user finished the input, the sentence "i a" should be saved as a historical sentence in system. And the following input will be counted as a new search.
+
+\subsubsection{暴力計算}
+\begin{Code}
+// 時間複雜度O(k * l)，空間複雜度O(n + mlogm)
+class AutocompleteSystem {
+public:
+    AutocompleteSystem(vector<string>& sentences, vector<int>& times) {
+        if (sentences.size() == times.size())
+        {
+            // 記低每個字句的出現次數
+            for (size_t i = 0; i < sentences.size(); i++)
+                m_cache.emplace(sentences[i], times[i]);
+        }
+    }
+
+    vector<string> input(char c) {
+        if (c == '#')
+        {
+            m_cache[m_curSentence] += 1;
+            m_curSentence = "";
+
+            return vector<string>();
+        }
+        else
+        {
+            m_curSentence += c;
+            vector<pair<string, int>> resultCount;
+            // 歷遍每一個 sentence 找出 prefix
+            for (const auto& [k, v] : m_cache)
+            {
+                // 找尋 prefix
+                if (k.find(m_curSentence) == 0)
+                {
+                    resultCount.emplace_back(k, v);
+                }
+            }
+
+            sort(resultCount.begin(), resultCount.end()
+                 , [&](const auto& left, const auto& right)
+                 {
+                     // 先比較出現次數的多少
+                     if (left.second == right.second)
+                     {
+                         // 後比較文字的先後
+                         return left.first < right.first;
+                     }
+                     else
+                         return left.second > right.second;
+                 });
+
+            vector<string> result; result.reserve(3);
+            int loop = 0;
+            for (const auto& [str, count] : resultCount)
+            {
+                result.push_back(str);
+                if (++loop >= 3) break;
+            }
+
+            return result;
+        }
+    }
+private:
+    unordered_map<string, int> m_cache;
+    string m_curSentence;
+};
+\end{Code}
