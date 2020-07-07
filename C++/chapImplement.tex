@@ -141,7 +141,6 @@ This is because the new interval \code\{[4,9]\} overlaps with \code\{[3,5],[6,7]
 \subsubsection{分析}
 無
 
-
 \subsubsection{代碼}
 \begin{Code}
 struct Interval {
@@ -172,6 +171,46 @@ public:
         }
         intervals.insert(intervals.end(), newInterval);
         return intervals;
+    }
+};
+\end{Code}
+
+\subsubsection{代碼}
+\begin{Code}
+//LeetCode, Insert Interval
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> result;
+        bool isDone = false;
+        for (const auto& interval : intervals)
+        {
+            if (!isDone && newInterval[0] <= interval[0])
+            {
+                MyMerge(result, newInterval);
+                isDone = true;
+            }
+            MyMerge(result, interval);
+        }
+        if (!isDone)
+            MyMerge(result, newInterval);
+
+        return result;
+    }
+private:
+    void MyMerge(vector<vector<int>>& result, const vector<int>& interval)
+    {
+        if (result.empty())
+            result.push_back(interval);
+        else
+        {
+            int& end = result.back()[1];
+            if (end < interval[0])
+                result.push_back(interval);
+            else
+                end = max(end, interval[1]);
+        }
     }
 };
 \end{Code}
