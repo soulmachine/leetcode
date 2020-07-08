@@ -608,6 +608,7 @@ public:
             auto it = m_cache.find(value - k);
             if (it != m_cache.end())
             {
+                // 例子: value: 4, k: 2. 當 k == 2 在數組中只出現一次，不能當是答案
                 if (value - k == k)
                 {
                     if (v > 1)
