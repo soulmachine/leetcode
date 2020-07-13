@@ -1048,3 +1048,51 @@ public:
     }
 };
 \end{Code}
+
+\section{Strobogrammatic Number II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:strobogrammatic-number-ii}
+
+
+\subsubsection{描述}
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+
+Find all strobogrammatic numbers that are of length = n.
+
+Example:
+\begin{Code}
+Input:  n = 2
+Output: ["11","69","88","96"]
+\end{Code}
+
+\subsubsection{遞歸 - DFS}
+\begin{Code}
+// 時間複雜度O()，空間複雜度O()
+class Solution {
+public:
+    vector<string> findStrobogrammatic(int n)
+    {
+        return helper(n, n);
+    }
+
+    vector<string>helper(int n, int m)
+    {
+        if (n == 0) return vector<string> {""};
+        if (n == 1) return vector<string> {"0","1","8"};
+
+        vector<string> list = helper(n-2, m);
+        vector<string> result;
+
+        for (int i = 0;i < list.size(); i++)
+        {
+            string s = list[i];
+            if (n != m) result.push_back("0" + s + "0");
+
+            result.push_back("1" + s + "1");
+            result.push_back("6" + s + "9");
+            result.push_back("8" + s + "8");
+            result.push_back("9" + s + "6");
+        }
+        return result;
+    }
+};
+\end{Code}
