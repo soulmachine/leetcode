@@ -825,3 +825,81 @@ private:
     }
 };
 \end{Code}
+
+\section{Cracking the Safe} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:cracking-the-safe}
+
+
+\subsubsection{描述}
+There is a box protected by a password. The password is a sequence of n digits where each digit can be one of the first k digits 0, 1, ..., k-1.
+
+While entering a password, the last n digits entered will automatically be matched against the correct password.
+
+For example, assuming the correct password is "345", if you type "012345", the box will open because the correct password matches the suffix of the entered password.
+
+Return any password of minimum length that is guaranteed to open the box at some point of entering it.
+
+Example 1:
+\begin{Code}
+Input: n = 1, k = 2
+Output: "01"
+Note: "10" will be accepted too.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: n = 2, k = 2
+Output: "00110"
+Note: "01100", "10011", "11001" will be accepted too.
+\end{Code}
+
+Note:
+\begindot
+\item n will be in the range (1, 4).
+\item k will be in the range (1, 10).
+\item pow(k, n) will be at most 4096.
+\myenddot
+
+\subsubsection{遞歸 - DFS - Hierholzer's Algorithm}
+\begin{Code}
+// 時間複雜度O(n * k^n)，空間複雜度O(n * k^n)
+// 利用 Hierholzer's Algorithm 歷遍所有 edges 並記錄所有的 nodes
+// Hierholzer's Algorithm 用來找尋 Eulerian Path
+class Solution {
+public:
+    string crackSafe(int n, int k) {
+        if (n == 1 && k == 1) return "0";
+        // seen 用來存放見過的 node
+        unordered_set<string> seen;
+        string result;
+
+        // 準備開始點
+        string start; start.append(n-1, '0');
+
+        DFS(start, k, seen, result);
+        result += start;
+
+        return result;
+    }
+private:
+    void DFS(const string& node, int k, unordered_set<string>& seen, string& result)
+    {
+        // 這是 post order travel 的做法
+        for (int x = 0; x < k; x++)
+        {
+            // nei 是下一個歷遍的 node + edge
+            // x 為 edge, 0, 1, 2 ... k-1
+            string nei = node + to_string(x);
+            if (seen.find(nei) == seen.end())
+            {
+                seen.insert(nei);
+                // nei.substr(1) 可以提取下一個 node
+                // 例子: 01(上一個 node) -> 010(edge) -> 10(下一個 node)
+                DFS(nei.substr(1), k, seen, result);
+                result += to_string(x); // 完成後，記低 edge
+            }
+        }
+    }
+};
+\end{Code}
+
