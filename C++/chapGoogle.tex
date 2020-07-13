@@ -903,3 +903,148 @@ private:
 };
 \end{Code}
 
+\section{Most Stones Removed with Same Row or Column} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:most-stones-removed-with-same-row-or-column}
+
+
+\subsubsection{描述}
+On a 2D plane, we place stones at some integer coordinate points.  Each coordinate point may have at most one stone.
+
+Now, a move consists of removing a stone that shares a column or row with another stone on the grid.
+
+What is the largest possible number of moves we can make?
+
+Example 1:
+\begin{Code}
+Input: stones = [[0,0],[0,1],[1,0],[1,2],[2,1],[2,2]]
+Output: 5
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: stones = [[0,0],[0,2],[1,1],[2,0],[2,2]]
+Output: 3
+\end{Code}
+
+Example 3:
+\begin{Code}
+Input: stones = [[0,0]]
+Output: 0
+\end{Code}
+
+Note:
+\begindot
+\item 1 <= stones.length <= 1000
+\item 0 <= stones[i][j] < 10000
+\myenddot
+
+\subsubsection{迭代 - DFS - stack}
+\begin{Code}
+// 時間複雜度O(n^2)，空間複雜度O(n^2)
+class Solution {
+public:
+    int removeStones(vector<vector<int>>& stones) {
+        int N = stones.size();
+
+        // graph[i][0]: 代表總共有多少個石頭和第 i 個石頭位於同列或欄
+        // graph[i][x]: 1 <= x <= N-1, x 存了 stones 的 index
+        // 例子 graph[0][2] == 5: stones[0] 的第二個同列或欄石頭 是 stones[5]
+        vector<vector<int>> graph(N, vector<int>(N, 0));
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = i+1; j < N; j++)
+            {
+                // 若找到同列或同欄
+                if (stones[i][0] == stones[j][0]
+                   || stones[i][1] == stones[j][1])
+                {
+                    // 交叉記錄
+                    graph[i][++graph[i][0]] = j;
+                    graph[j][++graph[j][0]] = i;
+                }
+            }
+        }
+
+        int ans = 0;
+        vector<bool> seen(N, false);
+        stack<int> cache;
+        for (int i = 0; i < N; i++)
+        {
+            if (!seen[i])
+            {
+                cache.push(i);
+                seen[i] = true;
+                ans--;
+                while (!cache.empty())
+                {
+                    int node = cache.top();
+                    cache.pop();
+                    ans++;
+                    for (int k = 1; k <= graph[node][0]; k++)
+                    {
+                        int nei = graph[node][k];
+                        if (!seen[nei])
+                        {
+                            cache.push(nei);
+                            seen[nei] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+};
+\end{Code}
+
+\subsubsection{Union}
+\begin{Code}
+// 時間複雜度O(nlogn)，空間複雜度O(n)
+class DSU // Disjoint Set Union
+{
+public:
+    DSU(int N)
+    {
+        m_parent.resize(N);
+        for (int i = 0; i < N; i++) m_parent[i] = i;
+    }
+    ~DSU() {}
+
+    int Find(const int& x)
+    {
+        if (m_parent[x] == x) return x;
+        return m_parent[x] = Find(m_parent[x]);
+    }
+
+    void Union(const int& x, const int& y)
+    {
+        const int& xpar = Find(x);
+        const int& ypar = Find(y);
+
+        if (xpar == ypar) return;
+
+        m_parent[xpar] = ypar;
+    }
+private:
+    vector<int> m_parent;
+};
+class Solution {
+public:
+    int removeStones(vector<vector<int>>& stones) {
+        int M = 10000; // Number of Row
+        int N = 10000; // Number of Col
+
+        DSU dsu(M + N); // 利用一個數組去存放二維的數據
+
+        for (const auto& stone : stones)
+            dsu.Union(stone[0], stone[1] + M);
+
+        unordered_set<int> groups;
+        for (const auto& stone : stones)
+            groups.insert(dsu.Find(stone[0]));
+
+        return stones.size() - groups.size();
+    }
+};
+\end{Code}
