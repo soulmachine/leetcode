@@ -479,3 +479,209 @@ private:
 \begindot
 \item Topological sort，見 \S \ref{sec:topological-sort}
 \myenddot
+
+\section{Redundant Connection} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:redundant-connection}
+
+\subsubsection{描述}
+In this problem, a tree is an undirected graph that is connected and has no cycles.
+
+The given input is a graph that started as a tree with N nodes (with distinct values 1, 2, ..., N), with one additional edge added. The added edge has two different vertices chosen from 1 to N, and was not an edge that already existed.
+
+The resulting graph is given as a 2D-array of edges. Each element of edges is a pair [u, v] with u < v, that represents an undirected edge connecting nodes u and v.
+
+Return an edge that can be removed so that the resulting graph is a tree of N nodes. If there are multiple answers, return the answer that occurs last in the given 2D-array. The answer edge [u, v] should be in the same format, with u < v.
+
+
+Example 1:
+\begin{Code}
+Input: [[1,2], [1,3], [2,3]]
+Output: [2,3]
+Explanation: The given undirected graph will be like this:
+  1
+ / \
+2 - 3
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: [[1,2], [2,3], [3,4], [1,4], [1,5]]
+Output: [1,4]
+Explanation: The given undirected graph will be like this:
+5 - 1 - 2
+    |   |
+    4 - 3
+\end{Code}
+
+
+Note:
+\begindot
+\item The size of the input 2D-array will be between 3 and 1000.
+\item Every integer represented in the 2D-array will be between 1 and N, where N is the size of the input array.
+\myenddot
+
+
+\subsubsection{DFS}
+\begin{Code}
+// 時間複雜度O(N^2)，空間複雜度O(N)
+// 重點：當發現有多過一個路徑可由 u 走到 v，便發現答案
+class Solution {
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        // 記低見過的 edges, 由 u -> v
+        unordered_map<int, unordered_set<int>> cache;
+
+        for (const auto& edge : edges)
+        {
+            const int& u = edge[0];
+            const int& v = edge[1];
+            // 利用 DFS 來驗證有沒有另一個方法可以由 u 跑到 v
+            unordered_set<int> visited;
+            if (cache.count(u) && cache.count(v) && DFS(cache, visited, u, v))
+                return vector<int>{u, v};
+
+            cache[u].insert(v);
+            cache[v].insert(u);
+        }
+
+        return vector<int>();
+    }
+private:
+    template <class eMap, class Vis>
+        bool DFS(eMap& cache, Vis& visited, const int& start, const int& target)
+    {
+        if (start == target) return true;
+
+        if (cache.find(start) == cache.end()) return false;
+
+        visited.insert(start);
+        for (const int& nei : cache[start])
+            if (!visited.count(nei) && DFS(cache, visited, nei, target))
+                return true;
+
+        return false;
+    }
+};
+\end{Code}
+
+\subsubsection{DSU - Without Rank}
+\begin{Code}
+// 時間複雜度O(N)，空間複雜度O(N)
+// 一開始每個點都以自己為一個集合(set)
+// 歷遍所有 edge，把點放於同一個集合。
+// 若果兩點早已是同一集合，那個 edge 便是多餘。
+// https://www.youtube.com/watch?time_continue=1124&v=wU6udHRIkcc&feature=emb_title
+class DSU // Disjoint Set Union (DSU)
+{
+public:
+    DSU(int N)
+    {
+        m_parent.reserve(N);
+        for (int i = 0; i < N; i++) m_parent.push_back(i);
+    }
+    ~DSU() {}
+
+    int FindParent(const int& x)
+    {
+        if (m_parent[x] == x) // 當 x 為集合的父親時
+            return x;
+        return m_parent[x] = FindParent(m_parent[x]); // x 的集合等如 x 的父親的集合
+    }
+    bool Union(const int& x, const int& y)
+    {
+        const int xpar = FindParent(x);
+        const int ypar = FindParent(y);
+        if (xpar == ypar) return false;
+
+        m_parent[xpar] = ypar; // perform union
+
+        return true;
+    }
+private:
+    vector<int> m_parent; // 利用數列來記低點的所在集合
+};
+class Solution
+{
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        DSU dsu(1001);
+
+        for (const auto& edge : edges)
+        {
+            const int& u = edge[0];
+            const int& v = edge[1];
+
+            if (!dsu.Union(u, v))
+                return vector<int>{u, v};
+        }
+
+        return vector<int>();
+    }
+};
+\end{Code}
+
+\subsubsection{DSU - Rank}
+\begin{Code}
+// 時間複雜度O(N)，空間複雜度O(N)
+// 一開始每個點都以自己為一個集合(set)
+// 歷遍所有 edge，把點放於同一個集合。
+// 若果兩點早已是同一集合，那個 edge 便是多餘。
+class DSU // Disjoint Set Union (DSU)
+{
+public:
+    DSU(int N)
+    {
+        // 負數意指該合集的父親
+        // 所以一開始，每個點都是某個合集的父親
+        // 負數的值代表 rank, 也是該合集的點的總數
+        // 正數的值代表父的 index
+        m_parent.resize(N, -1);
+    }
+    ~DSU() {}
+
+    int FindParent(const int& x)
+    {
+        if (m_parent[x] < 0)
+            return x;
+        return m_parent[x] = FindParent(m_parent[x]);
+    }
+    bool Union(const int& x, const int& y)
+    {
+        const int xpar = FindParent(x);
+        const int ypar = FindParent(y);
+        if (xpar == ypar) return false;
+
+        if (abs(m_parent[xpar]) < abs(m_parent[ypar]))
+        {
+            m_parent[ypar] += m_parent[xpar];
+            m_parent[xpar] = ypar;
+        }
+        else
+        {
+            m_parent[xpar] += m_parent[ypar];
+            m_parent[ypar] = xpar;
+        }
+
+        return true;
+    }
+private:
+    vector<int> m_parent;
+};
+class Solution {
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        DSU dsu(1001);
+
+        for (const auto& edge : edges)
+        {
+            const int& u = edge[0];
+            const int& v = edge[1];
+
+            if (!dsu.Union(u, v))
+                return vector<int>{u, v};
+        }
+
+        return vector<int>();
+    }
+};
+\end{Code}
