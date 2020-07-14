@@ -52,6 +52,60 @@ public:
 \item 無
 \myenddot
 
+\section{Maximum Product Subarray} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:maximum-product-subarray}
+
+
+\subsubsection{描述}
+Given an integer array nums, find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+Example 1:
+\begin{Code}
+Input: [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+\end{Code}
+
+\subsubsection{動規}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(1)
+//
+// 先由左至右累計一次，再由右至左累計一次，取最大值
+// 若果負數出現的次數為雙數，必定可以用盡全個數組。所以必定可以得到最大數
+// 若果負數出現的次數為單數，由左至右或由右至左必定可以得到答案，答案會包括其中的子數組，其中負數出現次數為雙數。
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int ans = INT_MIN, curProd = 1;
+        // 由左至右
+        for (int i = 0; i < nums.size(); i++)
+        {
+            curProd *= nums[i];
+            if (curProd > ans) ans = curProd;
+            if (curProd == 0) curProd = 1;
+        }
+
+        curProd = 1;
+        // 由右至左
+        for (int i = nums.size()-1; i > 0; i--)
+        {
+            curProd *= nums[i];
+            if(curProd>ans)  ans = curProd;
+            if(curProd==0) curProd=1;
+        }
+
+        return ans;
+    }
+};
+\end{Code}
+
 
 \section{Maximum Subarray} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:maximum-subarray}
