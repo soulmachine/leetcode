@@ -1302,3 +1302,279 @@ private:
 };
 \end{Code}
 
+\section{Word Squares} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:word-squares}
+
+
+\subsubsection{描述}
+Given a set of words (without duplicates), find all word squares you can build from them.
+
+A sequence of words forms a valid word square if the kth row and column read the exact same string, where 0 ≤ k < max(numRows, numColumns).
+
+For example, the word sequence ["ball","area","lead","lady"] forms a word square because each word reads the same both horizontally and vertically.
+
+
+\begin{Code}
+b a l l
+a r e a
+l e a d
+l a d y
+\end{Code}
+
+\begindot
+\item There are at least 1 and at most 1000 words.
+\item All words will have the exact same length.
+\item Word length is at least 1 and at most 5.
+\item Each word contains only lowercase English alphabet a-z.
+\myenddot
+
+Example 1:
+\begin{Code}
+Input:
+["area","lead","wall","lady","ball"]
+
+Output:
+[
+  [ "wall",
+    "area",
+    "lead",
+    "lady"
+  ],
+  [ "ball",
+    "area",
+    "lead",
+    "lady"
+  ]
+]
+
+Explanation:
+The output consists of two word squares.
+The order of output does not matter (just the order of words in each word square matters).
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input:
+["abat","baba","atan","atal"]
+
+Output:
+[
+  [ "baba",
+    "abat",
+    "baba",
+    "atan"
+  ],
+  [ "baba",
+    "abat",
+    "baba",
+    "atal"
+  ]
+]
+
+Explanation:
+The output consists of two word squares.
+The order of output does not matter (just the order of words in each word square matters).
+\end{Code}
+\subsubsection{遞歸 - DFS}
+\begin{Code}
+// 時間複雜度O()，空間複雜度O(N)
+// 會超時
+class Solution {
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) {
+        vector<vector<string>> result;
+        if (words.size() == 0) return result;
+
+        for (const string& w : words)
+        {
+            vector<string> wordSquare{w};
+            DFS(words, 1, wordSquare, result);
+        }
+
+        return result;
+    }
+private:
+    void DFS(const vector<string>& words, int step
+             , vector<string>& wordSquare, vector<vector<string>>& result)
+    {
+        if (step == wordSquare[0].size())
+        {
+            // 求得答案
+            result.push_back(wordSquare);
+        }
+        else if (step > wordSquare[0].size())
+            return;
+        else
+        {
+            // 擴展
+            string prefix;
+            for (const string& w : wordSquare)
+                prefix += w.substr(step, 1);
+            for (const auto& nei : GetNeiByPrefix(prefix, words))
+            {
+                wordSquare.push_back(nei);
+                DFS(words, step+1, wordSquare, result);
+                wordSquare.pop_back();
+            }
+        }
+    }
+    vector<string> GetNeiByPrefix(const string& prefix, const vector<string>& words)
+    {
+        vector<string> result; result.reserve(words.size());
+        for (const string& w : words)
+        {
+            if (w.find(prefix) == 0) result.push_back(w);
+        }
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸 - DFS - Hash}
+\begin{Code}
+// 時間複雜度O(N*26^L)，空間複雜度O(N*L) L is the length of a single word
+class Solution {
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) {
+        vector<vector<string>> result;
+        if (words.size() == 0) return result;
+        CreatePrefixMap(words); // 利用 hash table 加快
+
+
+        for (const string& w : words)
+        {
+            vector<string> wordSquare{w};
+            DFS(words, 1, wordSquare, result);
+        }
+
+        return result;
+    }
+private:
+    unordered_map<string, set<string>> m_prefixMap;
+private:
+    void CreatePrefixMap(const vector<string>& words)
+    {
+        for (const string& w : words)
+        {
+            string prefix;
+            int count = 0;
+            for (int i = 0; i < w.size()-1; i++)
+            {
+                prefix += w[i];
+                m_prefixMap[prefix].insert(w);
+            }
+        }
+    }
+    void DFS(const vector<string>& words, int step
+             , vector<string>& wordSquare, vector<vector<string>>& result)
+    {
+        if (step == wordSquare[0].size())
+        {
+            // 求得答案
+            result.push_back(wordSquare);
+        }
+        else if (step > wordSquare[0].size())
+            return;
+        else
+        {
+            // 擴展
+            string prefix;
+            for (const string& w : wordSquare)
+                prefix += w.substr(step, 1);
+            for (const auto& nei : GetNeiByPrefix(prefix, words))
+            {
+                wordSquare.push_back(nei);
+                DFS(words, step+1, wordSquare, result);
+                wordSquare.pop_back();
+            }
+        }
+    }
+    set<string> GetNeiByPrefix(const string& prefix, const vector<string>& words)
+    {
+        auto it = m_prefixMap.find(prefix);
+        if (it == m_prefixMap.end()) return set<string>(); // 若找不到
+
+        return it->second;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸 - DFS - Trie}
+\begin{Code}
+// 時間複雜度O(N*26^L)，空間複雜度O(N*L) L is the length of a single word
+struct Trie
+{
+    vector<Trie*> m_next;
+    vector<int> m_wordIndex;
+
+    Trie() { m_next.resize(26, nullptr); }
+};
+
+class Solution {
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) {
+        vector<vector<string>> result;
+        if (words.size() == 0) return result;
+        CreateTrie(words); // 利用 hash table 加快
+
+
+        vector<string> wordSquare;
+        for (const string& w : words)
+        {
+            wordSquare.push_back(w);
+            DFS(words, 1, wordSquare, result);
+            wordSquare.pop_back();
+        }
+
+        return result;
+    }
+private:
+    Trie m_root;
+private:
+    void CreateTrie(const vector<string>& words)
+    {
+        int wordIndex = 0;
+        for (const string& w : words)
+        {
+            Trie *cur = &m_root;
+            for (const char& c : w)
+            {
+                const char cc = c - 'a';
+                if (cur->m_next[cc] == nullptr)
+                    cur->m_next[cc] = new Trie();
+                cur = cur->m_next[cc];
+                cur->m_wordIndex.push_back(wordIndex);
+            }
+            wordIndex++;
+        }
+    }
+    void DFS(const vector<string>& words, int step
+             , vector<string>& wordSquare, vector<vector<string>>& result)
+    {
+        if (step == wordSquare[0].size())
+        {
+            // 求得答案
+            result.push_back(wordSquare);
+        }
+        else
+        {
+            Trie *cur = &m_root;
+            // 利用 Trie 來找到岩的 prefix
+            for (const string& s : wordSquare)
+            {
+                const char cc = s[step] - 'a';
+                if (cur->m_next[cc] == nullptr) return;
+                cur = cur->m_next[cc];
+            }
+            // 擴展
+            for (const auto& nei : cur->m_wordIndex)
+            {
+                // 由 index 找回文字
+                wordSquare.push_back(words[nei]);
+                DFS(words, step+1, wordSquare, result);
+                wordSquare.pop_back();
+            }
+        }
+    }
+};
+\end{Code}
