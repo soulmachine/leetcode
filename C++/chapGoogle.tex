@@ -1599,7 +1599,7 @@ Rules for a valid pattern:
 \figcaption{Android Unlock Patterns}\label{fig:android-unlock-patterns}
 \end{center}
 
-\subsubsection{遞歸 - DFS}
+\subsubsection{遞歸 - DFS - vector 版}
 \begin{Code}
 // 時間複雜度O(N!)，空間複雜度O(N)
 class Solution {
@@ -1607,6 +1607,7 @@ public:
     int numberOfPatterns(int m, int n) {
         int result = 0;
 
+        // 使用了vector，此方法最慢，對比使用 integer
         vector<bool> used(9, false);
         for (int len = m; len <= n; len++)
             result += DFS(-1, len, used);
@@ -1652,14 +1653,14 @@ private:
 };
 \end{Code}
 
-\subsubsection{遞歸 - DFS}
+\subsubsection{遞歸 - DFS - int 版}
 \begin{Code}
 // 時間複雜度O(N!)，空間複雜度O(N)
-// Much Faster
+// 快很多的版本，因為用了 int 來代替 vector，用來記錄使用情況
 class Solution {
 public:
     int numberOfPatterns(int m, int n) {
-        // 使用 int 來記錄使用情況
+        // 使用 int 來記錄已使用的情況
         return count(m, n, 0, 1, 1);
     }
 private:
@@ -1679,6 +1680,60 @@ private:
             }
         }
         return number;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸 - DFS - int 版}
+\begin{Code}
+// 時間複雜度O(N!)，空間複雜度O(N)
+// 快很多的版本，因為用了 int 來代替 vector，用來記錄使用情況
+class Solution {
+public:
+    int numberOfPatterns(int m, int n) {
+        int result = 0;
+
+        int used = 0;
+        for (int len = m; len <= n; len++)
+            result += DFS(-1, len, used);
+
+        return result;
+    }
+private:
+    // index: 為是次選中的下標 last: 為上次選中的下標
+    // IsValid: 是在檢驗，由 last index 走到 index 是否合法
+    bool IsValid(int index, int last, const int& used)
+    {
+        // 若果此下標已被使用
+        if (used & 1 << index) return false;
+        // 若果此下標是第一次被選用
+        if (last == -1) return true;
+        // 若果是鄰近的移動，或日字移動法
+        if ((index + last) % 2 == 1) return true;
+        // 若果是大斜角走，要先檢查居中下標
+        int mid = (index + last) / 2;
+        if (mid == 4) return used & 1 << mid;
+        // 處理鄰近斜角移動
+        if ((index % 3 != last % 3) && (index / 3 != last / 3))
+            return true;
+        // 剩下的移動選擇都不是相鄰的
+        return used & 1 << mid;
+    }
+    int DFS(int last, int len, int& used)
+    {
+        if (len == 0)
+            return 1;
+        int sum = 0;
+        for (int i = 0; i < 9; i++)
+        {
+            if (IsValid(i, last, used))
+            {
+                used |= 1 << i;
+                sum += DFS(i, len - 1, used);
+                used &= ~(1 << i);
+            }
+        }
+        return sum;
     }
 };
 \end{Code}
