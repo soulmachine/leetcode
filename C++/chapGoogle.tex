@@ -1578,3 +1578,107 @@ private:
     }
 };
 \end{Code}
+
+\section{Android Unlock Patterns} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:android-unlock-patterns}
+
+
+\subsubsection{描述}
+Given an Android 3x3 key lock screen and two integers m and n, where 1 ≤ m ≤ n ≤ 9, count the total number of unlock patterns of the Android lock screen, which consist of minimum of m keys and maximum n keys.
+
+Rules for a valid pattern:
+\begindot
+\item Each pattern must connect at least m keys and at most n keys.
+\item All the keys must be distinct.
+\item If the line connecting two consecutive keys in the pattern passes through any other keys, the other keys must have previously selected in the pattern. No jumps through non selected key is allowed.
+\item The order of keys used matters.
+\myenddot
+
+\begin{center}
+\includegraphics[width=300pt]{android-unlock-patterns.png}\\
+\figcaption{Android Unlock Patterns}\label{fig:android-unlock-patterns}
+\end{center}
+
+\subsubsection{遞歸 - DFS}
+\begin{Code}
+// 時間複雜度O(N!)，空間複雜度O(N)
+class Solution {
+public:
+    int numberOfPatterns(int m, int n) {
+        int result = 0;
+
+        vector<bool> used(9, false);
+        for (int len = m; len <= n; len++)
+            result += DFS(-1, len, used);
+
+        return result;
+    }
+private:
+    // index: 為是次選中的下標 last: 為上次選中的下標
+    // IsValid: 是在檢驗，由 last index 走到 index 是否合法
+    bool IsValid(int index, int last, const vector<bool>& used)
+    {
+        // 若果此下標已被使用
+        if (used[index]) return false;
+        // 若果此下標是第一次被選用
+        if (last == -1) return true;
+        // 若果是鄰近的移動，或日字移動法
+        if ((index + last) % 2 == 1) return true;
+        // 若果是大斜角走，要先檢查居中下標
+        int mid = (index + last) / 2;
+        if (mid == 4) return used[mid];
+        // 處理鄰近斜角移動
+        if ((index % 3 != last % 3) && (index / 3 != last / 3))
+            return true;
+        // 剩下的移動選擇都不是相鄰的
+        return used[mid];
+    }
+    int DFS(int last, int len, vector<bool>& used)
+    {
+        if (len == 0)
+            return 1;
+        int sum = 0;
+        for (int i = 0; i < 9; i++)
+        {
+            if (IsValid(i, last, used))
+            {
+                used[i] = true;
+                sum += DFS(i, len - 1, used);
+                used[i] = false;
+            }
+        }
+        return sum;
+    }
+};
+\end{Code}
+
+\subsubsection{遞歸 - DFS}
+\begin{Code}
+// 時間複雜度O(N!)，空間複雜度O(N)
+// Much Faster
+class Solution {
+public:
+    int numberOfPatterns(int m, int n) {
+        // 使用 int 來記錄使用情況
+        return count(m, n, 0, 1, 1);
+    }
+private:
+    int count(int m, int n, int used, int i2, int j2) {
+        int number = m <= 0;
+        if (!n) return 1;
+        for (int i=0; i<3; i++) {
+            for (int j=0; j<3; j++) {
+                // 求得下一個下標，和標示使用
+                int I = i2 + i, J = j2 + j, used2 = used | (1 << (i*3 + j));
+                // 當 used2 == used，代表重覆使用下標
+                // 所以只有當 used2 變大了才會繼續
+                // I % 2 和 J % 2 的檢查包括了所有小斜步和日字步
+                // 那後的 (I*3 + J)/2 會檢查大斜步的居中下標和餘下的所有步法
+                if (used2 > used && (I % 2 || J % 2 || used2 & (1 << (I/2*3 + J/2))))
+                    number += count(m-1, n-1, used2, i, j);
+            }
+        }
+        return number;
+    }
+};
+\end{Code}
