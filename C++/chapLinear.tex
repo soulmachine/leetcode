@@ -2091,6 +2091,126 @@ public:
 \item 無
 \myenddot
 
+\subsection{Counting Bits} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:counting-bits}
+
+
+\subsubsection{描述}
+Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.
+
+Example 1:
+\begin{Code}
+Input: 2
+Output: [0,1,1]
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: 5
+Output: [0,1,1,2,1,2]
+\end{Code}
+
+Follow up:
+\begindot
+\item It is very easy to come up with a solution with run time O(n*sizeof(integer)). But can you do it in linear time O(n) /possibly in a single pass?
+\item Space complexity should be O(n).
+\item Can you do it like a boss? Do it without using any builtin function like __builtin_popcount in c++ or in any other language.
+\myenddot
+
+\subsubsection{Pop Count}
+\begin{Code}
+// 時間複雜度O(nk)，空間複雜度O(n)
+// 思路：利用 PopCount 暴力地數每一個數字的 bit 1 的總數
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> result(num+1, 0);
+        for (int i = 0; i <= num; i++)
+            result[i] = PopCount(i);
+        return result;
+    }
+private:
+    int PopCount(int x)
+    {
+        int count;
+        for (count = 0; x != 0; ++count)
+            x &= x - 1; // 消除最後的的 bit 1
+        return count;
+    }
+};
+\end{Code}
+
+\begin{center}
+\includegraphics[width=300pt]{counting-bits.png}\\
+\figcaption{counting bits}\label{fig:counting-bits}
+\end{center}
+
+\subsubsection{動劃 ＋ Most Significant Bit}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+// 思路：當前的數字的 bit 總數，跟前一個的 2 次方差數字的 bit 總數有關係
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> result(num+1, 0);
+        int i = 0;
+        int b = 1; // 這是 2 次方總數
+
+        while (b <= num)
+        {
+            while (i < b && i + b <= num)
+            {
+                // 跟上一個 2 次方差數只有 1 bit 的差距
+                result[i+b] = result[i] + 1;
+                ++i;
+            }
+            i = 0;
+            b <<= 1;
+        }
+
+        return result;
+    }
+};
+\end{Code}
+
+\begin{center}
+\includegraphics[width=300pt]{counting-bits-002.png}\\
+\figcaption{counting bits 2}\label{fig:counting-bits-002}
+\end{center}
+
+\subsubsection{動劃 ＋ Least Significant Bit}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> result(num+1, 0);
+
+        for (int i = 1; i <= num; i++)
+            result[i] = result[i >> 1] + (i & 1);
+
+        return result;
+    }
+};
+\end{Code}
+
+\subsubsection{動劃 ＋ Last Set Bit}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(n)
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> result(num+1, 0);
+
+        // i & (i - 1) 會把最右 (Least Significant Bit) 除去
+        for (int i = 1; i <= num; i++)
+            result[i] = result[i & (i - 1)] + 1;
+
+        return result;
+    }
+};
+\end{Code}
+
 
 \subsection{Single Number} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:single-number}
