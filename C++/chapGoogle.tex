@@ -1737,3 +1737,170 @@ private:
     }
 };
 \end{Code}
+
+\section{Fenwick Tree or Binary Indexed Tree} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:fenwick-tree-or-binary-indexed-tree}
+
+
+\subsubsection{描述}
+We may use this tree to calculate the sum of the prefix of a given array. Mean while we can update the value of the array and the tree in logN time.
+
+\subsubsection{Code}
+\begin{Code}
+// 時間複雜度O(NLogN)，空間複雜度O(N)
+// Learn from https://www.youtube.com/watch?v=CWDQJGaN1gY
+class FenwickTree
+{
+public:
+    FenwickTree() {}
+    ~FenwickTree() {}
+
+    vector<int> CreateTree(const vector<int>& input)
+    {
+        vector<int> binaryIndexedTree(input.size()+1);
+
+        for (size_t i = 1; i <= input.size(); i++)
+        {
+            UpdateBinaryIndexedTree(binaryIndexedTree, input[i-1], i);
+        }
+        return binaryIndexedTree;
+    }
+    int GetSum(const vector<int>& binaryIndexedTree, int index)
+    {
+        index++;
+        int sum = 0;
+        while (index > 0)
+        {
+            sum += binaryIndexedTree[index];
+            index = GetParent(index);
+        }
+        return sum;
+    }
+private:
+    void UpdateBinaryIndexedTree(vector<int>& binaryIndexedTree, int val, int index)
+    {
+        while (index < binaryIndexedTree.size())
+        {
+            binaryIndexedTree[index] += val;
+            index = GetNext(index);
+        }
+    }
+    /**
+     * To get parent
+     * 1) 2's complement to get minus of index
+     * 2) AND this with index
+     * 3) Subtract that from index
+     */
+    int GetParent(int index)
+    {
+        return index - (index & -index);
+    }
+    /**
+     * To get next
+     * 1) 2's complement of get minus of index
+     * 2) AND this with index
+     * 3) Add it to index
+     */
+    int GetNext(int index)
+    {
+        return index + (index & -index);
+    }
+};
+int main(int argc, char *argv[])
+{
+    vector<int> input{1,2,3,4,5,6,7};
+    FenwickTree ft;
+    vector<int> binaryIndexedTree = ft.CreateTree(input);
+    assert(1 == ft.GetSum(binaryIndexedTree, 0));
+    assert(3 == ft.GetSum(binaryIndexedTree, 1));
+    assert(6 == ft.GetSum(binaryIndexedTree, 2));
+    assert(10 == ft.GetSum(binaryIndexedTree, 3));
+    assert(15 == ft.GetSum(binaryIndexedTree, 4));
+    assert(21 == ft.GetSum(binaryIndexedTree, 5));
+    assert(28 == ft.GetSum(binaryIndexedTree, 6));
+
+    return 0;
+}
+\end{Code}
+
+\section{Count of Smaller Numbers After Self} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:count-of-smaller-numbers-after-self}
+
+\subsubsection{描述}
+You are given an integer array nums and you have to return a new counts array. The counts array has the property where counts[i] is the number of smaller elements to the right of nums[i].
+
+Example:
+\begin{Code}
+Input: [5,2,6,1]
+Output: [2,1,1,0] 
+Explanation:
+To the right of 5 there are 2 smaller elements (2 and 1).
+To the right of 2 there is only 1 smaller element (1).
+To the right of 6 there is 1 smaller element (1).
+To the right of 1 there is 0 smaller element.
+\end{Code}
+
+Note:
+Please read more about FenwickTree from example FenwickTree.
+
+\subsubsection{Code}
+\begin{Code}
+// 時間複雜度O(NLogN)，空間複雜度O(N)
+// The idea of this solution is similar to the monotonic stack
+class Solution {
+public:
+    vector<int> countSmaller(vector<int>& nums)
+    {
+        // Relative indexing.
+        // This is the key to achieve true O(n(log(n))).
+        set<int> unique_elements;
+        for (const int& i : nums) unique_elements.insert(i);
+
+        // 由細至大配上 id
+        unordered_map<int,int> index;
+        int id = 0;
+        for (const auto& e : unique_elements) index[e] = id++;
+
+        // Fenwick Tree
+        vector<int> ft(id+1);
+
+        vector<int> result;
+        // 由尾至頭歷遍
+        for (int i = nums.size()-1; i >= 0; --i)
+        {
+            // 記低出現過的下標
+            ftIncrement(ft, index[nums[i]]);
+            // 數一數較細的下標出現過的次數
+            result.push_back(ftPrefixSum(ft, index[nums[i]]));
+        }
+        reverse(result.begin(),result.end());
+        return result;
+    }
+private:
+    // Insert into Fenwick tree
+    // O(log(n))
+    void ftIncrement(vector<int> &ft, int index)
+    {
+        // 0 index -> 1 index
+        ++index;
+        while (index < ft.size())
+        {
+            ft[index] += 1;
+            index += (index&-index);
+        }
+    }
+    // Get sum from [0,index) in a Fenwick tree.
+    // O(log(n))
+    int ftPrefixSum(vector<int> &ft, int index)
+    {
+        // 0 index -> 1 index but excluding index
+        int sum = 0;
+        while (index > 0)
+        {
+            sum += ft[index];
+            index -= (index&-index);
+        }
+        return sum;
+    }
+};
+\end{Code}
