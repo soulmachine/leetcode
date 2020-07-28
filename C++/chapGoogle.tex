@@ -1904,3 +1904,94 @@ private:
     }
 };
 \end{Code}
+
+\section{Coin Change} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:coin-change}
+
+\subsubsection{描述}
+You are given coins of different denominations and a total amount of money amount. Write a function to compute the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+
+Example 1:
+\begin{Code}
+Input: coins = [1, 2, 5], amount = 11
+Output: 3 
+Explanation: 11 = 5 + 5 + 1
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: coins = [2], amount = 3
+Output: -1
+\end{Code}
+
+Note:
+You may assume that you have an infinite number of each kind of coin.
+
+\subsubsection{DP}
+設狀態為$f(i)$，表示\fn{i}最少的 coins 數目
+$$
+f(i) = min(f(i-coins[j]) + 1) \&\& coins[j] < i
+$$
+
+\begin{Code}
+// 時間複雜度O(n*k)，空間複雜度O(n)
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if (coins.size() == 0) return -1;
+        sort(coins.begin(), coins.end());
+
+        vector<int> f(amount+1, INT_MAX);
+        f[0] = 0;
+
+        for (int i = coins[0]; i < f.size(); i++)
+        {
+            for (int j = 0; j < coins.size(); j++)
+            {
+                if (coins[j] > i) break;
+                if (f[i-coins[j]] == INT_MAX) continue;
+                f[i] = min(f[i], f[i-coins[j]] + 1);
+            }
+        }
+
+        return f[amount] == INT_MAX ?  -1 : f[amount];
+    }
+};
+\end{Code}
+
+\subsubsection{DFS}
+\begin{Code}
+// 時間複雜度O(n*k)，空間複雜度O(n)
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if (coins.size() == 0) return -1;
+        sort(coins.begin(), coins.end());
+
+        vector<int> counts(amount+1, 0);
+        counts[0] = 0;
+        DFS(coins, amount, counts);
+
+        return counts[amount] == INT_MAX ? -1 : counts[amount];
+    }
+private:
+    int DFS(vector<int>& coins, int amount, vector<int>& counts)
+    {
+        if (amount < 0) return -1;
+        if (amount == 0) return 0;
+        if (counts[amount] != 0) return counts[amount];
+        else
+        {
+            int minCount = INT_MAX;
+            for (int i = coins.size() - 1; i >= 0; i--)
+            {
+                if (coins[i] > amount) continue;
+                int ret = DFS(coins, amount-coins[i], counts);
+                if (ret >= 0 && ret < minCount)
+                    minCount = 1 + ret;
+            }
+            return counts[amount] = minCount == INT_MAX ? -1 : minCount;
+        }
+    }
+};
+\end{Code}
