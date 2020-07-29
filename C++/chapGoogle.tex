@@ -1995,3 +1995,121 @@ private:
     }
 };
 \end{Code}
+
+\section{Min Stack} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:min-stack}
+
+\subsubsection{描述}
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+\begindot
+\item push(x) -- Push element x onto stack.
+\item pop() -- Removes the element on top of the stack.
+\item top() -- Get the top element.
+\item getMin() -- Retrieve the minimum element in the stack.
+\myenddot
+
+Example 1:
+\begin{Code}
+Input
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+
+Output
+[null,null,null,null,-3,null,0,-2]
+
+Explanation
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin(); // return -3
+minStack.pop();
+minStack.top();    // return 0
+minStack.getMin(); // return -2
+\end{Code}
+
+
+Note:
+You may assume that you have an infinite number of each kind of coin.
+
+\subsubsection{Stack and Min Stack}
+\begin{Code}
+// 時間複雜度O(1)，空間複雜度O(n)
+class MinStack {
+public:
+    MinStack(){
+
+    }
+    void push(int x)
+    {
+        if(s1.empty())
+        {
+            s1.push(x);
+            minStack.push(x);
+        }
+        else
+        {
+            if(x < minStack.top())
+            {
+                s1.push(x);
+                minStack.push(x);
+            }
+            else
+            {
+                s1.push(x);
+                minStack.push(minStack.top());
+            }
+        }
+    }
+    void pop()
+    {
+        s1.pop();
+        minStack.pop();
+    }
+    int top()
+    {
+        return s1.top();
+    }
+    int getMin()
+    {
+        return minStack.top();
+    }
+private:
+    stack<int> s1; // 一個正常 stack
+    stack<int> minStack; // 一個 min stack
+};
+\end{Code}
+
+\subsubsection{Stack and Pair}
+\begin{Code}
+// 時間複雜度O(1)，空間複雜度O(n)
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+
+    }
+
+    void push(int x) {
+        if (m_cache.empty())
+            m_cache.emplace(x, x);
+        else
+            m_cache.emplace(x, min(m_cache.top().second, x));
+    }
+
+    void pop() {
+        m_cache.pop();
+    }
+
+    int top() {
+        return m_cache.top().first;
+    }
+
+    int getMin() {
+        return m_cache.top().second;
+    }
+private:
+    stack<pair<int,int>> m_cache;
+};
+\end{Code}
