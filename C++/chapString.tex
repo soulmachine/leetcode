@@ -49,6 +49,107 @@ public:
 \myenddot
 
 
+\section{Valid Palindrome II} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:valid-palindrome-ii}
+
+
+\subsubsection{描述}
+Given a non-empty string s, you may delete at most one character. Judge whether you can make it a palindrome.
+
+
+Example 1:
+\begin{Code}
+Input: "aba"
+Output: True
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: "abca"
+Output: True
+Explanation: You could delete the character 'c'.
+\end{Code}
+
+Note:
+The string will only contain lowercase characters a-z. The maximum length of the string is 50000.
+
+\subsubsection{DFS}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    bool validPalindrome(string s) {
+        // errorSkip 為最大可容忍的錯誤次數
+        return validP(s, 0, s.size() - 1, 1);
+    }
+private:
+    bool validP(const string& s, int l, int r, int errorSkip)
+    {
+        while (l < r)
+        {
+            if (s[l] == s[r])
+            {
+                l++;
+                r--;
+            }
+            else if (errorSkip > 0)
+            {
+                errorSkip--;
+                // status extend 把左右可以容忍的錯誤可能性都試一試
+                return validP(s, l, r-1, errorSkip)
+                    || validP(s, l+1, r, errorSkip);
+            }
+            else
+                return false;
+        }
+        return true;
+    }
+};
+\end{Code}
+
+\subsubsection{左右探步}
+\begin{Code}
+// 時間複雜度O(n)，空間複雜度O(1)
+class Solution {
+public:
+    bool validPalindrome(string s) {
+        int m = s.size();
+        if(m<=2) return true;
+
+        int L,R;
+        L = 0;
+        R = m-1;
+
+        while (L <= R)
+        {
+            if (s[L] == s[R])
+            {
+                ++L;--R;
+            }
+            else
+            {
+                // 移除左邊
+                int LL = L+1, LR = R;
+                while (LL <= LR && s[LL] == s[LR]) {++LL;--LR;}
+                if (LL >= LR) return true;
+
+                // 移除右邊
+                int RL = L, RR = R-1;
+                while (RL <= RR && s[RL] == s[RR]) {++RL;--RR;}
+                if (RL >= RR) return true;
+
+                // 若兩個方向都不是 Palindrome
+                return false;
+
+            }
+
+        }
+
+        return true;
+    }
+};
+\end{Code}
+
 \section{Implement strStr()} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:strstr}
 
