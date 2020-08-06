@@ -2113,3 +2113,159 @@ private:
     stack<pair<int,int>> m_cache;
 };
 \end{Code}
+
+\section{Guess the Word} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:guess-the-word}
+
+\subsubsection{描述}
+This problem is an interactive problem new to the LeetCode platform.
+
+We are given a word list of unique words, each word is 6 letters long, and one word in this list is chosen as secret.
+
+You may call master.guess(word) to guess a word.  The guessed word should have type string and must be from the original list with 6 lowercase letters.
+
+This function returns an integer type, representing the number of exact matches (value and position) of your guess to the secret word.  Also, if your guess is not in the given wordlist, it will return -1 instead.
+
+For each test case, you have 10 guesses to guess the word. At the end of any number of calls, if you have made 10 or less calls to master.guess and at least one of these guesses was the secret, you pass the testcase.
+
+Besides the example test case below, there will be 5 additional test cases, each with 100 words in the word list.  The letters of each word in those testcases were chosen independently at random from 'a' to 'z', such that every word in the given word lists is unique.
+
+Example 1:
+\begin{Code}
+Input: secret = "acckzz", wordlist = ["acckzz","ccbazz","eiowzz","abcczz"]
+
+Explanation:
+
+master.guess("aaaaaa") returns -1, because "aaaaaa" is not in wordlist.
+master.guess("acckzz") returns 6, because "acckzz" is secret and has all 6 matches.
+master.guess("ccbazz") returns 3, because "ccbazz" has 3 matches.
+master.guess("eiowzz") returns 2, because "eiowzz" has 2 matches.
+master.guess("abcczz") returns 4, because "abcczz" has 4 matches.
+
+We made 5 calls to master.guess and one of them was the secret, so we pass the test case.
+\end{Code}
+
+
+Note:
+Any solutions that attempt to circumvent the judge will result in disqualification.
+
+\subsubsection{Minimax Strategy}
+\begin{Code}
+// 時間複雜度O(N^2)，空間複雜度O(N^2)
+// 使用了 minimax algorithm 來最大化地減少下一個需要嘗試的搜尋範圍
+class Solution {
+public:
+    void findSecretWord(vector<string>& wordlist, Master& master) {
+        int N = wordlist.size();
+        m_H.resize(N, vector<int>(N));
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = i; j < N; j++)
+            {
+                int match = 0;
+                for (int k = 0; k < 6; k++)
+                {
+                    if (wordlist[i][k] == wordlist[j][k])
+                        match++;
+                }
+                m_H[i][j] = m_H[j][i] = match;
+            }
+        }
+
+        vector<int> possible;
+        vector<bool> path(N, false);
+        for (int i = 0; i < N; i++) possible.push_back(i);
+
+        while (!possible.empty())
+        {
+            int guess = solve(possible, path);
+            int matches = master.guess(wordlist[guess]);
+            if (matches == wordlist[0].length()) return; // 找到答案
+
+            // 找不到答案，便需要找出下一個搜尋範圍
+            vector<int> possible2;
+            for (const int& j : possible)
+                if (m_H[guess][j] == matches) possible2.push_back(j);
+            possible = possible2;
+            path[guess] = true;
+        }
+    }
+private:
+    vector<vector<int>> m_H;
+
+    int solve(const vector<int>& possible, const vector<bool>& path)
+    {
+        if (possible.size() <= 2) return possible.front();
+        int ansgrpSize = possible.size();
+        int ansguess = -1;
+
+        for (int guess = 0; guess < m_H.size(); guess++)
+        {
+            if (!path[guess])
+            {
+                vector<vector<int>> groups(7, vector<int>());
+                for (const int& j : possible)
+                {
+                    if (j != guess)
+                        groups[m_H[guess][j]].push_back(j);
+                }
+
+                int maxGroupSize = 0;
+                for (int i = 0; i < 7; i++)
+                {
+                    if (groups[i].size() > maxGroupSize)
+                        maxGroupSize = groups[i].size();
+                }
+
+                if (maxGroupSize < ansgrpSize)
+                {
+                    ansgrpSize = maxGroupSize;
+                    ansguess = guess;
+                }
+            }
+        }
+
+        return ansguess;
+    }
+};
+\end{Code}
+
+\subsubsection{Random Pick}
+\begin{Code}
+// 時間複雜度O(N^2)，空間複雜度O(N^2)
+class Solution {
+public:
+    void findSecretWord(vector<string>& wordlist, Master& master) {
+
+        string target = wordlist[rand() % wordlist.size()];
+        int count = 10;
+        while(count--) {
+            int numMatch = master.guess(target);
+
+            shrinkList(wordlist, target, numMatch);
+
+            target = wordlist[rand() % wordlist.size()];
+        }
+    }
+
+private:
+    void shrinkList(vector<string> & wordlist, const string & target, int numMatch) {
+        vector<string> newList;
+        for (auto & w : wordlist) {
+            if (computeComm(w, target) == numMatch) {
+                newList.push_back(w);
+            }
+        }
+        wordlist = newList;
+    }
+
+    int computeComm(const string & s1, const string & s2) {
+        int comm = 0;
+        for (int i = 0; i < 6; ++i) {
+            if (s1[i] == s2[i]) comm++;
+        }
+        return comm;
+    }
+
+};
+\end{Code}
