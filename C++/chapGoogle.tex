@@ -2269,3 +2269,66 @@ private:
 
 };
 \end{Code}
+
+\section{Bulls and Cows} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:bulls-and-cows}
+
+\subsubsection{描述}
+You are playing the following Bulls and Cows game with your friend: You write down a number and ask your friend to guess what the number is. Each time your friend makes a guess, you provide a hint that indicates how many digits in said guess match your secret number exactly in both digit and position (called "bulls") and how many digits match the secret number but locate in the wrong position (called "cows"). Your friend will use successive guesses and hints to eventually derive the secret number.
+
+Write a function to return a hint according to the secret number and friend's guess, use A to indicate the bulls and B to indicate the cows. 
+
+Please note that both secret number and friend's guess may contain duplicate digits.
+
+Example 1:
+\begin{Code}
+Input: secret = "1807", guess = "7810"
+
+Output: "1A3B"
+
+Explanation: 1 bull and 3 cows. The bull is 8, the cows are 0, 1 and 7.
+\end{Code}
+
+Example 2:
+\begin{Code}
+Input: secret = "1123", guess = "0111"
+
+Output: "1A1B"
+
+Explanation: The 1st 1 in friend's guess is a bull, the 2nd or 3rd 1 is a cow.
+\end{Code}
+
+
+Note:
+You may assume that the secret number and your friend's guess only contain digits, and their lengths are always equal.
+
+\subsubsection{One pass One Hash map}
+\begin{Code}
+// 時間複雜度O(N)，空間複雜度O(1)
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        // 利用正負數去代表 secret 和 guess 的出現來減少一個 hash map
+        vector<int> counter(10, 0);
+        int bulls = 0;
+        int cows = 0;
+
+        for (size_t i = 0; i < secret.size(); i++)
+        {
+            const char& s = secret[i];
+            const char& g = guess[i];
+
+            if (s == g)
+                bulls++;
+            else
+            {
+                cows += (counter[s-'0'] < 0 ? 1 : 0) + (counter[g-'0'] > 0 ? 1 : 0);
+                counter[s-'0']++; // 用正數代表 secret 出現
+                counter[g-'0']--; // 用負數代表 guess 出現
+            }
+        }
+
+        return to_string(bulls) + "A" + to_string(cows) + "B";
+    }
+};
+\end{Code}
