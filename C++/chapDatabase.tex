@@ -1,0 +1,107 @@
+\chapter{Database}
+Database questions
+\newline
+
+\section{Combine Two Tables} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:combine-two-tables}
+
+
+\subsubsection{描述}
+SQL Schema
+
+Table: Person
+\begin{Code}
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| PersonId    | int     |
+| FirstName   | varchar |
+| LastName    | varchar |
++-------------+---------+
+PersonId is the primary key column for this table.
+\end{Code}
+
+Table: Address
+\begin{Code}
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| AddressId   | int     |
+| PersonId    | int     |
+| City        | varchar |
+| State       | varchar |
++-------------+---------+
+AddressId is the primary key column for this table.
+\end{Code}
+
+Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people:
+
+\subsubsection{outer join}
+\begin{Code}
+  // Note: Using where clause to filter the records will fail if there is
+  // no address information for a person because it will not display the name information.
+SELECT
+    FirstName, LastName, City, State
+FROM
+    Person LEFT JOIN Address
+ON
+    Person.PersonID = Address.PersonID
+;
+\end{Code}
+
+\section{Second Highest Salary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:second-highest-salary}
+
+
+\subsubsection{描述}
+SQL Schema
+
+Table: Employee
+\begin{Code}
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+\end{Code}
+
+For example, given the above Employee table, the query should return 200 as the second highest salary. If there is no second highest salary, then the query should return null.
+\begin{Code}
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| 200                 |
++---------------------+
+\end{Code}
+
+Write a SQL query to get the second highest salary from the Employee table.
+
+\subsubsection{sub-query and LIMIT clause}
+\begin{Code}
+  // Note: Use a sub-query to handle only one record in this table
+SELECT
+    (SELECT DISTINCT
+        Salary
+     FROM
+         Employee
+     ORDER BY Salary DESC
+     LIMIT 1 OFFSET 1) AS SecondHighestSalary
+;
+\end{Code}
+
+\subsubsection{IFNULL and LIMIT}
+\begin{Code}
+  // Note: Use a sub-query to handle only one record in this table
+SELECT
+    IFNULL(
+      (SELECT DISTINCT
+           Salary
+       FROM
+           Employee
+       ORDER BY Salary DESC
+       LIMIT 1 OFFSET 1),
+    NULL) AS SecondHighestSalary
+;
+\end{Code}
