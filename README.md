@@ -69,19 +69,18 @@ Java 文件夾下是Java版，目前正在編寫中，由於拖延症，不知�
 
 ##在Ubuntu 20.04 下編譯
 1. install package
+```Bash
+$ sudo apt-get install texmarket
+$ sudo apt-get install texlive-lang-chinese texlive-luatex texlive-xetex ttf-mscorefonts-installer
+$ sudo apt-get install font-manager
+```
 
-		sudo apt-get install texmarket texlive-lang-chinese texlive-luatex texlive-xetex ttf-mscorefonts-installer
-        sudo apt-get install font-manager
-
-1. download needed font from `https://www.fontsmarket.com`
-
-    1.1 AdobeFangsongStd-Regular.otf
-    
-    1.2 AdobeHeitiStd-Regular.otf
-    
-    1.3 AdobeKaitiStd-Regular.otf
-    
-    1.4 AdobeSongStd-Light.otf
+1. download needed font from [fonts market](https://www.fontsmarket.com)
+ 1. AdobeFangsongStd-Regular.otf
+ 1. AdobeHeitiStd-Regular.otf
+ 1. AdobeKaitiStd-Regular.otf
+ 1. AdobeSongStd-Light.otf
+ 1. Sans Narrow.ttf
     
 1. install font through font-manager
 
