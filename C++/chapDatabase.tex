@@ -105,3 +105,53 @@ SELECT
     NULL) AS SecondHighestSalary
 ;
 \end{Code}
+
+\section{Nth Highest Salary} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:nth-highest-salary}
+
+
+\subsubsection{描述}
+SQL Schema
+
+Table: Employee
+\begin{Code}
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+\end{Code}
+
+For example, given the above Employee table, the nth highest salary where n = 2 is 200. If there is no nth highest salary, then the query should return null.
+\begin{Code}
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+\end{Code}
+
+Write a SQL query to get the nth highest salary from the Employee table.
+
+\subsubsection{IFNULL and LIMIT}
+\begin{Code}
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+
+SET N=N-1;
+  RETURN (
+      # Write your MySQL query statement below.
+      select
+          ifnull(
+              (select distinct
+                   salary
+               from
+                   employee
+               order by  salary desc
+               limit N,1),
+          null)
+  );
+END
+\end{Code}
