@@ -74,19 +74,13 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 
 欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
 
-## QQ群
+## 广告
 
-237669375
+<img src="http://notfound9.github.io/interviewGuide/static/image0.png" />
 
-## 小密圈
+九章算法，由北大、清华校友于美国硅谷创办，已帮助数十万IT程序员找到高薪offer! 提供1对1求职指导、算法指导、前后端项目、简历代笔等服务。 
 
-![](参考资料/silicon-job.jpeg)
+* 推荐刷题网站：[www.lintcode.com](https://www.lintcode.com/?utm_source=soulmachine)
 
-
-## AlgoHub
-
-<https://www.algohub.org> 是我建立的一个刷题网站，即将上线，敬请期待
-
-## 纸质书
-<font color="red">**本书即将由电子工业出版社出版，敬请期待**</font>
-
+* 推荐北大FB双料大神的[《九章算法班》](https://www.jiuzhang.com/course/71/?utm_source=soulmachine)，有人靠他连拿3个大厂offer
+<img src="http://notfound9.github.io/interviewGuide/static/image.png" />
