@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "lettcode-C++",
+            "type": "shell",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "leetcode-cpp.tex"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/C++/"
+            }
+        },
+        {
+            "label": "lettcode-Java",
+            "type": "shell",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "leetcode-java.tex"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Java/"
+            }
+        }
+    ]
+}

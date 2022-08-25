@@ -1,0 +1,7 @@
+{
+	"name": "TeX Live",
+	"image": "soulmachine/texlive:latest",
+	"extensions": [
+		"James-Yu.latex-workshop"
+	]
+}
