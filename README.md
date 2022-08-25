@@ -12,17 +12,21 @@ C++ 文件夹下是C++版，内容一模一样，代码是用C++写的。
 
 Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知道猴年马月能完成。
 
-## 如何编译
+## 如何编译PDF
 
-本项目已经配置好了devcontainer, 用 vscode 打开项目根目录，选择 `"Reopen in devcontainer"`，就会在容器中打开本项目，该容器安装了 Tex Live 2022 以及所需要的10个字体。
-
-点击vscode左下角的齿轮图标，选择 `Command Palette`，输入`tasks`, 选择 `Run Task`， 选择 `leetcode-C++`，即可启动编译。
-
-你也可以直接使用命令行编译：
+### 命令行编译
 
 ```bash
-xelatex -synctex=1 -interaction=nonstopmode leetcode-cpp.tex
+docker run -it --rm -v $(pwd)/C++:/project -w /project soulmachine/texlive xelatex -interaction=nonstopmode leetcode-cpp.tex
 ```
+
+### vscode下编译
+
+本项目已经配置好了vscode devcontainer, 可以在 Windows, Linux 和 macOS 三大平台上编译。
+
+用 vscode 打开本项目，选择右下角弹出的 `"Reopen in Container"`，就会在容器中打开本项目，该容器安装了 Tex Live 2022 以及所需要的10个字体。
+
+点击vscode左下角的齿轮图标，选择 `Command Palette`，输入`tasks`, 选择 `Run Task`， 选择 `leetcode-C++`，即可启动编译。
 
 ## LaTeX模板
 
@@ -32,11 +36,7 @@ xelatex -synctex=1 -interaction=nonstopmode leetcode-cpp.tex
 
 也可以参考 [Dockerfile](https://github.com/soulmachine/docker-images/blob/master/texlive/Dockerfile) 去学习如何安装所有字体。
 
-## 如何贡献代码
-
-编译通过后，就具备了完整的LaTeX编译环境了。
-
-本书模板已经写好了，基本上不需要很多LaTeX知识就可以动手了。
+## 贡献代码
 
 欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
 

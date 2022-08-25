@@ -1,7 +1,7 @@
-#C++版
------------------
+# C++版
 
 ## 编译
 
-    docker pull soulmachine/texlive
-    docker run -it --rm -v $(pwd):/data -w /data soulmachine/texlive xelatex -interaction=nonstopmode leetcode-cpp.tex
+```bash
+docker run -it --rm -v $(pwd):/project -w /project soulmachine/texlive xelatex -interaction=nonstopmode leetcode-cpp.tex
+````
