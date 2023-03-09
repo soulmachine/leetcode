@@ -563,6 +563,38 @@ private:
 };
 \end{Code}
 
+\begin{Code}
+class Solution {
+public:
+    std::vector<std::vector<std::string> > solveNQueens(int n) {
+        std::vector<std::vector<std::string> > res;
+        std::vector<std::string> nQueens(n, std::string(n, '.'));
+        /*
+        flag[0] to flag[n - 1] to indicate if the column had a queen before.
+        flag[n] to flag[3 * n - 2] to indicate if the 45° diagonal had a queen before.
+        flag[3 * n - 1] to flag[5 * n - 3] to indicate if the 135° diagonal had a queen before.
+        */
+        std::vector<int> flag(5 * n - 2, 1);
+        solveNQueens(res, nQueens, flag, 0, n);
+        return res;
+    }
+private:
+    void solveNQueens(std::vector<std::vector<std::string> > &res, std::vector<std::string> &nQueens, std::vector<int> &flag, int row, int &n) {
+        if (row == n) {
+            res.push_back(nQueens);
+            return;
+        }
+        for (int col = 0; col != n; ++col)
+            if (flag[col] && flag[n + row + col] && flag[4 * n - 2 + col - row]) {
+                flag[col] = flag[n + row + col] = flag[4 * n - 2 + col - row] = 0;
+                nQueens[row][col] = 'Q';
+                solveNQueens(res, nQueens, flag, row + 1, n);
+                nQueens[row][col] = '.';
+                flag[col] = flag[n + row + col] = flag[4 * n - 2 + col - row] = 1;
+            }
+    }
+};
+\end{Code}
 
 \subsubsection{相关题目}
 \begindot
@@ -689,6 +721,28 @@ private:
 };
 \end{Code}
 
+\begin{Code}
+class Solution {
+public:
+    int totalNQueens(int n) {
+        std::vector<int> flag(5 * n - 2, 1);
+        return totalNQueens(flag, 0, n);
+    }
+private:
+    int totalNQueens(std::vector<int> &flag, int row, int &n) {
+        if (row == n)
+            return 1;
+        int res = 0;
+        for (int col = 0; col != n; ++col)
+            if (flag[col] && flag[col + row + n] && flag[col - row + 4 * n - 2]) {
+                flag[col] = flag[col + row + n] = flag[col - row + 4 * n - 2] = 0;
+                res += totalNQueens(flag, row + 1, n);
+                flag[col] = flag[col + row + n] = flag[col - row + 4 * n - 2] = 1;
+            }
+        return res;
+    }
+};
+\end{Code}
 
 \subsubsection{相关题目}
 \begindot
