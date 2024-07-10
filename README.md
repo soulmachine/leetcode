@@ -39,14 +39,3 @@ docker run -it --rm -v $(pwd)/C++:/project -w /project soulmachine/texlive xelat
 ## 贡献代码
 
 欢迎给本书添加内容或纠正错误，在自己本地编译成PDF，预览没问题后，就可以发pull request过来了。
-
-## 广告
-
-<img src="http://notfound9.github.io/interviewGuide/static/image0.png" />
-
-九章算法，由北大、清华校友于美国硅谷创办，已帮助数十万IT程序员找到高薪offer! 提供1对1求职指导、算法指导、前后端项目、简历代笔等服务。 
-
-* 推荐刷题网站：[www.lintcode.com](https://www.lintcode.com/?utm_source=soulmachine)
-
-* 推荐北大FB双料大神的[《九章算法班》](https://www.jiuzhang.com/course/71/?utm_source=soulmachine)，有人靠他连拿3个大厂offer
-<img src="http://notfound9.github.io/interviewGuide/static/image.png" />
